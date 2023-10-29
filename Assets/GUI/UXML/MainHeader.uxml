@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
+>
+
+<VisualElement name="main-header-template-wrapper">
+    <VisualElement name="tabs">
+        <VisualElement class="tab inactive-tab" name="experiment-tab"></VisualElement>
+        <VisualElement class="tab inactive-tab" name="debug-tab"></VisualElement>
+        <VisualElement class="tab inactive-tab" name="data-tab"></VisualElement>
+        <VisualElement class="tab inactive-tab" name="info-tab"></VisualElement>
+        <VisualElement class="tab inactive-tab" name="cameras-tab"></VisualElement>
+        <VisualElement class="tab inactive-tab" name="settings-tab"></VisualElement>
+    </VisualElement>
+    <VisualElement name="exit-minimize-app-btns"></VisualElement>
+</VisualElement>
+    
+</UXML>
