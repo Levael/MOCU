@@ -6,15 +6,44 @@
 >
 
 <VisualElement name="main-header-template-wrapper">
+    <!-- TABS -->
     <VisualElement name="tabs">
-        <VisualElement class="tab inactive-tab" name="experiment-tab"></VisualElement>
-        <VisualElement class="tab inactive-tab" name="debug-tab"></VisualElement>
-        <VisualElement class="tab inactive-tab" name="data-tab"></VisualElement>
-        <VisualElement class="tab inactive-tab" name="info-tab"></VisualElement>
-        <VisualElement class="tab inactive-tab" name="cameras-tab"></VisualElement>
-        <VisualElement class="tab inactive-tab" name="settings-tab"></VisualElement>
+
+        <VisualElement class="tab" name="experiment-tab">
+            <Image class="tab_icon" name="experiment-tab-icon" src="/Assets/Images/ExperimentTabIcon.svg"/>
+            <TextElement class="tab-text" name="experiment-tab-text" text="Experiment"/>
+        </VisualElement>
+
+        <VisualElement class="tab" name="debug-tab">
+            <Image class="tab_icon" name="debug-tab-icon" src="/Assets/Images/DebugTabIcon.svg"/>
+            <TextElement class="tab-text" name="debug-tab-text" text="Debug"/>
+        </VisualElement>
+
+        <VisualElement class="tab" name="data-tab">
+            <Image class="tab_icon" name="data-tab-icon" src="/Assets/Images/DataTabIcon.svg"/>
+            <TextElement class="tab-text" name="data-tab-text" text="Data"/>
+        </VisualElement>
+
+        <VisualElement class="tab" name="info-tab">
+            <Image class="tab_icon" name="info-tab-icon" src="/Assets/Images/InfoTabIcon.svg"/>
+            <TextElement class="tab-text" name="info-tab-text" text="Info"/>
+        </VisualElement>
+
+        <VisualElement class="tab" name="cameras-tab">
+            <Image class="tab_icon" name="cameras-tab-icon" src="/Assets/Images/CamerasTabIcon.svg"/>
+            <TextElement class="tab-text" name="cameras-tab-text" text="Cameras"/>
+        </VisualElement>
+
+        <VisualElement class="tab" name="settings-tab">
+            <Image class="tab_icon" name="settings-tab-icon" src="/Assets/Images/SettingsTabIcon.svg"/>
+            <TextElement class="tab-text" name="settings-tab-text" text="Settings"/>
+        </VisualElement>
+
     </VisualElement>
+
+    <!-- EXIT / MINIMIZE BTNS -->
     <VisualElement name="exit-minimize-app-btns"></VisualElement>
+
 </VisualElement>
     
 </UXML>
