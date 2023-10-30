@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a00f442ca006bd247acb6e92fa4e584d
+guid: 2a7bbce1b616e9b449e0388232e4cb82
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -8,7 +8,7 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: a57477913897c46af95d590f580878bd, type: 3}
-  svgType: 0
+  svgType: 3
   texturedSpriteMeshType: 0
   svgPixelsPerUnit: 100
   gradientResolution: 64
@@ -18,8 +18,8 @@ ScriptedImporter:
   viewportOptions: 0
   preserveViewport: 0
   advancedMode: 0
-  predefinedResolutionIndex: 1
-  targetResolution: 1080
+  predefinedResolutionIndex: 4
+  targetResolution: 1920
   resolutionMultiplier: 1
   stepDistance: 10
   samplingStepDistance: 100

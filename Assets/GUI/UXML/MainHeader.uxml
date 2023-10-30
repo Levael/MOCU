@@ -5,45 +5,90 @@
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
 >
 
+
+
 <VisualElement name="main-header-template-wrapper">
+
     <!-- TABS -->
     <VisualElement name="tabs">
-
-        <VisualElement class="tab" name="experiment-tab">
-            <Image class="tab_icon" name="experiment-tab-icon" src="/Assets/Images/ExperimentTabIcon.svg"/>
+        
+        <!-- Experiment : ExperimentTabIcon.svg -->
+        <VisualElement class="tab active-tab" name="experiment-tab">
+            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/ExperimentTabIcon.svg');">
+                <VisualElement class="tab-icon-color"></VisualElement>
+            </VisualElement>
             <TextElement class="tab-text" name="experiment-tab-text" text="Experiment"/>
         </VisualElement>
 
+        <!-- Debug : DebugTabIcon.svg -->
         <VisualElement class="tab" name="debug-tab">
-            <Image class="tab_icon" name="debug-tab-icon" src="/Assets/Images/DebugTabIcon.svg"/>
+            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/DebugTabIcon.svg');">
+                <VisualElement class="tab-icon-color"></VisualElement>
+            </VisualElement>
             <TextElement class="tab-text" name="debug-tab-text" text="Debug"/>
         </VisualElement>
 
+        <!-- Data : DataTabIcon.svg -->
         <VisualElement class="tab" name="data-tab">
-            <Image class="tab_icon" name="data-tab-icon" src="/Assets/Images/DataTabIcon.svg"/>
+            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/DataTabIcon.svg');">
+                <VisualElement class="tab-icon-color"></VisualElement>
+            </VisualElement>
             <TextElement class="tab-text" name="data-tab-text" text="Data"/>
         </VisualElement>
 
+        <!-- Info : InfoTabIcon.svg -->
         <VisualElement class="tab" name="info-tab">
-            <Image class="tab_icon" name="info-tab-icon" src="/Assets/Images/InfoTabIcon.svg"/>
+            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/InfoTabIcon.svg');">
+                <VisualElement class="tab-icon-color"></VisualElement>
+            </VisualElement>
             <TextElement class="tab-text" name="info-tab-text" text="Info"/>
         </VisualElement>
 
+        <!-- Cameras : CamerasTabIcon.svg -->
         <VisualElement class="tab" name="cameras-tab">
-            <Image class="tab_icon" name="cameras-tab-icon" src="/Assets/Images/CamerasTabIcon.svg"/>
+            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/CamerasTabIcon.svg');">
+                <VisualElement class="tab-icon-color"></VisualElement>
+            </VisualElement>
             <TextElement class="tab-text" name="cameras-tab-text" text="Cameras"/>
         </VisualElement>
 
+        <!-- Settings : SettingsTabIcon.svg -->
         <VisualElement class="tab" name="settings-tab">
-            <Image class="tab_icon" name="settings-tab-icon" src="/Assets/Images/SettingsTabIcon.svg"/>
+            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/SettingsTabIcon.svg');">
+                <VisualElement class="tab-icon-color"></VisualElement>
+            </VisualElement>
             <TextElement class="tab-text" name="settings-tab-text" text="Settings"/>
         </VisualElement>
 
     </VisualElement>
 
+
     <!-- EXIT / MINIMIZE BTNS -->
-    <VisualElement name="exit-minimize-app-btns"></VisualElement>
+    <VisualElement name="exit-minimize-app-btns">
+
+        <!-- Close : CloseGameIcon.svg -->
+        <VisualElement class="close-minimize-background" style="background-image: url('/Assets/Images/SVG/CloseGameIcon.svg');">
+            <VisualElement class="close-minimize-icon-color"></VisualElement>
+        </VisualElement>
+
+        <!-- Minimize : MinimizeGameIcon.svg -->
+        <VisualElement class="close-minimize-background" style="background-image: url('/Assets/Images/SVG/MinimizeGameIcon.svg');">
+            <VisualElement class="close-minimize-icon-color"></VisualElement>
+        </VisualElement>
+    </VisualElement>
 
 </VisualElement>
     
 </UXML>
+
+
+<!-- COMMENTS
+
+<Template src="/Assets/GUI/UXML/HeaderTab.uxml" name="HeaderTab-template"/>
+
+<Instance template="HeaderTab-template" name="experiment-tab-test">
+    <AttributeOverrides element-name="tab-background"   style="background-image: url('/Assets/Images/SVG/ExperimentTabIcon.svg');" />
+    <AttributeOverrides element-name="tab-text"         text="Experiment test" />
+</Instance> 
+
+-->
