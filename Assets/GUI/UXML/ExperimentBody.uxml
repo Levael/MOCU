@@ -20,18 +20,21 @@
 
 
     <VisualElement name="experiment-body-right-part" class="body-container">
-        <VisualElement name="experiment-body-right-part-top" class="body-container">
-            <VisualElement name="experiment-body-right-part-top-unity" class="body-module"></VisualElement>
-            <VisualElement name="experiment-body-right-part-top-eeg" class="body-module"></VisualElement>
+        <VisualElement name="experiment-body-right-part-statuses" class="body-module">
         </VisualElement>
 
-        <VisualElement name="experiment-body-right-part-bottom" class="body-container">
-            <VisualElement name="experiment-body-right-part-bottom-left" class="body-container">
-                <VisualElement name="experiment-body-right-part-bottom-left-info" class="body-module"></VisualElement>
-                <VisualElement name="experiment-body-right-part-bottom-left-warnings" class="body-module"></VisualElement>
+        <VisualElement name="experiment-body-right-part-monitors" class="body-container">
+            <VisualElement name="experiment-body-right-part-monitors-unity" class="body-module"></VisualElement>
+            <VisualElement name="experiment-body-right-part-monitors-eeg" class="body-module"></VisualElement>
+        </VisualElement>
+
+        <VisualElement name="experiment-body-right-part-data" class="body-container">
+            <VisualElement name="experiment-body-right-part-data-left" class="body-container">
+                <VisualElement name="experiment-body-right-part-data-left-info" class="body-module"></VisualElement>
+                <VisualElement name="experiment-body-right-part-data-left-warnings" class="body-module"></VisualElement>
             </VisualElement>
-            <VisualElement name="experiment-body-right-part-bottom-right" class="body-container">
-                <VisualElement name="experiment-body-right-part-bottom-right-graph" class="body-module"></VisualElement>
+            <VisualElement name="experiment-body-right-part-data-right" class="body-container">
+                <VisualElement name="experiment-body-right-part-data-right-graph" class="body-module"></VisualElement>
             </VisualElement>
         </VisualElement>
     </VisualElement>

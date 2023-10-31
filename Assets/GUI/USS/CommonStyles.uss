@@ -24,7 +24,23 @@
 	background-color: #474747;
 }
 
-#main-body {
+#main-body, #main-body > * {
 	width: 100%;
 	height: 100%;
 }
+
+
+/* TEMP */
+#debug-body, #data-body, #info-body, #cameras-body, #settings-body, #experiment-body-right-part-monitors-eeg {
+	display: none !important;
+}
+
+
+
+
+
+/* border-left-width: 1px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-color: red; */
