@@ -5,10 +5,13 @@
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
 >
 
-<!-- STYLES-->
-<Style src="/Assets/GUI/USS/MainUiStyle.uss" />
+<!-- STYLES ================================ -->
+<Style src="/Assets/GUI/USS/CommonStyles.uss" />
+<!-- ======================================= -->
 
-<!-- TEMPLATES -->
+
+
+<!-- TEMPLATES ====================================================================== -->
 <Template src="/Assets/GUI/UXML/MainHeader.uxml"        name="MainHeader-template"/>
 
 <Template src="/Assets/GUI/UXML/ExperimentBody.uxml"    name="ExperimentBody-template"/>
@@ -17,9 +20,11 @@
 <Template src="/Assets/GUI/UXML/InfoBody.uxml"          name="InfoBody-template"/>
 <Template src="/Assets/GUI/UXML/CamerasBody.uxml"       name="CamerasBody-template"/>
 <Template src="/Assets/GUI/UXML/SettingsBody.uxml"      name="SettingsBody-template"/>
+<!-- ================================================================================ -->
 
 
-<!-- MAIN MARKUP -->
+
+<!-- MAIN MARKUP ==================================================================== -->
 <VisualElement name="main-wrapper">
 
     <Instance template="MainHeader-template"            name="main-header"/>
@@ -34,5 +39,8 @@
     </VisualElement>
 
 </VisualElement>
+<!-- ================================================================================ -->
+
+
     
 </UXML>

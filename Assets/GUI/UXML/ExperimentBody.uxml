@@ -4,5 +4,38 @@
     xmlns="UnityEngine.UIElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
+
+<!-- STYLES ================================ -->
+<Style src="/Assets/GUI/USS/ExperimentBodyStyles.uss" />
+<!-- ======================================= -->
+
+
+<!-- MAIN MARKUP ==================================================================== -->
+<VisualElement name="experiment-body-template-wrapper">
+    <VisualElement name="experiment-body-left-part" class="body-container">
+        <VisualElement name="experiment-body-left-part-inputs" class="body-module"></VisualElement>
+        <VisualElement name="experiment-body-left-part-table" class="body-module"></VisualElement>
+        <VisualElement name="experiment-body-left-part-controls" class="body-module"></VisualElement>
+    </VisualElement>
+
+
+    <VisualElement name="experiment-body-right-part" class="body-container">
+        <VisualElement name="experiment-body-right-part-top" class="body-container">
+            <VisualElement name="experiment-body-right-part-top-unity" class="body-module"></VisualElement>
+            <VisualElement name="experiment-body-right-part-top-eeg" class="body-module"></VisualElement>
+        </VisualElement>
+
+        <VisualElement name="experiment-body-right-part-bottom" class="body-container">
+            <VisualElement name="experiment-body-right-part-bottom-left" class="body-container">
+                <VisualElement name="experiment-body-right-part-bottom-left-info" class="body-module"></VisualElement>
+                <VisualElement name="experiment-body-right-part-bottom-left-warnings" class="body-module"></VisualElement>
+            </VisualElement>
+            <VisualElement name="experiment-body-right-part-bottom-right" class="body-container">
+                <VisualElement name="experiment-body-right-part-bottom-right-graph" class="body-module"></VisualElement>
+            </VisualElement>
+        </VisualElement>
+    </VisualElement>
+</VisualElement>
+<!-- ================================================================================ -->
     
 </UXML>

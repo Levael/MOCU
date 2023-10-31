@@ -5,6 +5,10 @@
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
 >
 
+<!-- STYLES ================================ -->
+<Style src="/Assets/GUI/USS/HeaderStyles.uss" />
+<!-- ======================================= -->
+
 
 
 <VisualElement name="main-header-template-wrapper">
@@ -14,48 +18,48 @@
         
         <!-- Experiment : ExperimentTabIcon.svg -->
         <VisualElement class="tab active-tab" name="experiment-tab">
-            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/ExperimentTabIcon.svg');">
-                <VisualElement class="tab-icon-color"></VisualElement>
+            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/ExperimentTabIcon.svg');">
+                <VisualElement class="tab-icon-color icon-color"></VisualElement>
             </VisualElement>
             <TextElement class="tab-text" name="experiment-tab-text" text="Experiment"/>
         </VisualElement>
 
         <!-- Debug : DebugTabIcon.svg -->
         <VisualElement class="tab" name="debug-tab">
-            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/DebugTabIcon.svg');">
-                <VisualElement class="tab-icon-color"></VisualElement>
+            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/DebugTabIcon.svg');">
+                <VisualElement class="tab-icon-color icon-color"></VisualElement>
             </VisualElement>
             <TextElement class="tab-text" name="debug-tab-text" text="Debug"/>
         </VisualElement>
 
         <!-- Data : DataTabIcon.svg -->
         <VisualElement class="tab" name="data-tab">
-            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/DataTabIcon.svg');">
-                <VisualElement class="tab-icon-color"></VisualElement>
+            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/DataTabIcon.svg');">
+                <VisualElement class="tab-icon-color icon-color"></VisualElement>
             </VisualElement>
             <TextElement class="tab-text" name="data-tab-text" text="Data"/>
         </VisualElement>
 
         <!-- Info : InfoTabIcon.svg -->
         <VisualElement class="tab" name="info-tab">
-            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/InfoTabIcon.svg');">
-                <VisualElement class="tab-icon-color"></VisualElement>
+            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/InfoTabIcon.svg');">
+                <VisualElement class="tab-icon-color icon-color"></VisualElement>
             </VisualElement>
             <TextElement class="tab-text" name="info-tab-text" text="Info"/>
         </VisualElement>
 
         <!-- Cameras : CamerasTabIcon.svg -->
         <VisualElement class="tab" name="cameras-tab">
-            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/CamerasTabIcon.svg');">
-                <VisualElement class="tab-icon-color"></VisualElement>
+            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/CamerasTabIcon.svg');">
+                <VisualElement class="tab-icon-color icon-color"></VisualElement>
             </VisualElement>
             <TextElement class="tab-text" name="cameras-tab-text" text="Cameras"/>
         </VisualElement>
 
         <!-- Settings : SettingsTabIcon.svg -->
         <VisualElement class="tab" name="settings-tab">
-            <VisualElement class="tab-background" style="background-image: url('/Assets/Images/SVG/SettingsTabIcon.svg');">
-                <VisualElement class="tab-icon-color"></VisualElement>
+            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/SettingsTabIcon.svg');">
+                <VisualElement class="tab-icon-color icon-color"></VisualElement>
             </VisualElement>
             <TextElement class="tab-text" name="settings-tab-text" text="Settings"/>
         </VisualElement>
@@ -66,15 +70,20 @@
     <!-- EXIT / MINIMIZE BTNS -->
     <VisualElement name="exit-minimize-app-btns">
 
-        <!-- Close : CloseGameIcon.svg -->
-        <VisualElement class="close-minimize-background" style="background-image: url('/Assets/Images/SVG/CloseGameIcon.svg');">
-            <VisualElement class="close-minimize-icon-color"></VisualElement>
+        <!-- Minimize : MinimizeGameIcon.svg -->
+        <VisualElement class="close-minimize-btn" name="minimize-game-btn">
+            <VisualElement class="close_minimize_btns-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/MinimizeGameIcon.svg');">
+                <VisualElement class="close_minimize_btns-icon-color icon-color"></VisualElement>
+            </VisualElement>
         </VisualElement>
 
-        <!-- Minimize : MinimizeGameIcon.svg -->
-        <VisualElement class="close-minimize-background" style="background-image: url('/Assets/Images/SVG/MinimizeGameIcon.svg');">
-            <VisualElement class="close-minimize-icon-color"></VisualElement>
+        <!-- Close : CloseGameIcon.svg -->
+        <VisualElement class="close-minimize-btn" name="close-game-btn">
+            <VisualElement class="close_minimize_btns-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/CloseGameIcon.svg');">
+                <VisualElement class="close_minimize_btns-icon-color icon-color"></VisualElement>
+            </VisualElement>
         </VisualElement>
+
     </VisualElement>
 
 </VisualElement>
