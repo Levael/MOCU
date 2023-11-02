@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+>
+
+
+
+<VisualElement name="controls-module-template-wrapper">
+
+    <VisualElement name="controls-main-btns-part">
+        <VisualElement name="main-btns-first-row">
+            <VisualElement class="main-btns-row-name"><TextElement text="Moog"/></VisualElement>
+            <VisualElement class="main-btns-row-btns"></VisualElement>
+        </VisualElement>
+        <VisualElement name="main-btns-second-row">
+            <VisualElement class="main-btns-row-name"><TextElement text="Trials"/></VisualElement>
+            <VisualElement class="main-btns-row-btns"></VisualElement>
+        </VisualElement>
+        <VisualElement name="main-btns-third-row">
+            <VisualElement class="main-btns-row-name"><TextElement text="Experiment"/></VisualElement>
+            <VisualElement class="main-btns-row-btns"></VisualElement>
+        </VisualElement>
+    </VisualElement>
+
+
+    <VisualElement name="controls-intercom-part" class="">  <!-- "", "isActive" or "isDisabled" -->
+        <VisualElement class="icon-shape">
+            <VisualElement class="icon-color"></VisualElement>
+        </VisualElement>
+        <TextElement name="intercom-text" text="Intercom"/>
+    </VisualElement>
+
+
+    <VisualElement name="controls-controller-part">
+        <VisualElement name="controller-first-row">
+            <VisualElement class="controller-button" name="controller-up-btn"><TextElement text="Up"/></VisualElement>
+        </VisualElement>
+        <VisualElement name="controller-second-row">
+            <VisualElement class="controller-button" name="controller-left-btn"><TextElement text="Left"/></VisualElement>
+            <VisualElement class="controller-button" name="controller-center-btn"><TextElement text="Center"/></VisualElement>
+            <VisualElement class="controller-button" name="controller-right-btn"><TextElement text="Right"/></VisualElement>
+        </VisualElement>
+        <VisualElement name="controller-third-row">
+            <VisualElement class="controller-button" name="controller-bottom-btn"><TextElement text="Bottom"/></VisualElement>
+        </VisualElement>
+    </VisualElement>
+
+</VisualElement>
+
+</UXML>

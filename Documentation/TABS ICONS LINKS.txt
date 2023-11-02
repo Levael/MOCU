@@ -12,3 +12,6 @@ Sound on: https://www.svgrepo.com/svg/523938/volume-loud
 Sound off: https://www.svgrepo.com/svg/523576/muted
 Close: https://www.svgrepo.com/svg/521564/close
 Minimize: https://www.svgrepo.com/svg/521755/minus
+Intercom inactive: https://www.svgrepo.com/svg/522178/microphone
+Intercom active: https://www.svgrepo.com/svg/522179/microphone
+Intercom disabled: https://www.svgrepo.com/svg/522175/microphone-off

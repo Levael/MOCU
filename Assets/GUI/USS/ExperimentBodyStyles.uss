@@ -9,12 +9,12 @@
 }
 
 #experiment-body-left-part-table {
-	background-color: gray;
+	background-color: var(--main-buttons-color);
 }
 
 #experiment-body-right-part-monitors-unity, #experiment-body-right-part-data-left-info,
 #experiment-body-right-part-data-left-warnings, #experiment-body-right-part-data-right-graph {
-	background-color: #2F2F2F;
+	background-color: var(--main-modules-color);
 }
 
 
@@ -22,19 +22,10 @@
 /* LEFT RIGHT parts */
 #experiment-body-left-part, #experiment-body-right-part {
 	/* it devides screen to half */
-	flex-grow: 1;
-	flex-shrink: 1;
-	flex-basis: auto;
+	width: 50%;
+	height: 100%;
 	flex-direction: column;
 }
-
-/* #experiment-body-left-part .body-module {
-	background-color: gray;
-}
-
-#experiment-body-right-part .body-module {
-	background-color: #2F2F2F;
-} */
 
 
 
@@ -74,14 +65,14 @@
 }
 
 #experiment-body-right-part-monitors-eeg {
+	/* display: none; */
 	flex-grow: 1;
 }
 
 #experiment-body-right-part-data-left, #experiment-body-right-part-data-right {
 	/* it devides screen to half */
-	flex-grow: 1;
-	flex-shrink: 1;
-	flex-basis: auto;
+	width: 50%;
+	height: 100%;
 }
 
 #experiment-body-right-part-data-left {

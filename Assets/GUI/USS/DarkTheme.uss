@@ -1,0 +1,27 @@
+:root {
+	--main-window-color			:	#474747;
+
+	--main-modules-color		:	#2F2F2F;
+
+	--main-font-color			:	#E3E3E3;
+
+	--secondary-font-color		:	#9A9B9B;
+
+	--contrast-font-color		:	#474747;
+
+	--main-buttons-color		:	#666666;
+
+	--active-buttons-color		:	#B9CDFF;
+
+	--main-images-color			:	#E3E3E3;
+
+	--secondary-images-color	:	#9A9B9B;
+
+	--main-accent-color			:	#5580ED;
+
+	--warning-color				:	#FCBA58;
+
+	--error-color				:	#FC5858;
+
+	--unrelevant-color			:	#9A9B9B;
+}

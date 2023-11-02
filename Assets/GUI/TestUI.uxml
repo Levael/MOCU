@@ -1,6 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="-unity-slice-top: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;" />
-    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="padding-top: 39px; background-color: rgb(209, 76, 76); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;" />
-    <ui:VisualElement name="placeForVr" style="flex-grow: 1; background-image: url(&apos;project://database/Assets/GUI/UnityViewFromUi.renderTexture?fileID=8400000&amp;guid=642719296f18f754197ba38dcf47bca1&amp;type=2#UnityViewFromUi&apos;); display: flex; visibility: visible; -unity-background-scale-mode: scale-and-crop;" />
-    <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0;" />
-</ui:UXML>

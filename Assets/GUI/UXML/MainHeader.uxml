@@ -5,10 +5,6 @@
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
 >
 
-<!-- STYLES ================================ -->
-<Style src="/Assets/GUI/USS/HeaderStyles.uss" />
-<!-- ======================================= -->
-
 
 
 <VisualElement name="main-header-template-wrapper">

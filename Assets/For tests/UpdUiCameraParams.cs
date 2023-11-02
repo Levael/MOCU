@@ -11,11 +11,13 @@ public class MatchFov : MonoBehaviour
 
         vrCamera = GameObject.Find("VrHelmetCamera").GetComponent<Camera>();
         uiCamera = this.GetComponent<Camera>();
-        
+
+        uiCamera.fieldOfView = 80;  // vrCamera.fieldOfView looks not real. 80 is just "hand peaked"
+
     }
 
     private void Update()
     {
-        uiCamera.fieldOfView = vrCamera.fieldOfView;
+        //uiCamera.fieldOfView = vrCamera.fieldOfView;
     }
 }
