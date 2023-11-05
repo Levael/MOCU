@@ -1,10 +1,98 @@
+/* UNITY */
 #unity-module-template-wrapper {
 	width: 100%;
 	height: 100%;
 }
 
 
+/* INPUTS */
+#inputs-module-template-wrapper {
+	height: 100%;
+	flex-direction: row;
+	justify-content: space-between;
+}
 
+#inputs-protocol-part {
+	height: 100%;
+	flex-direction: row;
+	align-items: center;
+}
+
+#inputs-names-part {
+	height: 100%;
+	flex-direction: column;
+}
+
+#inputs-protocol-part .button {
+	height: 50%;
+	width: 80px;
+}
+
+#inputs-protocol-part .button TextElement {
+	font-size: 12px;
+}
+
+#protocol-browse-btn {
+	margin: 0px 15px;
+}
+
+.inputs-names-row {
+	flex-direction: row;
+	justify-content: space-between;
+	height: 50%;
+}
+
+.inputs-names-label {
+	font-size: 14px;
+	-unity-font-style: normal;
+}
+
+.inputs-names-input {
+	width: 200px;
+	background-color: var(--main-buttons-color);
+	margin-left: 5px;
+}
+
+#researcher-name-part {
+	margin-bottom: 5px;
+}
+
+#protocol-dropdown {
+	width: 300px;
+	height: 50%;
+	margin: 0px;
+	padding: 0px;
+
+	background-image: url('/Assets/Images/SVG/TriangleIcon.svg');
+	background-color: var(--main-buttons-color);
+	background-size: contain;
+    background-position: 200% 200%;	/* out of screen */
+    background-repeat: no-repeat;
+}
+
+#protocol-dropdown:hover {
+	background-color: var(--hover-buttons-color);
+}
+
+
+
+
+
+
+/* CONTROLS */
+/* common */
+#experiment-body-left-part-controls {
+	padding-left: 5px;
+}
+
+#controls-module-template-wrapper .button {
+	height: 100%;
+	border-radius: 10px;
+}
+
+#controls-module-template-wrapper .button TextElement {
+	font-size: 12px;
+}
 
 #controls-module-template-wrapper {
 	width: 100%;
@@ -16,13 +104,72 @@
 	height: 100%;
 }
 
+/* main btns */
 #controls-main-btns-part {
 	width: 50%;
-	background-color: lightgray;
+	height: 100%;
 }
 
+#main-btns-first-row, #main-btns-second-row, #main-btns-third-row, .main-btns-row-btns {
+	flex-direction: row;
+	align-items: center;
+}
 
-/* INTERCOM */
+.main-btns-row-btns {
+	height: 100%;
+}
+
+#main-btns-first-row, #main-btns-second-row {
+	height: 30%;
+}
+
+#main-btns-third-row {
+	height: 40%;
+}
+
+#controls-main-btns-part .button {
+	width: 30%;
+}
+
+.main-btns-row-btns > * {
+	width: 30%;
+}
+
+#multiple-btns-wrapper {
+	flex-direction: column;
+	height: 100%;
+}
+
+#multiple-btns-wrapper .button {
+	width: 100%;
+}
+
+#experiment-pause-btn {
+	margin-bottom: 7px;
+}
+
+.main-btns-row-name {
+	width: 20%;
+}
+
+.main-btns-row-name TextElement {
+	-unity-text-align: middle-left;
+	font-size: 13px;
+}
+
+.main-btns-row-btns {
+	width: 80%;
+}
+
+#main-btns-second-row {
+	margin: 7px 0px;
+}
+
+#moog-engage-btn, #multiple-btns-wrapper {
+	margin: 0px 7px;
+}
+
+/* intercom */
 #controls-intercom-part {
 	flex-grow: 1;
 	align-items: center;
@@ -46,7 +193,7 @@
 }
 
 #controls-intercom-part.isActive .icon-color {
-	background-color: var(--main-accent-color) !important;
+	background-color: var(--active-buttons-color) !important;
 }
 
 #controls-intercom-part.isDisabled .icon-shape {
@@ -61,13 +208,9 @@
 
 #intercom-text {
 	font-size: 10px;
-	-unity-font-style: bold;
-	-unity-text-align: middle-center;
 }
 
-
-
-/* CONTROLLER */
+/* controller */
 #controls-controller-part {
 	width: 30%;
 	flex-direction: column;
@@ -88,29 +231,57 @@
 	margin: 7px 0px;
 }
 
-.controller-button {
-	height: 100%;
+#controls-controller-part .button {
 	width: 30%;
-	justify-content: center;
-	border-radius: 10px;
-	background-color: var(--main-buttons-color);
 }
 
-.controller-button.isActive {
+#controls-controller-part .button.isActive {
 	background-color: var(--active-buttons-color);
 }
 
-.controller-button.isActive TextElement {
+#controls-controller-part .button.isActive TextElement {
 	color: var(--contrast-font-color);
 	font-size: 14px;
 }
 
-.controller-button TextElement {
-	-unity-text-align: middle-center;
-	-unity-font-style: bold;
+#controls-controller-part .button TextElement {
 	font-size: 12px;
 }
 
 #controller-center-btn {
 	margin: 0px 7px;
+}
+
+
+/* STATUSES */
+#statuses-module-template-wrapper {
+	height: 100%;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.status-block {
+	height: auto;
+	width: 60px;
+	flex-direction: column;
+	margin-right: 10px;
+}
+
+#running-status-block {
+	margin: 0;
+	margin-left: 30px;
+	width: 80px;
+	justify-content: center;
+}
+
+.status-block-color {
+	height: 18px;
+	background-color: var(--waiting-color);
+	margin-bottom: 3px;
+}
+
+.status-block-text {
+	-unity-font-style: normal;
+	font-size: 10px;
 }

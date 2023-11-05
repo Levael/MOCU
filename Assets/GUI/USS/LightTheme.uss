@@ -11,6 +11,8 @@
 
 	--main-buttons-color		:	#D9D9D9;
 
+	--hover-buttons-color		:	#ff0000;
+
 	--active-buttons-color		:	#B9CDFF;
 
 	--main-images-color			:	#525252;
@@ -23,5 +25,5 @@
 
 	--error-color				:	#FC5858;
 
-	--unrelevant-color			:	#9A9B9B;
+	--waiting-color			:	#9A9B9B;
 }

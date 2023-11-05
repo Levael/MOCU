@@ -4,5 +4,28 @@
     xmlns="UnityEngine.UIElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
-    
+
+
+
+<VisualElement name="inputs-module-template-wrapper">
+    <VisualElement name="inputs-protocol-part">
+        <DropdownField name="protocol-dropdown"/>
+        <VisualElement class="button" name="protocol-browse-btn"><TextElement text="Browse"/></VisualElement>
+        <VisualElement class="button" name="protocol-save-btn"><TextElement text="Save"/></VisualElement>
+    </VisualElement>
+
+    <VisualElement name="inputs-names-part">
+        <VisualElement class="inputs-names-row" name="researcher-name-part">
+            <TextElement class="inputs-names-label" text="Researcher"/>
+            <TextElement class="inputs-names-input" name="researcher-name-input" text=""/>
+        </VisualElement>
+        <VisualElement class="inputs-names-row" name="participant-name-part">
+            <TextElement class="inputs-names-label" text="Participant"/>
+            <TextElement class="inputs-names-input" name="participant-name-input" text=""/>
+        </VisualElement>
+    </VisualElement>
+</VisualElement>
+
+
+
 </UXML>

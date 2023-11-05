@@ -4,5 +4,48 @@
     xmlns="UnityEngine.UIElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
+
+
+
+<VisualElement name="statuses-module-template-wrapper">
+
+    <VisualElement class="status-block" name="moog-status-block">
+        <VisualElement class="status-block-color"/>
+        <TextElement class="status-block-text" text="Moog"/>
+    </VisualElement>
+
+
+    <VisualElement class="status-block" name="oculus-status-block">
+        <VisualElement class="status-block-color"/>
+        <TextElement class="status-block-text" text="Oculus"/>
+    </VisualElement>
+
+
+    <VisualElement class="status-block" name="audio-status-block">
+        <VisualElement class="status-block-color"/>
+        <TextElement class="status-block-text" text="Audio"/>
+    </VisualElement>
+
+
+    <VisualElement class="status-block" name="eeg-status-block">
+        <VisualElement class="status-block-color"/>
+        <TextElement class="status-block-text" text="EEG"/>
+    </VisualElement>
+
+
+    <VisualElement class="status-block" name="trials-status-block">
+        <VisualElement class="status-block-color"/>
+        <TextElement class="status-block-text" text="Trials"/>
+    </VisualElement>
+
+
+    <VisualElement class="status-block" name="running-status-block">
+        <VisualElement class="status-block-color"/>
+        <TextElement class="status-block-text" text="Running"/>
+    </VisualElement>
+
+</VisualElement>
+
+
     
 </UXML>

@@ -12,15 +12,28 @@
     <VisualElement name="controls-main-btns-part">
         <VisualElement name="main-btns-first-row">
             <VisualElement class="main-btns-row-name"><TextElement text="Moog"/></VisualElement>
-            <VisualElement class="main-btns-row-btns"></VisualElement>
+            <VisualElement class="main-btns-row-btns">
+                <VisualElement class="button" name="moog-connect-btn"><TextElement text="Connect"/></VisualElement>
+                <VisualElement class="button" name="moog-engage-btn"><TextElement text="Engage"/></VisualElement>
+                <VisualElement class="button" name="moog-park-btn"><TextElement text="Park"/></VisualElement>
+            </VisualElement>
         </VisualElement>
         <VisualElement name="main-btns-second-row">
             <VisualElement class="main-btns-row-name"><TextElement text="Trials"/></VisualElement>
-            <VisualElement class="main-btns-row-btns"></VisualElement>
+            <VisualElement class="main-btns-row-btns">
+                <VisualElement class="button" name="trials-generate-btn"><TextElement text="Generate"/></VisualElement>
+            </VisualElement>
         </VisualElement>
         <VisualElement name="main-btns-third-row">
             <VisualElement class="main-btns-row-name"><TextElement text="Experiment"/></VisualElement>
-            <VisualElement class="main-btns-row-btns"></VisualElement>
+            <VisualElement class="main-btns-row-btns">
+                <VisualElement class="button" name="experiment-start-btn"><TextElement text="Start"/></VisualElement>
+                <VisualElement name="multiple-btns-wrapper">
+                    <VisualElement class="button" name="experiment-pause-btn"><TextElement text="Pause"/></VisualElement>
+                    <VisualElement class="button" name="experiment-resume-btn"><TextElement text="Resume"/></VisualElement>
+                </VisualElement>
+                <VisualElement class="button" name="experiment-stop-btn"><TextElement text="Stop"/></VisualElement>
+            </VisualElement>
         </VisualElement>
     </VisualElement>
 
@@ -35,15 +48,15 @@
 
     <VisualElement name="controls-controller-part">
         <VisualElement name="controller-first-row">
-            <VisualElement class="controller-button" name="controller-up-btn"><TextElement text="Up"/></VisualElement>
+            <VisualElement class="button" name="controller-up-btn"><TextElement text="Up"/></VisualElement>
         </VisualElement>
         <VisualElement name="controller-second-row">
-            <VisualElement class="controller-button" name="controller-left-btn"><TextElement text="Left"/></VisualElement>
-            <VisualElement class="controller-button" name="controller-center-btn"><TextElement text="Center"/></VisualElement>
-            <VisualElement class="controller-button" name="controller-right-btn"><TextElement text="Right"/></VisualElement>
+            <VisualElement class="button" name="controller-left-btn"><TextElement text="Left"/></VisualElement>
+            <VisualElement class="button" name="controller-center-btn"><TextElement text="Center"/></VisualElement>
+            <VisualElement class="button" name="controller-right-btn"><TextElement text="Right"/></VisualElement>
         </VisualElement>
         <VisualElement name="controller-third-row">
-            <VisualElement class="controller-button" name="controller-bottom-btn"><TextElement text="Bottom"/></VisualElement>
+            <VisualElement class="button" name="controller-bottom-btn"><TextElement text="Bottom"/></VisualElement>
         </VisualElement>
     </VisualElement>
 

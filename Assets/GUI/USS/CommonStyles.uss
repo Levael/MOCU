@@ -16,6 +16,17 @@
 
 TextElement {
 	color: var(--main-font-color);
+	-unity-text-align: middle-center;
+	-unity-font-style: bold;
+}
+
+.button {
+	justify-content: center;
+	background-color: var(--main-buttons-color);
+}
+
+.button:hover {
+	background-color: var(--hover-buttons-color);
 }
 
 
@@ -37,7 +48,7 @@ TextElement {
 
 
 /* TEMP */
-#debug-body, #data-body, #info-body, #cameras-body, #settings-body, #experiment-body-right-part-monitors-eeg {
+#debug-body, #data-body, #info-body, #cameras-body, #settings-body,		#experiment-body-right-part-monitors-eeg, #eeg-status-block {
 	display: none !important;
 }
 
