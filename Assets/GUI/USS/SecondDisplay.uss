@@ -1,0 +1,12 @@
+#second-monitor-version {
+	width: 100%;
+	height: 100%;
+}
+
+#experiment-tab, #experiment-body {
+	display: none;
+}
+
+/* #debug-body {
+	display: flex !important;
+} */

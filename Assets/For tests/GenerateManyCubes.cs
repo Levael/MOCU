@@ -2,7 +2,7 @@
 
 public class CubesGenerator : MonoBehaviour
 {
-    public GameObject cubePrefab; // Ссылка на ваш prefab
+    public GameObject cubePrefab; // Link to prefab (make it from code later)
     public GameObject parentObject;
 
     public int numberOfCubes = 100; // Количество кубиков, которые вы хотите создать
@@ -11,13 +11,9 @@ public class CubesGenerator : MonoBehaviour
 
     void Start()
     {
-        QualitySettings.vSyncCount = 0; // Отключение вертикальной синхронизации
-        Application.targetFrameRate = 150; // Установка целевой частоты кадров
-
-        Display.displays[0].Activate(); // активация Display 2
-
         GenerateCubes();
     }
+
 
     void GenerateCubes()
     {
