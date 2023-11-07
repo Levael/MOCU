@@ -11,7 +11,6 @@ public class GeneralScript : MonoBehaviour
 
         Display.displays[0].Activate();                                     // activation of main display (without it window isn't fullscreen)
         if (Display.displays.Length > 1) Display.displays[1].Activate();    // activation of second display (if needed)
-
     }
 
 

@@ -13,7 +13,7 @@
     <VisualElement name="tabs">
         
         <!-- Experiment : ExperimentTabIcon.svg -->
-        <VisualElement class="tab isActive" name="experiment-tab">
+        <VisualElement class="tab" name="experiment-tab">
             <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/ExperimentTabIcon.svg');">
                 <VisualElement class="tab-icon-color icon-color"></VisualElement>
             </VisualElement>
@@ -21,7 +21,7 @@
         </VisualElement>
 
         <!-- Debug : DebugTabIcon.svg -->
-        <VisualElement class="tab isOpened" name="debug-tab">
+        <VisualElement class="tab" name="debug-tab">
             <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/DebugTabIcon.svg');">
                 <VisualElement class="tab-icon-color icon-color"></VisualElement>
             </VisualElement>

@@ -1,0 +1,95 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+public class UiReferences : MonoBehaviour
+{
+    private Dictionary<string, VisualElement> _elements;
+    private VisualElement _root;
+    private Dictionary<string, string> _tab_body_relations;
+
+
+    void Awake ()
+    {
+        _elements = new();
+        _tab_body_relations = new();
+
+        _root = GetComponent<UIDocument>().rootVisualElement;
+
+        SetupTabBodyRelations();
+        SetupReferences();
+    }
+
+
+    public void SetupReferences()
+    {
+        _elements.Add("experiment-tab", _root.Q<VisualElement>("experiment-tab"));
+        _elements.Add("debug-tab", _root.Q<VisualElement>("debug-tab"));
+        _elements.Add("data-tab", _root.Q<VisualElement>("data-tab"));
+        _elements.Add("info-tab", _root.Q<VisualElement>("info-tab"));
+        _elements.Add("cameras-tab", _root.Q<VisualElement>("cameras-tab"));
+        _elements.Add("settings-tab", _root.Q<VisualElement>("settings-tab"));
+
+        _elements.Add("minimize-game-btn", _root.Q<VisualElement>("minimize-game-btn"));
+        _elements.Add("close-game-btn", _root.Q<VisualElement>("close-game-btn"));
+
+        _elements.Add("experiment-body", _root.Q<VisualElement>("experiment-body"));
+        _elements.Add("debug-body", _root.Q<VisualElement>("debug-body"));
+        _elements.Add("data-body", _root.Q<VisualElement>("data-body"));
+        _elements.Add("info-body", _root.Q<VisualElement>("info-body"));
+        _elements.Add("cameras-body", _root.Q<VisualElement>("cameras-body"));
+        _elements.Add("settings-body", _root.Q<VisualElement>("settings-body"));
+
+        _elements.Add("moog-connect-btn", _root.Q<VisualElement>("moog-connect-btn"));
+        _elements.Add("moog-engage-btn", _root.Q<VisualElement>("moog-engage-btn"));
+        _elements.Add("moog-park-btn", _root.Q<VisualElement>("moog-park-btn"));
+        _elements.Add("trials-generate-btn", _root.Q<VisualElement>("trials-generate-btn"));
+        _elements.Add("experiment-start-btn", _root.Q<VisualElement>("experiment-start-btn"));
+        _elements.Add("experiment-pause-btn", _root.Q<VisualElement>("experiment-pause-btn"));
+        _elements.Add("experiment-resume-btn", _root.Q<VisualElement>("experiment-resume-btn"));
+        _elements.Add("experiment-stop-btn", _root.Q<VisualElement>("experiment-stop-btn"));
+
+        _elements.Add("controls-intercom-part", _root.Q<VisualElement>("controls-intercom-part"));
+
+        _elements.Add("controller-up-btn", _root.Q<VisualElement>("controller-up-btn"));
+        _elements.Add("controller-left-btn", _root.Q<VisualElement>("controller-left-btn"));
+        _elements.Add("controller-center-btn", _root.Q<VisualElement>("controller-center-btn"));
+        _elements.Add("controller-right-btn", _root.Q<VisualElement>("controller-right-btn"));
+        _elements.Add("controller-bottom-btn", _root.Q<VisualElement>("controller-bottom-btn"));
+
+        _elements.Add("moog-status-block", _root.Q<VisualElement>("moog-status-block"));
+        _elements.Add("oculus-status-block", _root.Q<VisualElement>("oculus-status-block"));
+        _elements.Add("audio-status-block", _root.Q<VisualElement>("audio-status-block"));
+        _elements.Add("eeg-status-block", _root.Q<VisualElement>("eeg-status-block"));
+        _elements.Add("trials-status-block", _root.Q<VisualElement>("trials-status-block"));
+        _elements.Add("running-status-block", _root.Q<VisualElement>("running-status-block"));
+
+        _elements.Add("protocol-dropdownk", _root.Q<VisualElement>("protocol-dropdown"));
+        _elements.Add("protocol-browse-btn", _root.Q<VisualElement>("protocol-browse-btn"));
+        _elements.Add("protocol-save-btn", _root.Q<VisualElement>("protocol-save-btn"));
+        _elements.Add("researcher-name-input", _root.Q<VisualElement>("researcher-name-input"));
+        _elements.Add("participant-name-input", _root.Q<VisualElement>("participant-name-input"));
+    }
+
+    private void SetupTabBodyRelations()
+    {
+        _tab_body_relations.Add("experiment-tab", "experiment-body");
+        _tab_body_relations.Add("debug-tab", "debug-body");
+        _tab_body_relations.Add("data-tab", "data-body");
+        _tab_body_relations.Add("info-tab", "info-body");
+        _tab_body_relations.Add("cameras-tab", "cameras-body");
+        _tab_body_relations.Add("settings-tab", "settings-body");
+    }
+
+    public VisualElement GetElement(string name)
+    {
+        return _elements.ContainsKey(name) ? _elements[name] : null;
+    }
+
+    public List<VisualElement> GetHeaderTabs()
+    {
+        return _root.Query<VisualElement>().Class("tab").ToList();
+    }
+}
