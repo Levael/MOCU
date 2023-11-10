@@ -12,6 +12,7 @@
 
 <Style src="/Assets/GUI/USS/HeaderStyles.uss" />
 <Style src="/Assets/GUI/USS/ExperimentBodyModulesStyles.uss" />
+<Style src="/Assets/GUI/USS/ModalWindows.uss" />
 <!-- ======================================= -->
 
 
@@ -25,6 +26,8 @@
 <Template src="/Assets/GUI/UXML/InfoBody.uxml"                          name="InfoBody-template"/>
 <Template src="/Assets/GUI/UXML/CamerasBody.uxml"                       name="CamerasBody-template"/>
 <Template src="/Assets/GUI/UXML/SettingsBody.uxml"                      name="SettingsBody-template"/>
+
+<Template src="/Assets/GUI/UXML/ExitConfirmationModalWindow.uxml"       name="ExitConfirmationModalWindow-template"/>
 <!-- ================================================================================ -->
 
 
@@ -41,6 +44,10 @@
         <Instance template="InfoBody-template"          name="info-body"/>
         <Instance template="CamerasBody-template"       name="cameras-body"/>
         <Instance template="SettingsBody-template"      name="settings-body"/>
+    </VisualElement>
+
+    <VisualElement name="modal-windows">
+        <Instance template="ExitConfirmationModalWindow-template" name="exit-confirmation-modal-window"/>
     </VisualElement>
 
 </VisualElement>

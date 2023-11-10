@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,7 +6,7 @@ public class UiReferences : MonoBehaviour
 {
     private Dictionary<string, VisualElement> _elements;
     private VisualElement _root;
-    private Dictionary<string, string> _tab_body_relations;
+    public Dictionary<string, string> _tab_body_relations;
 
 
     void Awake ()
@@ -25,6 +23,14 @@ public class UiReferences : MonoBehaviour
 
     public void SetupReferences()
     {
+        _elements.Add("main-body", _root.Q<VisualElement>("main-body"));
+        _elements.Add("experiment-body-right-part-monitors-eeg", _root.Q<VisualElement>("experiment-body-right-part-monitors-eeg"));
+
+        _elements.Add("modal-windows", _root.Q<VisualElement>("modal-windows"));
+        _elements.Add("exit-confirmation-modal-window", _root.Q<VisualElement>("exit-confirmation-modal-window"));
+        _elements.Add("exit-confirm-btn", _root.Q<VisualElement>("exit-confirm-btn"));
+        _elements.Add("exit-cancel-btn", _root.Q<VisualElement>("exit-cancel-btn"));
+
         _elements.Add("experiment-tab", _root.Q<VisualElement>("experiment-tab"));
         _elements.Add("debug-tab", _root.Q<VisualElement>("debug-tab"));
         _elements.Add("data-tab", _root.Q<VisualElement>("data-tab"));
@@ -86,6 +92,11 @@ public class UiReferences : MonoBehaviour
     public VisualElement GetElement(string name)
     {
         return _elements.ContainsKey(name) ? _elements[name] : null;
+    }
+
+    public string GetTabBodyRelation(string tabName)
+    {
+        return _tab_body_relations.ContainsKey(tabName) ? _tab_body_relations[tabName] : null;
     }
 
     public List<VisualElement> GetHeaderTabs()

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+>
+
+
+<VisualElement name="exit-confirmation-modal-window-wrapper" class="modal-window-wrapper">
+    <VisualElement class="modal-window">
+        <Label text="Are you sure you want to quit?"/>
+        <Button name="exit-confirm-btn" text="Yes" />
+        <Button name="exit-cancel-btn" text="No" />
+    </VisualElement>
+</VisualElement>
+
+    
+</UXML>

@@ -1,0 +1,13 @@
+.modal-window-wrapper {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);   /* darkered background */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-window {
+    padding: 15px;
+    background-color: var(--main-images-color);
+    border-radius: 5px;
+}
