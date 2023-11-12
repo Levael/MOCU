@@ -56,11 +56,7 @@ public class UiHandler : MonoBehaviour
         _mainDisplayUiReferences.GetElement("exit-confirm-btn").RegisterCallback<ClickEvent>(eventObj => { ConfirmGameQuit(); });
         _mainDisplayUiReferences.GetElement("exit-cancel-btn").RegisterCallback<ClickEvent>(eventObj => { CancelGameQuit(); });
 
-        _secondDisplayUiReferences.GetElement("close-game-btn").RegisterCallback<ClickEvent>(eventObj => { CloseSecondDisplay(); });
         _secondDisplayUiReferences.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeSecondDisplay(); });
-
-
-        _mainDisplayUiReferences.GetElement("moog-connect-btn").RegisterCallback<ClickEvent>(eventObj => { WinAPI.RestoreWindow("Unity Secondary Display"); });
     }
 
     private void HideElements()
@@ -124,6 +120,7 @@ public class UiHandler : MonoBehaviour
 
     private void TabHasBeenClicked(VisualElement clickedTab)
     {
+        if (_openTabInSecondDisplay) WinAPI.RestoreWindow("Unity Secondary Display");
         if (clickedTab == _activeTab || clickedTab == _openedTab) return;
 
 
@@ -192,18 +189,6 @@ public class UiHandler : MonoBehaviour
         var clickEvent = new ClickEvent();
         clickEvent.target = _secondDisplayUiReferences.GetElement("minimize-game-btn");
         _secondDisplayUiReferences.GetElement("minimize-game-btn").SendEvent(clickEvent);
-    }
-
-    private void CloseSecondDisplay() {
-        // Currently there is no way to "Deactivate" second display. From Unity documentation: "Once you activate a display, you can’t deactivate it."
-        // So I just hided this button for now
-        // Nothing below didn't help
-
-        /*var secondDisplayCamera = GameObject.Find("SecondMonitorCamera").GetComponent<Camera>();
-        secondDisplayCamera.targetDisplay = 0;
-        secondDisplayCamera.enabled = false;
-        Screen.SetResolution(1920, 1080, false);
-        Display.displays[1].SetRenderingResolution(0, 0);*/
     }
 
     private void MinimizeSecondDisplay() {

@@ -4,5 +4,7 @@
     xmlns="UnityEngine.UIElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
+
+<TextElement text="Cameras"/>
     
 </UXML>

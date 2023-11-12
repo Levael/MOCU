@@ -11,8 +11,13 @@
 <!-- <Style src="/Assets/GUI/USS/LightTheme.uss" /> -->
 
 <Style src="/Assets/GUI/USS/HeaderStyles.uss" />
-<Style src="/Assets/GUI/USS/ExperimentBodyModulesStyles.uss" />
 <Style src="/Assets/GUI/USS/ModalWindows.uss" />
+
+<Style src="/Assets/GUI/USS/ExperimentBodyStyles.uss" />
+<Style src="/Assets/GUI/USS/ExperimentBodyModulesStyles.uss" />
+
+<Style src="/Assets/GUI/USS/DebugBodyStyles.uss" />
+<Style src="/Assets/GUI/USS/DebugBodyModulesStyles.uss" />
 <!-- ======================================= -->
 
 
@@ -21,7 +26,7 @@
 <Template src="/Assets/GUI/UXML/MainHeader.uxml"                        name="MainHeader-template"/>
 
 <Template src="/Assets/GUI/UXML/ExperimentModules/ExperimentBody.uxml"  name="ExperimentBody-template"/>
-<Template src="/Assets/GUI/UXML/DebugBody.uxml"                         name="DebugBody-template"/>
+<Template src="/Assets/GUI/UXML/DebugModules/DebugBody.uxml"            name="DebugBody-template"/>
 <Template src="/Assets/GUI/UXML/DataBody.uxml"                          name="DataBody-template"/>
 <Template src="/Assets/GUI/UXML/InfoBody.uxml"                          name="InfoBody-template"/>
 <Template src="/Assets/GUI/UXML/CamerasBody.uxml"                       name="CamerasBody-template"/>
