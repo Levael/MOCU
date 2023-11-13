@@ -5,10 +5,12 @@
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
 
-<!-- STYLES =============================================== -->
-<Style src="/Assets/GUI/USS/ExperimentBodyModulesStyles.uss" />
-<!-- ====================================================== -->
 
-<VisualElement name="unity-module-template-wrapper" style="background-image: url('/Assets/GUI/UnityViewFromUi.renderTexture');"></VisualElement>
+<VisualElement name="unity-module-template-wrapper" class="wrapper">
+    <VisualElement name="unity-module-template-wrapper" style="background-image: url('/Assets/GUI/UnityViewFromUi.renderTexture');"></VisualElement>
+
+    <TextElement class="module-label" text="Unity view"/>
+</VisualElement>
+
 
 </UXML>

@@ -38,7 +38,7 @@
 
 
 <!-- MAIN MARKUP ==================================================================== -->
-<VisualElement name="main-wrapper">
+<VisualElement name="main-wrapper" class="wrapper">
 
     <Instance template="MainHeader-template"            name="main-header"/>
 

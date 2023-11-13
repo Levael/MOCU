@@ -23,14 +23,7 @@ public class UiReferences : MonoBehaviour
 
     public void SetupReferences()
     {
-        _elements.Add("main-body", _root.Q<VisualElement>("main-body"));
-        _elements.Add("experiment-body-right-part-monitors-eeg", _root.Q<VisualElement>("experiment-body-right-part-monitors-eeg"));
-
-        _elements.Add("modal-windows", _root.Q<VisualElement>("modal-windows"));
-        _elements.Add("exit-confirmation-modal-window", _root.Q<VisualElement>("exit-confirmation-modal-window"));
-        _elements.Add("exit-confirm-btn", _root.Q<VisualElement>("exit-confirm-btn"));
-        _elements.Add("exit-cancel-btn", _root.Q<VisualElement>("exit-cancel-btn"));
-
+        // HEADER
         _elements.Add("experiment-tab", _root.Q<VisualElement>("experiment-tab"));
         _elements.Add("debug-tab", _root.Q<VisualElement>("debug-tab"));
         _elements.Add("data-tab", _root.Q<VisualElement>("data-tab"));
@@ -40,6 +33,19 @@ public class UiReferences : MonoBehaviour
 
         _elements.Add("minimize-game-btn", _root.Q<VisualElement>("minimize-game-btn"));
         _elements.Add("close-game-btn", _root.Q<VisualElement>("close-game-btn"));
+
+
+        // COMMON
+        _elements.Add("main-body", _root.Q<VisualElement>("main-body"));
+
+
+        // Experiment
+        _elements.Add("experiment-body-right-part-monitors-eeg", _root.Q<VisualElement>("experiment-body-right-part-monitors-eeg"));
+
+        _elements.Add("modal-windows", _root.Q<VisualElement>("modal-windows"));
+        _elements.Add("exit-confirmation-modal-window", _root.Q<VisualElement>("exit-confirmation-modal-window"));
+        _elements.Add("exit-confirm-btn", _root.Q<VisualElement>("exit-confirm-btn"));
+        _elements.Add("exit-cancel-btn", _root.Q<VisualElement>("exit-cancel-btn"));
 
         _elements.Add("experiment-body", _root.Q<VisualElement>("experiment-body"));
         _elements.Add("debug-body", _root.Q<VisualElement>("debug-body"));
@@ -77,6 +83,14 @@ public class UiReferences : MonoBehaviour
         _elements.Add("protocol-save-btn", _root.Q<VisualElement>("protocol-save-btn"));
         _elements.Add("researcher-name-input", _root.Q<VisualElement>("researcher-name-input"));
         _elements.Add("participant-name-input", _root.Q<VisualElement>("participant-name-input"));
+
+        _elements.Add("info-module-textbox", _root.Q<VisualElement>("info-module-textbox"));
+        _elements.Add("warnings-module-textbox", _root.Q<VisualElement>("info-module-textbox"));
+        _elements.Add("graph-module-window", _root.Q<VisualElement>("graph-module-window"));
+
+
+
+        // Debug
     }
 
     private void SetupTabBodyRelations()

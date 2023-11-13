@@ -5,6 +5,8 @@
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
 
-<TextElement text="Debug"/>
+
+
+
     
 </UXML>

@@ -4,5 +4,12 @@
     xmlns="UnityEngine.UIElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
+
+
+<VisualElement name="info-module-template-wrapper" class="wrapper">
+    <TextElement name="info-module-textbox" text=""/>
+    <TextElement class="module-label" text="Info"/>
+</VisualElement>
+
     
 </UXML>

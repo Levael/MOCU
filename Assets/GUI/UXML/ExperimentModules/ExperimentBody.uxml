@@ -22,7 +22,7 @@
 
 
 <!-- MAIN MARKUP ==================================================================== -->
-<VisualElement name="experiment-body-template-wrapper">
+<VisualElement name="experiment-body-template-wrapper" class="wrapper">
     <VisualElement name="experiment-body-left-part" class="body-container">
         <Instance template="InputsModule-template"      name="experiment-body-left-part-inputs"      class="body-module"/>
         <Instance template="TableModule-template"       name="experiment-body-left-part-table"       class="body-module"/>

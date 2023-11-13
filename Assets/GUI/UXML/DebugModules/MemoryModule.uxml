@@ -5,6 +5,12 @@
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
 
-<TextElement text="Debug"/>
+
+<VisualElement name="debug-body-memory-wrapper" class="wrapper">
+    <VisualElement name="debug-body-memory-data" class="debug-module-data body-module"></VisualElement>
+
+    <VisualElement name="debug-body-memory-chart" class="debug-module-chart body-module"></VisualElement>
+</VisualElement>
+
     
 </UXML>

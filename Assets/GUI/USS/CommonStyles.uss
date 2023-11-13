@@ -1,4 +1,3 @@
-
 /* Class for VisualElement with SVG as background-image. Servs as shape to be collored later (in child VisualElement with "icon-color" class) */
 .icon-shape {
 	overflow: hidden;					/* most important param */
@@ -14,6 +13,7 @@
 }
 
 
+
 TextElement {
 	color: var(--main-font-color);
 	-unity-text-align: middle-center;
@@ -26,7 +26,7 @@ TextElement {
 }
 
 .button:hover {
-	background-color: var(--hover-buttons-color);
+	background-color: var(--main-buttons-hover-color);
 }
 
 .button:active {
@@ -35,22 +35,23 @@ TextElement {
 }
 
 .button.isDisabled {
-	background-color: #4f4f4f;
+	background-color: var(--main-buttons-disabled-color);
 }
 
 .button.isDisabled TextElement {
-	color: #747474;
+	color: var(--main-disabled-font-color);
 }
-
-
 
 
 
 #main-wrapper {
-	width: 100%;
-	height: 100%;
 	flex-direction: column;
 	background-color: var(--main-window-color);
+}
+
+.wrapper {
+	width: 100%;
+	height: 100%;
 }
 
 #main-body, #main-body > * {
@@ -60,6 +61,18 @@ TextElement {
 
 .body-module {
 	margin: 5px;
+}
+
+.module-label {
+	position: absolute;
+	width: auto;
+	height: auto;
+	margin: 3px;
+	right: 0;
+	top: 0;
+	color: var(--waiting-color);
+	font-size: 10px;
+	-unity-font-style: normal;
 }
 
 

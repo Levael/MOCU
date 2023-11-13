@@ -4,5 +4,13 @@
     xmlns="UnityEngine.UIElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
-    
+
+
+<VisualElement name="graph-module-template-wrapper" class="wrapper">
+    <VisualElement name="graph-module-window"></VisualElement>
+
+    <TextElement class="module-label" text="Answers graph"/>
+</VisualElement>
+
+
 </UXML>

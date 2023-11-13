@@ -19,11 +19,42 @@
 
 
 <!-- MAIN MARKUP ==================================================================== -->
-<VisualElement name="debug-body-template-wrapper">
+<VisualElement name="debug-body-template-wrapper" class="wrapper">
+    
+    <VisualElement name="debug-body-top-part">
+        <Instance template="GlobalTimelineModule-template"              name="debug-body-global-timeline"       class="body-container"/>
+    </VisualElement>
 
-    <Instance template="GlobalTimelineModule-template"              name="debug-body-global-timeline"      class="body-container"/>
+    <VisualElement name="debug-body-center-part">
+        <VisualElement name="debug-body-center-left-part" class="body-container">
+            <Instance template="LastTrialDataModule-template"           name="debug-body-trial"                 class="body-container"/>
+            <Instance template="CpuModule-template"                     name="debug-body-cpu"                   class="body-container"/>
+            <Instance template="MemoryModule-template"                  name="debug-body-memory"                class="body-container"/>
+        </VisualElement>
 
-    <VisualElement name="debug-body-halves-part" class="body-container">
+        <VisualElement name="debug-body-center-right-part" class="body-container">
+            <Instance template="MovementGraphModule-template"           name="debug-body-movement-graph"        class="body-module"/>
+        </VisualElement>
+    </VisualElement>
+
+    <VisualElement name="debug-body-bottom-part" class="body-container">
+        <VisualElement name="debug-body-bottom-left-part" class="body-container">
+            <Instance template="ConsoleModule-template"                 name="debug-body-console"               class="body-module"/>
+        </VisualElement>
+
+        <VisualElement name="debug-body-bottom-right-part" class="body-container">
+            <Instance template="AccelerationGraphModule-template"       name="debug-body-acceleration-graph"    class="body-module"/>
+        </VisualElement>
+        
+    </VisualElement>
+
+
+
+
+
+    
+
+    <!-- <VisualElement name="debug-body-halves-part" class="body-container">
         <VisualElement name="debug-body-left-part" class="body-container">
             <Instance template="LastTrialDataModule-template"       name="debug-body-left-part-trial"   class="body-container"/>
             <Instance template="CpuModule-template"                 name="debug-body-left-part-cpu"     class="body-container"/>
@@ -35,7 +66,7 @@
             <Instance template="MovementGraphModule-template"       name="debug-body-right-part-movement-graph"     class="body-module"/>
             <Instance template="AccelerationGraphModule-template"   name="debug-body-right-part-acceleration-graph" class="body-module"/>
         </VisualElement>
-    </VisualElement>
+    </VisualElement> -->
 
 </VisualElement>
 <!-- ================================================================================ -->
