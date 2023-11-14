@@ -3,6 +3,6 @@
 	height: 100%;
 }
 
-.tab, #close-game-btn, #experiment-body {
+.tab, #close-game-btn {
 	display: none;
 }

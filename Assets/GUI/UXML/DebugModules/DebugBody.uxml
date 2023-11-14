@@ -13,7 +13,7 @@
 <Template src="/Assets/GUI/UXML/DebugModules/MemoryModule.uxml"             name="MemoryModule-template"/>
 <Template src="/Assets/GUI/UXML/DebugModules/ConsoleModule.uxml"            name="ConsoleModule-template"/>
 <Template src="/Assets/GUI/UXML/DebugModules/MovementGraphModule.uxml"      name="MovementGraphModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/AccelerationGraphModule.uxml"  name="AccelerationGraphModule-template"/>
+<Template src="/Assets/GUI/UXML/DebugModules/MoogAccelerationGraphModule.uxml"  name="MoogAccelerationGraphModule-template"/>
 <!-- ================================================================================ -->
 
 
@@ -43,7 +43,7 @@
         </VisualElement>
 
         <VisualElement name="debug-body-bottom-right-part" class="body-container">
-            <Instance template="AccelerationGraphModule-template"       name="debug-body-acceleration-graph"    class="body-module"/>
+            <Instance template="MoogAccelerationGraphModule-template"       name="debug-body-moog-acceleration-graph"    class="body-module"/>
         </VisualElement>
         
     </VisualElement>

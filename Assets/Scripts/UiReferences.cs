@@ -85,8 +85,8 @@ public class UiReferences : MonoBehaviour
         _elements.Add("participant-name-input", _root.Q<VisualElement>("participant-name-input"));
 
         _elements.Add("info-module-textbox", _root.Q<VisualElement>("info-module-textbox"));
-        _elements.Add("warnings-module-textbox", _root.Q<VisualElement>("info-module-textbox"));
-        _elements.Add("graph-module-window", _root.Q<VisualElement>("graph-module-window"));
+        _elements.Add("warnings-module-textbox", _root.Q<VisualElement>("warnings-module-textbox"));
+        _elements.Add("answers-graph-module-window", _root.Q<VisualElement>("answers-graph-module-window"));
 
 
 

@@ -1,4 +1,4 @@
-#debug-body-movement-graph, #debug-body-acceleration-graph, #debug-body-console,
+#debug-body-movement-graph, #debug-body-moog-acceleration-graph, #debug-body-console,
 .debug-module-data, .debug-module-chart{
 	background-color: var(--main-modules-color);
 }
@@ -52,7 +52,7 @@
 }
 
 #debug-body-global-timeline, #debug-body-global-timeline-wrapper,
-#debug-body-movement-graph, #debug-body-console, #debug-body-acceleration-graph {
+#debug-body-movement-graph, #debug-body-console, #debug-body-moog-acceleration-graph {
 	height: 100%;
 }
 

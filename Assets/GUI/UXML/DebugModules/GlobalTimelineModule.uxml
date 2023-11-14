@@ -9,7 +9,9 @@
 <VisualElement name="debug-body-global-timeline-wrapper" class="wrapper">
     <VisualElement name="debug-body-global-timeline-data" class="debug-module-data body-module"></VisualElement>
 
-    <VisualElement name="debug-body-global-timeline-chart" class="debug-module-chart body-module"></VisualElement>
+    <VisualElement name="debug-body-global-timeline-chart" class="debug-module-chart body-module">
+        <TextElement class="module-label" text="Last experiment timings"/>
+    </VisualElement>
 </VisualElement>
 
     

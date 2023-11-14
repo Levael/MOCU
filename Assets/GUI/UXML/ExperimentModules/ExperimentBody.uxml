@@ -8,15 +8,15 @@
 
 
 <!-- TEMPLATES ====================================================================== -->
-<Template src="/Assets/GUI/UXML/ExperimentModules/UnityModule.uxml"     name="UnityModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/ControlsModule.uxml"  name="ControlsModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/EegModule.uxml"       name="EegModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/GraphModule.uxml"     name="GraphModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/InfoModule.uxml"      name="InfoModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/InputsModule.uxml"    name="InputsModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/StatusesModule.uxml"  name="StatusesModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/TableModule.uxml"     name="TableModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/WarningsModule.uxml"  name="WarningsModule-template"/>
+<Template src="/Assets/GUI/UXML/ExperimentModules/UnityModule.uxml"         name="UnityModule-template"/>
+<Template src="/Assets/GUI/UXML/ExperimentModules/ControlsModule.uxml"      name="ControlsModule-template"/>
+<Template src="/Assets/GUI/UXML/ExperimentModules/EegModule.uxml"           name="EegModule-template"/>
+<Template src="/Assets/GUI/UXML/ExperimentModules/AnswersGraphModule.uxml"  name="AnswersGraphModule-template"/>
+<Template src="/Assets/GUI/UXML/ExperimentModules/InfoModule.uxml"          name="InfoModule-template"/>
+<Template src="/Assets/GUI/UXML/ExperimentModules/InputsModule.uxml"        name="InputsModule-template"/>
+<Template src="/Assets/GUI/UXML/ExperimentModules/StatusesModule.uxml"      name="StatusesModule-template"/>
+<Template src="/Assets/GUI/UXML/ExperimentModules/TableModule.uxml"         name="TableModule-template"/>
+<Template src="/Assets/GUI/UXML/ExperimentModules/WarningsModule.uxml"      name="WarningsModule-template"/>
 <!-- ================================================================================ -->
 
 
@@ -44,7 +44,7 @@
                 <Instance template="WarningsModule-template"    name="experiment-body-right-part-data-left-warnings"    class="body-module"/>
             </VisualElement>
             <VisualElement name="experiment-body-right-part-data-right" class="body-container">
-                <Instance template="GraphModule-template"       name="experiment-body-right-part-data-right-graph"      class="body-module"/>
+                <Instance template="AnswersGraphModule-template"       name="experiment-body-right-part-data-right-graph"      class="body-module"/>
             </VisualElement>
         </VisualElement>
     </VisualElement>

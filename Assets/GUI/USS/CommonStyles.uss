@@ -89,11 +89,17 @@ TextElement {
     height: 100%;
 }
 
+TextField * {
+	margin: 0;
+	border-width: 0;
+	padding: 0;
+}
+
 
 
 
 #modal-windows, #modal-windows > *,
-#experiment-body, #data-body, #info-body, #cameras-body, #settings-body,	/* #debug-body, */
+#debug-body, #data-body, #info-body, #cameras-body, #settings-body,	/* #debug-body, experiment*/
 #experiment-body-right-part-monitors-eeg, #eeg-status-block {
 	display: none;
 }

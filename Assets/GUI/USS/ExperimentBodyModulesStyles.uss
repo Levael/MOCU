@@ -49,8 +49,11 @@
 
 .inputs-names-input {
 	width: 200px;
+}
+
+.inputs-names-input, .inputs-names-input * {
 	background-color: var(--main-buttons-color);
-	margin-left: 5px;
+	color: var(--main-font-color);
 }
 
 #researcher-name-part {
