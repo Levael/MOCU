@@ -1,6 +1,7 @@
 using Assets.Scripts;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class UiHandler : MonoBehaviour
@@ -10,6 +11,8 @@ public class UiHandler : MonoBehaviour
 
     private UiReferences _mainDisplayUiReferences;
     private UiReferences _secondDisplayUiReferences;
+
+    private ForTests _forTests;
 
     private List<VisualElement> _mainDisplayHeaderTabs;
 
@@ -24,7 +27,14 @@ public class UiHandler : MonoBehaviour
         _mainDisplayUiReferences = mainDisplayGameObject.GetComponent<UiReferences>();
         _secondDisplayUiReferences = secondDisplayGameObject.GetComponent<UiReferences>();
 
+        _forTests = GetComponent<ForTests>();
+
         ApplyDefaultSettings();
+    }
+
+    private void Update()
+    {
+        ((TextElement)_mainDisplayUiReferences.GetElement("info-module-textbox")).text = _forTests.getStats();
     }
 
 

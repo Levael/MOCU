@@ -22,7 +22,7 @@ namespace Assets.Scripts
 
 
         private const int SW_MINIMIZE = 6;
-        const int SW_RESTORE = 9;
+        private const int SW_RESTORE = 9;
 
         public static void MinimizeGameWindow()
         {
