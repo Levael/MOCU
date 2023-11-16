@@ -1,0 +1,40 @@
+/* COMMON */
+.debug-module-data {
+	flex-direction: column;
+	padding: 5px;
+	/* justify-content: space-between; */
+}
+
+
+
+/* Experiment timeline */
+.debug-module-data-rows {
+	flex-direction: column;
+	justify-content: space-around;
+	height: 100%;
+}
+
+.debug-module-data-name {
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+
+.debug-module-data-row {
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.debug-module-data-row-label {
+	font-size: 12px;
+	-unity-font-style: normal;
+}
+
+.debug-module-data-row-value {
+	font-size: 12px;
+	-unity-font-style: bold;
+}
+
+/* Console */
+#debug-console-textbox {
+	/* same as #info-module-textbox and #warnings-module-textbox in Experiment Body */
+}

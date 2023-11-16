@@ -3,7 +3,7 @@
 	background-color: var(--main-modules-color);
 }
 
-#debug-body-global-timeline-wrapper, #debug-body-trial-wrapper, #debug-body-cpu-wrapper, #debug-body-memory-wrapper,
+#debug-body-experiment-timeline-wrapper, #debug-body-trial-wrapper, #debug-body-cpu-wrapper, #debug-body-memory-wrapper,
 #debug-body-center-part, #debug-body-bottom-part {
 	flex-direction: row;
 }
@@ -51,7 +51,7 @@
 	height: 30%;
 }
 
-#debug-body-global-timeline, #debug-body-global-timeline-wrapper,
+#debug-body-experiment-timeline, #debug-body-experiment-timeline-wrapper,
 #debug-body-movement-graph, #debug-body-console, #debug-body-moog-acceleration-graph {
 	height: 100%;
 }
@@ -59,8 +59,8 @@
 
 
 .debug-module-data {
-	min-width: 250px;
-	max-width: 250px;
+	min-width: 220px;
+	max-width: 220px;
 }
 
 .debug-module-chart {

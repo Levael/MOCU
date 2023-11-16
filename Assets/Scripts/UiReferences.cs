@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -88,9 +90,32 @@ public class UiReferences : MonoBehaviour
         _elements.Add("warnings-module-textbox", _root.Q<VisualElement>("warnings-module-textbox"));
         _elements.Add("answers-graph-module-window", _root.Q<VisualElement>("answers-graph-module-window"));
 
-
-
         // Debug
+        _elements.Add("debug-console-module-textbox", _root.Q<VisualElement>("debug-console-module-textbox"));
+
+        _elements.Add("experiment-timeline-data-total-time", _root.Q<VisualElement>("experiment-timeline-data-total-time"));
+        _elements.Add("experiment-timeline-data-status", _root.Q<VisualElement>("experiment-timeline-data-status"));
+        _elements.Add("experiment-timeline-data-total-trials", _root.Q<VisualElement>("experiment-timeline-data-total-trials"));
+        _elements.Add("experiment-timeline-data-defective-trials", _root.Q<VisualElement>("experiment-timeline-data-defective-trials"));
+        _elements.Add("experiment-timeline-data-dangerous-trials", _root.Q<VisualElement>("experiment-timeline-data-dangerous-trials"));
+
+        _elements.Add("trial-data-average-unity-fps", _root.Q<VisualElement>("trial-data-average-unity-fps"));
+        _elements.Add("trial-data-total-time-moog", _root.Q<VisualElement>("trial-data-total-time-moog"));
+        _elements.Add("trial-data-total-time-oculus", _root.Q<VisualElement>("trial-data-total-time-oculus"));
+        _elements.Add("trial-data-trial-status", _root.Q<VisualElement>("trial-data-trial-status"));
+        _elements.Add("trial-data-answer-get-in", _root.Q<VisualElement>("trial-data-answer-get-in"));
+        _elements.Add("trial-data-right-answer", _root.Q<VisualElement>("trial-data-right-answer"));
+        _elements.Add("trial-data-received-answer", _root.Q<VisualElement>("trial-data-received-answer"));
+        _elements.Add("trial-data-received-answer-is-correct", _root.Q<VisualElement>("trial-data-received-answer-is-correct"));
+
+        _elements.Add("cpu-data-average-usage", _root.Q<VisualElement>("cpu-data-average-usage"));
+        _elements.Add("memory-data-average-usage", _root.Q<VisualElement>("memory-data-average-usage"));
+
+
+
+
+
+        
     }
 
     private void SetupTabBodyRelations()

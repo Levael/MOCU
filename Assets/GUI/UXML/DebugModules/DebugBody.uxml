@@ -7,12 +7,12 @@
 
 
 <!-- TEMPLATES ====================================================================== -->
-<Template src="/Assets/GUI/UXML/DebugModules/GlobalTimelineModule.uxml"     name="GlobalTimelineModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/LastTrialDataModule.uxml"      name="LastTrialDataModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/CpuModule.uxml"                name="CpuModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/MemoryModule.uxml"             name="MemoryModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/ConsoleModule.uxml"            name="ConsoleModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/MovementGraphModule.uxml"      name="MovementGraphModule-template"/>
+<Template src="/Assets/GUI/UXML/DebugModules/ExperimentTimelineModule.uxml"     name="ExperimentTimelineModule-template"/>
+<Template src="/Assets/GUI/UXML/DebugModules/LastTrialDataModule.uxml"          name="LastTrialDataModule-template"/>
+<Template src="/Assets/GUI/UXML/DebugModules/CpuModule.uxml"                    name="CpuModule-template"/>
+<Template src="/Assets/GUI/UXML/DebugModules/MemoryModule.uxml"                 name="MemoryModule-template"/>
+<Template src="/Assets/GUI/UXML/DebugModules/ConsoleModule.uxml"                name="ConsoleModule-template"/>
+<Template src="/Assets/GUI/UXML/DebugModules/MovementGraphModule.uxml"          name="MovementGraphModule-template"/>
 <Template src="/Assets/GUI/UXML/DebugModules/MoogAccelerationGraphModule.uxml"  name="MoogAccelerationGraphModule-template"/>
 <!-- ================================================================================ -->
 
@@ -22,7 +22,7 @@
 <VisualElement name="debug-body-template-wrapper" class="wrapper">
     
     <VisualElement name="debug-body-top-part">
-        <Instance template="GlobalTimelineModule-template"              name="debug-body-global-timeline"       class="body-container"/>
+        <Instance template="ExperimentTimelineModule-template"          name="debug-body-experiment-timeline"       class="body-container"/>
     </VisualElement>
 
     <VisualElement name="debug-body-center-part">
@@ -43,7 +43,7 @@
         </VisualElement>
 
         <VisualElement name="debug-body-bottom-right-part" class="body-container">
-            <Instance template="MoogAccelerationGraphModule-template"       name="debug-body-moog-acceleration-graph"    class="body-module"/>
+            <Instance template="MoogAccelerationGraphModule-template"   name="debug-body-moog-acceleration-graph"    class="body-module"/>
         </VisualElement>
         
     </VisualElement>

@@ -294,7 +294,7 @@
 #info-module-template-wrapper {}
 #warnings-module-template-wrapper {}
 
-#info-module-textbox, #warnings-module-textbox {
+#info-module-textbox, #warnings-module-textbox,		#debug-console-module-textbox {
 	position: absolute;
 	width: 100%;
 	height: 100%;

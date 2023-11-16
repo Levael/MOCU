@@ -6,7 +6,11 @@
 >
 
 
+<VisualElement name="console-module-template-wrapper" class="wrapper">
+    <TextElement name="debug-console-module-textbox" text=">>>"/>
 
+    <TextElement class="module-label" text="Console"/>
+</VisualElement>
 
     
 </UXML>
