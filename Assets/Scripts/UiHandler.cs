@@ -19,6 +19,9 @@ public class UiHandler : MonoBehaviour
     private VisualElement _activeTab;   // main display
     private VisualElement _openedTab;   // second display
 
+    private UiReferences _mainScreen;
+    private UiReferences _secondaryScreen;
+
     private bool _openTabInSecondDisplay;
 
 
@@ -34,7 +37,7 @@ public class UiHandler : MonoBehaviour
 
     private void Update()
     {
-        ((TextElement)_mainDisplayUiReferences.GetElement("info-module-textbox")).text = _forTests.getStats();
+        ((TextElement)_secondaryScreen.GetElement("debug-console-module-textbox")).text = _forTests.getStats();
     }
 
 
@@ -42,6 +45,16 @@ public class UiHandler : MonoBehaviour
     private void ApplyDefaultSettings()
     {
         _openTabInSecondDisplay = true;
+
+        if (_openTabInSecondDisplay)
+        {
+            _mainScreen = _mainDisplayUiReferences;
+            _secondaryScreen = _secondDisplayUiReferences;
+        }
+        else
+        {
+            _mainScreen = _secondaryScreen = _mainDisplayUiReferences;
+        }
 
         TabHasBeenClicked(_mainDisplayUiReferences.GetElement("experiment-tab"));
         ShowBody("experiment-tab", _mainDisplayUiReferences);
