@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Unity.Profiling;
 using UnityEngine;
-using UnityEngine.Windows;
 
 public class ForTests : MonoBehaviour
 {
@@ -23,7 +22,8 @@ public class ForTests : MonoBehaviour
     {
         _systemMemoryRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "System Used Memory");
         _gcMemoryRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Reserved Memory");
-        _mainThreadTimeRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Main Thread", _framesDurationsBufferSize);
+        _mainThreadTimeRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Main Thread", 1);
+        // 1 is recorder.Capacity (no need in more than 1 because I take only the last one)
     }
 
     void OnDisable()
@@ -38,7 +38,7 @@ public class ForTests : MonoBehaviour
 
     private double GetAverageFrameDuration(ProfilerRecorder profilerRecorder)                               // function should be called only once per frame. returns ns
     {
-        if (_framesDurationsBuffer == null) _framesDurationsBuffer = new long[profilerRecorder.Capacity];   // first init
+        if (_framesDurationsBuffer == null) _framesDurationsBuffer = new long[_framesDurationsBufferSize];  // first init
 
         _framesDurationsBuffer[_frameIndex++] = profilerRecorder.LastValue;                                 // upd last frame + increment index
         if (_frameIndex == _framesDurationsBuffer.Length) _frameIndex = 0;                                  // jump to start in case of overflow

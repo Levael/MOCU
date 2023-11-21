@@ -15,5 +15,6 @@ Minimize: https://www.svgrepo.com/svg/521755/minus
 Intercom inactive: https://www.svgrepo.com/svg/522178/microphone
 Intercom active: https://www.svgrepo.com/svg/522179/microphone
 Intercom disabled: https://www.svgrepo.com/svg/522175/microphone-off
+Controller: https://www.svgrepo.com/svg/499595/controller
 
 Exit door: https://www.svgrepo.com/svg/151987/opened-door-aperture

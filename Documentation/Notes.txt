@@ -3,3 +3,8 @@ Design: https://www.figma.com/file/oCjwjn4o8zVzkfgBAvnZh3/MOCU-v0.2.19?type=desi
 Stackoverflow question: https://stackoverflow.com/questions/77362922/how-to-prevent-mirroring-of-vr-camera-view-to-main-monitor
 
 Unity documentation: https://docs.unity3d.com/Manual/index.html
+
+
+Notes:
+- ABOUT XBOX CONTROLLER: make sure batteries are full; press center (round) btn (it should blick slowly); hold "net" btn from behind (now center btn should blink frequently);
+connect bluetooth adapter to PC; from windows settings connect controller (first option)
