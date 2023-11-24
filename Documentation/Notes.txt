@@ -6,5 +6,7 @@ Unity documentation: https://docs.unity3d.com/Manual/index.html
 
 
 Notes:
-- ABOUT XBOX CONTROLLER: make sure batteries are full; press center (round) btn (it should blick slowly); hold "net" btn from behind (now center btn should blink frequently);
-connect bluetooth adapter to PC; from windows settings connect controller (first option)
+- ABOUT XBOX CONTROLLER: may work in 2 modes -- wireless and via cable
+	-wireless: make sure batteries are full; press center (round) btn (it should blick slowly); hold "net" btn from behind (now center btn should blink frequently);
+	connect bluetooth adapter to PC; from windows settings connect controller (first option). Goes off after some time of nothing-doing
+	- via cable: doesn't need batteries and never goes off

@@ -1,5 +1,38 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
+
+public class MicrophoneToSpeaker : MonoBehaviour
+{
+    //private AudioSource audioSource;
+    //public GameObject gameObjectUi;
+
+    void Start()
+    {
+        /*((TextElement)gameObjectUi.GetComponent<UiReferences>().GetElement("info-module-textbox")).text = $"{Microphone.devices[0]}";
+        ((TextElement)gameObjectUi.GetComponent<UiReferences>().GetElement("info-module-textbox")).text = $"{Microphone.devices[1]}";*/
+
+        /*var audioSource = GetComponent<AudioSource>();
+        audioSource.clip = Microphone.Start(Microphone.devices[0], true, 10, 44100);
+        audioSource.loop = true;
+        while (!(Microphone.GetPosition(null) > 0)) { }
+        audioSource.Play();*/
+
+        //var audioSource = GetComponent<AudioSource>();
+        //audioSource.Play();
+    }
+}
+
+
+
+
+
+
+
+
+
+/*using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class MicrophoneToSpeaker : MonoBehaviour
 {
@@ -43,3 +76,4 @@ public class MicrophoneToSpeaker : MonoBehaviour
         audioSource.Stop();
     }
 }
+*/
