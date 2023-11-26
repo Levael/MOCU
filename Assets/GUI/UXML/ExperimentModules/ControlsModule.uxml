@@ -38,11 +38,23 @@
     </VisualElement>
 
 
-    <VisualElement name="controls-intercom-part" class="">  <!-- "", "isActive" or "isDisabled" -->
-        <VisualElement class="icon-shape">
-            <VisualElement class="icon-color"></VisualElement>
-        </VisualElement>
-        <TextElement name="intercom-text" text="Intercom"/>
+    <VisualElement name="controls-intercom-part" class="">  <!-- "", "isActive", "isDisabled", "isActive isIncomming", "isActive isOutcomming" -->
+        <VisualElement name="intercom-inner-wrapper">
+
+            <VisualElement class="icon-shape" name="intercom-main-icon">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <VisualElement class="icon-shape" name="intercom-incomming-state">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+            <VisualElement class="icon-shape" name="intercom-outcomming-state">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <TextElement name="intercom-text" text="Intercom"/>
+
+        </VisualElement>        
     </VisualElement>
 
 

@@ -179,38 +179,87 @@
 	justify-content: center;
 }
 
-#controls-intercom-part .icon-shape {
-	width: 27px;
-	height: 27px;
+#intercom-inner-wrapper {
+	align-items: center;
+	justify-content: center;
+	width: auto;
+	height: auto;
+}
+
+#controls-intercom-part #intercom-main-icon {
+	width: 28px;
+	height: 28px;
 	background-image: url('/Assets/Images/SVG/IntercomInactiveIcon.svg');
 }
 
-#controls-intercom-part .icon-color {
+#controls-intercom-part #intercom-main-icon .icon-color {
 	background-color: var(--main-images-color);
 }
 
-#controls-intercom-part.isActive .icon-shape {
-	width: 30px !important;
-	height: 30px !important;
+
+
+#controls-intercom-part #intercom-incomming-state,
+#controls-intercom-part #intercom-outcomming-state {
+	width: 10px;
+	height: 10px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	display: none;
+}
+
+#controls-intercom-part #intercom-incomming-state {
+	background-image: url('/Assets/Images/SVG/ArrowIcon.svg');
+	rotate: 180deg;
+}
+
+#controls-intercom-part #intercom-outcomming-state {
+	background-image: url('/Assets/Images/SVG/ArrowIcon.svg');
+}
+
+#controls-intercom-part #intercom-incomming-state .icon-color,
+#controls-intercom-part #intercom-outcomming-state .icon-color {
+	background-color: var(--active-buttons-color);
+}
+
+
+
+
+
+#controls-intercom-part.isActive #intercom-main-icon {
 	background-image: url('/Assets/Images/SVG/IntercomActiveIcon.svg') !important;
 }
 
-#controls-intercom-part.isActive .icon-color {
+#controls-intercom-part.isActive #intercom-main-icon .icon-color {
 	background-color: var(--active-buttons-color) !important;
 }
 
-#controls-intercom-part.isDisabled .icon-shape {
-	width: 27px !important;
-	height: 27px !important;
+#controls-intercom-part.isActive.isIncomming #intercom-incomming-state {
+	display: flex;
+}
+
+#controls-intercom-part.isActive.isOutcomming #intercom-outcomming-state {
+	display: flex;
+}
+
+
+
+
+#controls-intercom-part.isDisabled #intercom-main-icon {
 	background-image: url('/Assets/Images/SVG/IntercomDisabledIcon.svg') !important;
 }
 
-#controls-intercom-part.isDisabled .icon-color {
+#controls-intercom-part.isDisabled #intercom-main-icon .icon-color {
 	background-color: var(--secondary-images-color) !important;
 }
 
 #intercom-text {
 	font-size: 10px;
+	margin-top: 3px;
+}
+
+#controls-intercom-part.isDisabled #intercom-text {
+	color: var(--secondary-font-color);
 }
 
 /* controller */

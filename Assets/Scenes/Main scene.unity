@@ -251,9 +251,10 @@ GameObject:
   - component: {fileID: 75438432}
   - component: {fileID: 75438433}
   - component: {fileID: 75438434}
-  - component: {fileID: 75438435}
+  - component: {fileID: 75438436}
+  - component: {fileID: 75438437}
   m_Layer: 0
-  m_Name: GeneralScripts
+  m_Name: Scripts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -312,7 +313,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7ff787f783770c43b5a407f5080fad9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &75438435
+--- !u!114 &75438436
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -321,11 +322,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 75438430}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a47ea371fb5c30b48bd1e43bf6b4a0ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 338608e27b1719e45b4b44ce0240c3ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   inputActions: {fileID: -944628639613478452, guid: a483bc81b3713784b98baf954ec508ee, type: 3}
-  gameObjectUi: {fileID: 603612049}
+  buttonsLogic: {fileID: 75438437}
+--- !u!114 &75438437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75438430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7441cef0ebebcc646a29e99fddc777a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &78664784
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,7 +948,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1784058963}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 24300002, guid: 1edcc540a088d44428604ccd06c32b38, type: 2}
   m_audioClip: {fileID: 8300000, guid: 40e3aa043a7cb574fb915fd653678cfe, type: 3}

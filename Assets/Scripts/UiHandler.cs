@@ -1,7 +1,6 @@
 using Assets.Scripts;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class UiHandler : MonoBehaviour
@@ -14,13 +13,11 @@ public class UiHandler : MonoBehaviour
 
     private ForTests _forTests;
 
-    private List<VisualElement> _mainDisplayHeaderTabs;
-
     private VisualElement _activeTab;   // main display
     private VisualElement _openedTab;   // second display
 
-    private UiReferences _mainScreen;
-    private UiReferences _secondaryScreen;
+    public UiReferences mainScreen;       // use this (instead of _mainDisplayUiReferences)
+    public UiReferences secondaryScreen;  // use this (instead of _secondDisplayUiReferences)
 
     private bool _openTabInSecondDisplay;
 
@@ -37,8 +34,34 @@ public class UiHandler : MonoBehaviour
 
     private void Update()
     {
-        ((TextElement)_secondaryScreen.GetElement("debug-console-module-textbox")).text = _forTests.getStats();
+        PrintToConsole(_forTests.getStats());
     }
+
+
+    public void PrintToInfo(string text) {
+        ((TextElement)mainScreen.GetElement("info-module-textbox")).text = text;
+    }
+
+    public void PrintToWarnings(string text)
+    {
+        ((TextElement)mainScreen.GetElement("warnings-module-textbox")).text = text;
+    }
+
+    public void PrintToConsole(string text)
+    {
+        ((TextElement)_secondDisplayUiReferences.GetElement("debug-console-module-textbox")).text = text;
+    }
+
+    public void ControllerButtonWasPressed(string btn_name) {
+        mainScreen.GetElement(btn_name).AddToClassList("isActive");
+    }
+
+    public void ControllerButtonWasReleased(string btn_name)
+    {
+        mainScreen.GetElement(btn_name).RemoveFromClassList("isActive");
+    }
+
+
 
 
 
@@ -48,16 +71,18 @@ public class UiHandler : MonoBehaviour
 
         if (_openTabInSecondDisplay)
         {
-            _mainScreen = _mainDisplayUiReferences;
-            _secondaryScreen = _secondDisplayUiReferences;
+            mainScreen = _mainDisplayUiReferences;
+            secondaryScreen = _secondDisplayUiReferences;
         }
         else
         {
-            _mainScreen = _secondaryScreen = _mainDisplayUiReferences;
+            mainScreen = secondaryScreen = _mainDisplayUiReferences;
         }
 
-        TabHasBeenClicked(_mainDisplayUiReferences.GetElement("experiment-tab"));
-        ShowBody("experiment-tab", _mainDisplayUiReferences);
+        TabHasBeenClicked(mainScreen.GetElement("experiment-tab"));
+        ShowBody("experiment-tab", mainScreen);
+
+        if (_openTabInSecondDisplay) ShowBody("", secondaryScreen);
 
         AddEventListeners();
         //HideElements();
@@ -186,6 +211,7 @@ public class UiHandler : MonoBehaviour
             body.style.display = DisplayStyle.None;
         }
 
+        if (tabName == "") return;
         uiReferences.GetElement(uiReferences.GetTabBodyRelation(tabName)).style.display = DisplayStyle.Flex;
     }
 

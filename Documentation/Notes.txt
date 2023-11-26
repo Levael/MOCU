@@ -4,9 +4,15 @@ Stackoverflow question: https://stackoverflow.com/questions/77362922/how-to-prev
 
 Unity documentation: https://docs.unity3d.com/Manual/index.html
 
+Cedrus documentation: https://www.cedrus.com/support/rb_series/index.htm
+Cedrus GIT: https://github.com/cedrus-opensource
+
 
 Notes:
-- ABOUT XBOX CONTROLLER: may work in 2 modes -- wireless and via cable
-	-wireless: make sure batteries are full; press center (round) btn (it should blick slowly); hold "net" btn from behind (now center btn should blink frequently);
+- ABOUT XBOX CONTROLLER:
+	- may work in 2 modes -- wireless and via cable
+	- wireless: make sure batteries are full; press center (round) btn (it should blick slowly); hold "net" btn from behind (now center btn should blink frequently);
 	connect bluetooth adapter to PC; from windows settings connect controller (first option). Goes off after some time of nothing-doing
 	- via cable: doesn't need batteries and never goes off
+- ABOUT SOUND:
+	- in Oculus App tap on device -> audio and mic should use Windows settings, not itself

@@ -107,50 +107,6 @@
                 },
                 {
                     "name": "",
-                    "id": "7d11b368-194c-4c84-980a-efa8c72edee9",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Up",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "e4924d9f-6179-4235-89cc-1fd467a5b801",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Up",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d1feafdc-012e-495b-a04b-77f9f3af8487",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Down",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "2d072ff6-2f12-428f-877f-2b762abf2937",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Down",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "a9269ad3-a528-44d2-b00c-f1115c3ac6ea",
                     "path": "<XInputController>/dpad/down",
                     "interactions": "Press",
@@ -197,7 +153,7 @@
                     "name": "",
                     "id": "d8107355-d919-4e82-9bb2-333477676bba",
                     "path": "<XInputController>/buttonNorth",
-                    "interactions": "Hold",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "Intercom",
@@ -208,7 +164,7 @@
                     "name": "",
                     "id": "1ab8e482-b36d-4c22-97ad-20c1923d4691",
                     "path": "<XInputController>/buttonWest",
-                    "interactions": "Hold",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "Intercom",
@@ -219,7 +175,18 @@
                     "name": "",
                     "id": "ae62a005-e709-42a5-ba51-5acb6bc8bbb2",
                     "path": "<XInputController>/buttonEast",
-                    "interactions": "Hold",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Intercom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1e77b1db-4770-4a9e-8adb-58d8255f2e79",
+                    "path": "<XInputController>/buttonSouth",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "Intercom",
@@ -246,8 +213,8 @@
                 {
                     "name": "",
                     "id": "2bec9888-80ff-4e4f-b36f-6c16e1a7bc3e",
-                    "path": "<Keyboard>/#(I)",
-                    "interactions": "",
+                    "path": "<Keyboard>/i",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "Intercom",
@@ -270,19 +237,7 @@
                     "initialStateCheck": false
                 }
             ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "dbac9433-e0bf-48f4-94aa-e8ee7172d2bd",
-                    "path": "<XInputController>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "TestAction",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
+            "bindings": []
         }
     ],
     "controlSchemes": []
