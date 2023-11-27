@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+//TODO: Fix Cedrus. Change event to keyboard, controller, intercom (logic, not devices). Add controller to numpad. Connect mi2audio
+
 public class UiHandler : MonoBehaviour
 {
     public GameObject mainDisplayGameObject;
@@ -12,6 +14,7 @@ public class UiHandler : MonoBehaviour
     private UiReferences _secondDisplayUiReferences;
 
     private ForTests _forTests;
+    private Cedrus _cedrus;
 
     private VisualElement _activeTab;   // main display
     private VisualElement _openedTab;   // second display
@@ -22,14 +25,20 @@ public class UiHandler : MonoBehaviour
     private bool _openTabInSecondDisplay;
 
 
-    void Start()
+
+    void OnEnable()
     {
         _mainDisplayUiReferences = mainDisplayGameObject.GetComponent<UiReferences>();
         _secondDisplayUiReferences = secondDisplayGameObject.GetComponent<UiReferences>();
 
         _forTests = GetComponent<ForTests>();
+        _cedrus = GetComponent<Cedrus>();
+    }
 
+    void Start()
+    {
         ApplyDefaultSettings();
+        _cedrus.InitCedrus();
     }
 
     private void Update()

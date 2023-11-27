@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
+using Assets.Scripts;
 
 
 public class InputHandler : MonoBehaviour
@@ -17,6 +19,9 @@ public class InputHandler : MonoBehaviour
     private InputAction _controllerCenterAction;
     private InputAction _controllerIntercomAction;
 
+    //private Cedrus _cedrus;
+
+
 
     private void Awake()
     {
@@ -30,11 +35,10 @@ public class InputHandler : MonoBehaviour
         _controllerIntercomAction   = inputActions.FindActionMap("Controller").FindAction("Intercom");
     }
 
-    private void OnEnable()
+    private void OnEnable()     // OnDisable is not done because I don't want to. Maybe add later
     {
         _keyboardIntercomAction.Enable();
 
-        _controllerIntercomAction.Enable();
         _controllerLeftAction.Enable();
         _controllerRightAction.Enable();
         _controllerUpAction.Enable();
@@ -42,7 +46,8 @@ public class InputHandler : MonoBehaviour
         _controllerCenterAction.Enable();
         _controllerIntercomAction.Enable();
 
-        // MAIN PART
+
+
         _keyboardIntercomAction.performed   += buttonsLogic.IntercomFromResearcherPressed;
         _keyboardIntercomAction.canceled    += buttonsLogic.IntercomFromResearcherReleased;
         
@@ -67,43 +72,25 @@ public class InputHandler : MonoBehaviour
 
         // here will be Cedrus EventListeners
         // ...
+
+        // here will be Ui EventListeners
+        // ...
     }
 
-    private void OnDisable()
+    private void Start()
     {
-        _keyboardIntercomAction.Disable();
-        _controllerIntercomAction.Disable();
-        _controllerLeftAction.Disable();
-        _controllerRightAction.Disable();
-        _controllerUpAction.Disable();
-        _controllerDownAction.Disable();
-        _controllerCenterAction.Disable();
-        _controllerIntercomAction.Disable();
+        //buttonsLogic.TestMethod(_cedrus.answer);
+        //StartCoroutine(CheckPortsCoroutine());
+    }
 
 
-        _keyboardIntercomAction.performed   -= buttonsLogic.IntercomFromResearcherPressed;
-        _keyboardIntercomAction.canceled    -= buttonsLogic.IntercomFromResearcherReleased;
 
-        _controllerIntercomAction.performed -= buttonsLogic.IntercomFromParticipantPressed;
-        _controllerIntercomAction.canceled  -= buttonsLogic.IntercomFromParticipantReleased;
-
-        _controllerLeftAction.performed     -= buttonsLogic.AnswerLeftPressed;
-        _controllerLeftAction.canceled      -= buttonsLogic.AnswerLeftReleased;
-
-        _controllerRightAction.performed    -= buttonsLogic.AnswerRightPressed;
-        _controllerRightAction.canceled     -= buttonsLogic.AnswerRightReleased;
-
-        _controllerUpAction.performed       -= buttonsLogic.AnswerUpPressed;
-        _controllerUpAction.canceled        -= buttonsLogic.AnswerUpReleased;
-
-        _controllerDownAction.performed     -= buttonsLogic.AnswerDownPressed;
-        _controllerDownAction.canceled      -= buttonsLogic.AnswerDownReleased;
-
-        _controllerCenterAction.performed   -= buttonsLogic.AnswerCenterPressed;
-        _controllerCenterAction.canceled    -= buttonsLogic.AnswerCenterReleased;
-
-
-        // here will be Cedrus EventListeners
-        // ...
+    private IEnumerator CheckPortsCoroutine()
+    {
+        while (true)
+        {
+            // code here
+            yield return new WaitForSeconds(0.1f);  // 100ms delay
+        }
     }
 }
