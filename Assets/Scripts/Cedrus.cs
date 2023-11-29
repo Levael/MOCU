@@ -5,65 +5,101 @@ using System.Text;
 using System.Collections;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 
+
+/// <summary>
+/// Make sure that the pins on the device itself are set as follows: 1(down) 2(down) 3(up) 4(up)
+/// It configures Cedrus to work with ASCII encoding with baud rate 9600 (bits per second)
+/// Cedrus documentation about it: https://cedrus.com/support/rb_series/tn1544_dip_switches.htm
+/// </summary>
 public class Cedrus : MonoBehaviour
 {
-    //NOTES:
-    // - because of data transfered in ASCII, dataLen % 8 = 0
-    // - _serialPort.Open() -- is pretty heavy function. It takes about 4sec. But it shouldn't...
-    // - GetCedrusPortName() -- is pretty heavy function too. It takes about 2sec
+    public DeviceConnectionStatus CedrusConnectionStatus;
 
+    public event Action<SignalFromParticipant> gotData;
 
     private UiHandler _uiHandler;
-
-    public bool CedrusIsConnected;
+    private AnswerHandler _answerHandler;
 
     private SerialPort _serialPort;
     private float _checkPortConnectionTimeInterval = 0.1f;  // sec
-    //private float _checkPortNameTimeInterval = 3f;  // sec
-    private int _checkPortConnectionReadTimeout = 1;        // ms   // todo: check if it can be less (the best is 0)
-    private ConcurrentQueue<string> _dataQueue;
-    private string _targetDisplayId;
+    private int _checkPortConnectionReadTimeout = 0;        // ms. If there will be any issue -- change to 1
+    private ConcurrentQueue<string> _dataQueue;             // todo: rename it later
+    private string _targetDeviceId;
     private string _portName;
+
+    private Dictionary<string, SignalFromParticipant> _cedrusCodes_answerSignals_Relations;
 
 
     void OnEnable()
     {
         _uiHandler = GetComponent<UiHandler>();
+        _answerHandler = GetComponent<AnswerHandler>();
 
         _dataQueue = new();
-        _targetDisplayId = @"FTDIBUS\VID_0403+PID_6001";   // todo: move to config
-        CedrusIsConnected = false;
-        //_portName = GetCedrusPortName(_targetDisplayId);
-        //if (_portName == null) StartCoroutine(CheckPortNumber());
-    }
+        _targetDeviceId = @"FTDIBUS\VID_0403+PID_6001";   // todo: move to config
+        CedrusConnectionStatus = DeviceConnectionStatus.Disconnected;
 
-    void Update()
-    {
-        _uiHandler.PrintToInfo($"{CedrusIsConnected}", true);
-        if (!CedrusIsConnected) _uiHandler.PrintToWarnings($"Cedrus. Check device connection and manualy try to reconnect", true);
-
-        if (CedrusIsConnected) ReadDataFromBufer();
-        if (_dataQueue.Count > 0)
-        {
-            while (_dataQueue.TryDequeue(out string data))
-            {
-                _uiHandler.PrintToWarnings($"Get from Cedrus: {data}. ", true);
-            }
-        }
+        // TODO" change "top" to "up" and "bottom" to "down"
+        _cedrusCodes_answerSignals_Relations = new() {
+            { "a", SignalFromParticipant.Top    },
+            { "b", SignalFromParticipant.Left   },
+            { "c", SignalFromParticipant.Center },
+            { "d", SignalFromParticipant.Right  },
+            { "e", SignalFromParticipant.Bottom }
+        };
     }
 
     void Start()
     {
-        CedrusIsConnected = TryConnect();
+        CedrusConnectionStatus = TryConnect();
         StartCoroutine(CheckPortConnection());
     }
 
-    private bool TryConnect()
+    void Update()
     {
+        if (CedrusConnectionStatus == DeviceConnectionStatus.Connected) ReadDataFromBufer();    // checks por buffer every frame in case any new data
+        
+
+        // TODO: maybe ove it to "InputLogic"
+        if (_dataQueue.Count > 0)
+        {
+            while (_dataQueue.TryDequeue(out string data))                                      // the loop is needed in case several clicks were made in one frame
+            {
+                //gotData?.Invoke();  // if somebody subscribed -- let's go
+
+
+                // Translates Cedrus ASCII string to "SignalFromParticipant" enum type
+
+                var signalFromParticipant = SignalFromParticipant.Error;                        // ideally, this will not happen at all, it's needed as a stub
+
+                if (_cedrusCodes_answerSignals_Relations.ContainsKey(data))                     // the usual scenario when everything is ok 
+                    signalFromParticipant = _cedrusCodes_answerSignals_Relations[data];
+                else if (data.Length > 1)                                                       // if several buttons were pressed simultaneously
+                    signalFromParticipant = SignalFromParticipant.MultipleAnswer;
+
+                //_answerHandler.AddAnswer(signalFromParticipant);
+                gotData?.Invoke(signalFromParticipant);
+            }
+        }
+    }
+    
+
+
+
+    private DeviceConnectionStatus TryConnect()
+    {
+        // SOME NOTES:
+        // serialPort.Open() -- is pretty heavy function. It takes about 4sec. But it shouldn't...
+        // GetCedrusPortName() -- is pretty heavy function too. It takes about 2sec
+
         try
         {
-            if (_serialPort != null && _serialPort.IsOpen && CedrusIsConnected == false)  // e.g port was opened but now it doesn work
+            CedrusConnectionStatus = DeviceConnectionStatus.InProgress;
+
+            if (_serialPort != null && _serialPort.IsOpen && CedrusConnectionStatus != DeviceConnectionStatus.Connected)  // e.g port was opened but now it doesn work
             {
                 _serialPort.Close();
                 _serialPort.Dispose();
@@ -72,29 +108,26 @@ public class Cedrus : MonoBehaviour
             }
 
 
-            _portName = GetCedrusPortName(_targetDisplayId);
-            if (string.IsNullOrEmpty(_portName)) return false;
+            _portName = GetCedrusPortName(_targetDeviceId);
+            if (string.IsNullOrEmpty(_portName)) return DeviceConnectionStatus.Disconnected;
 
-            _serialPort = new SerialPort(_portName);
-            _serialPort.ReadTimeout = _checkPortConnectionReadTimeout;  // need only for port checking. doesn't affect reading when there are bytes to read
+            _serialPort = new SerialPort(_portName)
+            {
+                ReadTimeout = _checkPortConnectionReadTimeout,  // Is needed only for port checking. doesn't affect reading when there are bytes to read
+                BaudRate = 9600,                                // The speed of data transmission, specifies how many bits of data are transmitted per second (bits per second)
+                DataBits = 8,                                   // The number of data bits in each data packet (usually 7 or 8, 8 in this case)
+                Parity = Parity.None,                           // A parity check method used to detect errors in the transmitted data (None means no parity check is used)
+                StopBits = StopBits.One,                        // The number of stop bits used to indicate the end of a data packet (One means one stop bit)
+                Handshake = Handshake.None,                     // The flow control protocol (Handshake.None means no flow control is used)
+                DtrEnable = true                                // Maybe it can help to improve connection speed...
+            };
 
-            _serialPort.BaudRate = 9600;            // BaudRate: The speed of data transmission, specifies how many bits of data are transmitted per second (bits per second)
-            _serialPort.DataBits = 8;               // DataBits: The number of data bits in each data packet (usually 7 or 8, 8 in this case)
-            _serialPort.Parity = Parity.None;       // Parity: A parity check method used to detect errors in the transmitted data (None means no parity check is used)
-            _serialPort.StopBits = StopBits.One;    // StopBits: The number of stop bits used to indicate the end of a data packet (One means one stop bit)
-            _serialPort.Handshake = Handshake.None; // Handshake: The flow control protocol (Handshake.None means no flow control is used)
+            //_serialPort.DataReceived += ReadDataFromBufer;    // doesn't work in Unity (because of thread system), although it was the best option
 
-            //_serialPort.DataReceived += ReadDataFromBufer;  // doesn't work in Unity
-
-            _serialPort.DtrEnable = true;   // maybe it can help
             _serialPort.Open();
+            return DeviceConnectionStatus.Connected;
 
-            return true;
-        } catch //(Exception exceprion)
-        {
-            //_uiHandler.PrintToWarnings(exceprion.ToString(), true);
-            return false;
-        }
+        } catch { return DeviceConnectionStatus.Disconnected; } // In case of unsuccessful connection just updates "CedrusConnectionStatus"
     }
 
 
@@ -118,74 +151,46 @@ public class Cedrus : MonoBehaviour
         Process process = new Process { StartInfo = startInfo };
         process.Start();
 
-        string output = process.StandardOutput.ReadToEnd();
+        string output = process.StandardOutput.ReadToEnd();                 // Get data from "Console.Write()"
         process.WaitForExit();
 
         return output;
     }
 
+    /// <summary>
+    /// Tries read data from port buffer to "_dataQueue". If fails -- then device was disconnected and so the connection status is updated
+    /// </summary>
     private void ReadDataFromBufer()
     {
         try
         {
-            int bytesToRead = _serialPort.BytesToRead;              // Read the number of bytes that are ready to be read from the serial buffer
-            if (bytesToRead == 0) return;                           // Exit if nothing getted
+            int bytesToRead = _serialPort.BytesToRead;                      // Read the number of bytes that are ready to be read from the serial buffer
+            if (bytesToRead == 0) return;                                   // Exit if nothing getted
 
-            byte[] buffer = new byte[bytesToRead];                  // Create a buffer array to hold the incoming bytes
-            _serialPort.Read(buffer, 0, bytesToRead);               // Read the available bytes from the serial port into the buffer
+            byte[] buffer = new byte[bytesToRead];                          // Create a buffer array to hold the incoming bytes
+            _serialPort.Read(buffer, 0, bytesToRead);                       // Read the available bytes from the serial port into the buffer
 
-            _dataQueue.Enqueue(Encoding.ASCII.GetString(buffer));   // todo: devide by bytes and add them separately (if 2 or more btns were pushed simultaneously)
+            _dataQueue.Enqueue(Encoding.ASCII.GetString(buffer));           // the data transfer protocol is defined by the pin settings on the device itself
         }
         catch
         {
-            // May occure if "CheckPortConnection" didn't check yet, but "ReadDataFromBufer" was called
-            CedrusIsConnected = false;
+            CedrusConnectionStatus = DeviceConnectionStatus.Disconnected;   // May occure if "CheckPortConnection" didn't check yet, but "ReadDataFromBufer" was called
         }
     }
 
+    /// <summary>
+    /// Coroutine that checks every "_checkPortConnectionTimeInterval" seconds if device is still connected and if not -- updates "CedrusConnectionStatus"
+    /// </summary>
     IEnumerator CheckPortConnection()
     {
         while (true)
         {
-            try
-            {
-                if (_serialPort.BytesToRead == 0) _serialPort.ReadLine();
-            }
-            catch (TimeoutException)
-            {
-                // It's ok
-            }
-            catch
-            {
-                //CedrusIsConnected = TryConnect();
-                CedrusIsConnected = false;
-            }
+            try                         { if (_serialPort.BytesToRead == 0) _serialPort.ReadLine(); }       // on purpose tries cause an exception
+            catch (TimeoutException)    { /* Do nothing */ }                                                // Device is connected but didn't send anything, it's ok
+            catch                       { CedrusConnectionStatus = DeviceConnectionStatus.Disconnected; }   // if not "TimeoutException"-- device disconected
 
-            yield return new WaitForSeconds(_checkPortConnectionTimeInterval);  // if "yield return null" -- would wait until text frame
+            yield return new WaitForSeconds(_checkPortConnectionTimeInterval);                              // if "yield return null" -- would wait until text frame
         }
     }
-
-
-
-    /*IEnumerator CheckPortNumber()
-    {
-        while (true)
-        {
-            if (CedrusIsConnected == true) yield break;
-
-            try
-            {
-                _portName = GetCedrusPortName(_targetDisplayId);   // todo: make port checking via ui btn "manual port check"
-                if (_portName != null) yield break;
-            }
-            catch
-            {
-                _uiHandler.PrintToWarnings($"Cedrus. Fatal error in checking port name");
-                yield break;
-            }
-
-            yield return new WaitForSeconds(_checkPortNameTimeInterval);  // if "yield return null" -- would wait until text frame
-        }
-    }*/
 
 }

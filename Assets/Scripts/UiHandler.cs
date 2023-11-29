@@ -14,7 +14,8 @@ public class UiHandler : MonoBehaviour
     private UiReferences _secondDisplayUiReferences;
 
     private ForTests _forTests;
-    //private Cedrus _cedrus;
+    private Cedrus _cedrus;
+    private AnswerHandler _answerHandler;
 
     private VisualElement _activeTab;       // main display
     private VisualElement _openedTab;       // second display
@@ -32,40 +33,61 @@ public class UiHandler : MonoBehaviour
         _secondDisplayUiReferences = secondDisplayGameObject.GetComponent<UiReferences>();
 
         _forTests = GetComponent<ForTests>();
-        //_cedrus = GetComponent<Cedrus>();
+        _cedrus = GetComponent<Cedrus>();
+        _answerHandler = GetComponent<AnswerHandler>();
     }
 
     void Start()
     {
         ApplyDefaultSettings();
-        //_cedrus.InitCedrus();
     }
 
     private void Update()
     {
-        PrintToConsole(_forTests.getStats());
+        PrintToConsole(_forTests.getStats(), clearTextElement: true);
+        PrintToInfo($"Cedrus connection: {_cedrus.CedrusConnectionStatus}\nAnswers got: {_answerHandler.answers.Count}", clearTextElement: true);
+
+        PrintToWarnings("", clearTextElement: true);
+        foreach (var answerStruct in _answerHandler.answers)
+        {
+            PrintToWarnings($"{answerStruct.answer} - {answerStruct.timestamp.ToBinary()}\n", clearTextElement: false);
+        }
+
+        //UpdateConnectionStatuses();
     }
 
 
     public void PrintToInfo(string message, bool clearTextElement = false) {
-        var textElement = ((TextElement)mainScreen.GetElement("info-module-textbox"));
+        var textElement = (TextElement)mainScreen.GetElement("info-module-textbox");
         if (clearTextElement) textElement.text = "";
         textElement.text += message;
     }
 
     public void PrintToWarnings(string message, bool clearTextElement = false)
     {
-        var textElement = ((TextElement)mainScreen.GetElement("warnings-module-textbox"));
+        var textElement = (TextElement)mainScreen.GetElement("warnings-module-textbox");
         if (clearTextElement) textElement.text = "";
         textElement.text += message;
     }
 
     public void PrintToConsole(string message, bool clearTextElement = false)
     {
-        var textElement = ((TextElement)mainScreen.GetElement("debug-console-module-textbox"));
+        var textElement = (TextElement)secondaryScreen.GetElement("debug-console-module-textbox");
         if (clearTextElement) textElement.text = "";
         textElement.text += message;
     }
+
+    private void UpdateConnectionStatuses()
+    {
+        //UpdateStatusBox(deviceName: "Cedrus", deviceStatus: _cedrus.CedrusConnectionStatus);
+    }
+
+    private void UpdateStatusBox(string deviceName, DeviceConnectionStatus deviceStatus)
+    {
+
+    }
+
+
 
     public void ControllerButtonWasPressed(string btn_name) {
         mainScreen.GetElement(btn_name).AddToClassList("isActive");
@@ -280,4 +302,5 @@ public class UiHandler : MonoBehaviour
     {
         CloseExitConfirmationModalWindow();
     }
+
 }

@@ -1,18 +1,46 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputLogic : MonoBehaviour
 {
     private UiHandler _uiHandler;
+    private AnswerHandler _answerHandler;
 
     private void Awake()
     {
         _uiHandler = GetComponent<UiHandler>();
+        _answerHandler = GetComponent<AnswerHandler>();
     }
 
     public void TestMethod(string text)
     {
         _uiHandler.PrintToWarnings(text);
+    }
+
+    public void GotAnswerFromCedrus(SignalFromParticipant signalFromParticipant)
+    {
+        // All this is temp and dirty
+
+        switch (signalFromParticipant)
+        {
+            case SignalFromParticipant.Top:
+                AnswerUpPressed(source: "cedrus");
+                break;
+            case SignalFromParticipant.Left:
+                AnswerLeftPressed(source: "cedrus");
+                break;
+            case SignalFromParticipant.Center:
+                AnswerCenterPressed(source: "cedrus");
+                break;
+            case SignalFromParticipant.Right:
+                AnswerRightPressed(source: "cedrus");
+                break;
+            case SignalFromParticipant.Bottom:
+                AnswerDownPressed(source: "cedrus");
+                break;
+        }
+        _answerHandler.AddAnswer(signalFromParticipant);
     }
 
 
@@ -49,10 +77,12 @@ public class InputLogic : MonoBehaviour
         _uiHandler.mainScreen.GetElement("controls-intercom-part").RemoveFromClassList("isIncomming");
     }
 
+
+
     public void AnswerLeftPressed(string source)
     {
         _uiHandler.ControllerButtonWasPressed("controller-left-btn");     // for UI/UX purpose only
-        if (source == "ui") { Invoke("AnswerLeftReleased", 0.5f); }       // with delay 0.5sec if clicked with mouse    // todo later to all
+        if (source == "ui" || source == "cedrus") { Invoke("AnswerLeftReleased", 0.1f); }       // with delay 0.5sec if clicked with mouse    // todo later to all
     }
     public void AnswerLeftReleased()
     {
@@ -61,7 +91,8 @@ public class InputLogic : MonoBehaviour
     public void AnswerRightPressed(string source)
     {
         _uiHandler.ControllerButtonWasPressed("controller-right-btn");     // for UI/UX purpose only
-        if(source == "ui") { AnswerRightReleased(); }
+        if (source == "ui" || source == "cedrus") { Invoke("AnswerRightReleased", 0.1f); }
+        //if(source == "ui") { AnswerRightReleased(); }
     }
     public void AnswerRightReleased()
     {
@@ -70,7 +101,8 @@ public class InputLogic : MonoBehaviour
     public void AnswerUpPressed(string source)
     {
         _uiHandler.ControllerButtonWasPressed("controller-up-btn");     // for UI/UX purpose only
-        if(source == "ui") { AnswerUpReleased(); }
+        if (source == "ui" || source == "cedrus") { Invoke("AnswerUpReleased", 0.1f); }
+        //if(source == "ui") { AnswerUpReleased(); }
     }
     public void AnswerUpReleased()
     {
@@ -78,17 +110,19 @@ public class InputLogic : MonoBehaviour
     }
     public void AnswerDownPressed(string source)
     {
-        _uiHandler.ControllerButtonWasPressed("controller-down-btn");     // for UI/UX purpose only
-        if(source == "ui") { AnswerDownReleased(); }
+        _uiHandler.ControllerButtonWasPressed("controller-bottom-btn");     // for UI/UX purpose only
+        if (source == "ui" || source == "cedrus") { Invoke("AnswerDownReleased", 0.1f); }
+        //if(source == "ui") { AnswerDownReleased(); }
     }
     public void AnswerDownReleased()
     {
-        _uiHandler.ControllerButtonWasReleased("controller-down-btn");    // for UI/UX purpose only
+        _uiHandler.ControllerButtonWasReleased("controller-bottom-btn");    // for UI/UX purpose only
     }
     public void AnswerCenterPressed(string source)
     {
         _uiHandler.ControllerButtonWasPressed("controller-center-btn");     // for UI/UX purpose only
-        if(source == "ui") { AnswerCenterReleased(); }
+        if (source == "ui" || source == "cedrus") { Invoke("AnswerCenterReleased", 0.1f); }
+        //if(source == "ui") { AnswerCenterReleased(); }
     }
     public void AnswerCenterReleased()
     {
