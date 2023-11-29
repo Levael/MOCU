@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ButtonsLogic : MonoBehaviour
+public class InputLogic : MonoBehaviour
 {
     private UiHandler _uiHandler;
 

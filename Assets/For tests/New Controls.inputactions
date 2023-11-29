@@ -49,15 +49,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Intercom",
-                    "type": "Button",
-                    "id": "4483c7e3-ef17-4633-8a9f-66b9ff348a9a",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -148,96 +139,89 @@
                     "action": "Center",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d8107355-d919-4e82-9bb2-333477676bba",
-                    "path": "<XInputController>/buttonNorth",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Intercom",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1ab8e482-b36d-4c22-97ad-20c1923d4691",
-                    "path": "<XInputController>/buttonWest",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Intercom",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "ae62a005-e709-42a5-ba51-5acb6bc8bbb2",
-                    "path": "<XInputController>/buttonEast",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Intercom",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1e77b1db-4770-4a9e-8adb-58d8255f2e79",
-                    "path": "<XInputController>/buttonSouth",
-                    "interactions": "Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Intercom",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 }
             ]
         },
         {
-            "name": "Keyboard",
-            "id": "76882205-4a09-408c-ac16-1c445393d0de",
+            "name": "Intercom",
+            "id": "0cb785cc-4489-4f35-a399-8f31c38c861b",
             "actions": [
                 {
-                    "name": "Intercom",
+                    "name": "Keyboard_output",
                     "type": "Button",
-                    "id": "d7f940f6-c7f3-4f6b-9e51-9247e2c1473b",
+                    "id": "6c145ccf-6750-4444-bb7e-c65ac1bac1aa",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Press",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Gamepad_input",
+                    "type": "Button",
+                    "id": "cfb2e0bf-8d6e-4bb6-89e0-8631b91502ff",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
                     "initialStateCheck": false
                 }
             ],
             "bindings": [
                 {
                     "name": "",
-                    "id": "2bec9888-80ff-4e4f-b36f-6c16e1a7bc3e",
+                    "id": "b09ba6b8-8f7b-425c-a7a8-af11e8a4e22b",
                     "path": "<Keyboard>/i",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "Intercom",
+                    "action": "Keyboard_output",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e8d746f0-9522-4e21-bf61-15bd552b580c",
+                    "path": "<XInputController>/buttonEast",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Gamepad_input",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "666638aa-ca62-489f-8dd1-09d1f7b3bdde",
+                    "path": "<XInputController>/buttonNorth",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Gamepad_input",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "94552b7c-1d41-46da-80b9-470a4a6c079e",
+                    "path": "<XInputController>/buttonSouth",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Gamepad_input",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d66d919c-d172-4f47-bd23-e1bcd000e558",
+                    "path": "<XInputController>/buttonWest",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Gamepad_input",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
             ]
-        },
-        {
-            "name": "Test",
-            "id": "f84d29b8-0313-4983-8a03-ccc06a220eee",
-            "actions": [
-                {
-                    "name": "TestAction",
-                    "type": "Button",
-                    "id": "6642efae-8f23-462e-8f9d-59cbacd3c6d8",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Press",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": []
         }
     ],
     "controlSchemes": []

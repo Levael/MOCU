@@ -7,17 +7,17 @@ using Assets.Scripts;
 public class InputHandler : MonoBehaviour
 {
     public InputActionAsset inputActions;
-    public ButtonsLogic     buttonsLogic;
+    public InputLogic       inputLogic;
 
 
-    private InputAction _keyboardIntercomAction;
+    private InputAction _keyboardIntercomOutputAction;
+    private InputAction _controllerIntercomInputAction;
 
     private InputAction _controllerLeftAction;
     private InputAction _controllerRightAction;
     private InputAction _controllerUpAction;
     private InputAction _controllerDownAction;
     private InputAction _controllerCenterAction;
-    private InputAction _controllerIntercomAction;
 
     //private Cedrus _cedrus;
 
@@ -25,49 +25,49 @@ public class InputHandler : MonoBehaviour
 
     private void Awake()
     {
-        _keyboardIntercomAction     = inputActions.FindActionMap("Keyboard").FindAction("Intercom");
+        _keyboardIntercomOutputAction   = inputActions.FindActionMap("Intercom").FindAction("Keyboard_output");
+        _controllerIntercomInputAction  = inputActions.FindActionMap("Intercom").FindAction("Gamepad_input");
 
-        _controllerLeftAction       = inputActions.FindActionMap("Controller").FindAction("Left");
-        _controllerRightAction      = inputActions.FindActionMap("Controller").FindAction("Right");
-        _controllerUpAction         = inputActions.FindActionMap("Controller").FindAction("Up");
-        _controllerDownAction       = inputActions.FindActionMap("Controller").FindAction("Down");
-        _controllerCenterAction     = inputActions.FindActionMap("Controller").FindAction("Center");
-        _controllerIntercomAction   = inputActions.FindActionMap("Controller").FindAction("Intercom");
+        _controllerLeftAction           = inputActions.FindActionMap("Controller").FindAction("Left");
+        _controllerRightAction          = inputActions.FindActionMap("Controller").FindAction("Right");
+        _controllerUpAction             = inputActions.FindActionMap("Controller").FindAction("Up");
+        _controllerDownAction           = inputActions.FindActionMap("Controller").FindAction("Down");
+        _controllerCenterAction         = inputActions.FindActionMap("Controller").FindAction("Center");
     }
 
     private void OnEnable()     // OnDisable is not done because I don't want to. Maybe add later
     {
-        _keyboardIntercomAction.Enable();
+        _keyboardIntercomOutputAction.Enable();
+        _controllerIntercomInputAction.Enable();
 
         _controllerLeftAction.Enable();
         _controllerRightAction.Enable();
         _controllerUpAction.Enable();
         _controllerDownAction.Enable();
         _controllerCenterAction.Enable();
-        _controllerIntercomAction.Enable();
 
 
 
-        _keyboardIntercomAction.performed   += buttonsLogic.IntercomFromResearcherPressed;
-        _keyboardIntercomAction.canceled    += buttonsLogic.IntercomFromResearcherReleased;
+        _keyboardIntercomOutputAction.performed   += inputLogic.IntercomFromResearcherPressed;
+        _keyboardIntercomOutputAction.canceled    += inputLogic.IntercomFromResearcherReleased;
         
-        _controllerIntercomAction.performed += buttonsLogic.IntercomFromParticipantPressed;
-        _controllerIntercomAction.canceled  += buttonsLogic.IntercomFromParticipantReleased;
+        _controllerIntercomInputAction.performed += inputLogic.IntercomFromParticipantPressed;
+        _controllerIntercomInputAction.canceled  += inputLogic.IntercomFromParticipantReleased;
         
-        _controllerLeftAction.performed     += buttonsLogic.AnswerLeftPressed;
-        _controllerLeftAction.canceled      += buttonsLogic.AnswerLeftReleased;
+        _controllerLeftAction.performed     += inputLogic.AnswerLeftPressed;
+        _controllerLeftAction.canceled      += inputLogic.AnswerLeftReleased;
 
-        _controllerRightAction.performed    += buttonsLogic.AnswerRightPressed;
-        _controllerRightAction.canceled     += buttonsLogic.AnswerRightReleased;
+        _controllerRightAction.performed    += inputLogic.AnswerRightPressed;
+        _controllerRightAction.canceled     += inputLogic.AnswerRightReleased;
 
-        _controllerUpAction.performed       += buttonsLogic.AnswerUpPressed;
-        _controllerUpAction.canceled        += buttonsLogic.AnswerUpReleased;
+        _controllerUpAction.performed       += inputLogic.AnswerUpPressed;
+        _controllerUpAction.canceled        += inputLogic.AnswerUpReleased;
 
-        _controllerDownAction.performed     += buttonsLogic.AnswerDownPressed;
-        _controllerDownAction.canceled      += buttonsLogic.AnswerDownReleased;
+        _controllerDownAction.performed     += inputLogic.AnswerDownPressed;
+        _controllerDownAction.canceled      += inputLogic.AnswerDownReleased;
 
-        _controllerCenterAction.performed   += buttonsLogic.AnswerCenterPressed;
-        _controllerCenterAction.canceled    += buttonsLogic.AnswerCenterReleased;
+        _controllerCenterAction.performed   += inputLogic.AnswerCenterPressed;
+        _controllerCenterAction.canceled    += inputLogic.AnswerCenterReleased;
 
 
         // here will be Cedrus EventListeners
@@ -79,13 +79,13 @@ public class InputHandler : MonoBehaviour
 
     private void Start()
     {
-        //buttonsLogic.TestMethod(_cedrus.answer);
+        //inputLogic.TestMethod(_cedrus.answer);
         //StartCoroutine(CheckPortsCoroutine());
     }
 
 
 
-    private IEnumerator CheckPortsCoroutine()
+    private IEnumerator StartCheckPortsCoroutine()
     {
         while (true)
         {

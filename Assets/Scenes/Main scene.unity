@@ -329,7 +329,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputActions: {fileID: -944628639613478452, guid: a483bc81b3713784b98baf954ec508ee, type: 3}
-  buttonsLogic: {fileID: 75438437}
+  inputLogic: {fileID: 75438437}
 --- !u!114 &75438437
 MonoBehaviour:
   m_ObjectHideFlags: 0

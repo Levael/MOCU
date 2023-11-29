@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-//TODO: Fix Cedrus. Change event to keyboard, controller, intercom (logic, not devices). Add controller to numpad. Connect mi2audio
+//TODO: Fix Cedrus. Add controller to numpad. Connect mi2audio
 
 public class UiHandler : MonoBehaviour
 {
@@ -14,13 +14,13 @@ public class UiHandler : MonoBehaviour
     private UiReferences _secondDisplayUiReferences;
 
     private ForTests _forTests;
-    private Cedrus _cedrus;
+    //private Cedrus _cedrus;
 
-    private VisualElement _activeTab;   // main display
-    private VisualElement _openedTab;   // second display
+    private VisualElement _activeTab;       // main display
+    private VisualElement _openedTab;       // second display
 
-    public UiReferences mainScreen;       // use this (instead of _mainDisplayUiReferences)
-    public UiReferences secondaryScreen;  // use this (instead of _secondDisplayUiReferences)
+    public UiReferences mainScreen;         // use this (instead of _mainDisplayUiReferences)
+    public UiReferences secondaryScreen;    // use this (instead of _secondDisplayUiReferences)
 
     private bool _openTabInSecondDisplay;
 
@@ -32,13 +32,13 @@ public class UiHandler : MonoBehaviour
         _secondDisplayUiReferences = secondDisplayGameObject.GetComponent<UiReferences>();
 
         _forTests = GetComponent<ForTests>();
-        _cedrus = GetComponent<Cedrus>();
+        //_cedrus = GetComponent<Cedrus>();
     }
 
     void Start()
     {
         ApplyDefaultSettings();
-        _cedrus.InitCedrus();
+        //_cedrus.InitCedrus();
     }
 
     private void Update()
@@ -47,18 +47,24 @@ public class UiHandler : MonoBehaviour
     }
 
 
-    public void PrintToInfo(string text) {
-        ((TextElement)mainScreen.GetElement("info-module-textbox")).text = text;
+    public void PrintToInfo(string message, bool clearTextElement = false) {
+        var textElement = ((TextElement)mainScreen.GetElement("info-module-textbox"));
+        if (clearTextElement) textElement.text = "";
+        textElement.text += message;
     }
 
-    public void PrintToWarnings(string text)
+    public void PrintToWarnings(string message, bool clearTextElement = false)
     {
-        ((TextElement)mainScreen.GetElement("warnings-module-textbox")).text = text;
+        var textElement = ((TextElement)mainScreen.GetElement("warnings-module-textbox"));
+        if (clearTextElement) textElement.text = "";
+        textElement.text += message;
     }
 
-    public void PrintToConsole(string text)
+    public void PrintToConsole(string message, bool clearTextElement = false)
     {
-        ((TextElement)_secondDisplayUiReferences.GetElement("debug-console-module-textbox")).text = text;
+        var textElement = ((TextElement)mainScreen.GetElement("debug-console-module-textbox"));
+        if (clearTextElement) textElement.text = "";
+        textElement.text += message;
     }
 
     public void ControllerButtonWasPressed(string btn_name) {
