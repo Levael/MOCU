@@ -20,7 +20,7 @@ public class Cedrus : MonoBehaviour
 
     public event Action<SignalFromParticipant> gotData;     // calls every subscribed to it functions if got any data from participant (checks buffer every frame)
 
-    //private UiHandler _uiHandler;
+    private UiHandler _uiHandler;
     //private AnswerHandler _answerHandler;
 
     private SerialPort _serialPort;
@@ -35,7 +35,7 @@ public class Cedrus : MonoBehaviour
 
     void OnEnable()
     {
-        //_uiHandler = GetComponent<UiHandler>();
+        _uiHandler = GetComponent<UiHandler>();
         //_answerHandler = GetComponent<AnswerHandler>();
 
         _dataQueue = new();
@@ -100,8 +100,8 @@ public class Cedrus : MonoBehaviour
                 _portName = null;
             }
 
-
             _portName = GetCedrusPortName(_targetDeviceId);
+
             if (string.IsNullOrEmpty(_portName)) return DeviceConnectionStatus.Disconnected;
 
             _serialPort = new SerialPort(_portName)

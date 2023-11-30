@@ -20,6 +20,18 @@
         <TextElement class="status-block-text" text="Oculus"/>
     </VisualElement>
 
+    
+    <VisualElement class="status-block" name="cedrus-status-block">
+        <VisualElement class="status-block-color"/>
+        <TextElement class="status-block-text" text="Cedrus"/>
+    </VisualElement>
+
+
+    <VisualElement class="status-block" name="gamepad-status-block">
+        <VisualElement class="status-block-color"/>
+        <TextElement class="status-block-text" text="Gamepad"/>
+    </VisualElement>
+
 
     <VisualElement class="status-block" name="audio-status-block">
         <VisualElement class="status-block-color"/>

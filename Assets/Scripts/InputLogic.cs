@@ -15,18 +15,18 @@ public class InputLogic : MonoBehaviour
 
     public void TestMethod(string text)
     {
-        _uiHandler.PrintToWarnings(text);
+        //_uiHandler.PrintToWarnings(text);
     }
 
     
 
 
-    public void IntercomFromResearcher()
+    public void IntercomFromResearcherStarted()
     {
         _uiHandler.mainScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
         _uiHandler.mainScreen.GetElement("controls-intercom-part").AddToClassList("isOutcomming");
     }
-    public void IntercomFromResearcherWasReleased()
+    public void IntercomFromResearcherStopped()
     {
         if (!_uiHandler.mainScreen.GetElement("controls-intercom-part").ClassListContains("isIncomming"))
         {
@@ -36,12 +36,12 @@ public class InputLogic : MonoBehaviour
         _uiHandler.mainScreen.GetElement("controls-intercom-part").RemoveFromClassList("isOutcomming");
     }
 
-    public void IntercomFromParticipant()
+    public void IntercomFromParticipantStarted()
     {
         _uiHandler.mainScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
         _uiHandler.mainScreen.GetElement("controls-intercom-part").AddToClassList("isIncomming");
     }
-    public void IntercomFromParticipantWasReleased()
+    public void IntercomFromParticipantStopped()
     {
         if (!_uiHandler.mainScreen.GetElement("controls-intercom-part").ClassListContains("isOutcomming"))
         {
@@ -50,6 +50,8 @@ public class InputLogic : MonoBehaviour
         }
         _uiHandler.mainScreen.GetElement("controls-intercom-part").RemoveFromClassList("isIncomming");
     }
+
+
 
     public void GotPressSignalFromInputSystem(SignalFromParticipant signalFromParticipant)
     {

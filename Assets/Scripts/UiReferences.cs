@@ -75,6 +75,8 @@ public class UiReferences : MonoBehaviour
 
         _elements.Add("moog-status-block", _root.Q<VisualElement>("moog-status-block"));
         _elements.Add("oculus-status-block", _root.Q<VisualElement>("oculus-status-block"));
+        _elements.Add("cedrus-status-block", _root.Q<VisualElement>("cedrus-status-block"));
+        _elements.Add("gamepad-status-block", _root.Q<VisualElement>("gamepad-status-block"));
         _elements.Add("audio-status-block", _root.Q<VisualElement>("audio-status-block"));
         _elements.Add("eeg-status-block", _root.Q<VisualElement>("eeg-status-block"));
         _elements.Add("trials-status-block", _root.Q<VisualElement>("trials-status-block"));
@@ -110,11 +112,6 @@ public class UiReferences : MonoBehaviour
 
         _elements.Add("cpu-data-average-usage", _root.Q<VisualElement>("cpu-data-average-usage"));
         _elements.Add("memory-data-average-usage", _root.Q<VisualElement>("memory-data-average-usage"));
-
-
-
-
-
         
     }
 

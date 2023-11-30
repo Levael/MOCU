@@ -7,7 +7,8 @@ public enum DeviceConnectionStatus
 {
     Connected,
     Disconnected,
-    InProgress
+    InProgress,
+    NotRelevant
 }
 
 /// <summary>

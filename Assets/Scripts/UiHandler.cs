@@ -16,6 +16,7 @@ public class UiHandler : MonoBehaviour
     private ForTests _forTests;
     private Cedrus _cedrus;
     private AnswerHandler _answerHandler;
+    private ConnectionsStatusesHandler _connectionsStatusesHandler;
 
     private VisualElement _activeTab;       // main display
     private VisualElement _openedTab;       // second display
@@ -27,7 +28,7 @@ public class UiHandler : MonoBehaviour
 
 
 
-    void OnEnable()
+    void Awake()
     {
         _mainDisplayUiReferences = mainDisplayGameObject.GetComponent<UiReferences>();
         _secondDisplayUiReferences = secondDisplayGameObject.GetComponent<UiReferences>();
@@ -35,6 +36,8 @@ public class UiHandler : MonoBehaviour
         _forTests = GetComponent<ForTests>();
         _cedrus = GetComponent<Cedrus>();
         _answerHandler = GetComponent<AnswerHandler>();
+        _connectionsStatusesHandler = GetComponent<ConnectionsStatusesHandler>();
+
     }
 
     void Start()
@@ -47,13 +50,13 @@ public class UiHandler : MonoBehaviour
         PrintToConsole(_forTests.getStats(), clearTextElement: true);
         PrintToInfo($"Cedrus connection: {_cedrus.CedrusConnectionStatus}\nAnswers got: {_answerHandler.answers.Count}", clearTextElement: true);
 
-        PrintToWarnings("", clearTextElement: true);
+        /*PrintToWarnings("", clearTextElement: true);
         foreach (var answerStruct in _answerHandler.answers)
         {
             PrintToWarnings($"{answerStruct.answer} - {answerStruct.timestamp.ToBinary()}\n", clearTextElement: false);
-        }
+        }*/
 
-        //UpdateConnectionStatuses();
+        _connectionsStatusesHandler.UpdateConnectionStatuses();
     }
 
 
@@ -76,17 +79,6 @@ public class UiHandler : MonoBehaviour
         if (clearTextElement) textElement.text = "";
         textElement.text += message;
     }
-
-    private void UpdateConnectionStatuses()
-    {
-        //UpdateStatusBox(deviceName: "Cedrus", deviceStatus: _cedrus.CedrusConnectionStatus);
-    }
-
-    private void UpdateStatusBox(string deviceName, DeviceConnectionStatus deviceStatus)
-    {
-
-    }
-
 
 
     public void ControllerButtonWasPressed(string btn_name) {

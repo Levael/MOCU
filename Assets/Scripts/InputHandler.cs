@@ -29,16 +29,35 @@ public class InputHandler : MonoBehaviour
         _inputSystem_actionHandlers = new()
         {
             // Part of "Intercom" action map
-            { "Input",      (OnPressed: GotInputIntercomSignal,     OnReleased: InputIntercomButtonWasReleased)},
-            { "Output",     (OnPressed: GotOutputIntercomSignal,    OnReleased: OutputIntercomButtonWasReleased)},
+            { "Input",      (OnPressed: GotSignalFromInputIntercom,     OnReleased: InputIntercomButtonWasReleased)},
+            { "Output",     (OnPressed: GotSignalFromOutputIntercom,    OnReleased: OutputIntercomButtonWasReleased)},
 
             // Part of "Controller" action map
-            { "Left",       (OnPressed: GotSignalFromInputSystem,   OnReleased: InputSystemButtonWasReleased)},
-            { "Right",      (OnPressed: GotSignalFromInputSystem,   OnReleased: InputSystemButtonWasReleased)},
-            { "Up",         (OnPressed: GotSignalFromInputSystem,   OnReleased: InputSystemButtonWasReleased)},
-            { "Down",       (OnPressed: GotSignalFromInputSystem,   OnReleased: InputSystemButtonWasReleased)},
-            { "Center",     (OnPressed: GotSignalFromInputSystem,   OnReleased: InputSystemButtonWasReleased)}
+            { "Left",       (OnPressed: GotSignalFromInputSystem,       OnReleased: InputSystemButtonWasReleased)},
+            { "Right",      (OnPressed: GotSignalFromInputSystem,       OnReleased: InputSystemButtonWasReleased)},
+            { "Up",         (OnPressed: GotSignalFromInputSystem,       OnReleased: InputSystemButtonWasReleased)},
+            { "Down",       (OnPressed: GotSignalFromInputSystem,       OnReleased: InputSystemButtonWasReleased)},
+            { "Center",     (OnPressed: GotSignalFromInputSystem,       OnReleased: InputSystemButtonWasReleased)}
         };
+
+        _actionNameToSignalMap = new()
+        {
+            { "Left",   SignalFromParticipant.Left },
+            { "Right",  SignalFromParticipant.Right },
+            { "Up",     SignalFromParticipant.Up },
+            { "Down",   SignalFromParticipant.Down },
+            { "Center", SignalFromParticipant.Center }
+        };
+
+        // Cedrus ASCII codes are stored in "Cedrus class"
+        //private Dictionary<SignalFromParticipant, Action<string>> _cedrusSignalHandlers; (from header)
+        /*_cedrusCodes_answerSignals_Relations = new() {
+            { "a", SignalFromParticipant.Up    },
+            { "b", SignalFromParticipant.Left   },
+            { "c", SignalFromParticipant.Center },
+            { "d", SignalFromParticipant.Right  },
+            { "e", SignalFromParticipant.Down }
+        };*/
 
         foreach (var actionMap in inputActions.actionMaps)
         {
@@ -59,27 +78,6 @@ public class InputHandler : MonoBehaviour
         // Due to the fact that Unity does not see Cedrus as a HID device, I had to write a separate class for it with its own event handler
         _cedrus.gotData += GotSignalFromCedrus;
 
-
-
-        // DICTIONARIES PART
-        _actionNameToSignalMap = new()
-        {
-            { "Left",   SignalFromParticipant.Left },
-            { "Right",  SignalFromParticipant.Right },
-            { "Up",     SignalFromParticipant.Up },
-            { "Down",   SignalFromParticipant.Down },
-            { "Center", SignalFromParticipant.Center }
-        };
-
-        // Cedrus ASCII codes are stored in "Cedrus class"
-        //private Dictionary<SignalFromParticipant, Action<string>> _cedrusSignalHandlers; (from header)
-        /*_cedrusCodes_answerSignals_Relations = new() {
-            { "a", SignalFromParticipant.Up    },
-            { "b", SignalFromParticipant.Left   },
-            { "c", SignalFromParticipant.Center },
-            { "d", SignalFromParticipant.Right  },
-            { "e", SignalFromParticipant.Down }
-        };*/
     }
 
     private void Start()
@@ -115,24 +113,24 @@ public class InputHandler : MonoBehaviour
     /// <summary>
     /// When participant calls
     /// </summary>
-    private void GotInputIntercomSignal(InputAction.CallbackContext context)
+    private void GotSignalFromInputIntercom(InputAction.CallbackContext context)
     {
-        _inputLogic.IntercomFromParticipant();
+        _inputLogic.IntercomFromParticipantStarted();
     }
     private void InputIntercomButtonWasReleased(InputAction.CallbackContext context)
     {
-        _inputLogic.IntercomFromParticipantWasReleased();
+        _inputLogic.IntercomFromParticipantStopped();
     }
 
     /// <summary>
     /// When researcher calls
     /// </summary>
-    private void GotOutputIntercomSignal(InputAction.CallbackContext context)
+    private void GotSignalFromOutputIntercom(InputAction.CallbackContext context)
     {
-        _inputLogic.IntercomFromResearcher();
+        _inputLogic.IntercomFromResearcherStarted();
     }
     private void OutputIntercomButtonWasReleased(InputAction.CallbackContext context)
     {
-        _inputLogic.IntercomFromResearcherWasReleased();
+        _inputLogic.IntercomFromResearcherStopped();
     }
 }
