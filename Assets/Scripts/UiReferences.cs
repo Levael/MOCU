@@ -71,7 +71,7 @@ public class UiReferences : MonoBehaviour
         _elements.Add("controller-left-btn", _root.Q<VisualElement>("controller-left-btn"));
         _elements.Add("controller-center-btn", _root.Q<VisualElement>("controller-center-btn"));
         _elements.Add("controller-right-btn", _root.Q<VisualElement>("controller-right-btn"));
-        _elements.Add("controller-bottom-btn", _root.Q<VisualElement>("controller-bottom-btn"));
+        _elements.Add("controller-down-btn", _root.Q<VisualElement>("controller-down-btn"));
 
         _elements.Add("moog-status-block", _root.Q<VisualElement>("moog-status-block"));
         _elements.Add("oculus-status-block", _root.Q<VisualElement>("oculus-status-block"));

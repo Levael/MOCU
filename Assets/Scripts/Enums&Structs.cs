@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 /// <summary>
 /// Status of device connection. May be 'Connected', 'Disconnected' or 'InProgress'
@@ -18,8 +17,8 @@ public enum SignalFromParticipant
 {
     Left,
     Right,
-    Top,
-    Bottom,
+    Up,
+    Down,
     Center,
     Intercom,
     Error,

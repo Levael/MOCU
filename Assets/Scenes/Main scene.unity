@@ -254,6 +254,7 @@ GameObject:
   - component: {fileID: 75438436}
   - component: {fileID: 75438437}
   - component: {fileID: 75438438}
+  - component: {fileID: 75438439}
   m_Layer: 0
   m_Name: Scripts
   m_TagString: Untagged
@@ -329,7 +330,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputActions: {fileID: -944628639613478452, guid: a483bc81b3713784b98baf954ec508ee, type: 3}
-  inputLogic: {fileID: 75438437}
 --- !u!114 &75438437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -352,6 +352,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7d8bd99b8101aa41aa42e67d2f32367, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CedrusConnectionStatus: 0
+--- !u!114 &75438439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75438430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ae91769467598e4d80bc7d444fbdd5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &78664784

@@ -1,95 +1,138 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
-using Assets.Scripts;
 
 
 public class InputHandler : MonoBehaviour
 {
     public InputActionAsset inputActions;
     private InputLogic      _inputLogic;
+    private Cedrus          _cedrus;
+    private UiHandler       _uiHandler;
 
-
-    private InputAction _keyboardIntercomOutputAction;
-    private InputAction _controllerIntercomInputAction;
-
-    private InputAction _controllerLeftAction;
-    private InputAction _controllerRightAction;
-    private InputAction _controllerUpAction;
-    private InputAction _controllerDownAction;
-    private InputAction _controllerCenterAction;
-
-    private Cedrus _cedrus;
+    /// Dictionary stores ActionName (from InputActionAsset) and tuple with two handlers: on "press" event and on "release" event
+    private Dictionary<string, (Action<InputAction.CallbackContext> OnPressed, Action<InputAction.CallbackContext> OnReleased)> _inputSystem_actionHandlers;
+    private Dictionary<string, SignalFromParticipant> _actionNameToSignalMap;
+    
 
 
 
     private void Awake()
     {
-        _keyboardIntercomOutputAction   = inputActions.FindActionMap("Intercom").FindAction("Keyboard_output");
-        _controllerIntercomInputAction  = inputActions.FindActionMap("Intercom").FindAction("Gamepad_input");
-
-        // controller here is not a gamepad but those 5 btns in general
-        _controllerLeftAction           = inputActions.FindActionMap("Controller").FindAction("Left");
-        _controllerRightAction          = inputActions.FindActionMap("Controller").FindAction("Right");
-        _controllerUpAction             = inputActions.FindActionMap("Controller").FindAction("Up");
-        _controllerDownAction           = inputActions.FindActionMap("Controller").FindAction("Down");
-        _controllerCenterAction         = inputActions.FindActionMap("Controller").FindAction("Center");
-    }
-
-    private void OnEnable()     // OnDisable is not done because I don't want to. Maybe add later
-    {
         _inputLogic = GetComponent<InputLogic>();
-        _cedrus = GetComponent<Cedrus>();
+        _cedrus     = GetComponent<Cedrus>();
+        _uiHandler  = GetComponent<UiHandler>();
+
+        // INPUT SYSTEM PART (gamepad, keyboard and other devices Unity support)
+        // Dictionary keys -- as specified in "InputActionAsset" (action.name)
+        _inputSystem_actionHandlers = new()
+        {
+            // Part of "Intercom" action map
+            { "Input",      (OnPressed: GotInputIntercomSignal,     OnReleased: InputIntercomButtonWasReleased)},
+            { "Output",     (OnPressed: GotOutputIntercomSignal,    OnReleased: OutputIntercomButtonWasReleased)},
+
+            // Part of "Controller" action map
+            { "Left",       (OnPressed: GotSignalFromInputSystem,   OnReleased: InputSystemButtonWasReleased)},
+            { "Right",      (OnPressed: GotSignalFromInputSystem,   OnReleased: InputSystemButtonWasReleased)},
+            { "Up",         (OnPressed: GotSignalFromInputSystem,   OnReleased: InputSystemButtonWasReleased)},
+            { "Down",       (OnPressed: GotSignalFromInputSystem,   OnReleased: InputSystemButtonWasReleased)},
+            { "Center",     (OnPressed: GotSignalFromInputSystem,   OnReleased: InputSystemButtonWasReleased)}
+        };
+
+        foreach (var actionMap in inputActions.actionMaps)
+        {
+            foreach (var action in actionMap.actions)
+            {
+                action.Enable();
+
+                if (_inputSystem_actionHandlers.TryGetValue(action.name, out var handlers))
+                {
+                    action.performed += handlers.OnPressed;
+                    action.canceled += handlers.OnReleased;
+                }
+            }
+        }
+
+
+        // CEDRUS PART
+        // Due to the fact that Unity does not see Cedrus as a HID device, I had to write a separate class for it with its own event handler
+        _cedrus.gotData += GotSignalFromCedrus;
 
 
 
-        _keyboardIntercomOutputAction.Enable();
-        _controllerIntercomInputAction.Enable();
+        // DICTIONARIES PART
+        _actionNameToSignalMap = new()
+        {
+            { "Left",   SignalFromParticipant.Left },
+            { "Right",  SignalFromParticipant.Right },
+            { "Up",     SignalFromParticipant.Up },
+            { "Down",   SignalFromParticipant.Down },
+            { "Center", SignalFromParticipant.Center }
+        };
 
-        _controllerLeftAction.Enable();
-        _controllerRightAction.Enable();
-        _controllerUpAction.Enable();
-        _controllerDownAction.Enable();
-        _controllerCenterAction.Enable();
-
-        // TODO: maybe change all of it to:
-        // _controller.performed += _inputLogic.ControllerPressed;
-        // _controller.canceled += _inputLogic.ControllerReleased;
-
-        _keyboardIntercomOutputAction.performed   += _inputLogic.IntercomFromResearcherPressed;
-        _keyboardIntercomOutputAction.canceled    += _inputLogic.IntercomFromResearcherReleased;
-        
-        _controllerIntercomInputAction.performed += _inputLogic.IntercomFromParticipantPressed;
-        _controllerIntercomInputAction.canceled  += _inputLogic.IntercomFromParticipantReleased;
-        
-        _controllerLeftAction.performed     += _inputLogic.AnswerLeftPressed;
-        _controllerLeftAction.canceled      += _inputLogic.AnswerLeftReleased;
-
-        _controllerRightAction.performed    += _inputLogic.AnswerRightPressed;
-        _controllerRightAction.canceled     += _inputLogic.AnswerRightReleased;
-
-        _controllerUpAction.performed       += _inputLogic.AnswerUpPressed;
-        _controllerUpAction.canceled        += _inputLogic.AnswerUpReleased;
-
-        _controllerDownAction.performed     += _inputLogic.AnswerDownPressed;
-        _controllerDownAction.canceled      += _inputLogic.AnswerDownReleased;
-
-        _controllerCenterAction.performed   += _inputLogic.AnswerCenterPressed;
-        _controllerCenterAction.canceled    += _inputLogic.AnswerCenterReleased;
-
-        _cedrus.gotData += _inputLogic.GotAnswerFromCedrus;
-
-
-        // here will be Cedrus EventListeners
-        // ...
-
-        // here will be Ui EventListeners
-        // ...
+        // Cedrus ASCII codes are stored in "Cedrus class"
+        //private Dictionary<SignalFromParticipant, Action<string>> _cedrusSignalHandlers; (from header)
+        /*_cedrusCodes_answerSignals_Relations = new() {
+            { "a", SignalFromParticipant.Up    },
+            { "b", SignalFromParticipant.Left   },
+            { "c", SignalFromParticipant.Center },
+            { "d", SignalFromParticipant.Right  },
+            { "e", SignalFromParticipant.Down }
+        };*/
     }
 
     private void Start()
     {
-        //_inputLogic.TestMethod(_cedrus.answer);
-        //StartCoroutine(CheckPortsCoroutine());
+    }
+
+
+
+    //THE NESTING IN FOLLOWING FUNCTIONS MAY SEEM REDUNDANT, BUT LET IT BE JUST IN CASE
+
+    private void GotSignalFromCedrus(SignalFromParticipant signalFromParticipant)
+    {
+        _inputLogic.GotAnswerFromCedrus(signalFromParticipant);
+    }
+    private void CudrusButtonWasReleased(InputAction.CallbackContext context)
+    {
+        // In ASCII mode Cedrus can't detect if button was released, it sends only "pressEvent"
+    }
+
+    private void GotSignalFromInputSystem(InputAction.CallbackContext context)
+    {
+        if (_actionNameToSignalMap.TryGetValue(context.action.name, out SignalFromParticipant signalFromParticipant))
+            _inputLogic.GotPressSignalFromInputSystem(signalFromParticipant);
+
+    }
+    private void InputSystemButtonWasReleased(InputAction.CallbackContext context)
+    {
+        if (_actionNameToSignalMap.TryGetValue(context.action.name, out SignalFromParticipant signalFromParticipant))
+            _inputLogic.GotReleaseSignalFromInputSystem(signalFromParticipant);
+    }
+
+
+    /// <summary>
+    /// When participant calls
+    /// </summary>
+    private void GotInputIntercomSignal(InputAction.CallbackContext context)
+    {
+        _inputLogic.IntercomFromParticipant();
+    }
+    private void InputIntercomButtonWasReleased(InputAction.CallbackContext context)
+    {
+        _inputLogic.IntercomFromParticipantWasReleased();
+    }
+
+    /// <summary>
+    /// When researcher calls
+    /// </summary>
+    private void GotOutputIntercomSignal(InputAction.CallbackContext context)
+    {
+        _inputLogic.IntercomFromResearcher();
+    }
+    private void OutputIntercomButtonWasReleased(InputAction.CallbackContext context)
+    {
+        _inputLogic.IntercomFromResearcherWasReleased();
     }
 }

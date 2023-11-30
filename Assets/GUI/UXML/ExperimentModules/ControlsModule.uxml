@@ -68,7 +68,7 @@
             <VisualElement class="button" name="controller-right-btn"><TextElement text="Right"/></VisualElement>
         </VisualElement>
         <VisualElement name="controller-third-row">
-            <VisualElement class="button" name="controller-bottom-btn"><TextElement text="Bottom"/></VisualElement>
+            <VisualElement class="button" name="controller-down-btn"><TextElement text="Bottom"/></VisualElement>
         </VisualElement>
     </VisualElement>
 

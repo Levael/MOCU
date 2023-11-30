@@ -18,10 +18,10 @@ public class Cedrus : MonoBehaviour
 {
     public DeviceConnectionStatus CedrusConnectionStatus;
 
-    public event Action<SignalFromParticipant> gotData;
+    public event Action<SignalFromParticipant> gotData;     // calls every subscribed to it functions if got any data from participant (checks buffer every frame)
 
-    private UiHandler _uiHandler;
-    private AnswerHandler _answerHandler;
+    //private UiHandler _uiHandler;
+    //private AnswerHandler _answerHandler;
 
     private SerialPort _serialPort;
     private float _checkPortConnectionTimeInterval = 0.1f;  // sec
@@ -35,20 +35,19 @@ public class Cedrus : MonoBehaviour
 
     void OnEnable()
     {
-        _uiHandler = GetComponent<UiHandler>();
-        _answerHandler = GetComponent<AnswerHandler>();
+        //_uiHandler = GetComponent<UiHandler>();
+        //_answerHandler = GetComponent<AnswerHandler>();
 
         _dataQueue = new();
         _targetDeviceId = @"FTDIBUS\VID_0403+PID_6001";   // todo: move to config
         CedrusConnectionStatus = DeviceConnectionStatus.Disconnected;
 
-        // TODO" change "top" to "up" and "bottom" to "down"
         _cedrusCodes_answerSignals_Relations = new() {
-            { "a", SignalFromParticipant.Top    },
+            { "a", SignalFromParticipant.Up    },
             { "b", SignalFromParticipant.Left   },
             { "c", SignalFromParticipant.Center },
             { "d", SignalFromParticipant.Right  },
-            { "e", SignalFromParticipant.Bottom }
+            { "e", SignalFromParticipant.Down }
         };
     }
 
@@ -62,15 +61,10 @@ public class Cedrus : MonoBehaviour
     {
         if (CedrusConnectionStatus == DeviceConnectionStatus.Connected) ReadDataFromBufer();    // checks por buffer every frame in case any new data
         
-
-        // TODO: maybe ove it to "InputLogic"
         if (_dataQueue.Count > 0)
         {
             while (_dataQueue.TryDequeue(out string data))                                      // the loop is needed in case several clicks were made in one frame
             {
-                //gotData?.Invoke();  // if somebody subscribed -- let's go
-
-
                 // Translates Cedrus ASCII string to "SignalFromParticipant" enum type
 
                 var signalFromParticipant = SignalFromParticipant.Error;                        // ideally, this will not happen at all, it's needed as a stub
@@ -80,8 +74,7 @@ public class Cedrus : MonoBehaviour
                 else if (data.Length > 1)                                                       // if several buttons were pressed simultaneously
                     signalFromParticipant = SignalFromParticipant.MultipleAnswer;
 
-                //_answerHandler.AddAnswer(signalFromParticipant);
-                gotData?.Invoke(signalFromParticipant);
+                gotData?.Invoke(signalFromParticipant);                                         // trigger "InputHandler" function
             }
         }
     }

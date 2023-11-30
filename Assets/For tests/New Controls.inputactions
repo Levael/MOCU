@@ -76,6 +76,17 @@
                 },
                 {
                     "name": "",
+                    "id": "fab8b894-5c12-4bb0-9368-fe7a9038cd90",
+                    "path": "<Keyboard>/numpad4",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Left",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "27b3f71d-a391-4fa3-9585-bd14d3521d12",
                     "path": "<XInputController>/rightTrigger",
                     "interactions": "Press",
@@ -90,6 +101,17 @@
                     "id": "1b44440c-4567-4cfc-8814-2ac31a40361e",
                     "path": "<XInputController>/rightShoulder",
                     "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e865396e-0ef1-4a99-b66c-d57c45da506c",
+                    "path": "<Keyboard>/numpad6",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Right",
@@ -139,6 +161,39 @@
                     "action": "Center",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bd41b4cd-73a7-418d-a3d6-98d55cee17b0",
+                    "path": "<Keyboard>/numpad5",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Center",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "347cfc3a-2bbc-48ff-beb8-b61c44763978",
+                    "path": "<Keyboard>/numpad8",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Up",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f286a83d-5f12-4882-8c61-21fc778e5331",
+                    "path": "<Keyboard>/numpad2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Down",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -147,7 +202,7 @@
             "id": "0cb785cc-4489-4f35-a399-8f31c38c861b",
             "actions": [
                 {
-                    "name": "Keyboard_output",
+                    "name": "Output",
                     "type": "Button",
                     "id": "6c145ccf-6750-4444-bb7e-c65ac1bac1aa",
                     "expectedControlType": "Button",
@@ -156,7 +211,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Gamepad_input",
+                    "name": "Input",
                     "type": "Button",
                     "id": "cfb2e0bf-8d6e-4bb6-89e0-8631b91502ff",
                     "expectedControlType": "Button",
@@ -173,7 +228,7 @@
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "Keyboard_output",
+                    "action": "Output",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -184,7 +239,7 @@
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "Gamepad_input",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -195,7 +250,7 @@
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "Gamepad_input",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -206,7 +261,7 @@
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "Gamepad_input",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -217,7 +272,7 @@
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "Gamepad_input",
+                    "action": "Input",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
