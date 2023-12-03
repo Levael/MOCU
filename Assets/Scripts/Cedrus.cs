@@ -24,7 +24,7 @@ public class Cedrus : MonoBehaviour
     //private AnswerHandler _answerHandler;
 
     private SerialPort _serialPort;
-    private float _checkPortConnectionTimeInterval = 0.1f;  // sec
+    //private float _checkPortConnectionTimeInterval = 0.1f;  // sec
     private int _checkPortConnectionReadTimeout = 0;        // ms. If there will be any issue -- change to 1
     private ConcurrentQueue<string> _dataQueue;             // todo: rename it later
     private string _targetDeviceId;
@@ -53,8 +53,7 @@ public class Cedrus : MonoBehaviour
 
     void Start()
     {
-        CedrusConnectionStatus = TryConnect();
-        StartCoroutine(CheckPortConnection());
+        
     }
 
     void Update()
@@ -82,7 +81,7 @@ public class Cedrus : MonoBehaviour
 
 
 
-    private DeviceConnectionStatus TryConnect()
+    public DeviceConnectionStatus TryConnect()
     {
         // SOME NOTES:
         // serialPort.Open() -- is pretty heavy function. It takes about 4sec. But it shouldn't...
@@ -174,7 +173,7 @@ public class Cedrus : MonoBehaviour
     /// <summary>
     /// Coroutine that checks every "_checkPortConnectionTimeInterval" seconds if device is still connected and if not -- updates "CedrusConnectionStatus"
     /// </summary>
-    IEnumerator CheckPortConnection()
+    public IEnumerator CheckPortConnection(float checkConnectionTimeInterval)
     {
         while (true)
         {
@@ -182,7 +181,7 @@ public class Cedrus : MonoBehaviour
             catch (TimeoutException)    { /* Do nothing */ }                                                // Device is connected but didn't send anything, it's ok
             catch                       { CedrusConnectionStatus = DeviceConnectionStatus.Disconnected; }   // if not "TimeoutException"-- device disconected
 
-            yield return new WaitForSeconds(_checkPortConnectionTimeInterval);                              // if "yield return null" -- would wait until text frame
+            yield return new WaitForSeconds(checkConnectionTimeInterval);                                   // if "yield return null" -- would wait until text frame
         }
     }
 

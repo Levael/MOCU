@@ -8,6 +8,7 @@ public class ConnectionsStatusesHandler : MonoBehaviour
 
     private Cedrus _cedrus;
     private UiHandler _uiHandler;
+    private InputHandler _inputHandler;
 
     private Dictionary<string, VisualElement> _deviceNameToUxmlBlockMap;
     private Dictionary<DeviceConnectionStatus, string> _deviceConnectionStatusToColorMap;
@@ -18,10 +19,12 @@ public class ConnectionsStatusesHandler : MonoBehaviour
     {
         _cedrus = GetComponent<Cedrus>();
         _uiHandler = GetComponent<UiHandler>();
+        _inputHandler = GetComponent<InputHandler>();
     }
 
     void Start()
     {
+        // those dictionaries are in Start func because otherwise "UpdateConnectionStatuses" called before their initialization
         _deviceNameToUxmlBlockMap = new()
         {
             { "Moog",       _uiHandler.mainScreen.GetElement("moog-status-block") },
@@ -42,7 +45,9 @@ public class ConnectionsStatusesHandler : MonoBehaviour
             { DeviceConnectionStatus.NotRelevant,   "#9A9B9B" }     // gray
         };
 
-        classIsReady = true;
+        // todo: add here event listeners for ReConnection
+
+        classIsReady = true;    // is needed to prevent access to fields/methods that have not yet been initialized
     }
 
 
@@ -52,6 +57,8 @@ public class ConnectionsStatusesHandler : MonoBehaviour
         if (!classIsReady) return;
 
         UpdateStatusBox(deviceName: "Cedrus", deviceStatus: _cedrus.CedrusConnectionStatus);
+        UpdateStatusBox(deviceName: "Gamepad", deviceStatus: _inputHandler.GamepadConnectionStatus);
+        UpdateStatusBox(deviceName: "Oculus", deviceStatus: _inputHandler.XRConnectionStatus);
     }
 
     private void UpdateStatusBox(string deviceName, DeviceConnectionStatus deviceStatus)

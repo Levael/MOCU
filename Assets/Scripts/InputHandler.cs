@@ -2,7 +2,8 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using System.Collections;
+using UnityEngine.XR;
 
 public class InputHandler : MonoBehaviour
 {
@@ -11,21 +12,29 @@ public class InputHandler : MonoBehaviour
     private Cedrus          _cedrus;
     private UiHandler       _uiHandler;
 
-    /// Dictionary stores ActionName (from InputActionAsset) and tuple with two handlers: on "press" event and on "release" event
     private Dictionary<string, (Action<InputAction.CallbackContext> OnPressed, Action<InputAction.CallbackContext> OnReleased)> _inputSystem_actionHandlers;
     private Dictionary<string, SignalFromParticipant> _actionNameToSignalMap;
-    
+
+    public DeviceConnectionStatus GamepadConnectionStatus;
+    public DeviceConnectionStatus XRConnectionStatus;
+
+    private float _checkGamepadConnectionTimeInterval       = 0.1f; // sec
+    private float _checkCedrusPortConnectionTimeInterval    = 0.1f; // sec
+    private float _checkXRConnectionTimeInterval            = 0.1f; // sec
+
 
 
 
     private void Awake()
     {
+        GamepadConnectionStatus = DeviceConnectionStatus.NotRelevant;
+
         _inputLogic = GetComponent<InputLogic>();
         _cedrus     = GetComponent<Cedrus>();
         _uiHandler  = GetComponent<UiHandler>();
 
         // INPUT SYSTEM PART (gamepad, keyboard and other devices Unity support)
-        // Dictionary keys -- as specified in "InputActionAsset" (action.name)
+        // Dictionary stores ActionName (from InputActionAsset) and tuple with two handlers: on "press" event and on "release" event
         _inputSystem_actionHandlers = new()
         {
             // Part of "Intercom" action map
@@ -59,6 +68,7 @@ public class InputHandler : MonoBehaviour
             { "e", SignalFromParticipant.Down }
         };*/
 
+        // activates every action from InputSystem and, if it's in dict, adds its handler
         foreach (var actionMap in inputActions.actionMaps)
         {
             foreach (var action in actionMap.actions)
@@ -77,12 +87,19 @@ public class InputHandler : MonoBehaviour
         // CEDRUS PART
         // Due to the fact that Unity does not see Cedrus as a HID device, I had to write a separate class for it with its own event handler
         _cedrus.gotData += GotSignalFromCedrus;
-
     }
 
-    private void Start()
+
+    void Start()
     {
+        _cedrus.CedrusConnectionStatus = _cedrus.TryConnect();
+        StartCoroutine(_cedrus.CheckPortConnection(_checkCedrusPortConnectionTimeInterval));
+        StartCoroutine(CheckGamepadConnection(_checkGamepadConnectionTimeInterval));
+        StartCoroutine(CheckXRConnection(_checkXRConnectionTimeInterval));
     }
+
+    void Update() { }
+
 
 
 
@@ -132,5 +149,44 @@ public class InputHandler : MonoBehaviour
     private void OutputIntercomButtonWasReleased(InputAction.CallbackContext context)
     {
         _inputLogic.IntercomFromResearcherStopped();
+    }
+
+
+
+
+    // CONNECTION CHECKERS  // todo: maybe combine all of them into one function
+
+    private IEnumerator CheckGamepadConnection(float checkConnectionTimeInterval)
+    {
+        while (true)
+        {
+            try
+            {
+                if (Gamepad.current != null)    GamepadConnectionStatus = DeviceConnectionStatus.Connected;
+                else                            GamepadConnectionStatus = DeviceConnectionStatus.Disconnected;
+            }
+            catch {                             GamepadConnectionStatus = DeviceConnectionStatus.Disconnected; }
+
+            yield return new WaitForSeconds(checkConnectionTimeInterval);
+        }
+    }
+
+    /// <summary>
+    /// it works half-way -- it doesn't understand if you turn off the deviceю
+    /// and also considers it disabled even if it is connected but has not yet been put on your head
+    /// </summary>
+    private IEnumerator CheckXRConnection(float checkConnectionTimeInterval)
+    {
+        while (true)
+        {
+            try
+            {
+                if (XRSettings.isDeviceActive)  XRConnectionStatus = DeviceConnectionStatus.Connected;
+                else                            XRConnectionStatus = DeviceConnectionStatus.Disconnected;
+            }
+            catch {                             XRConnectionStatus = DeviceConnectionStatus.Disconnected; }
+
+            yield return new WaitForSeconds(checkConnectionTimeInterval);
+        }
     }
 }

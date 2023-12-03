@@ -22,6 +22,8 @@
             <VisualElement class="main-btns-row-name"><TextElement text="Trials"/></VisualElement>
             <VisualElement class="main-btns-row-btns">
                 <VisualElement class="button" name="trials-generate-btn"><TextElement text="Generate"/></VisualElement>
+                <VisualElement class="button" name="empty-trials-btn"><TextElement text=""/></VisualElement>
+                <VisualElement class="button" name="test-trials-generate-btn"><TextElement text="Generate         test run"/></VisualElement>
             </VisualElement>
         </VisualElement>
         <VisualElement name="main-btns-third-row">

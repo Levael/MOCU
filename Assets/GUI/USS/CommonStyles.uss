@@ -18,11 +18,13 @@ TextElement {
 	color: var(--main-font-color);
 	-unity-text-align: middle-center;
 	-unity-font-style: bold;
+	/* white-space: pre-wrap;	 if there is '\n' in text -- execute it as new line  --- doesn't work in Unity*/
 }
 
 .button {
 	justify-content: center;
 	background-color: var(--main-buttons-color);
+	padding: 5px;
 }
 
 .button:hover {
