@@ -165,13 +165,18 @@
 }
 
 /* center column */
-#moog-engage-btn, #multiple-btns-wrapper, #empty-trials-btn {
+#moog-engage-btn, #multiple-btns-wrapper, #main-test-btn {
 	margin: 0px 7px;
 	flex-grow: 1;
 }
 
-#empty-trials-btn {
-	visibility: hidden;
+#main-test-btn {
+	background-color: var(--warning-color);
+	/* visibility: hidden; */
+}
+
+#main-test-btn TextElement {
+	color: var(--contrast-font-color);
 }
 
 /* intercom */

@@ -60,7 +60,7 @@ public class UiReferences : MonoBehaviour
         _elements.Add("moog-engage-btn", _root.Q<VisualElement>("moog-engage-btn"));
         _elements.Add("moog-park-btn", _root.Q<VisualElement>("moog-park-btn"));
         _elements.Add("trials-generate-btn", _root.Q<VisualElement>("trials-generate-btn"));
-        _elements.Add("empty-trials-btn", _root.Q<VisualElement>("empty-trials-btn"));
+        _elements.Add("main-test-btn", _root.Q<VisualElement>("main-test-btn"));
         _elements.Add("test-trials-generate-btn", _root.Q<VisualElement>("test-trials-generate-btn"));
         _elements.Add("experiment-start-btn", _root.Q<VisualElement>("experiment-start-btn"));
         _elements.Add("experiment-pause-btn", _root.Q<VisualElement>("experiment-pause-btn"));
