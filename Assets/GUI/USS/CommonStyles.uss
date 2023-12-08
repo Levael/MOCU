@@ -13,6 +13,11 @@
 }
 
 
+.isDisabled {
+	opacity: 0.4;
+}
+
+
 
 TextElement {
 	color: var(--main-font-color);
@@ -36,13 +41,15 @@ TextElement {
 	background-color: red; /*#6a6a6a;*/
 }
 
-.button.isDisabled {
+/* .button.isDisabled, .button.isDisabled * {
 	background-color: var(--main-buttons-disabled-color);
 }
 
 .button.isDisabled TextElement {
 	color: var(--main-disabled-font-color);
-}
+} */
+
+
 
 
 

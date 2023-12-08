@@ -9,6 +9,7 @@ public class ConnectionsStatusesHandler : MonoBehaviour
     private Cedrus _cedrus;
     private UiHandler _uiHandler;
     private InputHandler _inputHandler;
+    private AudioHandler _audioHandler;
 
     private Dictionary<string, VisualElement> _deviceNameToUxmlBlockMap;
     private Dictionary<DeviceConnectionStatus, string> _deviceConnectionStatusToColorMap;
@@ -20,6 +21,7 @@ public class ConnectionsStatusesHandler : MonoBehaviour
         _cedrus = GetComponent<Cedrus>();
         _uiHandler = GetComponent<UiHandler>();
         _inputHandler = GetComponent<InputHandler>();
+        _audioHandler = GetComponent<AudioHandler>();
     }
 
     void Start()
@@ -59,6 +61,7 @@ public class ConnectionsStatusesHandler : MonoBehaviour
         UpdateStatusBox(deviceName: "Cedrus", deviceStatus: _cedrus.CedrusConnectionStatus);
         UpdateStatusBox(deviceName: "Gamepad", deviceStatus: _inputHandler.GamepadConnectionStatus);
         UpdateStatusBox(deviceName: "Oculus", deviceStatus: _inputHandler.XRConnectionStatus);
+        UpdateStatusBox(deviceName: "Audio", deviceStatus: _audioHandler.audioPipeConnectionStatus);
     }
 
     private void UpdateStatusBox(string deviceName, DeviceConnectionStatus deviceStatus)

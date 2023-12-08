@@ -11,6 +11,18 @@ public enum DeviceConnectionStatus
     NotRelevant
 }
 
+/*public class DeviceInfo
+{
+    public DeviceInfo(string name, DeviceConnectionStatus status)
+    {
+        Status = status;
+        Name = name;
+    }
+
+    public DeviceConnectionStatus Status { get; set; }
+    public string Name { get; set; }
+}*/
+
 /// <summary>
 /// Just to know on what participant pressed
 /// </summary>

@@ -256,18 +256,18 @@
 	background-image: url('/Assets/Images/SVG/IntercomDisabledIcon.svg') !important;
 }
 
-#controls-intercom-part.isDisabled #intercom-main-icon .icon-color {
+/* #controls-intercom-part.isDisabled #intercom-main-icon .icon-color {
 	background-color: var(--secondary-images-color) !important;
-}
+} */
 
 #intercom-text {
 	font-size: 10px;
 	margin-top: 3px;
 }
 
-#controls-intercom-part.isDisabled #intercom-text {
+/* #controls-intercom-part.isDisabled #intercom-text {
 	color: var(--secondary-font-color);
-}
+} */
 
 /* controller */
 #controls-controller-part {

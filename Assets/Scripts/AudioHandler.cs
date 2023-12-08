@@ -1,35 +1,115 @@
-﻿using System.Collections.Concurrent;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
+
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class NamedPipeClient : MonoBehaviour
+
+public class AudioHandler : MonoBehaviour
 {
+    public DeviceConnectionStatus audioPipeConnectionStatus;
+
     private NamedPipeClientStream pipeClient;
     private StreamReader streamReader;
     private StreamWriter streamWriter;
-    private ConcurrentQueue<string> messageQueue = new ConcurrentQueue<string>();
+    private ConcurrentQueue<string> inputMessageQueue;
+    private ConcurrentQueue<string> outputMessageQueue;
+    private bool isProcessingWriting = false;
     private Process audioControlProcess;
     private UiHandler _uiHandler;
 
-    private void Awake()
+    void Awake()
     {
         _uiHandler = GetComponent<UiHandler>();
+        audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
+        inputMessageQueue = new();
+        outputMessageQueue = new();
     }
 
-    private async void Start()
+    async void Start()
     {
-        StartAudioControlProcess();
-        _uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommand("xxx"));
+        try
+        {
+            audioPipeConnectionStatus = DeviceConnectionStatus.InProgress;
+            StartAudioControlProcess();
 
-        pipeClient = new NamedPipeClientStream(".", "AudioPipe", PipeDirection.InOut, PipeOptions.Asynchronous);
-        await pipeClient.ConnectAsync();
-        streamReader = new StreamReader(pipeClient);
-        streamWriter = new StreamWriter(pipeClient);
-        ReadMessagesAsync();
+            _uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync("GetAudioDevices"));
+
+            pipeClient = new NamedPipeClientStream(".", "AudioPipe", PipeDirection.InOut, PipeOptions.Asynchronous);    // '.' means this PC, not via LAN
+            await pipeClient.ConnectAsync();
+            streamReader = new StreamReader(pipeClient);
+            streamWriter = new StreamWriter(pipeClient);
+            audioPipeConnectionStatus = DeviceConnectionStatus.Connected;
+
+            ReadMessagesAsync();
+
+            UnityEngine.Debug.Log("successful end of start method AudioHandler");
+        } catch
+        {
+            audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
+            UnityEngine.Debug.Log("Error in Start func AudioHandler");
+        }
+        
+    }
+
+    void Update()
+    {
+        while (inputMessageQueue.TryDequeue(out string message))
+        {
+            UnityEngine.Debug.Log("Received: " + message);
+        }
+    }
+
+    void OnDestroy()
+    {
+        try { streamReader?.Close();        } catch { }
+        try { streamWriter?.Close();        } catch { }
+        try { pipeClient?.Close();          } catch { }
+        try { pipeClient?.Dispose();        } catch { }
+        try { audioControlProcess?.Kill();  } catch { }
+
+        audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
+    }
+
+
+
+
+
+
+    async Task ProcessMessages()
+    {
+        while (!outputMessageQueue.IsEmpty)
+        {
+            if (outputMessageQueue.TryDequeue(out string message))
+            {
+                try
+                {
+                    await streamWriter.WriteLineAsync(message);
+                    await streamWriter.FlushAsync();
+                }
+                catch (InvalidOperationException ex)
+                {
+                    UnityEngine.Debug.LogError(ex.Message);
+                }
+            }
+        }
+
+        isProcessingWriting = false;
+    }
+
+    public async void SendCommandAsync(string command)
+    {
+        outputMessageQueue.Enqueue(command);
+
+        if (!isProcessingWriting)
+        {
+            isProcessingWriting = true;
+            ProcessMessages(); // this method is without "await" in order not to block the current thread
+        }
     }
 
     private async void ReadMessagesAsync()
@@ -39,49 +119,23 @@ public class NamedPipeClient : MonoBehaviour
             string response = await streamReader.ReadLineAsync();
             if (response != null)
             {
-                messageQueue.Enqueue(response);
+                inputMessageQueue.Enqueue(response);
+            } else
+            {
+                audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
             }
         }
     }
 
-    public async void SendCommand(string command)
+    private void StartAudioControlProcess()
     {
-        await streamWriter.WriteLineAsync(command);
-        await streamWriter.FlushAsync();
-    }
-
-    private void Update()
-    {
-        while (messageQueue.TryDequeue(out string message))
-        {
-            UnityEngine.Debug.Log("Received: " + message);
-        }
-    }
-
-    private void OnDestroy()
-    {
-        streamReader?.Close();
-        streamWriter?.Close();
-        pipeClient?.Close();
-    }
-
-    // Пример отправки команды
-    public void OnButtonPressed()
-    {
-        SendCommand("YourCommandHere");
-    }
-
-    void StartAudioControlProcess()
-    {
-        //string externalAppPath = "Assets/ExternalTools/AudioControl/AudioControl.exe";
-        //string externalAppPath = @"C:\Users\Levael\GitHub\MOCU\Assets\ExternalTools\AudioControl\AudioControl.exe";
-        string externalAppPath = @"C:\Users\Levael\GitHub\AudioControl\AudioControl\bin\Release\net7.0\AudioControl.exe";
-        int parentProcessId = Process.GetCurrentProcess().Id;
+        string relativeExternalAppPath = @"ExternalTools/AudioControl.exe"; // from "Assets" folder
+        string fullExternalAppPath = Path.Combine(Application.dataPath, relativeExternalAppPath);
 
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
-            FileName = externalAppPath,
-            Arguments = parentProcessId.ToString(),
+            FileName = fullExternalAppPath,
+            Arguments = Process.GetCurrentProcess().Id.ToString(),
             UseShellExecute = true,
             RedirectStandardOutput = false,
             CreateNoWindow = false
@@ -131,7 +185,7 @@ public class AudioHandler : MonoBehaviour
 
     void Start()
     {
-        _uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommand("xxx"));
+        _uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync("xxx"));
 
         cancellationTokenSource = new CancellationTokenSource();
 
@@ -227,16 +281,16 @@ public class AudioHandler : MonoBehaviour
         responseThread.Start();
     }
 
-    private void SendCommand(string command)
+    private void SendCommandAsync(string command)
     {
         try
         {
             if (streamWriter != null)
             {
-                UnityEngine.Debug.Log("SendCommand before");
+                UnityEngine.Debug.Log("SendCommandAsync before");
                 streamWriter.WriteLine(command);
                 streamWriter.Flush();
-                UnityEngine.Debug.Log("SendCommand after");
+                UnityEngine.Debug.Log("SendCommandAsync after");
             }
             else
             {
