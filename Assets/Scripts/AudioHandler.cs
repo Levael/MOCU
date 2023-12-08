@@ -8,6 +8,9 @@ using System.Collections.Concurrent;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+using AudioControl;
+using System.Xml.Linq;
+
 
 public class AudioHandler : MonoBehaviour
 {
@@ -37,21 +40,20 @@ public class AudioHandler : MonoBehaviour
             audioPipeConnectionStatus = DeviceConnectionStatus.InProgress;
             StartAudioControlProcess();
 
-            _uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync("GetAudioDevices"));
+            _uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new GetAudioDevicesCommand { DoUpdate = false })));
 
             pipeClient = new NamedPipeClientStream(".", "AudioPipe", PipeDirection.InOut, PipeOptions.Asynchronous);    // '.' means this PC, not via LAN
             await pipeClient.ConnectAsync();
             streamReader = new StreamReader(pipeClient);
             streamWriter = new StreamWriter(pipeClient);
-            audioPipeConnectionStatus = DeviceConnectionStatus.Connected;
 
             ReadMessagesAsync();
 
-            UnityEngine.Debug.Log("successful end of start method AudioHandler");
-        } catch
+            audioPipeConnectionStatus = DeviceConnectionStatus.Connected;
+        } catch (Exception ex)
         {
             audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
-            UnityEngine.Debug.Log("Error in Start func AudioHandler");
+            _uiHandler.PrintToWarnings($"Error in Start func AudioHandler: {ex}");
         }
         
     }
@@ -60,7 +62,7 @@ public class AudioHandler : MonoBehaviour
     {
         while (inputMessageQueue.TryDequeue(out string message))
         {
-            UnityEngine.Debug.Log("Received: " + message);
+            _uiHandler.PrintToWarnings("Received: " + message);
         }
     }
 
@@ -93,7 +95,7 @@ public class AudioHandler : MonoBehaviour
                 }
                 catch (InvalidOperationException ex)
                 {
-                    UnityEngine.Debug.LogError(ex.Message);
+                    _uiHandler.PrintToWarnings(ex.Message);
                 }
             }
         }
@@ -129,16 +131,16 @@ public class AudioHandler : MonoBehaviour
 
     private void StartAudioControlProcess()
     {
-        string relativeExternalAppPath = @"ExternalTools/AudioControl.exe"; // from "Assets" folder
-        string fullExternalAppPath = Path.Combine(Application.dataPath, relativeExternalAppPath);
+        string relativeExternalAppPath = @"AudioControl.exe";
+        string fullExternalAppPath = Path.Combine(Application.streamingAssetsPath, relativeExternalAppPath);
 
         ProcessStartInfo startInfo = new ProcessStartInfo()
         {
             FileName = fullExternalAppPath,
             Arguments = Process.GetCurrentProcess().Id.ToString(),
-            UseShellExecute = true,
+            UseShellExecute = true,    // false
             RedirectStandardOutput = false,
-            CreateNoWindow = false
+            CreateNoWindow = false       // true
         };
 
         audioControlProcess = new Process() { StartInfo = startInfo };

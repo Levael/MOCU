@@ -42,11 +42,11 @@ public class Cedrus : MonoBehaviour
         CedrusConnectionStatus = DeviceConnectionStatus.Disconnected;
 
         _cedrusCodes_answerSignals_Relations = new() {
-            { "a", SignalFromParticipant.Up    },
+            { "a", SignalFromParticipant.Up     },
             { "b", SignalFromParticipant.Left   },
             { "c", SignalFromParticipant.Center },
             { "d", SignalFromParticipant.Right  },
-            { "e", SignalFromParticipant.Down }
+            { "e", SignalFromParticipant.Down   }
         };
     }
 
@@ -118,7 +118,10 @@ public class Cedrus : MonoBehaviour
             _serialPort.Open();
             return DeviceConnectionStatus.Connected;
 
-        } catch { return DeviceConnectionStatus.Disconnected; } // In case of unsuccessful connection just updates "CedrusConnectionStatus"
+        } catch (Exception ex) {
+            _uiHandler.PrintToWarnings($"\n{ex}\n");
+            return DeviceConnectionStatus.Disconnected; // In case of unsuccessful connection just updates "CedrusConnectionStatus"
+        }
     }
 
 
@@ -130,22 +133,31 @@ public class Cedrus : MonoBehaviour
     /// <returns></returns>
     private string GetCedrusPortName(string deviceId)
     {
-        ProcessStartInfo startInfo = new ProcessStartInfo
-        {
-            FileName = "Assets/ExternalTools/PortFinder.exe",
-            Arguments = deviceId,
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            CreateNoWindow = true
-        };
+        try {
+            string relativeExternalAppPath = "PortFinder.exe";
+            string fullExternalAppPath = System.IO.Path.Combine(Application.streamingAssetsPath, relativeExternalAppPath);
 
-        Process process = new Process { StartInfo = startInfo };
-        process.Start();
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = fullExternalAppPath,
+                Arguments = deviceId,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
 
-        string output = process.StandardOutput.ReadToEnd();                 // Get data from "Console.Write()"
-        process.WaitForExit();
+            Process process = new Process { StartInfo = startInfo };
+            process.Start();
 
-        return output;
+            string output = process.StandardOutput.ReadToEnd();                 // Get data from "Console.Write()"
+            process.WaitForExit();
+
+            return output;
+        } catch (Exception ex) {
+            _uiHandler.PrintToWarnings($"\n{ex}\n");
+            return null;
+        }
+        
     }
 
     /// <summary>
