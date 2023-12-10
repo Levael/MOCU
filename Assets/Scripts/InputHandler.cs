@@ -11,6 +11,7 @@ public class InputHandler : MonoBehaviour
     private InputLogic      _inputLogic;
     private Cedrus          _cedrus;
     private UiHandler       _uiHandler;
+    
 
     private Dictionary<string, (Action<InputAction.CallbackContext> OnPressed, Action<InputAction.CallbackContext> OnReleased)> _inputSystem_actionHandlers;
     private Dictionary<string, SignalFromParticipant> _actionNameToSignalMap;
@@ -29,9 +30,10 @@ public class InputHandler : MonoBehaviour
     {
         GamepadConnectionStatus = DeviceConnectionStatus.NotRelevant;
 
-        _inputLogic = GetComponent<InputLogic>();
-        _cedrus     = GetComponent<Cedrus>();
-        _uiHandler  = GetComponent<UiHandler>();
+        _inputLogic     = GetComponent<InputLogic>();
+        _cedrus         = GetComponent<Cedrus>();
+        _uiHandler      = GetComponent<UiHandler>();
+        
 
         // INPUT SYSTEM PART (gamepad, keyboard and other devices Unity support)
         // Dictionary stores ActionName (from InputActionAsset) and tuple with two handlers: on "press" event and on "release" event

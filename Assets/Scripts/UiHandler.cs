@@ -21,8 +21,8 @@ public class UiHandler : MonoBehaviour
     private VisualElement _activeTab;       // main display
     private VisualElement _openedTab;       // second display
 
-    public UiReferences mainScreen;         // use this (instead of _mainDisplayUiReferences)
-    public UiReferences secondaryScreen;    // use this (instead of _secondDisplayUiReferences)
+    public UiReferences mainTabScreen;         // use this (instead of _mainDisplayUiReferences)
+    public UiReferences secondaryTabScreen;    // use this (instead of _secondDisplayUiReferences)
 
     private bool _openTabInSecondDisplay;
 
@@ -61,33 +61,33 @@ public class UiHandler : MonoBehaviour
 
 
     public void PrintToInfo(string message, bool clearTextElement = false) {
-        var textElement = (TextElement)mainScreen.GetElement("info-module-textbox");
+        var textElement = (TextElement)mainTabScreen.GetElement("info-module-textbox");
         if (clearTextElement) textElement.text = "";
         textElement.text += message;
     }
 
     public void PrintToWarnings(string message, bool clearTextElement = false)
     {
-        var textElement = (TextElement)mainScreen.GetElement("warnings-module-textbox");
+        var textElement = (TextElement)mainTabScreen.GetElement("warnings-module-textbox");
         if (clearTextElement) textElement.text = "";
         textElement.text += message;
     }
 
     public void PrintToConsole(string message, bool clearTextElement = false)
     {
-        var textElement = (TextElement)secondaryScreen.GetElement("debug-console-module-textbox");
+        var textElement = (TextElement)secondaryTabScreen.GetElement("debug-console-module-textbox");
         if (clearTextElement) textElement.text = "";
         textElement.text += message;
     }
 
 
     public void ControllerButtonWasPressed(string btn_name) {
-        mainScreen.GetElement(btn_name).AddToClassList("isActive");
+        mainTabScreen.GetElement(btn_name).AddToClassList("isActive");
     }
 
     public void ControllerButtonWasReleased(string btn_name)
     {
-        mainScreen.GetElement(btn_name).RemoveFromClassList("isActive");
+        mainTabScreen.GetElement(btn_name).RemoveFromClassList("isActive");
     }
 
 
@@ -100,18 +100,18 @@ public class UiHandler : MonoBehaviour
 
         if (_openTabInSecondDisplay)
         {
-            mainScreen = _mainDisplayUiReferences;
-            secondaryScreen = _secondDisplayUiReferences;
+            mainTabScreen = _mainDisplayUiReferences;
+            secondaryTabScreen = _secondDisplayUiReferences;
         }
         else
         {
-            mainScreen = secondaryScreen = _mainDisplayUiReferences;
+            mainTabScreen = secondaryTabScreen = _mainDisplayUiReferences;
         }
 
-        TabHasBeenClicked(mainScreen.GetElement("experiment-tab"));
-        ShowBody("experiment-tab", mainScreen);
+        TabHasBeenClicked(mainTabScreen.GetElement("experiment-tab"));
+        ShowBody("experiment-tab", mainTabScreen);
 
-        if (_openTabInSecondDisplay) ShowBody("", secondaryScreen);
+        if (_openTabInSecondDisplay) ShowBody("", secondaryTabScreen);
 
         AddEventListeners();
         //HideElements();

@@ -29,14 +29,14 @@ public class ConnectionsStatusesHandler : MonoBehaviour
         // those dictionaries are in Start func because otherwise "UpdateConnectionStatuses" called before their initialization
         _deviceNameToUxmlBlockMap = new()
         {
-            { "Moog",       _uiHandler.mainScreen.GetElement("moog-status-block") },
-            { "Oculus",     _uiHandler.mainScreen.GetElement("oculus-status-block") },
-            { "Cedrus",     _uiHandler.mainScreen.GetElement("cedrus-status-block") },
-            { "Gamepad",    _uiHandler.mainScreen.GetElement("gamepad-status-block") },
-            { "Audio",      _uiHandler.mainScreen.GetElement("audio-status-block") },
-            { "EEG",        _uiHandler.mainScreen.GetElement("eeg-status-block") },
-            { "Trials",     _uiHandler.mainScreen.GetElement("trials-status-block") },
-            { "Running",    _uiHandler.mainScreen.GetElement("running-status-block") }
+            { "Moog",       _uiHandler.mainTabScreen.GetElement("moog-status-block") },
+            { "Oculus",     _uiHandler.mainTabScreen.GetElement("oculus-status-block") },
+            { "Cedrus",     _uiHandler.mainTabScreen.GetElement("cedrus-status-block") },
+            { "Gamepad",    _uiHandler.mainTabScreen.GetElement("gamepad-status-block") },
+            { "Audio",      _uiHandler.mainTabScreen.GetElement("audio-status-block") },
+            { "EEG",        _uiHandler.mainTabScreen.GetElement("eeg-status-block") },
+            { "Trials",     _uiHandler.mainTabScreen.GetElement("trials-status-block") },
+            { "Running",    _uiHandler.mainTabScreen.GetElement("running-status-block") }
         };
 
         _deviceConnectionStatusToColorMap = new()

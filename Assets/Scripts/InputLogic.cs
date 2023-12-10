@@ -1,16 +1,22 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class InputLogic : MonoBehaviour
 {
     private UiHandler _uiHandler;
     private AnswerHandler _answerHandler;
+    //private AudioHandler _audioHandler;
+
+    public event Action startIntercomStream;
+    public event Action stopIntercomStream;
 
     private void Awake()
     {
         _uiHandler = GetComponent<UiHandler>();
         _answerHandler = GetComponent<AnswerHandler>();
+        //_audioHandler = GetComponent<AudioHandler>();
     }
 
     public void TestMethod(string text)
@@ -23,32 +29,40 @@ public class InputLogic : MonoBehaviour
 
     public void IntercomFromResearcherStarted()
     {
-        _uiHandler.mainScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
-        _uiHandler.mainScreen.GetElement("controls-intercom-part").AddToClassList("isOutcomming");
+        startIntercomStream?.Invoke();
+
+        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
+        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").AddToClassList("isOutcomming");
     }
     public void IntercomFromResearcherStopped()
     {
-        if (!_uiHandler.mainScreen.GetElement("controls-intercom-part").ClassListContains("isIncomming"))
+        if (!_uiHandler.mainTabScreen.GetElement("controls-intercom-part").ClassListContains("isIncomming"))
         {
             // the check is necessary so that the highlight does not disappear completely when pressed simultaneously
-            _uiHandler.mainScreen.GetElement("controls-intercom-part").RemoveFromClassList("isActive");
+            stopIntercomStream?.Invoke();
+            _uiHandler.mainTabScreen.GetElement("controls-intercom-part").RemoveFromClassList("isActive");
         }
-        _uiHandler.mainScreen.GetElement("controls-intercom-part").RemoveFromClassList("isOutcomming");
+        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").RemoveFromClassList("isOutcomming");
     }
 
     public void IntercomFromParticipantStarted()
     {
-        _uiHandler.mainScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
-        _uiHandler.mainScreen.GetElement("controls-intercom-part").AddToClassList("isIncomming");
+        startIntercomStream?.Invoke();
+
+        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
+        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").AddToClassList("isIncomming");
     }
     public void IntercomFromParticipantStopped()
     {
-        if (!_uiHandler.mainScreen.GetElement("controls-intercom-part").ClassListContains("isOutcomming"))
+        
+
+        if (!_uiHandler.mainTabScreen.GetElement("controls-intercom-part").ClassListContains("isOutcomming"))
         {
             // the check is necessary so that the highlight does not disappear completely when pressed simultaneously
-            _uiHandler.mainScreen.GetElement("controls-intercom-part").RemoveFromClassList("isActive");
+            stopIntercomStream?.Invoke();
+            _uiHandler.mainTabScreen.GetElement("controls-intercom-part").RemoveFromClassList("isActive");
         }
-        _uiHandler.mainScreen.GetElement("controls-intercom-part").RemoveFromClassList("isIncomming");
+        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").RemoveFromClassList("isIncomming");
     }
 
 

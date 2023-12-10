@@ -22,11 +22,15 @@ public class AudioHandler : MonoBehaviour
     private ConcurrentQueue<string> outputMessageQueue;
     private bool isProcessingWriting = false;
     private Process audioControlProcess;
+
     private UiHandler _uiHandler;
+    private InputLogic _inputLogic;
 
     void Awake()
     {
         _uiHandler = GetComponent<UiHandler>();
+        _inputLogic = GetComponent<InputLogic>();
+
         audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
         inputMessageQueue = new();
         outputMessageQueue = new();
@@ -37,10 +41,19 @@ public class AudioHandler : MonoBehaviour
         try
         {
             audioPipeConnectionStatus = DeviceConnectionStatus.InProgress;
-            StartAudioControlProcess(); 
+            StartAudioControlProcess();
 
-            _uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new StartIntercomStreamCommand(microphoneIndex: 0, speakerIndex: 1))));
-            //_uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new GetAudioDevicesCommand(doUpdate: true ))));
+            _inputLogic.startIntercomStream += () =>
+            {
+                SendCommandAsync(JsonUtility.ToJson(new StartIntercomStreamCommand(microphoneIndex: 0, speakerIndex: 1)));
+            };
+
+            _inputLogic.stopIntercomStream += () =>
+            {
+                SendCommandAsync(JsonUtility.ToJson(new StopIntercomStreamCommand()));
+            };
+            //_uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new StartIntercomStreamCommand(microphoneIndex: 0, speakerIndex: 1))));
+            //_uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new GetAudioDevicesCommand(doUpdate: true ))));
 
             pipeClient = new NamedPipeClientStream(".", "AudioPipe", PipeDirection.InOut, PipeOptions.Asynchronous);    // '.' means this PC, not via LAN
             await pipeClient.ConnectAsync();
@@ -188,7 +201,7 @@ public class AudioHandler : MonoBehaviour
 
     void Start()
     {
-        _uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync("xxx"));
+        _uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync("xxx"));
 
         cancellationTokenSource = new CancellationTokenSource();
 
