@@ -9,7 +9,6 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 using AudioControl;
-using System.Xml.Linq;
 
 
 public class AudioHandler : MonoBehaviour
@@ -38,9 +37,10 @@ public class AudioHandler : MonoBehaviour
         try
         {
             audioPipeConnectionStatus = DeviceConnectionStatus.InProgress;
-            StartAudioControlProcess();
+            StartAudioControlProcess(); 
 
-            _uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new GetAudioDevicesCommand { DoUpdate = false })));
+            _uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new StartIntercomStreamCommand(microphoneIndex: 0, speakerIndex: 1))));
+            //_uiHandler.mainScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new GetAudioDevicesCommand(doUpdate: true ))));
 
             pipeClient = new NamedPipeClientStream(".", "AudioPipe", PipeDirection.InOut, PipeOptions.Asynchronous);    // '.' means this PC, not via LAN
             await pipeClient.ConnectAsync();
@@ -62,7 +62,7 @@ public class AudioHandler : MonoBehaviour
     {
         while (inputMessageQueue.TryDequeue(out string message))
         {
-            _uiHandler.PrintToWarnings("Received: " + message);
+            _uiHandler.PrintToWarnings($"Received: {message}\n");
         }
     }
 
@@ -105,6 +105,7 @@ public class AudioHandler : MonoBehaviour
 
     public async void SendCommandAsync(string command)
     {
+        //UnityEngine.Debug.Log(command);
         outputMessageQueue.Enqueue(command);
 
         if (!isProcessingWriting)
