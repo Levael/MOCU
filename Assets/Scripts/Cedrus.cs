@@ -55,6 +55,14 @@ public class Cedrus : MonoBehaviour
         
     }
 
+    void OnDestroy()
+    {
+        _serialPort.Close();
+        _serialPort.Dispose();
+        _serialPort = null;
+        _portName = null;
+    }
+
     void Update()
     {
         if (CedrusConnectionStatus == DeviceConnectionStatus.Connected) ReadDataFromBufer();    // checks por buffer every frame in case any new data
@@ -80,27 +88,24 @@ public class Cedrus : MonoBehaviour
 
 
 
-    public DeviceConnectionStatus TryConnect()
+    public DeviceConnectionStatus TryConnect(bool doRequestPortName)
     {
         // SOME NOTES:
         // serialPort.Open() -- is pretty heavy function. It takes about 4sec. But it shouldn't...
         // GetCedrusPortName() -- is pretty heavy function too. It takes about 2sec
+        //_serialPort.DataReceived += ReadDataFromBufer;    // doesn't work in Unity (because of thread system), although it was the best option
 
         try
         {
             CedrusConnectionStatus = DeviceConnectionStatus.InProgress;
 
-            if (_serialPort != null && _serialPort.IsOpen && CedrusConnectionStatus != DeviceConnectionStatus.Connected)  // e.g port was opened but now it doesn work
+            if (doRequestPortName) _portName = GetCedrusPortName(_targetDeviceId);
+
+            if (string.IsNullOrEmpty(_portName))
             {
-                _serialPort.Close();
-                _serialPort.Dispose();
-                _serialPort = null;
-                _portName = null;
+                _uiHandler.PrintToWarnings($"doRequestPortName: {doRequestPortName}. _portName: {_portName}");
+                return DeviceConnectionStatus.Disconnected;
             }
-
-            _portName = GetCedrusPortName(_targetDeviceId);
-
-            if (string.IsNullOrEmpty(_portName)) return DeviceConnectionStatus.Disconnected;
 
             _serialPort = new SerialPort(_portName)
             {
@@ -112,8 +117,7 @@ public class Cedrus : MonoBehaviour
                 Handshake = Handshake.None,                     // The flow control protocol (Handshake.None means no flow control is used)
                 DtrEnable = true                                // Maybe it can help to improve connection speed...
             };
-
-            //_serialPort.DataReceived += ReadDataFromBufer;    // doesn't work in Unity (because of thread system), although it was the best option
+            
 
             _serialPort.Open();
             return DeviceConnectionStatus.Connected;

@@ -30,7 +30,7 @@
 <Template src="/Assets/GUI/UXML/DataBody.uxml"                          name="DataBody-template"/>
 <Template src="/Assets/GUI/UXML/InfoBody.uxml"                          name="InfoBody-template"/>
 <Template src="/Assets/GUI/UXML/CamerasBody.uxml"                       name="CamerasBody-template"/>
-<Template src="/Assets/GUI/UXML/SettingsBody.uxml"                      name="SettingsBody-template"/>
+<Template src="/Assets/GUI/UXML/SettingsModules/SettingsBody.uxml"      name="SettingsBody-template"/>
 
 <Template src="/Assets/GUI/UXML/ExitConfirmationModalWindow.uxml"       name="ExitConfirmationModalWindow-template"/>
 <!-- ================================================================================ -->

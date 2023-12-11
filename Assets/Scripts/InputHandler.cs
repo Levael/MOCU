@@ -94,7 +94,7 @@ public class InputHandler : MonoBehaviour
 
     void Start()
     {
-        _cedrus.CedrusConnectionStatus = _cedrus.TryConnect();
+        _cedrus.CedrusConnectionStatus = _cedrus.TryConnect(doRequestPortName: true);
         StartCoroutine(_cedrus.CheckPortConnection(_checkCedrusPortConnectionTimeInterval));
         StartCoroutine(CheckGamepadConnection(_checkGamepadConnectionTimeInterval));
         StartCoroutine(CheckXRConnection(_checkXRConnectionTimeInterval));

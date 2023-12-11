@@ -120,6 +120,7 @@ public class UiHandler : MonoBehaviour
 
     private void AddEventListeners()
     {
+        // HEADER TABS
         foreach (var tab in _mainDisplayUiReferences.GetHeaderTabs())
         {
             tab.pickingMode = PickingMode.Position;
@@ -127,6 +128,7 @@ public class UiHandler : MonoBehaviour
             // adds class to clicked elem (currentTarget, not just target!)
         }
 
+        // EXIT / MINIMIZE GAME
         _mainDisplayUiReferences.GetElement("close-game-btn").RegisterCallback<ClickEvent>(eventObj => { ShowExitConfirmationModalWindow(); });
         _mainDisplayUiReferences.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeGame(); });
 
@@ -134,6 +136,21 @@ public class UiHandler : MonoBehaviour
         _mainDisplayUiReferences.GetElement("exit-cancel-btn").RegisterCallback<ClickEvent>(eventObj => { CancelGameQuit(); });
 
         _secondDisplayUiReferences.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeSecondDisplay(); });
+
+        // EXPERIMENT tab MAIN BTNS
+        // ...
+
+        // EXPERIMENT tab CONTROLLER
+        // ...
+
+        // EXPERIMENT tab STATUSES
+        // ...
+
+        // EXPERIMENT tab PROTOCOL
+        // ...
+
+        // SETTINGS tab DEVICES
+        // ...
     }
 
     private void HideElements()

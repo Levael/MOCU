@@ -20,3 +20,6 @@ Intercom disabled: https://www.svgrepo.com/svg/522175/microphone-off
 Controller: https://www.svgrepo.com/svg/499595/controller
 Exit door: https://www.svgrepo.com/svg/151987/opened-door-aperture
 Arrow (up): https://www.svgrepo.com/svg/533623/arrow-sm-up
+Keyboard: https://www.svgrepo.com/svg/478479/keyboard-1
+Monitor: https://www.svgrepo.com/svg/509170/monitor
+Cedrus: https://www.svgrepo.com/svg/288567/joystick-gamer
