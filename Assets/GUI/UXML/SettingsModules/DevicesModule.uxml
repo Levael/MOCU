@@ -81,11 +81,32 @@
             </VisualElement>
             <TextElement class="settings-device-box-text" text="Controller"/>
         </VisualElement>
-
     </VisualElement>
 
 
-    <VisualElement name="settings-devices-choose-device-modal-window">
+    <VisualElement name="settings-devices-choose-device-window">
+        <VisualElement name="choose-device-window-left-part">
+            <VisualElement name="choose-device-window-right-part-device-box">
+                
+                <VisualElement class="">
+                    <VisualElement class="icon-shape" style="">
+                        <VisualElement class="icon-color"></VisualElement>
+                    </VisualElement>
+                    <TextElement class="" text="Device name"/>
+                </VisualElement>
+
+            </VisualElement>
+
+            <VisualElement name="choose-device-window-right-part-upd-devices-btn">
+                <TextElement class="" text="UPD devices"/>
+            </VisualElement>
+        </VisualElement>
+
+        <VisualElement name="choose-device-window-right-part">
+
+            <!-- <VisualElement name="" class=""></VisualElement> -->  <!--  choose option -->
+
+        </VisualElement>
     </VisualElement>
 
 </VisualElement>
