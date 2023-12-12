@@ -18,6 +18,9 @@
 
 <Style src="/Assets/GUI/USS/DebugBodyStyles.uss" />
 <Style src="/Assets/GUI/USS/DebugBodyModulesStyles.uss" />
+
+<Style src="/Assets/GUI/USS/SettingsBodyStyles.uss" />
+<Style src="/Assets/GUI/USS/SettingsBodyModulesStyles.uss" />
 <!-- ======================================= -->
 
 

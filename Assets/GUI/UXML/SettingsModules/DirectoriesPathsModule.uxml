@@ -6,11 +6,11 @@
 >
 
 
-<VisualElement name="directories-paths-module-template-wrapper" class="wrapper">
+<VisualElement name="directories-paths-module-template-wrapper" class="wrapper settings-module-template-wrapper">
     <TextElement class="module-header" text="Directories Paths"/>
 
-    <VisualElement name="directories-paths-module-window">
-        <TextElement class="" text="test"/>
+    <VisualElement name="directories-paths-module-window" class="settings-module-window">
+        <!-- <TextElement class="" text="test"/> -->
     </VisualElement>
 </VisualElement>
 

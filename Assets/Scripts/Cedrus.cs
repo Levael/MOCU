@@ -50,17 +50,17 @@ public class Cedrus : MonoBehaviour
         };
     }
 
-    void Start()
-    {
-        
-    }
+    void Start() {}
 
     void OnDestroy()
     {
-        _serialPort.Close();
-        _serialPort.Dispose();
-        _serialPort = null;
-        _portName = null;
+        if (_serialPort != null)
+        {
+            _serialPort.Close();
+            _serialPort.Dispose();
+            _serialPort = null;
+            _portName = null;
+        }
     }
 
     void Update()

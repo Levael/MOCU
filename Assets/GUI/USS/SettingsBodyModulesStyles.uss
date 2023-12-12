@@ -1,0 +1,65 @@
+#settings-body-template-wrapper .body-module {
+	background-color: var(--main-modules-color);
+}
+
+
+.module-header {
+	-unity-text-align: middle-left;
+	-unity-font-style: bold;
+	font-size: 16px;
+	padding: 5px;
+}
+
+.settings-module-template-wrapper {
+	flex-direction: column;
+}
+
+.settings-module-window {
+	flex-grow: 1;
+	padding: 5px;
+}
+
+/* DEVICES */
+#settings-devices-module-window {
+	flex-direction: row;
+	align-items: flex-end;
+	justify-content: flex-start;
+
+	display: none;
+}
+
+.settings-device-box {
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0px 7px;
+}
+
+.settings-device-box-image-wrapper {
+	background-color: var(--main-window-color);
+	width: 90px;
+	height: 90px;
+	justify-content: center;
+	align-items: center;
+}
+
+.settings-device-box .icon-shape {
+	width: 50px;
+	height: 50px;
+}
+
+.settings-device-box .icon-shape .icon-color{
+	background-color: var(--secondary-images-color);
+}
+
+.settings-device-box-text {
+	font-size: 10px;
+	margin-top: 5px;
+}
+
+	/* DEVICES MODAL WINDOW */
+	#settings-devices-choose-device-modal-window {
+		width: 100%;
+		height: 100%;
+		background-color: lime;
+	}

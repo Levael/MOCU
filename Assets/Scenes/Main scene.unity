@@ -305,8 +305,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainDisplayGameObject: {fileID: 603612049}
   secondDisplayGameObject: {fileID: 782628375}
-  mainScreen: {fileID: 0}
-  secondaryScreen: {fileID: 0}
+  mainTabScreen: {fileID: 603612052}
+  secondaryTabScreen: {fileID: 782628378}
 --- !u!114 &75438434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,6 +396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf66a12ed18e1f4791c9e6bef9f35c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioPipeConnectionStatus: 0
 --- !u!1 &78664784
 GameObject:
   m_ObjectHideFlags: 0
@@ -978,7 +979,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1784058966}
   - component: {fileID: 1784058965}
-  - component: {fileID: 1784058964}
   m_Layer: 0
   m_Name: Audio Source
   m_TagString: Untagged
@@ -986,18 +986,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1784058964
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1784058963}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fccfb43913147e4fbfc49818b45dcfa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &1784058965
 AudioSource:
   m_ObjectHideFlags: 0

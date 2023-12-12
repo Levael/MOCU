@@ -6,11 +6,11 @@
 >
 
 
-<VisualElement name="modules-module-template-wrapper" class="wrapper">
+<VisualElement name="modules-module-template-wrapper" class="wrapper settings-module-template-wrapper">
     <TextElement class="module-header" text="Modules"/>
 
-    <VisualElement name="modules-module-window">
-        <TextElement class="" text="test"/>
+    <VisualElement name="modules-module-window" class="settings-module-window">
+        <!-- <TextElement class="" text="test"/> -->
     </VisualElement>
 </VisualElement>
 

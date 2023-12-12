@@ -106,9 +106,8 @@ TextField * {
 
 
 
-
 #modal-windows, #modal-windows > *,
-#debug-body, #data-body, #info-body, #cameras-body, #settings-body,	/* #debug-body, experiment*/
+#debug-body, #data-body, #info-body, #cameras-body, #experiment-body,	/* #settings, experiment*/
 #experiment-body-right-part-monitors-eeg, #eeg-status-block {
 	display: none;
 }

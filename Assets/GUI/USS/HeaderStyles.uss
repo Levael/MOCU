@@ -84,13 +84,13 @@
 }
 
 #minimize-game-btn .close_minimize_btns-icon-shape {
-	width: 18px;
-	height: 18px;
+	width: 15px;
+	height: 15px;
 }
 
 #close-game-btn .close_minimize_btns-icon-shape {
-	width: 14px;
-	height: 14px;
+	width: 12px;
+	height: 12px;
 }
 
 .close_minimize_btns-icon-color {

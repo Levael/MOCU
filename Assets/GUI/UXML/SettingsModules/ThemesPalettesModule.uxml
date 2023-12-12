@@ -6,11 +6,11 @@
 >
 
 
-<VisualElement name="themes-palettes-module-template-wrapper" class="wrapper">
+<VisualElement name="themes-palettes-module-template-wrapper" class="wrapper settings-module-template-wrapper">
     <TextElement class="module-header" text="Themes palettes"/>
 
-    <VisualElement name="themes-palettes-module-window">
-        <TextElement class="" text="test"/>
+    <VisualElement name="themes-palettes-module-window" class="settings-module-window">
+        <!-- <TextElement class="" text="test"/> -->
     </VisualElement>
 </VisualElement>
 
