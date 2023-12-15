@@ -2,12 +2,30 @@
 <UXML
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="UnityEngine.UIElements"
+    xmlns:custom="CustomUxmlElements"
     xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
 >
 
 
 <VisualElement name="settings-devices-module-template-wrapper" class="wrapper settings-module-template-wrapper">
-    <TextElement class="module-header" text="Devices"/>
+    <VisualElement class="settings-module-header">
+        <VisualElement class="settings-module-header-left-part">
+            <TextElement class="module-header-text" text="Devices"/>
+
+            <VisualElement name="settings-devices-update-btn">
+                <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/UpdateIcon.svg');">
+                    <VisualElement class="icon-color"></VisualElement>
+                </VisualElement>
+            </VisualElement>
+        </VisualElement>
+
+        <VisualElement name="settings-devices-back-btn">
+            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/CloseGameIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+        </VisualElement>
+    </VisualElement>
+    
 
 
     <VisualElement name="settings-devices-module-window" class="settings-module-window">
@@ -35,6 +53,8 @@
         <!-- Speaker (researcher) : SpeakerIcon.svg -->
         <VisualElement name="settings-device-box-speaker-researcher" class="settings-device-box">
             <VisualElement class="settings-device-box-image-wrapper">
+                <custom:CustomSlider name="device-speaker-researcher-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50"/>
+
                 <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/SpeakerIcon.svg');">
                     <VisualElement class="icon-color"></VisualElement>
                 </VisualElement>
@@ -45,6 +65,8 @@
         <!-- Speaker (participant) : SpeakerIcon.svg -->
         <VisualElement name="settings-device-box-speaker-participant" class="settings-device-box">
             <VisualElement class="settings-device-box-image-wrapper">
+                <custom:CustomSlider name="device-speaker-participant-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50" />
+
                 <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/SpeakerIcon.svg');">
                     <VisualElement class="icon-color"></VisualElement>
                 </VisualElement>
@@ -85,7 +107,7 @@
 
 
     <VisualElement name="settings-devices-choose-device-window">
-        <VisualElement name="choose-device-window-left-part">
+        <!-- <VisualElement name="choose-device-window-left-part">
             <VisualElement name="choose-device-window-right-part-device-box">
                 
                 <VisualElement class="">
@@ -100,7 +122,7 @@
             <VisualElement name="choose-device-window-right-part-upd-devices-btn">
                 <TextElement class="" text="UPD devices"/>
             </VisualElement>
-        </VisualElement>
+        </VisualElement> -->
 
         <VisualElement name="choose-device-window-right-part">
 

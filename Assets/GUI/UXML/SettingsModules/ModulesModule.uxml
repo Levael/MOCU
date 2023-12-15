@@ -7,7 +7,9 @@
 
 
 <VisualElement name="modules-module-template-wrapper" class="wrapper settings-module-template-wrapper">
-    <TextElement class="module-header" text="Modules"/>
+    <VisualElement class="settings-module-header">
+        <TextElement class="module-header-text" text="Modules"/>
+    </VisualElement>
 
     <VisualElement name="modules-module-window" class="settings-module-window">
         <!-- <TextElement class="" text="test"/> -->

@@ -23,3 +23,4 @@ Arrow (up): https://www.svgrepo.com/svg/533623/arrow-sm-up
 Keyboard: https://www.svgrepo.com/svg/478479/keyboard-1
 Monitor: https://www.svgrepo.com/svg/509170/monitor
 Cedrus: https://www.svgrepo.com/svg/288567/joystick-gamer
+Update: https://www.svgrepo.com/svg/447524/update-alt

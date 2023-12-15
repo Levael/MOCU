@@ -116,6 +116,9 @@ public class AudioHandler : MonoBehaviour
         isProcessingWriting = false;
     }
 
+// todo: come back to this later
+#pragma warning disable CS1998
+#pragma warning disable CS4014
     public async void SendCommandAsync(string command)
     {
         //UnityEngine.Debug.Log(command);
@@ -127,6 +130,8 @@ public class AudioHandler : MonoBehaviour
             ProcessMessages(); // this method is without "await" in order not to block the current thread
         }
     }
+#pragma warning restore CS1998
+#pragma warning restore CS4014
 
     private async void ReadMessagesAsync()
     {
