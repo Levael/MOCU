@@ -7,6 +7,11 @@
 >
 
 
+<!-- TEMPLATES ====================================================================== -->
+<Template src="/Assets/GUI/UXML/SettingsModules/DeviceOptionModule.uxml"      name="DeviceOptionModule-template"/>
+<!-- ================================================================================ -->
+
+
 <VisualElement name="settings-devices-module-template-wrapper" class="wrapper settings-module-template-wrapper">
     <VisualElement class="settings-module-header">
         <VisualElement class="settings-module-header-left-part">
@@ -20,7 +25,7 @@
         </VisualElement>
 
         <VisualElement name="settings-devices-back-btn">
-            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/CloseGameIcon.svg');">
+            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/CloseIcon.svg');">
                 <VisualElement class="icon-color"></VisualElement>
             </VisualElement>
         </VisualElement>
@@ -96,12 +101,21 @@
 
             <TextElement class="settings-device-box-text" text="Controller"/>
         </VisualElement>
-    </VisualElement>
 
 
-    <VisualElement name="settings-devices-choose-device-window">
-        <!-- <VisualElement name="" class=""></VisualElement> -->  <!--  choose option -->
+        <VisualElement name="settings-devices-choose-device-window">
+            <ScrollView>
+                <Instance template="DeviceOptionModule-template" class="current-device"/>
+                <Instance template="DeviceOptionModule-template" class="already-chosen-device"/>
+                <Instance template="DeviceOptionModule-template" class=""/>
+                <!-- <Instance template="DeviceOptionModule-template" class=""/>
+                <Instance template="DeviceOptionModule-template" class=""/> -->
+            </ScrollView>
+
+            <!-- classes: "current-device", "already-chosen-device" -->
+        </VisualElement>
     </VisualElement>
+
 
 </VisualElement>
 

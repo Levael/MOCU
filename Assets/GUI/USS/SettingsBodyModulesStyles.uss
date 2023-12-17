@@ -42,16 +42,14 @@
 	width: 18px;
 	height: 18px;
 }
-#settings-devices-update-btn .icon-shape .icon-color{
+#settings-devices-update-btn .icon-shape .icon-color,
+#settings-devices-back-btn .icon-shape .icon-color {
 	background-color: var(--main-images-color);
 }
 #settings-devices-back-btn {}
 #settings-devices-back-btn .icon-shape {
 	width: 14px;
 	height: 14px;
-}
-#settings-devices-back-btn .icon-shape .icon-color{
-	background-color: var(--secondary-images-color);
 }
 
 
@@ -64,6 +62,8 @@
 	width: 90px;
 	background-color: var(--main-window-color);
 	justify-content: center;
+
+	/* display: none; */	/* temp */
 }
 .settings-device-box:hover .device-volume-slider {
 	display: flex;
@@ -74,7 +74,7 @@
 	height: 50px;
 }
 
-.settings-device-box .icon-shape .icon-color{
+.settings-device-box .icon-shape .icon-color {
 	background-color: var(--secondary-images-color);
 }
 
@@ -89,10 +89,78 @@
 #settings-devices-choose-device-window {
 	width: 100%;
 	height: 100%;
-	background-color: lime;
+	/* background-color: lime; */
+
+	display: none;	/* temp */
+}
+.device-option-row {
+	/* background-color: pink; */
+	width: 100%;
+	height: 30px;
+	flex-direction: row;
+	margin-bottom: 5px;
+}
+.device-option-left-part, .device-option-right-part {
+	height: 100%;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0px 5px;
+	flex-direction: row;
+}
+.device-option-left-part {
+	/* background-color: green; */
+	width: 15%;
+}
+.device-option-left-part-text {}
+.device-option-left-part-status {
+	width: 13px;
+	height: 13px;
+	border-radius: 50%;
+	background-color: transparent;	/* "ready to go" status */
+	justify-content: space-between;
+}
+.device-option-right-part {
+	background-color: var(--main-buttons-color);
+	width: 85%;
+}
+.device-option-full-name {}
+.device-option-right-part .icon-shape {
+	width: 12px;
+	height: 12px;
 
 	display: none;
 }
+.device-option-right-part .icon-shape .icon-color {
+	background-color: var(--secondary-images-color);
+}
+
+.current-device .device-option-row .device-option-left-part-status {
+	background-color: var(--main-accent-color);
+}
+.already-chosen-device .device-option-row .device-option-left-part-status {
+	background-color: var(--secondary-images-color);
+}
+/* .current-device .device-option-row .device-option-left-part-text,
+.current-device .device-option-row .device-option-full-name {
+	color: white;
+	font-size: 16px;
+}
+
+
+.already-chosen-device .device-option-row .device-option-left-part-text,
+.already-chosen-device .device-option-row .device-option-full-name {
+	color: var(--secondary-font-color);
+} */
+
+.already-chosen-device .device-option-right-part .icon-shape,
+.current-device .device-option-right-part .icon-shape {
+	display: flex;
+}
+
+
+
+
+
 
 
 /* SLIDERS */

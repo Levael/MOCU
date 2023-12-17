@@ -145,6 +145,12 @@ public class UiHandler : MonoBehaviour
         // SETTINGS tab DEVICES
         _secondDisplayUiReferences.GetElement("settings-device-box-speaker-researcher").RegisterCallback<WheelEvent>(WeelSoundChange);
         _secondDisplayUiReferences.GetElement("settings-device-box-speaker-participant").RegisterCallback<WheelEvent>(WeelSoundChange);
+
+        foreach (var deviceBox in _secondDisplayUiReferences.GetDevicesBoxes())
+        {
+            deviceBox.pickingMode = PickingMode.Position;
+            deviceBox.RegisterCallback<ClickEvent>(eventObj => { OpenDeviceBoxParameters((VisualElement)eventObj.currentTarget); });
+        }
     }
 
     private void HideElements()
@@ -317,6 +323,19 @@ public class UiHandler : MonoBehaviour
         var parentName = ((VisualElement)evt.currentTarget).name;
         var slider = _secondDisplayUiReferences.GetElement(parentName).Q<CustomUxmlElements.CustomSlider>();
         slider.value += evt.delta.y > 0 ? -2 : +2;
+    }
+
+    private void OpenDeviceBoxParameters(VisualElement clickedDeviceBox)
+    {
+        // hide every box except clicked one
+        foreach (var deviceBox in _secondDisplayUiReferences.GetDevicesBoxes())
+        {
+            if (deviceBox == clickedDeviceBox) continue;
+            deviceBox.style.display = DisplayStyle.None;
+        }
+
+        // show device parameters window
+        _secondDisplayUiReferences.GetElement("settings-devices-choose-device-window").style.display = DisplayStyle.Flex;
     }
 
 }

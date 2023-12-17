@@ -18,6 +18,42 @@
 }
 
 
+ScrollView {
+	overflow: scroll;
+}
+ScrollView Scroller {
+	margin-left: 5px;
+	margin-right: -14px;
+}
+ScrollView Scroller * {
+	min-width: 10px;
+	max-width: 10px;
+	width: 10px;
+}
+ScrollView Scroller #unity-low-button,
+ScrollView Scroller #unity-high-button,
+ScrollView Scroller #unity-slider,
+ScrollView Scroller #unity-slider > VisualElement,
+ScrollView Scroller #unity-slider #unity-tracker,
+ScrollView Scroller #unity-slider #unity-dragger,
+ScrollView Scroller #unity-slider #unity-drag-container {
+	margin-right: 0;
+	margin-left: 0;
+	left: 0;
+	right: 0;
+}
+ScrollView Scroller #unity-low-button,
+ScrollView Scroller #unity-high-button {
+	display: none;
+}
+ScrollView Scroller #unity-slider {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+ScrollView #unity-dragger {
+	/* max-height: 27px; */
+}
+
 
 TextElement {
 	color: var(--main-font-color);

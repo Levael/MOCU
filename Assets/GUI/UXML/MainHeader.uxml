@@ -73,9 +73,11 @@
             </VisualElement>
         </VisualElement>
 
-        <!-- Close : CloseGameIcon.svg -->
+        <!-- Close : 
+        
+        .svg -->
         <VisualElement class="close-minimize-btn" name="close-game-btn">
-            <VisualElement class="close_minimize_btns-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/CloseGameIcon.svg');">
+            <VisualElement class="close_minimize_btns-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/CloseIcon.svg');">
                 <VisualElement class="close_minimize_btns-icon-color icon-color"></VisualElement>
             </VisualElement>
         </VisualElement>

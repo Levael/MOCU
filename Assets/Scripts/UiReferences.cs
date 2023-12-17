@@ -157,4 +157,9 @@ public class UiReferences : MonoBehaviour
     {
         return _root.Query<VisualElement>().Class("tab").ToList();
     }
+
+    public List<VisualElement> GetDevicesBoxes()
+    {
+        return _root.Query<VisualElement>().Class("settings-device-box").ToList();
+    }
 }
