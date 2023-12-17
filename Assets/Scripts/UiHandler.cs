@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-//TODO: Fix Cedrus. Add controller to numpad. Connect mi2audio
 
 public class UiHandler : MonoBehaviour
 {
@@ -18,11 +17,11 @@ public class UiHandler : MonoBehaviour
     private AnswerHandler _answerHandler;
     private ConnectionsStatusesHandler _connectionsStatusesHandler;
 
-    private VisualElement _activeTab;       // main display
-    private VisualElement _openedTab;       // second display
+    private VisualElement _activeTab;           // main display
+    private VisualElement _openedTab;           // second display
 
-    public UiReferences mainTabScreen;         // use this (instead of _mainDisplayUiReferences)
-    public UiReferences secondaryTabScreen;    // use this (instead of _secondDisplayUiReferences)
+    public UiReferences mainTabScreen;          // use this (instead of _mainDisplayUiReferences)
+    public UiReferences secondaryTabScreen;     // use this (instead of _secondDisplayUiReferences)
 
     private bool _openTabInSecondDisplay;
 
@@ -48,13 +47,6 @@ public class UiHandler : MonoBehaviour
     private void Update()
     {
         PrintToConsole(_forTests.getStats(), clearTextElement: true);
-        PrintToInfo($"Cedrus connection: {_cedrus.CedrusConnectionStatus}\nAnswers got: {_answerHandler.answers.Count}", clearTextElement: true);
-
-        /*PrintToWarnings("", clearTextElement: true);
-        foreach (var answerStruct in _answerHandler.answers)
-        {
-            PrintToWarnings($"{answerStruct.answer} - {answerStruct.timestamp.ToBinary()}\n", clearTextElement: false);
-        }*/
 
         _connectionsStatusesHandler.UpdateConnectionStatuses();
     }
@@ -109,7 +101,7 @@ public class UiHandler : MonoBehaviour
         }
 
         TabHasBeenClicked(mainTabScreen.GetElement("experiment-tab"));
-        ShowBody("experiment-tab", mainTabScreen);
+        //ShowBody("experiment-tab", mainTabScreen);
 
         if (_openTabInSecondDisplay) ShowBody("", secondaryTabScreen);
 
@@ -137,6 +129,7 @@ public class UiHandler : MonoBehaviour
 
         _secondDisplayUiReferences.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeSecondDisplay(); });
 
+
         // EXPERIMENT tab MAIN BTNS
         // ...
 
@@ -150,7 +143,8 @@ public class UiHandler : MonoBehaviour
         // ...
 
         // SETTINGS tab DEVICES
-        // ...
+        _secondDisplayUiReferences.GetElement("settings-device-box-speaker-researcher").RegisterCallback<WheelEvent>(WeelSoundChange);
+        _secondDisplayUiReferences.GetElement("settings-device-box-speaker-participant").RegisterCallback<WheelEvent>(WeelSoundChange);
     }
 
     private void HideElements()
@@ -220,7 +214,11 @@ public class UiHandler : MonoBehaviour
 
         if (_openTabInSecondDisplay)
         {
-            if (clickedTab == _mainDisplayUiReferences.GetElement("experiment-tab")) ActivateTab(clickedTab);  // main tab is exclusion
+            if (clickedTab == _mainDisplayUiReferences.GetElement("experiment-tab"))
+            {
+                ActivateTab(clickedTab);
+                ShowBody(clickedTab.name, _mainDisplayUiReferences);
+            }
             else
             {
                 OpeneTab(clickedTab);
@@ -310,6 +308,15 @@ public class UiHandler : MonoBehaviour
     private void CancelGameQuit()
     {
         CloseExitConfirmationModalWindow();
+    }
+
+
+    // Sliders
+    private void WeelSoundChange(WheelEvent evt)
+    {
+        var parentName = ((VisualElement)evt.currentTarget).name;
+        var slider = _secondDisplayUiReferences.GetElement(parentName).Q<CustomUxmlElements.CustomSlider>();
+        slider.value += evt.delta.y > 0 ? -2 : +2;
     }
 
 }

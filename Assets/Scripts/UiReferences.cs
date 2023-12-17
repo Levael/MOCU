@@ -94,6 +94,7 @@ public class UiReferences : MonoBehaviour
         _elements.Add("warnings-module-textbox", _root.Q<VisualElement>("warnings-module-textbox"));
         _elements.Add("answers-graph-module-window", _root.Q<VisualElement>("answers-graph-module-window"));
 
+
         // Debug
         _elements.Add("debug-console-module-textbox", _root.Q<VisualElement>("debug-console-module-textbox"));
 
@@ -114,7 +115,22 @@ public class UiReferences : MonoBehaviour
 
         _elements.Add("cpu-data-average-usage", _root.Q<VisualElement>("cpu-data-average-usage"));
         _elements.Add("memory-data-average-usage", _root.Q<VisualElement>("memory-data-average-usage"));
-        
+
+
+        // Settings
+        _elements.Add("settings-devices-update-btn", _root.Q<VisualElement>("settings-devices-update-btn"));
+        _elements.Add("settings-devices-back-btn", _root.Q<VisualElement>("settings-devices-back-btn"));
+
+        _elements.Add("settings-device-box-microphone-researcher", _root.Q<VisualElement>("settings-device-box-microphone-researcher"));
+        _elements.Add("settings-device-box-microphone-participant", _root.Q<VisualElement>("settings-device-box-microphone-participant"));
+        _elements.Add("settings-device-box-speaker-researcher", _root.Q<VisualElement>("settings-device-box-speaker-researcher"));
+        _elements.Add("settings-device-box-speaker-participant", _root.Q<VisualElement>("settings-device-box-speaker-participant"));
+        _elements.Add("settings-device-box-camera-1", _root.Q<VisualElement>("settings-device-box-camera-1"));
+        _elements.Add("settings-device-box-camera-2", _root.Q<VisualElement>("settings-device-box-camera-2"));
+        _elements.Add("settings-device-box-controller", _root.Q<VisualElement>("settings-device-box-controller"));
+        _elements.Add("settings-devices-choose-device-window", _root.Q<VisualElement>("settings-devices-choose-device-window"));
+
+
     }
 
     private void SetupTabBodyRelations()

@@ -12,10 +12,10 @@
 	height: 40%;
 }
 #settings-body-left-part-second-row, #settings-body-right-part-second-row {
-	height: 40%;
+	height: 45%;
 }
 #settings-body-left-part-third-row, #settings-body-right-part-third-row {
-	height: 20%;
+	height: 15%;
 }
 
 #settings-body-left-part-second-row {
