@@ -15,7 +15,7 @@
 
 .settings-module-window {
 	flex-grow: 1;
-	padding: 5px;
+	padding: 5px 0px;
 }
 
 /* DEVICES */
@@ -60,6 +60,7 @@
 	margin: 0px 7px;
 	height: 100%;
 	width: 90px;
+	min-width: 90px;
 	background-color: var(--main-window-color);
 	justify-content: center;
 
@@ -89,6 +90,7 @@
 #settings-devices-choose-device-window {
 	width: 100%;
 	height: 100%;
+	padding-right: 7px;
 	/* background-color: lime; */
 
 	display: none;	/* temp */
@@ -156,6 +158,10 @@
 .current-device .device-option-right-part .icon-shape {
 	display: flex;
 }
+/* .already-chosen-device .device-option-full-name,
+.current-device .device-option-full-name {
+	color: var(--secondary-font-color);
+} */
 
 
 

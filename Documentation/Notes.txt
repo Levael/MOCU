@@ -18,3 +18,5 @@ Notes:
 	- in Oculus App tap on device -> audio and mic should use Windows settings, not itself
 - ABOUT CEDRUS:
 	- needs System.IO.Ports, which needs .Net Framework (not .net Standart 2.1)
+- ABOUT DISPLAYS:
+	- in Unity Editor there is always only 1 display. Real number can be get only in build version

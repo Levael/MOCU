@@ -1,5 +1,7 @@
 using Assets.Scripts;
 using System.Collections.Generic;
+using System.Xml.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -23,6 +25,8 @@ public class UiHandler : MonoBehaviour
     public UiReferences mainTabScreen;          // use this (instead of _mainDisplayUiReferences)
     public UiReferences secondaryTabScreen;     // use this (instead of _secondDisplayUiReferences)
 
+    public VisualTreeAsset chooseDeviceRowTemplate;     // TODO: move it to separate class later
+
     private bool _openTabInSecondDisplay;
 
 
@@ -42,6 +46,9 @@ public class UiHandler : MonoBehaviour
     void Start()
     {
         ApplyDefaultSettings();
+        AddEventListeners();
+
+        TabHasBeenClicked(mainTabScreen.GetElement("settings-tab"));
     }
 
     private void Update()
@@ -88,24 +95,32 @@ public class UiHandler : MonoBehaviour
 
     private void ApplyDefaultSettings()
     {
-        _openTabInSecondDisplay = true;
+        _openTabInSecondDisplay = true && Display.displays.Length > 1;
+        Display.displays[0].Activate();         // activation of main display (without it window isn't fullscreen)
+
 
         if (_openTabInSecondDisplay)
         {
             mainTabScreen = _mainDisplayUiReferences;
             secondaryTabScreen = _secondDisplayUiReferences;
+            Display.displays[1].Activate();     // activation of second display
+
+            ShowBody("", secondaryTabScreen);
         }
         else
         {
-            mainTabScreen = secondaryTabScreen = _mainDisplayUiReferences;
+            mainTabScreen = _mainDisplayUiReferences;
+            secondaryTabScreen = _mainDisplayUiReferences;
+
+            secondDisplayGameObject.SetActive(false);
+            GameObject.Find("SecondMonitorCamera").GetComponent<Camera>().enabled = false;
         }
 
-        TabHasBeenClicked(mainTabScreen.GetElement("experiment-tab"));
-        //ShowBody("experiment-tab", mainTabScreen);
+        
+        //TabHasBeenClicked(mainTabScreen.GetElement("experiment-tab"));
 
-        if (_openTabInSecondDisplay) ShowBody("", secondaryTabScreen);
 
-        AddEventListeners();
+        //AddEventListeners();
         //HideElements();
         //UnhideElements();
     }
@@ -113,7 +128,7 @@ public class UiHandler : MonoBehaviour
     private void AddEventListeners()
     {
         // HEADER TABS
-        foreach (var tab in _mainDisplayUiReferences.GetHeaderTabs())
+        foreach (var tab in mainTabScreen.GetHeaderTabs())
         {
             tab.pickingMode = PickingMode.Position;
             tab.RegisterCallback<ClickEvent>(eventObj => { TabHasBeenClicked((VisualElement)eventObj.currentTarget); });
@@ -121,13 +136,13 @@ public class UiHandler : MonoBehaviour
         }
 
         // EXIT / MINIMIZE GAME
-        _mainDisplayUiReferences.GetElement("close-game-btn").RegisterCallback<ClickEvent>(eventObj => { ShowExitConfirmationModalWindow(); });
-        _mainDisplayUiReferences.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeGame(); });
+        mainTabScreen.GetElement("close-game-btn").RegisterCallback<ClickEvent>(eventObj => { ShowExitConfirmationModalWindow(); });
+        mainTabScreen.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeGame(); });
 
-        _mainDisplayUiReferences.GetElement("exit-confirm-btn").RegisterCallback<ClickEvent>(eventObj => { ConfirmGameQuit(); });
-        _mainDisplayUiReferences.GetElement("exit-cancel-btn").RegisterCallback<ClickEvent>(eventObj => { CancelGameQuit(); });
+        mainTabScreen.GetElement("exit-confirm-btn").RegisterCallback<ClickEvent>(eventObj => { ConfirmGameQuit(); });
+        mainTabScreen.GetElement("exit-cancel-btn").RegisterCallback<ClickEvent>(eventObj => { CancelGameQuit(); });
 
-        _secondDisplayUiReferences.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeSecondDisplay(); });
+        secondaryTabScreen.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeSecondDisplay(); });
 
 
         // EXPERIMENT tab MAIN BTNS
@@ -143,14 +158,17 @@ public class UiHandler : MonoBehaviour
         // ...
 
         // SETTINGS tab DEVICES
-        _secondDisplayUiReferences.GetElement("settings-device-box-speaker-researcher").RegisterCallback<WheelEvent>(WeelSoundChange);
-        _secondDisplayUiReferences.GetElement("settings-device-box-speaker-participant").RegisterCallback<WheelEvent>(WeelSoundChange);
+        secondaryTabScreen.GetElement("settings-device-box-speaker-researcher").RegisterCallback<WheelEvent>(WeelSoundChange);
+        secondaryTabScreen.GetElement("settings-device-box-speaker-participant").RegisterCallback<WheelEvent>(WeelSoundChange);
 
-        foreach (var deviceBox in _secondDisplayUiReferences.GetDevicesBoxes())
+        foreach (var deviceBox in secondaryTabScreen.GetDevicesBoxes())
         {
             deviceBox.pickingMode = PickingMode.Position;
-            deviceBox.RegisterCallback<ClickEvent>(eventObj => { OpenDeviceBoxParameters((VisualElement)eventObj.currentTarget); });
+            deviceBox.RegisterCallback<ClickEvent>(eventObj => DeviceBoxClicked(eventObj));
         }
+
+        secondaryTabScreen.GetElement("settings-devices-back-btn").RegisterCallback<ClickEvent>(CloseDeviceBoxParameters);
+        secondaryTabScreen.GetElement("settings-devices-update-btn").RegisterCallback<ClickEvent>(UpdateDevices);
     }
 
     private void HideElements()
@@ -202,7 +220,7 @@ public class UiHandler : MonoBehaviour
     {
         var showedByDefault = new List<VisualElement>();
 
-        showedByDefault.Add(_mainDisplayUiReferences.GetElement("experiment-body"));
+        showedByDefault.Add(mainTabScreen.GetElement("experiment-body"));
 
 
 
@@ -220,21 +238,21 @@ public class UiHandler : MonoBehaviour
 
         if (_openTabInSecondDisplay)
         {
-            if (clickedTab == _mainDisplayUiReferences.GetElement("experiment-tab"))
+            if (clickedTab == mainTabScreen.GetElement("experiment-tab"))
             {
                 ActivateTab(clickedTab);
-                ShowBody(clickedTab.name, _mainDisplayUiReferences);
+                ShowBody(clickedTab.name, mainTabScreen);
             }
             else
             {
                 OpeneTab(clickedTab);
-                ShowBody(clickedTab.name, _secondDisplayUiReferences);
+                ShowBody(clickedTab.name, secondaryTabScreen);
             }
         }
         else // only one display
         {
             ActivateTab(clickedTab);
-            ShowBody(clickedTab.name, _mainDisplayUiReferences);
+            ShowBody(clickedTab.name, mainTabScreen);
         }
     }
 
@@ -286,8 +304,8 @@ public class UiHandler : MonoBehaviour
 
         // And after that -- second display (imitates click on second display btn. unity somehow knows which screen minimize, but can't minimize both automaticaly)
         var clickEvent = new ClickEvent();
-        clickEvent.target = _secondDisplayUiReferences.GetElement("minimize-game-btn");
-        _secondDisplayUiReferences.GetElement("minimize-game-btn").SendEvent(clickEvent);
+        clickEvent.target = secondaryTabScreen.GetElement("minimize-game-btn");
+        secondaryTabScreen.GetElement("minimize-game-btn").SendEvent(clickEvent);
     }
 
     private void MinimizeSecondDisplay() {
@@ -296,14 +314,14 @@ public class UiHandler : MonoBehaviour
 
     private void ShowExitConfirmationModalWindow()
     {
-        _mainDisplayUiReferences.GetElement("modal-windows").style.display = DisplayStyle.Flex;
-        _mainDisplayUiReferences.GetElement("exit-confirmation-modal-window").style.display = DisplayStyle.Flex;
+        mainTabScreen.GetElement("modal-windows").style.display = DisplayStyle.Flex;
+        mainTabScreen.GetElement("exit-confirmation-modal-window").style.display = DisplayStyle.Flex;
     }
 
     private void CloseExitConfirmationModalWindow()
     {
-        _mainDisplayUiReferences.GetElement("modal-windows").style.display = DisplayStyle.None;
-        _mainDisplayUiReferences.GetElement("exit-confirmation-modal-window").style.display = DisplayStyle.None;
+        mainTabScreen.GetElement("modal-windows").style.display = DisplayStyle.None;
+        mainTabScreen.GetElement("exit-confirmation-modal-window").style.display = DisplayStyle.None;
     }
 
     private void ConfirmGameQuit()
@@ -321,21 +339,83 @@ public class UiHandler : MonoBehaviour
     private void WeelSoundChange(WheelEvent evt)
     {
         var parentName = ((VisualElement)evt.currentTarget).name;
-        var slider = _secondDisplayUiReferences.GetElement(parentName).Q<CustomUxmlElements.CustomSlider>();
+        var slider = secondaryTabScreen.GetElement(parentName).Q<CustomUxmlElements.CustomSlider>();
         slider.value += evt.delta.y > 0 ? -2 : +2;
+    }
+
+
+    // Devices (settings tab)
+    private void DeviceBoxClicked(ClickEvent eventObj)
+    {
+        // if device parameters already opened
+        if (secondaryTabScreen.GetElement("settings-devices-choose-device-window").style.display == DisplayStyle.Flex) return;
+
+        // if clicked on Slider -- ignore "OpenDeviceBoxParameters" action
+        var currentElement = eventObj.target as VisualElement;
+        while (currentElement != null)
+        {
+            if (currentElement.name == "settings-devices-module-window") break; // upper bound 
+            if (currentElement is Slider) return;
+            currentElement = currentElement.parent;
+        }
+
+        OpenDeviceBoxParameters((VisualElement)eventObj.currentTarget);
     }
 
     private void OpenDeviceBoxParameters(VisualElement clickedDeviceBox)
     {
-        // hide every box except clicked one
-        foreach (var deviceBox in _secondDisplayUiReferences.GetDevicesBoxes())
+        foreach (var deviceBox in secondaryTabScreen.GetDevicesBoxes())                                             // hide every device box except clicked one
         {
             if (deviceBox == clickedDeviceBox) continue;
             deviceBox.style.display = DisplayStyle.None;
         }
+        
+        secondaryTabScreen.GetElement("settings-devices-choose-device-window").style.display = DisplayStyle.Flex;   // show device parameters window
+        secondaryTabScreen.GetElement("settings-devices-back-btn").style.display = DisplayStyle.Flex;               // show close btn
+        secondaryTabScreen.GetElement("settings-devices-update-btn").style.display = DisplayStyle.Flex;             // show upd btn
 
-        // show device parameters window
-        _secondDisplayUiReferences.GetElement("settings-devices-choose-device-window").style.display = DisplayStyle.Flex;
+        // if it's a speaker -- show its volume slider (not only while :hover)
+        var slider = clickedDeviceBox.Q<CustomUxmlElements.CustomSlider>();
+        if (slider != null) slider.style.display = DisplayStyle.Flex;
+
+        // local root
+        var devicesList = secondaryTabScreen.GetElement("settings-devices-choose-device-window").Q<ScrollView>();
+
+        // Clear devices list
+        devicesList.Clear();
+
+        // Fill devices list
+        for (int i = 0; i < 3; i++)
+        {
+            var instance = chooseDeviceRowTemplate.CloneTree();
+            instance.Q<TextElement>(className: "device-option-left-part-text").text = $"Device {i}";
+            instance.Q<TextElement>(className: "device-option-full-name").text = $"Uga buga {i}{i}{i}";
+            devicesList.Add(instance);
+        }
     }
+
+    private void CloseDeviceBoxParameters(ClickEvent clickEvent)
+    {
+        // unhide every device box
+        foreach (var deviceBox in secondaryTabScreen.GetDevicesBoxes())
+        {
+            deviceBox.style.display = DisplayStyle.Flex;
+
+            // if it's a speaker -- show its volume slider
+            var slider = deviceBox.Q<CustomUxmlElements.CustomSlider>();
+            if (slider != null) slider.style.display = StyleKeyword.Null;
+            // can't use "DisplayStyle.None;" because it makes style inline (and it's stronger than uss and slider will be always hidden)
+        }
+
+        // hide device parameters window
+        secondaryTabScreen.GetElement("settings-devices-choose-device-window").style.display = DisplayStyle.None;
+        // hide close btn
+        secondaryTabScreen.GetElement("settings-devices-back-btn").style.display = DisplayStyle.None;
+        // hide upd btn
+        secondaryTabScreen.GetElement("settings-devices-update-btn").style.display = DisplayStyle.None;
+    }
+
+    // TODO later
+    private void UpdateDevices(ClickEvent clickEvent) { }
 
 }

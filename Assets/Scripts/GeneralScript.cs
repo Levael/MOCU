@@ -8,9 +8,6 @@ public class GeneralScript : MonoBehaviour
     {
         QualitySettings.vSyncCount = 0;                                     // Disable VSync
         Application.targetFrameRate = 150;                                  // Application fps
-
-        Display.displays[0].Activate();                                     // activation of main display (without it window isn't fullscreen)
-        if (Display.displays.Length > 1) Display.displays[1].Activate();    // activation of second display (if needed)
     }
 
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -25,6 +26,8 @@ public class UiReferences : MonoBehaviour
 
     public void SetupReferences()
     {
+        _elements.Add("root-element", _root);
+
         // HEADER
         _elements.Add("experiment-tab", _root.Q<VisualElement>("experiment-tab"));
         _elements.Add("debug-tab", _root.Q<VisualElement>("debug-tab"));
