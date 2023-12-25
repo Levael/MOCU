@@ -307,6 +307,7 @@ MonoBehaviour:
   secondDisplayGameObject: {fileID: 782628375}
   mainTabScreen: {fileID: 603612052}
   secondaryTabScreen: {fileID: 782628378}
+  chooseDeviceRowTemplate: {fileID: 9197481963319205126, guid: cc72a5c0ce95be84987e3a6e985fbad9, type: 3}
 --- !u!114 &75438434
 MonoBehaviour:
   m_ObjectHideFlags: 0

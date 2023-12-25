@@ -385,12 +385,35 @@ public class UiHandler : MonoBehaviour
         devicesList.Clear();
 
         // Fill devices list
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 1; i++)
         {
+            // "audio-output" class is to show "bell icon"
+
             var instance = chooseDeviceRowTemplate.CloneTree();
-            instance.Q<TextElement>(className: "device-option-left-part-text").text = $"Device {i}";
-            instance.Q<TextElement>(className: "device-option-full-name").text = $"Uga buga {i}{i}{i}";
+            if (slider != null)  instance.AddToClassList("audio-output");
+            instance.AddToClassList("current-device");
+            instance.Q<TextElement>(className: "device-option-left-part-text").text = $"Device 1";
+            instance.Q<TextElement>(className: "device-option-full-name").text = $"Uga buga 111";
+            instance.Q<VisualElement>(className: "bell-btn").RegisterCallback<ClickEvent>(SendTestSoundToAudioOutputDevice);
+            instance.Q<VisualElement>(className: "close-btn").RegisterCallback<ClickEvent>(DisconnectDevice);
             devicesList.Add(instance);
+
+            var instance2 = chooseDeviceRowTemplate.CloneTree();
+            if (slider != null)  instance2.AddToClassList("audio-output");
+            instance2.AddToClassList("already-chosen-device");
+            instance2.Q<TextElement>(className: "device-option-left-part-text").text = $"Device 2";
+            instance2.Q<TextElement>(className: "device-option-full-name").text = $"Uga buga 222";
+            instance2.Q<VisualElement>(className: "bell-btn").RegisterCallback<ClickEvent>(SendTestSoundToAudioOutputDevice);
+            instance2.Q<VisualElement>(className: "close-btn").RegisterCallback<ClickEvent>(DisconnectDevice);
+            devicesList.Add(instance2);
+
+            var instance3 = chooseDeviceRowTemplate.CloneTree();
+            if (slider != null)  instance3.AddToClassList("audio-output");
+            instance3.Q<TextElement>(className: "device-option-left-part-text").text = $"Device 3";
+            instance3.Q<TextElement>(className: "device-option-full-name").text = $"Uga buga 333";
+            instance3.Q<VisualElement>(className: "bell-btn").RegisterCallback<ClickEvent>(SendTestSoundToAudioOutputDevice);
+            instance3.Q<VisualElement>(className: "close-btn").RegisterCallback<ClickEvent>(DisconnectDevice);
+            devicesList.Add(instance3);
         }
     }
 
@@ -417,5 +440,16 @@ public class UiHandler : MonoBehaviour
 
     // TODO later
     private void UpdateDevices(ClickEvent clickEvent) { }
+
+    private void SendTestSoundToAudioOutputDevice(ClickEvent clickEvent)
+    {
+        Debug.Log($"bell btn {((VisualElement)clickEvent.currentTarget).parent.parent.Q<TextElement>(className: "device-option-full-name").text}");
+    }
+
+
+    private void DisconnectDevice(ClickEvent clickEvent)
+    {
+        Debug.Log($"close btn {((VisualElement)clickEvent.currentTarget).parent.parent.Q<TextElement>(className: "device-option-full-name").text}");
+    }
 
 }

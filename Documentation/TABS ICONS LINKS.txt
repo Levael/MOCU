@@ -24,3 +24,6 @@ Keyboard: https://www.svgrepo.com/svg/478479/keyboard-1
 Monitor: https://www.svgrepo.com/svg/509170/monitor
 Cedrus: https://www.svgrepo.com/svg/288567/joystick-gamer
 Update: https://www.svgrepo.com/svg/447524/update-alt
+Trash can: https://www.svgrepo.com/svg/500199/edit-delete
+Edit: https://www.svgrepo.com/svg/432468/edit-detailed
+BellIcon: https://www.svgrepo.com/svg/308841/ringing-bell-alarm-notify

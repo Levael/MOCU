@@ -54,8 +54,6 @@ public class InputLogic : MonoBehaviour
     }
     public void IntercomFromParticipantStopped()
     {
-        
-
         if (!_uiHandler.mainTabScreen.GetElement("controls-intercom-part").ClassListContains("isOutcomming"))
         {
             // the check is necessary so that the highlight does not disappear completely when pressed simultaneously

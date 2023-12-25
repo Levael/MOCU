@@ -3,12 +3,14 @@ using System.IO;
 using System.IO.Pipes;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 using UnityEngine;
 using UnityEngine.UIElements;
 
 using AudioControl;
+
 
 
 public class AudioHandler : MonoBehaviour
@@ -26,6 +28,9 @@ public class AudioHandler : MonoBehaviour
     private UiHandler _uiHandler;
     private InputLogic _inputLogic;
 
+    public List<string> inputAudioDevices;
+    public List<string> outputAudioDevices;
+
     void Awake()
     {
         _uiHandler = GetComponent<UiHandler>();
@@ -34,6 +39,9 @@ public class AudioHandler : MonoBehaviour
         audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
         inputMessageQueue = new();
         outputMessageQueue = new();
+
+        inputAudioDevices = new();
+        outputAudioDevices = new();
     }
 
     async void Start()
@@ -43,18 +51,6 @@ public class AudioHandler : MonoBehaviour
             audioPipeConnectionStatus = DeviceConnectionStatus.InProgress;
             StartAudioControlProcess();
 
-            _inputLogic.startIntercomStream += () =>
-            {
-                SendCommandAsync(JsonUtility.ToJson(new StartIntercomStreamCommand(microphoneIndex: 0, speakerIndex: 1)));
-            };
-
-            _inputLogic.stopIntercomStream += () =>
-            {
-                SendCommandAsync(JsonUtility.ToJson(new StopIntercomStreamCommand()));
-            };
-            //_uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new StartIntercomStreamCommand(microphoneIndex: 0, speakerIndex: 1))));
-            //_uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new GetAudioDevicesCommand(doUpdate: true ))));
-
             pipeClient = new NamedPipeClientStream(".", "AudioPipe", PipeDirection.InOut, PipeOptions.Asynchronous);    // '.' means this PC, not via LAN
             await pipeClient.ConnectAsync();
             streamReader = new StreamReader(pipeClient);
@@ -63,6 +59,42 @@ public class AudioHandler : MonoBehaviour
             ReadMessagesAsync();
 
             audioPipeConnectionStatus = DeviceConnectionStatus.Connected;
+
+            // Temp
+            SendCommandAsync(JsonUtility.ToJson(new SetDevicesParameters_Command(
+                audioOutputDeviceNameResearcher: "Realtek High Definition Audio",
+                audioInputDeviceNameResearcher: "fifine Microphone",
+                audioOutputDeviceNameParticipant: "Rift Audio",
+                audioInputDeviceNameParticipant: "Rift Audio",
+                audioOutputDeviceVolumeResearcher: 42f,
+                audioOutputDeviceVolumeParticipant: 69f
+            )));
+
+
+            // Event listeners for intercom
+            _inputLogic.startIntercomStream += () =>
+            {
+                SendCommandAsync(JsonUtility.ToJson(new StartIntercomStream_ResearcherToParticipant_Command()));
+            };
+
+            _inputLogic.stopIntercomStream += () =>
+            {
+                SendCommandAsync(JsonUtility.ToJson(new StopIntercomStream_ResearcherToParticipant_Command()));
+            };
+
+            // Fill 
+            //_uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new PlayAudioFile_Command(audioFileName: "test.mp3", audioOutputDeviceName: "Fifine"))));
+            //_uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new GetAudioDevices_Command(doUpdate: false ))));
+            /*_uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new SetDevicesParameters_Command(
+                audioOutputDeviceNameResearcher: "Realtek High Definition Audio",
+                audioInputDeviceNameResearcher: "fifine Microphone",
+                audioOutputDeviceNameParticipant: "Rift Audio",
+                audioInputDeviceNameParticipant: "Rift Audio",
+                audioOutputDeviceVolumeResearcher: 42f,
+                audioOutputDeviceVolumeParticipant: 69f
+            ))));*/
+
+            
         } catch (Exception ex)
         {
             audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
@@ -75,7 +107,10 @@ public class AudioHandler : MonoBehaviour
     {
         while (inputMessageQueue.TryDequeue(out string message))
         {
-            //_uiHandler.PrintToWarnings($"Received: {message}\n");
+            _uiHandler.PrintToInfo($"Received: {message}\n");
+
+            // SendStartConfig
+            //SendCommandAsync(JsonUtility.ToJson(new PlayAudioFile_Command(audioFileName: "test.mp3", audioOutputDeviceName: "Fifine")));
         }
     }
 
@@ -105,6 +140,8 @@ public class AudioHandler : MonoBehaviour
                 {
                     await streamWriter.WriteLineAsync(message);
                     await streamWriter.FlushAsync();
+
+                    //_uiHandler.PrintToWarnings($"command sent: {message}");
                 }
                 catch (InvalidOperationException ex)
                 {
@@ -157,9 +194,9 @@ public class AudioHandler : MonoBehaviour
         {
             FileName = fullExternalAppPath,
             Arguments = Process.GetCurrentProcess().Id.ToString(),
-            UseShellExecute = false,    // false
+            UseShellExecute = true,    // false
             RedirectStandardOutput = false,
-            CreateNoWindow = true       // true
+            CreateNoWindow = false       // true
         };
 
         audioControlProcess = new Process() { StartInfo = startInfo };

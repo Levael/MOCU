@@ -1,44 +1,97 @@
 ﻿namespace AudioControl {
 
-    public class StartIntercomStreamCommand
+    // INTERCOM ==================================================================================================
+    public class StartIntercomStream_ResearcherToParticipant_Command
     {
-        public string Command = "StartIntercomStream";
-        public int MicrophoneIndex;
-        public int SpeakerIndex;
-        public string MicrophoneName;
-        public string SpeakerName;
+        public string Command = "StartIntercomStream_ResearcherToParticipant_Command";
+    }
+    
+    public class StartIntercomStream_ParticipantToResearcher_Command
+    {
+        public string Command = "StartIntercomStream_ParticipantToResearcher_Command";
+    }
 
-        public StartIntercomStreamCommand (int microphoneIndex, int speakerIndex)
+    public class StopIntercomStream_ResearcherToParticipant_Command
+    {
+        public string Command = "StopIntercomStream_ResearcherToParticipant_Command";
+    }
+    
+    public class StopIntercomStream_ParticipantToResearcher_Command
+    {
+        public string Command = "StopIntercomStream_ParticipantToResearcher_Command";
+    }
+
+    // DIFFERENT =================================================================================================
+    public class PlayAudioFile_Command
+    {
+        public string Command = "PlayAudioFile_Command";
+
+        public string AudioFileName;
+        public string AudioOutputDeviceName;
+
+        public PlayAudioFile_Command(string audioFileName, string audioOutputDeviceName)
         {
-            MicrophoneIndex = microphoneIndex;
-            SpeakerIndex = speakerIndex;
+            AudioFileName = audioFileName;
+            AudioOutputDeviceName = audioOutputDeviceName;
         }
     }
 
-    public class StopIntercomStreamCommand
+    public class GetAudioDevices_Command
     {
-        public string Command = "StopIntercomStream";
-    }
+        public string Command = "GetAudioDevices_Command";
 
-    public class PlayAudioFileCommand
-    {
-        public string Command = "PlayAudioFile";
-        public string FileName;
-
-        public PlayAudioFileCommand(string fileName)
-        {
-            FileName = fileName;
-        }
-    }
-
-    public class GetAudioDevicesCommand
-    {
-        public string Command = "GetAudioDevices";
         public bool DoUpdate;
+        // The server stores the list requested once, which means the response will be fast.
+        // If it is known that the devices have changed, the flag must be set to true
 
-        public GetAudioDevicesCommand(bool doUpdate)
+        public GetAudioDevices_Command(bool doUpdate)
         {
             DoUpdate = doUpdate;
+        }
+    }
+
+    public class SetDevicesParameters_Command
+    {
+        public string Command = "SetDevicesParameters_Command";
+
+        public string AudioOutputDeviceNameResearcher;
+        public string AudioInputDeviceNameResearcher;
+        public string AudioOutputDeviceNameParticipant;
+        public string AudioInputDeviceNameParticipant;
+
+        public float AudioOutputDeviceVolumeResearcher;
+        public float AudioOutputDeviceVolumeParticipant;
+
+        public SetDevicesParameters_Command(
+            string audioOutputDeviceNameResearcher = "same",
+            string audioInputDeviceNameResearcher = "same",
+            string audioOutputDeviceNameParticipant = "same",
+            string audioInputDeviceNameParticipant = "same",
+            float audioOutputDeviceVolumeResearcher = -1f,
+            float audioOutputDeviceVolumeParticipant = -1f
+            )
+        {
+            AudioOutputDeviceNameResearcher = audioOutputDeviceNameResearcher;
+            AudioInputDeviceNameResearcher = audioInputDeviceNameResearcher;
+            AudioOutputDeviceNameParticipant = audioOutputDeviceNameParticipant;
+            AudioInputDeviceNameParticipant = audioInputDeviceNameParticipant;
+            AudioOutputDeviceVolumeResearcher = audioOutputDeviceVolumeResearcher;
+            AudioOutputDeviceVolumeParticipant = audioOutputDeviceVolumeParticipant;
+        }
+    }
+
+    public class ChangeOutputDeviceVolume_Command
+    {
+        public float AudioOutputDeviceVolumeResearcher;
+        public float AudioOutputDeviceVolumeParticipant;
+
+        public ChangeOutputDeviceVolume_Command(
+            float audioOutputDeviceVolumeResearcher = -1f,
+            float audioOutputDeviceVolumeParticipant = -1f
+            )
+        {
+            AudioOutputDeviceVolumeResearcher = audioOutputDeviceVolumeResearcher;
+            AudioOutputDeviceVolumeParticipant = audioOutputDeviceVolumeParticipant;
         }
     }
 

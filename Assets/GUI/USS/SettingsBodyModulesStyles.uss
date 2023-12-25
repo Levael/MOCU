@@ -125,14 +125,33 @@
 	background-color: var(--main-buttons-color);
 	width: 85%;
 }
-.device-option-full-name {}
-.device-option-right-part .icon-shape {
-	width: 12px;
-	height: 12px;
-
-	display: none;
+.device-option-right-part-btns {
+	flex-direction: row;
+	height: 100%;
+	width: auto;
+	justify-content: space-between;
+	align-items: center;
 }
-.device-option-right-part .icon-shape .icon-color {
+.device-option-full-name {
+	-unity-font-style: normal;
+}
+.device-option-right-part .icon-shape.close-btn {
+	width: 22px;
+	height: 22px;
+
+	visibility: hidden;
+	border-width: 5px;
+	border-color: var(--main-buttons-color);
+}
+.device-option-right-part .icon-shape.bell-btn {
+	width: 26px;
+	height: 26px;
+	margin-right: 15px;
+
+	visibility: hidden;
+}
+.device-option-right-part .icon-shape.close-btn .icon-color,
+.device-option-right-part .icon-shape.bell-btn .icon-color {
 	background-color: var(--secondary-images-color);
 }
 
@@ -142,26 +161,12 @@
 .already-chosen-device .device-option-row .device-option-left-part-status {
 	background-color: var(--secondary-images-color);
 }
-/* .current-device .device-option-row .device-option-left-part-text,
-.current-device .device-option-row .device-option-full-name {
-	color: white;
-	font-size: 16px;
+
+.already-chosen-device .device-option-right-part .icon-shape.close-btn,
+.current-device .device-option-right-part .icon-shape.close-btn,
+.audio-output .device-option-right-part .icon-shape.bell-btn {
+	visibility: visible;
 }
-
-
-.already-chosen-device .device-option-row .device-option-left-part-text,
-.already-chosen-device .device-option-row .device-option-full-name {
-	color: var(--secondary-font-color);
-} */
-
-.already-chosen-device .device-option-right-part .icon-shape,
-.current-device .device-option-right-part .icon-shape {
-	display: flex;
-}
-/* .already-chosen-device .device-option-full-name,
-.current-device .device-option-full-name {
-	color: var(--secondary-font-color);
-} */
 
 
 

@@ -14,8 +14,15 @@
 
     <VisualElement class="device-option-right-part">
         <TextElement class="device-option-full-name" text="device-option-full-name"/>
-        <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/CloseIcon.svg');">
-            <VisualElement class="icon-color"></VisualElement>
+
+        <VisualElement class="device-option-right-part-btns">
+            <VisualElement class="icon-shape bell-btn" style="background-image: url('/Assets/Images/SVG/BellIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <VisualElement class="icon-shape close-btn" style="background-image: url('/Assets/Images/SVG/CloseIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
         </VisualElement>
     </VisualElement>
 </VisualElement>

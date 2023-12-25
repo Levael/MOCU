@@ -20,3 +20,6 @@ Notes:
 	- needs System.IO.Ports, which needs .Net Framework (not .net Standart 2.1)
 - ABOUT DISPLAYS:
 	- in Unity Editor there is always only 1 display. Real number can be get only in build version
+- ABOUT FIFINE MICROPHONE:
+	- better sound with "B" symbol -- bidirectional
+	- a;so make sure it is not muted (touch button on itself on the top. green - works, red - muted)

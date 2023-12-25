@@ -53,7 +53,7 @@
             <TextElement class="settings-device-box-text" text="Mic (there)"/>
         </VisualElement>
 
-        <!-- Speaker (researcher) : SpeakerIcon.svg -->
+        <!-- Speaker (researcher) : SpeakerIcon.svg -->     <!-- Has additional "sound slider" and "ringing btn" -->
         <VisualElement name="settings-device-box-speaker-researcher" class="settings-device-box">
             <custom:CustomSlider name="device-speaker-researcher-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50"/>
 
@@ -64,7 +64,7 @@
             <TextElement class="settings-device-box-text" text="Speaker (here)"/>
         </VisualElement>
 
-        <!-- Speaker (participant) : SpeakerIcon.svg -->
+        <!-- Speaker (participant) : SpeakerIcon.svg -->    <!-- Has additional "sound slider" and "ringing btn" -->
         <VisualElement name="settings-device-box-speaker-participant" class="settings-device-box">
             <custom:CustomSlider name="device-speaker-participant-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50" />
 
