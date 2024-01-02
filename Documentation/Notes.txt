@@ -16,6 +16,10 @@ Notes:
 	- via cable: doesn't need batteries and never goes off
 - ABOUT SOUND:
 	- in Oculus App tap on device -> audio and mic should use Windows settings, not itself
+	- sound delay:
+		- intercom researcher to participant -- 172ms
+		- intercom participant to researcher -- 165ms
+		- play single Console.Beep() 	     -- 110ms
 - ABOUT CEDRUS:
 	- needs System.IO.Ports, which needs .Net Framework (not .net Standart 2.1)
 - ABOUT DISPLAYS:

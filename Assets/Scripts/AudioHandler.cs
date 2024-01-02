@@ -60,41 +60,30 @@ public class AudioHandler : MonoBehaviour
 
             audioPipeConnectionStatus = DeviceConnectionStatus.Connected;
 
-            // Temp
-            SendCommandAsync(JsonUtility.ToJson(new SetDevicesParameters_Command(
-                audioOutputDeviceNameResearcher: "Realtek High Definition Audio",
-                audioInputDeviceNameResearcher: "fifine Microphone",
-                audioOutputDeviceNameParticipant: "Rift Audio",
-                audioInputDeviceNameParticipant: "Rift Audio",
-                audioOutputDeviceVolumeResearcher: 42f,
-                audioOutputDeviceVolumeParticipant: 69f
-            )));
+            SetAudioDevices();  // send to server side devices parameters to initiate them there
 
 
             // Event listeners for intercom
-            _inputLogic.startIntercomStream += () =>
-            {
+            _inputLogic.startOutgoingIntercomStream += () => {
                 SendCommandAsync(JsonUtility.ToJson(new StartIntercomStream_ResearcherToParticipant_Command()));
             };
 
-            _inputLogic.stopIntercomStream += () =>
-            {
+            _inputLogic.stopOutgoingIntercomStream += () => {
                 SendCommandAsync(JsonUtility.ToJson(new StopIntercomStream_ResearcherToParticipant_Command()));
             };
 
-            // Fill 
-            //_uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new PlayAudioFile_Command(audioFileName: "test.mp3", audioOutputDeviceName: "Fifine"))));
-            //_uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new GetAudioDevices_Command(doUpdate: false ))));
-            /*_uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendCommandAsync(JsonUtility.ToJson(new SetDevicesParameters_Command(
-                audioOutputDeviceNameResearcher: "Realtek High Definition Audio",
-                audioInputDeviceNameResearcher: "fifine Microphone",
-                audioOutputDeviceNameParticipant: "Rift Audio",
-                audioInputDeviceNameParticipant: "Rift Audio",
-                audioOutputDeviceVolumeResearcher: 42f,
-                audioOutputDeviceVolumeParticipant: 69f
-            ))));*/
+            _inputLogic.startIncomingIntercomStream += () => {
+                SendCommandAsync(JsonUtility.ToJson(new StartIntercomStream_ParticipantToResearcher_Command()));
+            };
 
-            
+            _inputLogic.stopIncomingIntercomStream += () => {
+                SendCommandAsync(JsonUtility.ToJson(new StopIntercomStream_ParticipantToResearcher_Command()));
+            };
+
+            _uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => SendTestAudioSignalToDevice("Speakers (Realtek High Definition Audio)", "test.mp3"));
+
+
+
         } catch (Exception ex)
         {
             audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
@@ -107,7 +96,8 @@ public class AudioHandler : MonoBehaviour
     {
         while (inputMessageQueue.TryDequeue(out string message))
         {
-            _uiHandler.PrintToInfo($"Received: {message}\n");
+            _uiHandler.PrintToInfo($"Output queue length: {outputMessageQueue.Count}\nInput queue length: {inputMessageQueue.Count}\n", true);
+            //_uiHandler.PrintToInfo($"Received: {message}\n");
 
             // SendStartConfig
             //SendCommandAsync(JsonUtility.ToJson(new PlayAudioFile_Command(audioFileName: "test.mp3", audioOutputDeviceName: "Fifine")));
@@ -201,5 +191,22 @@ public class AudioHandler : MonoBehaviour
 
         audioControlProcess = new Process() { StartInfo = startInfo };
         audioControlProcess.Start();
+    }
+
+    public void SetAudioDevices()
+    {
+        SendCommandAsync(JsonUtility.ToJson(new SetDevicesParameters_Command(
+            audioOutputDeviceNameResearcher: "Speakers (Realtek High Definition Audio)",
+            audioInputDeviceNameResearcher: "Microphone (fifine Microphone)",
+            audioOutputDeviceNameParticipant: "Headphones (Rift Audio)",
+            audioInputDeviceNameParticipant: "Microphone (Rift Audio)",
+            audioOutputDeviceVolumeResearcher: 77f,
+            audioOutputDeviceVolumeParticipant: 69f
+        )));
+    }
+
+    public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")
+    {
+        SendCommandAsync(JsonUtility.ToJson(new PlayAudioFile_Command(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
     }
 }
