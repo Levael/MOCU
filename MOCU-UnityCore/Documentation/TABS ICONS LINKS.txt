@@ -1,0 +1,29 @@
+ICONS LINKS:
+
+Experiment: https://www.svgrepo.com/svg/522900/home-1
+Debug: https://www.svgrepo.com/svg/523271/chart
+Data: https://www.svgrepo.com/svg/522832/database
+Info: https://www.svgrepo.com/svg/522904/info-circle
+Cameras: https://www.svgrepo.com/svg/523930/videocamera-record
+Settings: https://www.svgrepo.com/svg/523734/settings
+
+Close: https://www.svgrepo.com/svg/521564/close
+Minimize: https://www.svgrepo.com/svg/521755/minus
+
+Headphones: https://www.svgrepo.com/svg/523455/headphones-round
+Headphones playing: https://www.svgrepo.com/svg/523456/headphones-round-sound
+Sound on: https://www.svgrepo.com/svg/523938/volume-loud
+Sound off: https://www.svgrepo.com/svg/523576/muted
+Intercom inactive: https://www.svgrepo.com/svg/522178/microphone
+Intercom active: https://www.svgrepo.com/svg/522179/microphone
+Intercom disabled: https://www.svgrepo.com/svg/522175/microphone-off
+Controller: https://www.svgrepo.com/svg/499595/controller
+Exit door: https://www.svgrepo.com/svg/151987/opened-door-aperture
+Arrow (up): https://www.svgrepo.com/svg/533623/arrow-sm-up
+Keyboard: https://www.svgrepo.com/svg/478479/keyboard-1
+Monitor: https://www.svgrepo.com/svg/509170/monitor
+Cedrus: https://www.svgrepo.com/svg/288567/joystick-gamer
+Update: https://www.svgrepo.com/svg/447524/update-alt
+Trash can: https://www.svgrepo.com/svg/500199/edit-delete
+Edit: https://www.svgrepo.com/svg/432468/edit-detailed
+BellIcon: https://www.svgrepo.com/svg/308841/ringing-bell-alarm-notify

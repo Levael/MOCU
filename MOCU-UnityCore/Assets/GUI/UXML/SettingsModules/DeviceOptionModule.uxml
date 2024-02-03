@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+>
+
+
+<VisualElement class="device-option-row">
+    <VisualElement class="device-option-left-part">
+        <TextElement class="device-option-left-part-text" text="device-1"/>
+        <VisualElement class="device-option-left-part-status"></VisualElement>
+    </VisualElement>
+
+    <VisualElement class="device-option-right-part">
+        <TextElement class="device-option-full-name" text="device-option-full-name"/>
+
+        <VisualElement class="device-option-right-part-btns">
+            <VisualElement class="icon-shape bell-btn" style="background-image: url('/Assets/Images/SVG/BellIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <VisualElement class="icon-shape close-btn" style="background-image: url('/Assets/Images/SVG/CloseIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+        </VisualElement>
+    </VisualElement>
+</VisualElement>
+
+    
+</UXML>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="UnityEngine.UIElements"
+    xmlns:custom="CustomUxmlElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+>
+
+
+<!-- TEMPLATES ====================================================================== -->
+<Template src="/Assets/GUI/UXML/SettingsModules/DeviceOptionModule.uxml"      name="DeviceOptionModule-template"/>
+<!-- ================================================================================ -->
+
+
+<VisualElement name="settings-devices-module-template-wrapper" class="wrapper settings-module-template-wrapper">
+    <VisualElement class="settings-module-header">
+        <VisualElement class="settings-module-header-left-part">
+            <TextElement class="module-header-text" text="Devices"/>
+
+            <VisualElement name="settings-devices-update-btn">
+                <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/UpdateIcon.svg');">
+                    <VisualElement class="icon-color"></VisualElement>
+                </VisualElement>
+            </VisualElement>
+        </VisualElement>
+
+        <VisualElement name="settings-devices-back-btn">
+            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/CloseIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+        </VisualElement>
+    </VisualElement>
+    
+
+
+    <VisualElement name="settings-devices-module-window" class="settings-module-window">
+
+        <!-- Mic (researcher) : IntercomActiveIcon.svg -->
+        <VisualElement name="settings-device-box-microphone-researcher" class="settings-device-box">
+            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/IntercomActiveIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <TextElement class="settings-device-box-text" text="Mic (here)"/>
+        </VisualElement>
+
+        <!-- Mic (participant) : IntercomActiveIcon.svg -->
+        <VisualElement name="settings-device-box-microphone-participant" class="settings-device-box">
+            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/IntercomActiveIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <TextElement class="settings-device-box-text" text="Mic (there)"/>
+        </VisualElement>
+
+        <!-- Speaker (researcher) : SpeakerIcon.svg -->     <!-- Has additional "sound slider" and "ringing btn" -->
+        <VisualElement name="settings-device-box-speaker-researcher" class="settings-device-box">
+            <custom:CustomSlider name="device-speaker-researcher-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50"/>
+
+            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/SpeakerIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <TextElement class="settings-device-box-text" text="Speaker (here)"/>
+        </VisualElement>
+
+        <!-- Speaker (participant) : SpeakerIcon.svg -->    <!-- Has additional "sound slider" and "ringing btn" -->
+        <VisualElement name="settings-device-box-speaker-participant" class="settings-device-box">
+            <custom:CustomSlider name="device-speaker-participant-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50" />
+
+            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/SpeakerIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <TextElement class="settings-device-box-text" text="Speaker (there)"/>
+        </VisualElement>
+
+        <!-- Camera (1) : CamerasTabIcon.svg -->
+        <VisualElement name="settings-device-box-camera-1" class="settings-device-box">
+            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/CamerasTabIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <TextElement class="settings-device-box-text" text="Camera (1)"/>
+        </VisualElement>
+
+        <!-- Camera (2) : CamerasTabIcon.svg -->
+        <VisualElement name="settings-device-box-camera-2" class="settings-device-box">
+            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/CamerasTabIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <TextElement class="settings-device-box-text" text="Camera (2)"/>
+        </VisualElement>
+
+        <!-- Controller : ControllerIcon.svg -->
+        <VisualElement name="settings-device-box-controller" class="settings-device-box">
+            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/ControllerIcon.svg');">
+                <VisualElement class="icon-color"></VisualElement>
+            </VisualElement>
+
+            <TextElement class="settings-device-box-text" text="Controller"/>
+        </VisualElement>
+
+
+        <VisualElement name="settings-devices-choose-device-window">
+            <ScrollView>
+                <Instance template="DeviceOptionModule-template" class="current-device"/>
+                <Instance template="DeviceOptionModule-template" class="already-chosen-device"/>
+                <Instance template="DeviceOptionModule-template" class=""/>
+                <!-- <Instance template="DeviceOptionModule-template" class=""/>
+                <Instance template="DeviceOptionModule-template" class=""/> -->
+            </ScrollView>
+
+            <!-- classes: "current-device", "already-chosen-device" -->
+        </VisualElement>
+    </VisualElement>
+
+
+</VisualElement>
+
+    
+</UXML>

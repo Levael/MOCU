@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+>
+
+<VisualElement class="tab">
+    <VisualElement class="tab-background" name="tab-background" style="">
+        <VisualElement class="tab-icon-color"></VisualElement>
+    </VisualElement>
+    <TextElement class="tab-text" name="tab-text" text=""/>
+</VisualElement>
+    
+</UXML>

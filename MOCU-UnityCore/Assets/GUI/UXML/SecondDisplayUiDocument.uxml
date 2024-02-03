@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
+>
+
+
+<Style src="/Assets/GUI/USS/SecondDisplay.uss"/>
+<Template src="/Assets/GUI/UXML/MainUiDocument.uxml" name="MainUiDocument-template"/>
+<Instance template="MainUiDocument-template" name="second-monitor-version"/>
+
+    
+</UXML>

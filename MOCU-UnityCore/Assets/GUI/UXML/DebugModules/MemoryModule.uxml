@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+>
+
+
+<VisualElement name="debug-body-memory-wrapper" class="wrapper">
+    <VisualElement name="debug-body-memory-data" class="debug-module-data body-module">
+        <TextElement class="debug-module-data-name" text="Memory usage"/>
+
+        <VisualElement class="debug-module-data-rows">
+            <VisualElement class="debug-module-data-row">
+                <TextElement class="debug-module-data-row-label" text="Average usage:"/>
+                <TextElement class="debug-module-data-row-value" name="memory-data-average-usage" text=""/>
+            </VisualElement>
+        </VisualElement>
+    </VisualElement>
+
+    <VisualElement name="debug-body-memory-chart" class="debug-module-chart body-module"></VisualElement>
+</VisualElement>
+
+    
+</UXML>

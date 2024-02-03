@@ -1,0 +1,8 @@
+#second-monitor-version {
+	width: 100%;
+	height: 100%;
+}
+
+.tab, #close-game-btn {
+	display: none;
+}

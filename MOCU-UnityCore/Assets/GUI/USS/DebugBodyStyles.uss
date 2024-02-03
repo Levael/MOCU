@@ -1,0 +1,68 @@
+#debug-body-movement-graph, #debug-body-moog-acceleration-graph, #debug-body-console,
+.debug-module-data, .debug-module-chart{
+	background-color: var(--main-modules-color);
+}
+
+#debug-body-experiment-timeline-wrapper, #debug-body-trial-wrapper, #debug-body-cpu-wrapper, #debug-body-memory-wrapper,
+#debug-body-center-part, #debug-body-bottom-part {
+	flex-direction: row;
+}
+
+#debug-body-template-wrapper, #debug-body-center-left-part {
+	flex-direction: column;
+}
+
+
+
+#debug-body-top-part {
+	height: 15%;
+	margin-top: 15px;
+}
+
+#debug-body-center-part {
+	height: 65%;
+}
+
+#debug-body-bottom-part {
+	height: 20%;
+}
+
+
+
+#debug-body-center-left-part, #debug-body-bottom-left-part {
+	width: 60%;
+}
+
+#debug-body-center-right-part, #debug-body-bottom-right-part {
+	width: 40%;
+}
+
+
+
+#debug-body-trial {
+	height: 40%;
+}
+
+#debug-body-cpu {
+	height: 30%;
+}
+
+#debug-body-memory {
+	height: 30%;
+}
+
+#debug-body-experiment-timeline, #debug-body-experiment-timeline-wrapper,
+#debug-body-movement-graph, #debug-body-console, #debug-body-moog-acceleration-graph {
+	height: 100%;
+}
+
+
+
+.debug-module-data {
+	min-width: 220px;
+	max-width: 220px;
+}
+
+.debug-module-chart {
+	width: 100%;
+}

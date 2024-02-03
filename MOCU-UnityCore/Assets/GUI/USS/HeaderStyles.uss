@@ -1,0 +1,103 @@
+#main-header-template-wrapper {
+	height: 30px;
+	width: 100%;
+	flex-direction: row;
+	justify-content: space-between;		/* tabs -- lest, close/min btns -- right */
+	
+	background-color: var(--main-modules-color);
+}
+
+#tabs, #exit-minimize-app-btns {
+	flex-direction: row;
+	height: 100%;
+}
+
+
+/* REGULAR (NOT ACTIVE) TAB ---------------------------- */
+.tab {
+	width: auto;
+	margin-right: 30px;
+	height: 100%;
+	flex-direction: row;
+	justify-content: center;	/* icon and text are close to each other, positioned on the tab center */
+	align-items: center;
+	padding: 2px 7px;			/* to prevent icon and text touching the tab bottom */
+}
+
+.tab-icon-shape {
+	width: 20px;
+	height: 20px;
+}
+
+.tab-icon-color {
+	background-color: var(--secondary-images-color);
+}
+
+.tab-text {
+	color: var(--secondary-font-color);
+	font-size: 14px;
+	margin-left: 3px;
+	-unity-font-style: bold;
+	-unity-text-align: middle-center;
+
+	/*pointer-events: none !important;	 to prevent event interception */
+}
+/* ===================================================== */
+
+
+
+/* ACTIVE TAB ------------------------------------------ */
+.tab.isActive {
+	border-top-width: 5px !important;
+	border-top-color: var(--main-accent-color);
+	background-color: var(--main-window-color) !important;
+	justify-content: space-around !important;
+	/* padding: 2px 10px !important; */
+	align-items: flex-end;		/* pressed to the bottom of tab -- to leave space for top border */
+}
+
+.tab.isOpened {	/* opened on second monitor */
+	border-top-width: 3px !important;
+	border-top-color: var(--secondary-images-color);
+}
+
+.tab.isActive .icon-color {
+	background-color: var(--main-images-color) !important;
+}
+
+.tab.isActive .tab-text {
+	color: var(--main-font-color) !important;
+	/* font-size: 17px !important; */
+	/* margin-left: 15px; */
+	/*-unity-text-align: lower-center !important;  doesn't work by some reason*/
+}
+/* ===================================================== */
+
+
+
+/* CLOSE / MINIMIZE BUTTONS ------------------------------------------ */
+#minimize-game-btn, #close-game-btn {
+	width: 30px;
+	height: 100%;
+	justify-content: center;
+	align-items: center;
+}
+
+#minimize-game-btn .close_minimize_btns-icon-shape {
+	width: 15px;
+	height: 15px;
+}
+
+#close-game-btn .close_minimize_btns-icon-shape {
+	width: 12px;
+	height: 12px;
+}
+
+.close_minimize_btns-icon-color {
+	background-color: var(--secondary-images-color);
+}
+
+#minimize-game-btn:hover .close_minimize_btns-icon-color, #close-game-btn:hover .close_minimize_btns-icon-color {
+	background-color: var(--main-images-color);
+}
+/* ===================================================== */
