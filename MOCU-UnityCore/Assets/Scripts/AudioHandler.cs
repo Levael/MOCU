@@ -12,7 +12,8 @@ using InterprocessCommunication;
 
 public class AudioHandler : MonoBehaviour
 {
-    public DeviceConnectionStatus audioPipeConnectionStatus;
+    //public DeviceConnectionStatus audioPipeConnectionStatus;
+    public StateTracker stateTracker;
 
     private NamedPipeClient namedPipeClient;
     private Process audioControlProcess;
@@ -33,7 +34,7 @@ public class AudioHandler : MonoBehaviour
         _uiHandler = GetComponent<UiHandler>();
         _inputLogic = GetComponent<InputLogic>();
 
-        audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
+        stateTracker = new(DeviceConnectionStatus.Disconnected);
 
         inputAudioDevices = new();
         outputAudioDevices = new();
@@ -52,13 +53,13 @@ public class AudioHandler : MonoBehaviour
     {
         try
         {
-            audioPipeConnectionStatus = DeviceConnectionStatus.InProgress;
+            stateTracker.SetStatus(DeviceConnectionStatus.InProgress);
 
             StartAudioControlProcess();
 
             namedPipeClient = new NamedPipeClient(namedPipeName);
 
-            audioPipeConnectionStatus = DeviceConnectionStatus.Connected;
+            stateTracker.SetStatus(DeviceConnectionStatus.Connected);
 
             SendConfigs();
             SetAudioDevices();  // send to server side devices parameters to initiate them there
@@ -87,7 +88,7 @@ public class AudioHandler : MonoBehaviour
 
         } catch (Exception ex)
         {
-            audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
+            stateTracker.SetStatus(DeviceConnectionStatus.Disconnected);
             _uiHandler.PrintToWarnings($"Error in Start func AudioHandler: {ex}");
         }
         
@@ -128,7 +129,7 @@ public class AudioHandler : MonoBehaviour
         try { namedPipeClient?.Destroy();   } catch { }
         try { audioControlProcess?.Kill();  } catch { }
 
-        audioPipeConnectionStatus = DeviceConnectionStatus.Disconnected;
+        stateTracker.SetStatus(DeviceConnectionStatus.Disconnected);
     }
 
 

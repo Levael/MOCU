@@ -17,7 +17,6 @@ public class UiHandler : MonoBehaviour
     private ForTests _forTests;
     private Cedrus _cedrus;
     private AnswerHandler _answerHandler;
-    private ConnectionsStatusesHandler _connectionsStatusesHandler;
     private AudioHandler _audioHandler;
 
     private VisualElement _activeTab;           // main display
@@ -40,7 +39,6 @@ public class UiHandler : MonoBehaviour
         _forTests = GetComponent<ForTests>();
         _cedrus = GetComponent<Cedrus>();
         _answerHandler = GetComponent<AnswerHandler>();
-        _connectionsStatusesHandler = GetComponent<ConnectionsStatusesHandler>();
         _audioHandler = GetComponent<AudioHandler>();
 
     }
@@ -56,8 +54,6 @@ public class UiHandler : MonoBehaviour
     private void Update()
     {
         PrintToConsole(_forTests.getStats(), clearTextElement: true);
-
-        _connectionsStatusesHandler.UpdateConnectionStatuses();
     }
 
 

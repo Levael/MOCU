@@ -15,7 +15,8 @@ using System.Collections.Generic;
 /// </summary>
 public class Cedrus : MonoBehaviour
 {
-    public DeviceConnectionStatus CedrusConnectionStatus;
+    public StateTracker stateTracker;
+    //public DeviceConnectionStatus CedrusConnectionStatus;
 
     public event Action<SignalFromParticipant> gotData;     // calls every subscribed to it functions if got any data from participant (checks buffer every frame)
 
@@ -39,7 +40,7 @@ public class Cedrus : MonoBehaviour
 
         _dataQueue = new();
         _targetDeviceId = @"FTDIBUS\VID_0403+PID_6001";   // todo: move to config
-        CedrusConnectionStatus = DeviceConnectionStatus.Disconnected;
+        stateTracker = new(DeviceConnectionStatus.Disconnected);
 
         _cedrusCodes_answerSignals_Relations = new() {
             { "a", SignalFromParticipant.Up     },
@@ -65,7 +66,7 @@ public class Cedrus : MonoBehaviour
 
     void Update()
     {
-        if (CedrusConnectionStatus == DeviceConnectionStatus.Connected) ReadDataFromBufer();    // checks por buffer every frame in case any new data
+        if (stateTracker.Status == DeviceConnectionStatus.Connected) ReadDataFromBufer();    // checks por buffer every frame in case any new data
         
         if (_dataQueue.Count > 0)
         {
@@ -97,7 +98,7 @@ public class Cedrus : MonoBehaviour
 
         try
         {
-            CedrusConnectionStatus = DeviceConnectionStatus.InProgress;
+            stateTracker.SetStatus(DeviceConnectionStatus.InProgress);
 
             if (doRequestPortName) _portName = GetCedrusPortName(_targetDeviceId);
 
@@ -181,7 +182,7 @@ public class Cedrus : MonoBehaviour
         }
         catch
         {
-            CedrusConnectionStatus = DeviceConnectionStatus.Disconnected;   // May occure if "CheckPortConnection" didn't check yet, but "ReadDataFromBufer" was called
+            stateTracker.SetStatus(DeviceConnectionStatus.Disconnected);   // May occure if "CheckPortConnection" didn't check yet, but "ReadDataFromBufer" was called
         }
     }
 
@@ -194,7 +195,7 @@ public class Cedrus : MonoBehaviour
         {
             try                         { if (_serialPort.BytesToRead == 0) _serialPort.ReadLine(); }       // on purpose tries cause an exception
             catch (TimeoutException)    { /* Do nothing */ }                                                // Device is connected but didn't send anything, it's ok
-            catch                       { CedrusConnectionStatus = DeviceConnectionStatus.Disconnected; }   // if not "TimeoutException"-- device disconected
+            catch                       { stateTracker.SetStatus(DeviceConnectionStatus.Disconnected); }   // if not "TimeoutException"-- device disconected
 
             yield return new WaitForSeconds(checkConnectionTimeInterval);                                   // if "yield return null" -- would wait until text frame
         }

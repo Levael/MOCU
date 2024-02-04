@@ -1,4 +1,4 @@
-﻿using UnityEditor.Build;
+﻿/*using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using System.Diagnostics;
 using System.IO;
@@ -46,7 +46,7 @@ public class CustomBuildProcessor : IPreprocessBuildWithReport, IPostprocessBuil
     /// <summary>
     /// Compiles external C# projects to specific directory in Unity
     /// </summary>
-    private void CompileExternalPrograms()
+    *//*private void CompileExternalPrograms()
     {
         string assetsFolderPath = UnityEngine.Application.dataPath;                                                                 // ~/MOCU/UnityCore/Assets
         string totalRootFolderPath = Directory.GetParent(Directory.GetParent(assetsFolderPath).FullName).FullName;                  // ~/MOCU
@@ -64,13 +64,13 @@ public class CustomBuildProcessor : IPreprocessBuildWithReport, IPostprocessBuil
 
             CompileExternalProject(csprojFilePath, destinationFolderPath);
         }
-    }
+    }*//*
 
     /// <summary>
     /// Compiles the specified external C# project using the 'dotnet publish' command
     /// </summary>
     /// <param name="csprojFilePath">The file path of the .csproj file to compile</param>
-    private void CompileExternalProject(string csprojFilePath, string destinationFolderPath)
+    *//*private void CompileExternalProject(string csprojFilePath, string destinationFolderPath)
     {
         ProcessStartInfo startInfo = new ProcessStartInfo
         {
@@ -89,5 +89,6 @@ public class CustomBuildProcessor : IPreprocessBuildWithReport, IPostprocessBuil
                 UnityEngine.Debug.Log(result);
             }
         }
-    }
+    }*//*
 }
+*/

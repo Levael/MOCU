@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -69,14 +69,16 @@ public class ConnectionsStatusesHandler : MonoBehaviour
         if (_deviceNameToUxmlBlockMap.TryGetValue(deviceName, out var statusBlock))
         {
             VisualElement statusBlockColor = statusBlock.Q<VisualElement>(className: "status-block-color");
-            Color color;
 
-
-            if (ColorUtility.TryParseHtmlString(_deviceConnectionStatusToColorMap[deviceStatus], out color))
+            if (ColorUtility.TryParseHtmlString(_deviceConnectionStatusToColorMap[deviceStatus], out Color color))
             {
                 statusBlockColor.style.backgroundColor = new StyleColor(color);
             }
-            else { _uiHandler.PrintToWarnings("Couldn't translate color"); }
+            else
+            {
+                _uiHandler.PrintToWarnings("Couldn't translate color");
+            }
         }
     }
 }
+*/

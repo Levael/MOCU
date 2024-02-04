@@ -16,8 +16,11 @@ public class InputHandler : MonoBehaviour
     private Dictionary<string, (Action<InputAction.CallbackContext> OnPressed, Action<InputAction.CallbackContext> OnReleased)> _inputSystem_actionHandlers;
     private Dictionary<string, SignalFromParticipant> _actionNameToSignalMap;
 
-    public DeviceConnectionStatus GamepadConnectionStatus;
-    public DeviceConnectionStatus XRConnectionStatus;
+    //public DeviceConnectionStatus GamepadConnectionStatus;
+    //public DeviceConnectionStatus XRConnectionStatus;
+
+    public StateTracker GamepadConnectionStatus;
+    public StateTracker XRConnectionStatus;
 
     private float _checkGamepadConnectionTimeInterval       = 0.1f; // sec
     private float _checkCedrusPortConnectionTimeInterval    = 0.1f; // sec
@@ -28,7 +31,8 @@ public class InputHandler : MonoBehaviour
 
     private void Awake()
     {
-        GamepadConnectionStatus = DeviceConnectionStatus.NotRelevant;
+        GamepadConnectionStatus = new(DeviceConnectionStatus.NotRelevant);
+        XRConnectionStatus = new(DeviceConnectionStatus.NotRelevant);
 
         _inputLogic     = GetComponent<InputLogic>();
         _cedrus         = GetComponent<Cedrus>();
@@ -94,7 +98,7 @@ public class InputHandler : MonoBehaviour
 
     void Start()
     {
-        _cedrus.CedrusConnectionStatus = _cedrus.TryConnect(doRequestPortName: true);
+        _cedrus.stateTracker.SetStatus(_cedrus.TryConnect(doRequestPortName: true));
         StartCoroutine(_cedrus.CheckPortConnection(_checkCedrusPortConnectionTimeInterval));
         StartCoroutine(CheckGamepadConnection(_checkGamepadConnectionTimeInterval));
         StartCoroutine(CheckXRConnection(_checkXRConnectionTimeInterval));
@@ -164,10 +168,13 @@ public class InputHandler : MonoBehaviour
         {
             try
             {
-                if (Gamepad.current != null)    GamepadConnectionStatus = DeviceConnectionStatus.Connected;
-                else                            GamepadConnectionStatus = DeviceConnectionStatus.Disconnected;
+                if (Gamepad.current != null)    GamepadConnectionStatus.SetStatus(DeviceConnectionStatus.Connected);
+                else                            GamepadConnectionStatus.SetStatus(DeviceConnectionStatus.Disconnected);
             }
-            catch {                             GamepadConnectionStatus = DeviceConnectionStatus.Disconnected; }
+            catch
+            {                             
+                                                GamepadConnectionStatus.SetStatus(DeviceConnectionStatus.Disconnected);
+            }
 
             yield return new WaitForSeconds(checkConnectionTimeInterval);
         }
@@ -183,10 +190,13 @@ public class InputHandler : MonoBehaviour
         {
             try
             {
-                if (XRSettings.isDeviceActive)  XRConnectionStatus = DeviceConnectionStatus.Connected;
-                else                            XRConnectionStatus = DeviceConnectionStatus.Disconnected;
+                if (XRSettings.isDeviceActive)  XRConnectionStatus.SetStatus(DeviceConnectionStatus.Connected);
+                else                            XRConnectionStatus.SetStatus(DeviceConnectionStatus.Disconnected);
             }
-            catch {                             XRConnectionStatus = DeviceConnectionStatus.Disconnected; }
+            catch
+            {
+                                                XRConnectionStatus.SetStatus(DeviceConnectionStatus.Disconnected);
+            }
 
             yield return new WaitForSeconds(checkConnectionTimeInterval);
         }

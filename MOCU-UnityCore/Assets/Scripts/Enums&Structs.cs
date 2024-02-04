@@ -3,13 +3,13 @@ using System;
 /// <summary>
 /// Status of device connection. May be 'Connected', 'Disconnected' or 'InProgress'
 /// </summary>
-public enum DeviceConnectionStatus
+/*public enum DeviceConnectionStatus
 {
     Connected,
     Disconnected,
     InProgress,
     NotRelevant
-}
+}*/
 
 /*public class DeviceInfo
 {

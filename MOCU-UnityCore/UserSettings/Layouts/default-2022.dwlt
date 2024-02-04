@@ -270,8 +270,8 @@ MonoBehaviour:
     y: 0
     width: 370
     height: 939
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 71}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 17}
@@ -496,9 +496,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
-      m_LastClickedID: 0
-      m_ExpandedIDs: 12fbffff
+      m_SelectedIDs: 92630000
+      m_LastClickedID: 25490
+      m_ExpandedIDs: 4cf2ffff8cf2ffff5af4ffff2afbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -976,7 +976,7 @@ MonoBehaviour:
     m_SkipHidden: 1
     m_SearchArea: 1
     m_Folders:
-    - Assets/StreamingAssets
+    - Assets/Scripts
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -984,16 +984,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 48
   m_LastFolders:
-  - Assets/StreamingAssets
+  - Assets/Scripts
   m_LastFoldersGridSize: 48
   m_LastProjectPath: C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 4c610000
-    m_LastClickedID: 24908
-    m_ExpandedIDs: 00000000fc600000
+    m_SelectedIDs: 46610000
+    m_LastClickedID: 24902
+    m_ExpandedIDs: 00000000f8600000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1021,7 +1021,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000fc600000
+    m_ExpandedIDs: 00000000f8600000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
