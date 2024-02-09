@@ -14,9 +14,6 @@ public class UiHandler : MonoBehaviour
     private UiReferences _mainDisplayUiReferences;
     private UiReferences _secondDisplayUiReferences;
 
-    private ForTests _forTests;
-    private Cedrus _cedrus;
-    private AnswerHandler _answerHandler;
     private AudioHandler _audioHandler;
 
     private VisualElement _activeTab;           // main display
@@ -36,16 +33,13 @@ public class UiHandler : MonoBehaviour
         _mainDisplayUiReferences = mainDisplayGameObject.GetComponent<UiReferences>();
         _secondDisplayUiReferences = secondDisplayGameObject.GetComponent<UiReferences>();
 
-        _forTests = GetComponent<ForTests>();
-        _cedrus = GetComponent<Cedrus>();
-        _answerHandler = GetComponent<AnswerHandler>();
         _audioHandler = GetComponent<AudioHandler>();
 
+        ApplyDefaultSettings();
     }
 
     void Start()
     {
-        ApplyDefaultSettings();
         AddEventListeners();
 
         TabHasBeenClicked(mainTabScreen.GetElement("settings-tab"));
@@ -53,29 +47,10 @@ public class UiHandler : MonoBehaviour
 
     private void Update()
     {
-        PrintToConsole(_forTests.getStats(), clearTextElement: true);
+        
     }
 
-
-    public void PrintToInfo(string message, bool clearTextElement = false) {
-        var textElement = (TextElement)mainTabScreen.GetElement("info-module-textbox");
-        if (clearTextElement) textElement.text = "";
-        textElement.text += message;
-    }
-
-    public void PrintToWarnings(string message, bool clearTextElement = false)
-    {
-        var textElement = (TextElement)mainTabScreen.GetElement("warnings-module-textbox");
-        if (clearTextElement) textElement.text = "";
-        textElement.text += message;
-    }
-
-    public void PrintToConsole(string message, bool clearTextElement = false)
-    {
-        var textElement = (TextElement)secondaryTabScreen.GetElement("debug-console-module-textbox");
-        if (clearTextElement) textElement.text = "";
-        textElement.text += message;
-    }
+    
 
 
     public void ControllerButtonWasPressed(string btn_name) {

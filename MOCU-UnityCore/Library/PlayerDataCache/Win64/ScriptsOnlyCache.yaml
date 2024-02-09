@@ -4,13 +4,14 @@ ScriptsOnlyBuild:
     - AnswerHandler
     - AudioHandler
     - Cedrus
-    - ConnectionsStatusesHandler
     - CubesGenerator
+    - DebugTabHandler
     - ForTests
     - GeneralScript
     - InputHandler
     - InputLogic
     - MatchFov
+    - StatusesHandler
     - UiHandler
     - UiReferences
     Unity.InputSystem.dll:
@@ -143,15 +144,17 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 2946}
     - Class: 114
-      Script: {instanceID: 4082}
+      Script: {instanceID: 3610}
     - Class: 114
-      Script: {instanceID: 5402}
+      Script: {instanceID: 4084}
     - Class: 114
-      Script: {instanceID: 6132}
+      Script: {instanceID: 5404}
     - Class: 114
-      Script: {instanceID: 6244}
+      Script: {instanceID: 6134}
     - Class: 114
-      Script: {instanceID: 6368}
+      Script: {instanceID: 6246}
+    - Class: 114
+      Script: {instanceID: 6370}
     - Class: 114
       Script: {instanceID: 7198}
     - Class: 114
@@ -159,11 +162,11 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 7750}
     - Class: 114
-      Script: {instanceID: 7970}
+      Script: {instanceID: 8896}
     - Class: 114
-      Script: {instanceID: 8898}
+      Script: {instanceID: 9052}
     - Class: 114
-      Script: {instanceID: 9054}
+      Script: {instanceID: 24972}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -269,7 +272,7 @@ ScriptsOnlyBuild:
     className: UnityOnMouseExitMessageListener
   - hash:
       serializedVersion: 2
-      Hash: 05915efcdfc925a78a69b1944ba90e9f
+      Hash: 8839030b10d4d2c8f99f8d9b0dd88915
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: AudioHandler
@@ -501,6 +504,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: VariablesAsset
+  - hash:
+      serializedVersion: 2
+      Hash: 751e5bae2a317288c2ab58d66687092b
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: StatusesHandler
   - hash:
       serializedVersion: 2
       Hash: f6831ac80ec81c5d5b370c0ed0fee997
@@ -887,7 +896,7 @@ ScriptsOnlyBuild:
     className: Text
   - hash:
       serializedVersion: 2
-      Hash: 1309f67090510ee58f8bc4e8e368aa5a
+      Hash: 751e5bae2a317288c2ab58d66687092b
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: Cedrus
@@ -1109,7 +1118,7 @@ ScriptsOnlyBuild:
     className: DPadInteraction
   - hash:
       serializedVersion: 2
-      Hash: 815532858dfd25f61460649fc23a26d0
+      Hash: 85b3529fe7a9003c9ebc64bbcee7e063
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: InputHandler
@@ -1215,12 +1224,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline
     namespaceName: UnityEngine.Timeline
     className: SignalTrack
-  - hash:
-      serializedVersion: 2
-      Hash: a9e0315401d2a1a226ee73610420c2d8
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: ConnectionsStatusesHandler
   - hash:
       serializedVersion: 2
       Hash: 3959748dfe434297e37b19650fd73710
@@ -1383,6 +1386,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSliderValueChangedMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: 5284cea9f644fd53a1487cdc9a792c87
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: DebugTabHandler
   platform: 19
   scenePathNames:
   - Assets/Scenes/Main scene.unity

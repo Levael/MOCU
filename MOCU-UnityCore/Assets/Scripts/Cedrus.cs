@@ -21,7 +21,7 @@ public class Cedrus : MonoBehaviour
     public event Action<SignalFromParticipant> gotData;     // calls every subscribed to it functions if got any data from participant (checks buffer every frame)
 
     private UiHandler _uiHandler;
-    //private AnswerHandler _answerHandler;
+    private ExperimentTabHandler _experimentTabHandler;
 
     private SerialPort _serialPort;
     //private float _checkPortConnectionTimeInterval = 0.1f;  // sec
@@ -33,10 +33,10 @@ public class Cedrus : MonoBehaviour
     private Dictionary<string, SignalFromParticipant> _cedrusCodes_answerSignals_Relations;
 
 
-    void OnEnable()
+    void Awake()
     {
         _uiHandler = GetComponent<UiHandler>();
-        //_answerHandler = GetComponent<AnswerHandler>();
+        _experimentTabHandler = GetComponent<ExperimentTabHandler>();
 
         _dataQueue = new();
         _targetDeviceId = @"FTDIBUS\VID_0403+PID_6001";   // todo: move to config
@@ -104,7 +104,7 @@ public class Cedrus : MonoBehaviour
 
             if (string.IsNullOrEmpty(_portName))
             {
-                _uiHandler.PrintToWarnings($"doRequestPortName: {doRequestPortName}. _portName: {_portName}");
+                _experimentTabHandler.PrintToWarnings($"doRequestPortName: {doRequestPortName}. _portName: {_portName}");
                 return DeviceConnectionStatus.Disconnected;
             }
 
@@ -124,7 +124,7 @@ public class Cedrus : MonoBehaviour
             return DeviceConnectionStatus.Connected;
 
         } catch (Exception ex) {
-            _uiHandler.PrintToWarnings($"\n{ex}\n");
+            _experimentTabHandler.PrintToWarnings($"\n{ex}\n");
             return DeviceConnectionStatus.Disconnected; // In case of unsuccessful connection just updates "CedrusConnectionStatus"
         }
     }
@@ -159,7 +159,7 @@ public class Cedrus : MonoBehaviour
 
             return output;
         } catch (Exception ex) {
-            _uiHandler.PrintToWarnings($"\n{ex}\n");
+            _experimentTabHandler.PrintToWarnings($"\n{ex}\n");
             return null;
         }
         

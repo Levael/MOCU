@@ -9,6 +9,7 @@ public class StatusesHandler : MonoBehaviour
     private UiHandler _uiHandler;
     private InputHandler _inputHandler;
     private AudioHandler _audioHandler;
+    private ExperimentTabHandler _experimentTabHandler;
 
     private Dictionary<string, (StateTracker stateTracker, VisualElement visualElement)> _deviceNameToUxmlBlockMap;
     private Dictionary<DeviceConnectionStatus, string> _deviceConnectionStatusToColorMap;
@@ -21,6 +22,7 @@ public class StatusesHandler : MonoBehaviour
         _uiHandler = GetComponent<UiHandler>();
         _inputHandler = GetComponent<InputHandler>();
         _audioHandler = GetComponent<AudioHandler>();
+        _experimentTabHandler = GetComponent<ExperimentTabHandler>();
     }
 
     void Start()
@@ -72,7 +74,7 @@ public class StatusesHandler : MonoBehaviour
             }
             else
             {
-                _uiHandler.PrintToWarnings("Couldn't translate color");
+                _experimentTabHandler.PrintToWarnings("Couldn't translate color");
             }
         }
     }

@@ -20,6 +20,7 @@ public class AudioHandler : MonoBehaviour
     private string namedPipeName;
 
     private UiHandler _uiHandler;
+    private ExperimentTabHandler _experimentTabHandler;
     private InputLogic _inputLogic;
 
     public List<string> inputAudioDevices;
@@ -32,6 +33,7 @@ public class AudioHandler : MonoBehaviour
         namedPipeName = "AudioPipe";
 
         _uiHandler = GetComponent<UiHandler>();
+        _experimentTabHandler = GetComponent<ExperimentTabHandler>();
         _inputLogic = GetComponent<InputLogic>();
 
         stateTracker = new(DeviceConnectionStatus.Disconnected);
@@ -89,7 +91,7 @@ public class AudioHandler : MonoBehaviour
         } catch (Exception ex)
         {
             stateTracker.SetStatus(DeviceConnectionStatus.Disconnected);
-            _uiHandler.PrintToWarnings($"Error in Start func AudioHandler: {ex}");
+            _experimentTabHandler.PrintToWarnings($"Error in Start func AudioHandler: {ex}");
         }
         
     }
@@ -120,7 +122,7 @@ public class AudioHandler : MonoBehaviour
             if (message.messageType == InnerMessageType.Info)
                 //_uiHandler.PrintToInfo(message.messageText);
             if (message.messageType == InnerMessageType.Error)
-                _uiHandler.PrintToWarnings(message.messageText);
+                _experimentTabHandler.PrintToWarnings(message.messageText);
         }
     }
 

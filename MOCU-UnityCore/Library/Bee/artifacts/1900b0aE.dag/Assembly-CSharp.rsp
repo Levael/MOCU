@@ -393,6 +393,8 @@
 "Assets/Scripts/InputHandler.cs"
 "Assets/Scripts/InputLogic.cs"
 "Assets/Scripts/StatusesHandler.cs"
+"Assets/Scripts/TabHandlers/DebugTabHandler.cs"
+"Assets/Scripts/TabHandlers/ExperimentTabHandler.cs"
 "Assets/Scripts/UiHandler.cs"
 "Assets/Scripts/UiReferences.cs"
 "Assets/Scripts/UnityUtilities.cs"

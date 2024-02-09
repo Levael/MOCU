@@ -255,9 +255,9 @@ GameObject:
   - component: {fileID: 75438437}
   - component: {fileID: 75438438}
   - component: {fileID: 75438439}
-  - component: {fileID: 75438440}
   - component: {fileID: 75438441}
   - component: {fileID: 75438442}
+  - component: {fileID: 75438443}
   m_Layer: 0
   m_Name: Scripts
   m_TagString: Untagged
@@ -370,23 +370,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ae91769467598e4d80bc7d444fbdd5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &75438440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 75438430}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0f8331664ba6ed44b6e2b0d1e78e2f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  classIsReady: 0
-  _cedrus: {fileID: 0}
-  _uiHandler: {fileID: 0}
-  _inputHandler: {fileID: 0}
-  _audioHandler: {fileID: 0}
 --- !u!114 &75438441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,6 +396,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 707d5bb10eb09d440b4dd41714f1b4bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &75438443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 75438430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 950f497332911da49be3b9a92fb23d7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _uiReference: {fileID: 0}
 --- !u!1 &78664784
 GameObject:
   m_ObjectHideFlags: 0
