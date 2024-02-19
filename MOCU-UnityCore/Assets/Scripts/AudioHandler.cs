@@ -12,7 +12,6 @@ using InterprocessCommunication;
 
 public class AudioHandler : MonoBehaviour
 {
-    //public DeviceConnectionStatus audioPipeConnectionStatus;
     public StateTracker stateTracker;
 
     private NamedPipeClient namedPipeClient;

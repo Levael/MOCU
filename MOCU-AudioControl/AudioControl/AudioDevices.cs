@@ -66,6 +66,31 @@ namespace AudioControl
         private void OnDataAvailable(object? sender, WaveInEventArgs e)
         {
             buffer.AddSamples(e.Buffer, 0, e.BytesRecorded);
+
+            // tried to add noise cancelling
+            /*// Пороговое значение для шумоподавления
+            float threshold = 0.5f; // Задайте порог в соответствии с вашими потребностями
+
+            // Проходим по всему буферу и применяем пороговое значение для отсечения шума
+            for (int index = 0; index < e.BytesRecorded; index += 2)
+            {
+                // Конвертируем байты в 16-битное значение
+                short sample = (short)((e.Buffer[index + 1] << 8) | e.Buffer[index]);
+
+                // Применяем шумоподавление
+                float sampleFloat = sample / 32768f; // Конвертируем в значение от -1.0 до 1.0
+                if (Math.Abs(sampleFloat) < threshold)
+                {
+                    sample = 0;
+                }
+
+                // Конвертируем обратно в байты
+                e.Buffer[index] = (byte)(sample & 0xFF);
+                e.Buffer[index + 1] = (byte)(sample >> 8);
+            }
+
+            // Добавляем обработанные данные в буфер
+            buffer.AddSamples(e.Buffer, 0, e.BytesRecorded);*/
         }
 
         public void BindToBuffer(BufferedWaveProvider outputBuffer)
