@@ -7,8 +7,8 @@ using UnityEngine.UIElements;
 using AudioControl;
 using CommonUtilitiesNamespace;
 using InterprocessCommunication;
-
-
+using System.Threading.Tasks;
+using System.Collections;
 
 public class AudioHandler : MonoBehaviour
 {
@@ -47,9 +47,13 @@ public class AudioHandler : MonoBehaviour
             {"StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ParticipantToResearcher_Command())},
         };
 
+
+
         // for git test
     }
 
+    // all this sh*t is here because Unity can't handle "await" in "Start" method. Otherwise it would take 1 line (-_-)
+    // the goal is to connect to server using "async" func with "await"
     void Start()
     {
         try
@@ -58,12 +62,20 @@ public class AudioHandler : MonoBehaviour
 
             StartAudioControlProcess();
 
-            namedPipeClient = new NamedPipeClient(namedPipeName);
+            StartCoroutine(ConnectToServer(result => {
+                if (result == false)
+                {
+                    stateTracker.SetStatus(DeviceConnectionStatus.Disconnected);
+                    return;
+                }
 
-            stateTracker.SetStatus(DeviceConnectionStatus.Connected);
+                stateTracker.SetStatus(DeviceConnectionStatus.Connected);
 
-            SendConfigs();
-            SetAudioDevices();  // send to server side devices parameters to initiate them there
+                SendConfigs();
+                SetAudioDevices();  // send to server side devices parameters to initiate them there
+            }));
+
+
 
 
             // Event listeners for intercom
@@ -84,7 +96,6 @@ public class AudioHandler : MonoBehaviour
             };
 
             _uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => RequestAudioDevicesNames());
-
 
 
         } catch (Exception ex)
@@ -133,7 +144,28 @@ public class AudioHandler : MonoBehaviour
         stateTracker.SetStatus(DeviceConnectionStatus.Disconnected);
     }
 
+    // all this sh*t is here because Unity can't handle "await" in "Start" method. Otherwise it would take 2 lines (-_-). todo: maybe refactor later
+    // omg, it's so disgusting...
+    private IEnumerator ConnectToServer(Action<bool> callback)
+    {
+        TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
+        Task.Run(async () => {
+            try
+            {
+                namedPipeClient = new NamedPipeClient(namedPipeName);
+                bool result = await namedPipeClient.StartAsync();
+                tcs.SetResult(result);
+            }
+            catch
+            {
+                tcs.SetResult(false);
+            }
+        });
+
+        yield return new WaitUntil(() => tcs.Task.IsCompleted);
+        callback?.Invoke(tcs.Task.Result);
+    }
 
     private void StartAudioControlProcess()
     {

@@ -5,9 +5,9 @@ set EXE_PATH=.\MOCU-UnityCore\Build\MOCU.exe
 
 :: will show error message and wait for 2sec if there is no internet, then start old version of app
 echo Checking internet connection...
-ping -n 1 google.com > nul 2>&1
+ping -n 1 github.com > nul 2>&1
 if errorlevel 1 (
-    echo You are not connected to the Internet, so it is not the newest version of the program that will start (potentially)
+    echo You are not connected to the Internet (GitHub), so it is not the newest version of the program that will start (potentially)
     timeout /t 2 /nobreak > nul
     goto :startApp
 )
@@ -25,8 +25,8 @@ if %errorlevel% neq 0 (
 echo Fetching latest changes for the repository...
 git pull origin main
 if %errorlevel% neq 0 (
-    ::echo Error: Failed to fetch latest changes (or it is already 'up to date'), so it is not the newest version of the program that will start (potentially)
-    ::timeout /t 2 /nobreak > nul
+    echo Error: Failed to fetch latest changes, so it is not the newest version of the program that will start (potentially)
+    timeout /t 2 /nobreak > nul
     goto :startApp
 )
 

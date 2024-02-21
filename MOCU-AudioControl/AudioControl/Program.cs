@@ -36,11 +36,11 @@ class Program
         var audioManager = new AudioManager();
         var server = new NamedPipeServer(namedPipeName: namedPipeName, commandProcessor_dependencyInjection: audioManager.ProcessCommand);
 
-        audioManager.outputMessagesQueue = server.outputMessagesQueue;  // must be before "server.Start()"
+        audioManager.outputMessagesQueue = server.outputMessagesQueue;  // must be before "server.StartAsync()"
         server.ErrorOccurred += ServerErrorOccurred;                    // the way to communicate: from server to Program
         // todo: maybe add later "server.innerMessagesQueue" to "audioManager.innerMessagesQueue"
         
-        server.Start();
+        server.StartAsync();
     }
 
     

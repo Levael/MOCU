@@ -19,23 +19,57 @@ namespace InterprocessCommunication
         public ConcurrentQueue<(string messageText, InnerMessageType messageType)> innerMessagesQueue;  // for cross-class connection
 
         private bool _isProcessingWriting = false;
+        private int _connectionTimeoutMs = 5000;    // todo: read from config
+        private string _namedPipeName;
+        private CancellationTokenSource _cts = new CancellationTokenSource();
+
+        public bool isConnectionAlive = false;  // todo: add later to server class too
+
 
 
 
         public NamedPipeClient(string namedPipeName)
         {
-            _pipeClient = new NamedPipeClientStream(".", namedPipeName, PipeDirection.InOut, PipeOptions.Asynchronous);    // '.' means this PC, not via LAN
-            _pipeClient.Connect();
-
-            _streamReader = new StreamReader(_pipeClient);
-            _streamWriter = new StreamWriter(_pipeClient);
+            _namedPipeName = namedPipeName;
 
             inputMessagesQueue = new();
             outputMessagesQueue = new();
             innerMessagesQueue = new();
-
-            ReadMessagesAsync();
         }
+
+        public async Task<bool> StartAsync()
+        {
+            try
+            {
+                _pipeClient = new NamedPipeClientStream(".", _namedPipeName, PipeDirection.InOut, PipeOptions.Asynchronous);    // '.' means this PC, not via LAN
+
+                var connectTask = _pipeClient.ConnectAsync(_cts.Token);
+                if (await Task.WhenAny(connectTask, Task.Delay(_connectionTimeoutMs)) != connectTask)
+                {
+                    // In case connect task did not complete in time
+                    _cts.Cancel();
+                    isConnectionAlive = false;
+                    return isConnectionAlive;
+                }
+
+                // If connected successfully, initialize stream reader and writer
+                _streamReader = new StreamReader(_pipeClient);
+                _streamWriter = new StreamWriter(_pipeClient);
+
+                // Start reading messages asynchronously
+                StartReadingMessagesAsync();
+
+                isConnectionAlive = true;
+                return isConnectionAlive;
+            }
+            catch
+            {
+                isConnectionAlive = false;
+                return isConnectionAlive;
+            }
+
+        }
+
 
         public void Destroy()
         {
@@ -84,7 +118,7 @@ namespace InterprocessCommunication
             }
         }
 
-        private async void ReadMessagesAsync()
+        private async void StartReadingMessagesAsync()
         {
             while (_pipeClient.IsConnected)
             {
@@ -137,15 +171,23 @@ namespace InterprocessCommunication
             innerMessagesQueue = new(ShowNotification);
         }
 
-        public void Start()
+        public async void StartAsync()
         {
-            _pipeServer = new NamedPipeServerStream(namedPipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-            _pipeServer.WaitForConnection();
+            try
+            {
+                _pipeServer = new NamedPipeServerStream(namedPipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+                await _pipeServer.WaitForConnectionAsync(_cts.Token);
 
-            _streamReader = new StreamReader(_pipeServer);
-            _streamWriter = new StreamWriter(_pipeServer);
+                _streamReader = new StreamReader(_pipeServer);
+                _streamWriter = new StreamWriter(_pipeServer);
 
-            ReadMessages();
+                ReadMessages();
+            }
+            catch
+            {
+                OnErrorOccurred("StartAsync - error uccured");
+            }
+            
         }
 
         private async void ReadMessages()
@@ -203,7 +245,7 @@ namespace InterprocessCommunication
         /// <summary>
         /// Is called when new notification added to "innerMessagesQueue"
         /// </summary>
-        public async void ShowNotification((string messageText, InnerMessageType messageType) notification)
+        public void ShowNotification((string messageText, InnerMessageType messageType) notification)
         {
             if (notification.messageType == InnerMessageType.Error)
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -215,7 +257,7 @@ namespace InterprocessCommunication
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public async void ShowNotification(string messageText)
+        public void ShowNotification(string messageText)
         {
             Console.WriteLine(messageText);
         }
@@ -252,297 +294,3 @@ namespace InterprocessCommunication
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*using System.Collections.Concurrent;
-using System.IO.Pipes;
-using System.IO;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using static UnityEditor.Progress;
-
-namespace InterprocessCommunication
-{
-    public class NamedPipeClient
-    {
-        private NamedPipeClientStream _pipeClient;
-        private StreamReader _streamReader;
-        private StreamWriter _streamWriter;
-
-        public ConcurrentQueue<string> inputMessagesQueue;
-        public ConcurrentQueue<string> outputMessagesQueue;
-        public ConcurrentQueue<(string messageText, InnerMessageType messageType)> innerMessagesQueue;  // for cross-class connection
-
-        private bool _isProcessingWriting = false;
-
-
-
-        public NamedPipeClient(string namedPipeName)
-        {
-            _pipeClient = new NamedPipeClientStream(".", namedPipeName, PipeDirection.InOut, PipeOptions.Asynchronous);    // '.' means this PC, not via LAN
-            _pipeClient.Connect();
-
-            _streamReader = new StreamReader(_pipeClient);
-            _streamWriter = new StreamWriter(_pipeClient);
-
-            inputMessagesQueue = new();
-            outputMessagesQueue = new();
-            innerMessagesQueue = new();
-
-            ReadMessagesAsync();
-        }
-
-        public void Destroy()
-        {
-            try { _streamReader?.Close();   } catch { }
-            try { _streamWriter?.Close();   } catch { }
-            try { _pipeClient?.Close();     } catch { }
-
-            try { _streamReader?.Dispose(); } catch { }
-            try { _streamWriter?.Dispose(); } catch { }
-            try { _pipeClient?.Dispose();   } catch { }
-        }
-
-
-        private async void ProcessMessages()
-        {
-            _isProcessingWriting = true;
-
-            while (!outputMessagesQueue.IsEmpty)
-            {
-                if (outputMessagesQueue.TryDequeue(out string message))
-                {
-                    try
-                    {
-                        await _streamWriter.WriteLineAsync(message);
-                        await _streamWriter.FlushAsync();
-
-                        innerMessagesQueue.Enqueue(($"command sent: {message}", InnerMessageType.Info));
-                    }
-                    catch
-                    {
-                        innerMessagesQueue.Enqueue(($"error when sending: {message}", InnerMessageType.Error));
-                    }
-                }
-            }
-
-            _isProcessingWriting = false;
-        }
-
-        public void SendCommandAsync(string command)
-        {
-            outputMessagesQueue.Enqueue(command);
-
-            if (!_isProcessingWriting)
-            {
-                ProcessMessages();
-            }
-        }
-
-        private async void ReadMessagesAsync()
-        {
-            while (_pipeClient.IsConnected)
-            {
-                string response = await _streamReader.ReadLineAsync();
-                if (response != null)
-                {
-                    inputMessagesQueue.Enqueue(response);
-                }
-                else
-                {
-                    innerMessagesQueue.Enqueue(($"response == null", InnerMessageType.Error));
-                }
-            }
-        }
-    }
-
-
-
-
-
-    public class NamedPipeServer
-    {
-        private NamedPipeServerStream _pipeServer;
-        private StreamReader _streamReader;
-        private StreamWriter _streamWriter;
-        private CancellationTokenSource _cts = new CancellationTokenSource();
-
-        private ICommandProcessor _commandProcessor;
-        private bool _isProcessingWriting = false;
-
-        /// <summary>
-        /// Occurs when an error is detected in the NamedPipeServer and handles by parrent Class
-        /// </summary>
-        public event Action<string> ErrorOccurred;
-
-        public event Action<string> InnerMessageSent;
-
-        public ConcurrentQueue<string> inputMessagesQueue;
-        public ConcurrentQueue<string> outputMessagesQueue;
-        public ConcurrentQueue<(string messageText, InnerMessageType messageType)> innerMessagesQueue;  // for cross-class connection
-
-
-
-        public NamedPipeServer(string namedPipeName, ICommandProcessor commandProcessor_dependencyInjection)
-        {
-            _pipeServer = new NamedPipeServerStream(namedPipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-            _pipeServer.WaitForConnection();
-
-            _streamReader = new StreamReader(_pipeServer);
-            _streamWriter = new StreamWriter(_pipeServer);
-
-            inputMessagesQueue = new();
-            outputMessagesQueue = new();
-            innerMessagesQueue = new();
-
-            _commandProcessor = commandProcessor_dependencyInjection;
-
-            
-            ReadMessages();
-        }
-
-        private async void ReadMessages()
-        {
-            while (!_cts.Token.IsCancellationRequested && _pipeServer.IsConnected)
-            {
-                try
-                {
-                    string message = await ReadCommandAsync();  // 99.99% of time will be here waiting for new message
-                    Task.Run(() => ProcessResponse(message));   // on purpose launches as a new task so that the next message will be read immediately
-
-                }
-                catch (IOException ex)
-                {
-                    OnErrorOccurred($"ReadMessages-StartAsync-IO exception :: {ex.Message}");
-                }
-                catch (OperationCanceledException)
-                {
-                    OnErrorOccurred("ReadMessages :: Operation canceled");
-                }
-            }
-        }
-
-        public async Task<string> ReadCommandAsync()
-        {
-            string message = await _streamReader.ReadLineAsync();
-
-            if (message == null) throw new Exception("ReadCommandAsync :: message == null");
-
-            return message;
-        }
-
-        private void ProcessResponse(string message)
-        {
-            try
-            {
-                var response = _commandProcessor.ProcessCommand(message);
-                SendCommandAsync(response);
-
-                innerMessagesQueue.Enqueue(($"COMMAND GOT: {message}\nRESPONSE SENT: {response}\n\n", InnerMessageType.Info));
-            }
-            catch
-            {
-                innerMessagesQueue.Enqueue(($"error when reading: {message}", InnerMessageType.Error));
-            }
-        }
-
-
-
-
-
-
-        public void SendCommandAsync(string command)
-        {
-            outputMessagesQueue.Enqueue(command);
-
-            if (!_isProcessingWriting)
-            {
-                ProcessMessagesWriting();
-            }
-        }
-
-        private async void ProcessMessagesWriting()
-        {
-            _isProcessingWriting = true;
-
-            while (!outputMessagesQueue.IsEmpty)
-            {
-                if (outputMessagesQueue.TryDequeue(out string message))
-                {
-                    try
-                    {
-                        await _streamWriter.WriteLineAsync(message);
-                        await _streamWriter.FlushAsync();
-
-                        innerMessagesQueue.Enqueue(($"command sent: {message}", InnerMessageType.Info));
-                    }
-                    catch
-                    {
-                        innerMessagesQueue.Enqueue(($"error when sending: {message}", InnerMessageType.Error));
-                    }
-                }
-            }
-
-            _isProcessingWriting = false;
-        }
-
-        
-
-
-
-        public void Stop()
-        {
-            _cts.Cancel();
-            Destroy();
-        }
-
-        private void Destroy()
-        {
-            try { _streamReader?.Dispose(); } catch { }
-            try { _streamWriter?.Dispose(); } catch { }
-            try { _pipeServer?.Dispose();   } catch { }
-        }
-
-        protected virtual void OnErrorOccurred(string message)
-        {
-            Stop();
-            ErrorOccurred?.Invoke(message);
-        }
-
-        protected virtual void OnInnerMessageSent(string message)
-        {
-            InnerMessageSent?.Invoke(message);
-        }
-    }
-
-
-
-    public enum InnerMessageType
-    {
-        Error,
-        Info
-    }
-
-
-    public interface ICommandProcessor
-    {
-        public string ProcessCommand(string jsonCommand);
-    }
-
-
-}
-
-*/
