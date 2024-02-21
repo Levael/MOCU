@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "8tqMVb7MQ3YM90vZLSYbz+92aJ3vmrRTFcp9o2ZVPpbi1DUq9CElZJfhVkrWZ9pvu8QI7H40JOdYPCdL+sGClw==",
+  "dgSpecHash": "kQXHmRgq+QKM1yJ+LhXmk1uMdPC1X1UR4AeMJHeXx1smbeDlKDsc1EtF8LYxWin1OosTlqKI7k5fsR1hA8It1Q==",
   "success": true,
   "projectFilePath": "C:\\Users\\Levael\\GitHub\\MOCU\\MOCU-AudioControl\\AudioControl\\AudioControl.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Levael\\.nuget\\packages\\microsoft.net.illink.analyzers\\7.0.100-1.23211.1\\microsoft.net.illink.analyzers.7.0.100-1.23211.1.nupkg.sha512",
+    "C:\\Users\\Levael\\.nuget\\packages\\microsoft.net.illink.tasks\\7.0.100-1.23211.1\\microsoft.net.illink.tasks.7.0.100-1.23211.1.nupkg.sha512",
     "C:\\Users\\Levael\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\Levael\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\Levael\\.nuget\\packages\\naudio\\2.2.1\\naudio.2.2.1.nupkg.sha512",
@@ -15,9 +17,9 @@
     "C:\\Users\\Levael\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\Levael\\.nuget\\packages\\system.security.accesscontrol\\4.7.0\\system.security.accesscontrol.4.7.0.nupkg.sha512",
     "C:\\Users\\Levael\\.nuget\\packages\\system.security.principal.windows\\4.7.0\\system.security.principal.windows.4.7.0.nupkg.sha512",
-    "C:\\Users\\Levael\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\7.0.10\\microsoft.aspnetcore.app.runtime.win-x64.7.0.10.nupkg.sha512",
-    "C:\\Users\\Levael\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\7.0.10\\microsoft.windowsdesktop.app.runtime.win-x64.7.0.10.nupkg.sha512",
-    "C:\\Users\\Levael\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\7.0.10\\microsoft.netcore.app.runtime.win-x64.7.0.10.nupkg.sha512"
+    "C:\\Users\\Levael\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\7.0.16\\microsoft.aspnetcore.app.runtime.win-x64.7.0.16.nupkg.sha512",
+    "C:\\Users\\Levael\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\7.0.16\\microsoft.windowsdesktop.app.runtime.win-x64.7.0.16.nupkg.sha512",
+    "C:\\Users\\Levael\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\7.0.16\\microsoft.netcore.app.runtime.win-x64.7.0.16.nupkg.sha512"
   ],
   "logs": []
 }

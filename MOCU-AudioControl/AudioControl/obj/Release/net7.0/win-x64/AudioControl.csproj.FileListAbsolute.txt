@@ -187,7 +187,6 @@ C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\bin\Release\net7.0\wi
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\bin\Release\net7.0\win-x64\hostfxr.dll
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\bin\Release\net7.0\win-x64\hostpolicy.dll
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\bin\Release\net7.0\win-x64\mscordaccore.dll
-C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\bin\Release\net7.0\win-x64\mscordaccore_amd64_amd64_7.0.1023.36312.dll
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\bin\Release\net7.0\win-x64\mscordbi.dll
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\bin\Release\net7.0\win-x64\mscorrc.dll
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\bin\Release\net7.0\win-x64\msquic.dll
@@ -196,8 +195,9 @@ C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\obj\Release\net7.0\wi
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\obj\Release\net7.0\win-x64\AudioControl.AssemblyInfoInputs.cache
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\obj\Release\net7.0\win-x64\AudioControl.AssemblyInfo.cs
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\obj\Release\net7.0\win-x64\AudioControl.csproj.CoreCompileInputs.cache
-C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\obj\Release\net7.0\win-x64\AudioControl.csproj.CopyComplete
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\obj\Release\net7.0\win-x64\AudioControl.dll
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\obj\Release\net7.0\win-x64\refint\AudioControl.dll
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\obj\Release\net7.0\win-x64\AudioControl.genruntimeconfig.cache
 C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\obj\Release\net7.0\win-x64\ref\AudioControl.dll
+C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\bin\Release\net7.0\win-x64\mscordaccore_amd64_amd64_7.0.1624.6629.dll
+C:\Users\Levael\GitHub\MOCU\MOCU-AudioControl\AudioControl\obj\Release\net7.0\win-x64\AudioCon.86586570.Up2Date

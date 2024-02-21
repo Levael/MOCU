@@ -19,7 +19,7 @@ namespace InterprocessCommunication
         public ConcurrentQueue<(string messageText, InnerMessageType messageType)> innerMessagesQueue;  // for cross-class connection
 
         private bool _isProcessingWriting = false;
-        private int _connectionTimeoutMs = 5000;    // todo: read from config
+        private int _connectionTimeoutMs = 5000;    // todo: read from config (to avoid freezes)
         private string _namedPipeName;
         private CancellationTokenSource _cts = new CancellationTokenSource();
 
@@ -73,13 +73,13 @@ namespace InterprocessCommunication
 
         public void Destroy()
         {
-            try { _streamReader?.Close(); } catch { }
-            try { _streamWriter?.Close(); } catch { }
-            try { _pipeClient?.Close(); } catch { }
+            try { _streamReader?.Close();   } catch { }
+            try { _streamWriter?.Close();   } catch { }
+            try { _pipeClient?.Close();     } catch { }
 
             try { _streamReader?.Dispose(); } catch { }
             try { _streamWriter?.Dispose(); } catch { }
-            try { _pipeClient?.Dispose(); } catch { }
+            try { _pipeClient?.Dispose();   } catch { }
         }
 
 
@@ -96,11 +96,11 @@ namespace InterprocessCommunication
                         await _streamWriter.WriteLineAsync(message);
                         await _streamWriter.FlushAsync();
 
-                        innerMessagesQueue.Enqueue(($"command sent: {message}", InnerMessageType.Info));
+                        innerMessagesQueue.Enqueue(($"Connection manager/Client/ProcessMessages/command sent: {message}", InnerMessageType.Info));
                     }
                     catch
                     {
-                        innerMessagesQueue.Enqueue(($"error when sending: {message}", InnerMessageType.Error));
+                        innerMessagesQueue.Enqueue(($"Connection manager/Client/ProcessMessages/error when sending: {message}", InnerMessageType.Error));
                     }
                 }
             }
@@ -110,6 +110,8 @@ namespace InterprocessCommunication
 
         public void SendCommandAsync(string command)
         {
+            if (isConnectionAlive != true) return;
+
             outputMessagesQueue.Enqueue(command);
 
             if (!_isProcessingWriting)
@@ -120,18 +122,32 @@ namespace InterprocessCommunication
 
         private async void StartReadingMessagesAsync()
         {
-            while (_pipeClient.IsConnected)
+            try
             {
-                string response = await _streamReader.ReadLineAsync();
-                if (response != null)
+                while (_pipeClient.IsConnected)
                 {
+                    string response = await _streamReader.ReadLineAsync();
+
+                    if (response == null)
+                    {
+                        CloseConnection("Connection manager/Client/StartReadingMessagesAsync/response == null");
+                        break;
+                    }
+
                     inputMessagesQueue.Enqueue(response);
                 }
-                else
-                {
-                    innerMessagesQueue.Enqueue(($"response == null", InnerMessageType.Error));
-                }
             }
+            catch
+            {
+                CloseConnection("Connection manager/Client/StartReadingMessagesAsync/unkmown fatal error");
+            }
+        }
+
+        private void CloseConnection(string message)
+        {
+            innerMessagesQueue.Enqueue((message, InnerMessageType.Error));
+            isConnectionAlive = false;
+            Destroy();
         }
     }
 

@@ -26,7 +26,7 @@ namespace AudioControl
         public AudioManager()
         {
             unifiedWaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2); // 32 bit IEEFloat: 44100Hz 2 channels
-            //pathToAudioFiles = @"..\..\MOCU-UnityCore\Assets\Audio";            // todo: move it to config file later
+            //pathToAudioFiles = @"..\..\MOCU-UnityCore\Assets\Audio";          // todo: move it to config file later
             audioFileNames = new() { "test.mp3", "test2.mp3" };                 // todo: maybe read it from config or unity, idk
 
             enumerator = new();
