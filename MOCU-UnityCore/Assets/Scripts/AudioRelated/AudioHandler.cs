@@ -26,6 +26,9 @@ public class AudioHandler : MonoBehaviour
     public List<string> outputAudioDevices;
 
     private Dictionary<string, string> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
+    private Dictionary<string, bool> stateTrackerComponents;
+
+
 
     void Awake()
     {
@@ -35,7 +38,7 @@ public class AudioHandler : MonoBehaviour
         _experimentTabHandler = GetComponent<ExperimentTabHandler>();
         _inputLogic = GetComponent<InputLogic>();
 
-        stateTracker = new(DeviceConnectionStatus.NotRelevant);
+        stateTracker = new StateTracker(new[] { "SetConfigs", "SetAudioDevices", "StartAudioProcess", "StartNamedPipeConnection" });
 
         inputAudioDevices = new();
         outputAudioDevices = new();
@@ -54,20 +57,19 @@ public class AudioHandler : MonoBehaviour
     {
         try
         {
-            stateTracker.SetStatus(DeviceConnectionStatus.InProgress);
-
             StartAudioControlProcess();
 
             StartCoroutine(ConnectToServer(result => {
                 if (result == false)
                 {
                     CloseConnection($"AudioHandler/Start/ConnectToServer");
+                    stateTracker.UpdateSubState("StartNamedPipeConnection", false);
                     return;
                 }
 
-                stateTracker.SetStatus(DeviceConnectionStatus.Connected);
+                stateTracker.UpdateSubState("StartNamedPipeConnection", true);
 
-                SendConfigs();
+                SendConfigs();      // paths and file names
                 SetAudioDevices();  // send to server side devices parameters to initiate them there
             }));
 
@@ -99,6 +101,7 @@ public class AudioHandler : MonoBehaviour
         } catch (Exception ex)
         {
             CloseConnection($"AudioHandler/Start/error message: {ex}");
+            stateTracker.UpdateSubState("StartNamedPipeConnection", false);
         }
         
     }
@@ -109,14 +112,42 @@ public class AudioHandler : MonoBehaviour
         {
             var commandName = CommonUtilities.GetSerializedObjectType(message);
 
+            // { } are for using same variable 'obj'
             switch (commandName)
             {
                 case "GeneralResponseFromServer_Command":
-                    //_uiHandler.PrintToInfo($"1: {commandName}\n");
+                    var obj = CommonUtilities.DeserializeJson<GeneralResponseFromServer_Command>(message);
+                    switch (obj.ReceivedCommand)
+                    {
+                        case "SendConfigs_Command":
+                            if (obj.HasError)
+                            {
+                                stateTracker.UpdateSubState("SetConfigs", false);
+                                _experimentTabHandler.PrintToWarnings("Failed to 'SendConfigs'");
+                            }
+                            else
+                            {
+                                stateTracker.UpdateSubState("SetConfigs", true);
+                            }
+                            break;
+                        case "SetDevicesParameters_Command":
+                            if (obj.HasError)
+                            {
+                                stateTracker.UpdateSubState("SetAudioDevices", false);
+                                _experimentTabHandler.PrintToWarnings("Failed to 'SetAudioDevices'");
+                            }
+                            else
+                            {
+                                stateTracker.UpdateSubState("SetAudioDevices", true);
+                            }
+                            break;
+                    }
                     break;
                 case "ResponseFromServer_GetAudioDevices_Command":
                     //_uiHandler.PrintToInfo($"2: {commandName}\n");
                     break;
+
+
                 default:
                     //_uiHandler.PrintToInfo($"3: {commandName}\n");
                     break;
@@ -134,6 +165,7 @@ public class AudioHandler : MonoBehaviour
             if (message.messageType == InnerMessageType.Error)
             {
                 CloseConnection(message.messageText);
+                stateTracker.UpdateSubState("StartNamedPipeConnection", false);
             }
         }
     }
@@ -147,7 +179,6 @@ public class AudioHandler : MonoBehaviour
     private void CloseConnection(string message)
     {
         _experimentTabHandler.PrintToWarnings(message);
-        stateTracker.SetStatus(DeviceConnectionStatus.Disconnected);
         OnDestroy();
     }
 
@@ -175,21 +206,30 @@ public class AudioHandler : MonoBehaviour
 
     private void StartAudioControlProcess()
     {
-        string relativeExternalAppPath = @"AudioControl.exe";
-        string fullExternalAppPath = Path.Combine(Application.streamingAssetsPath, relativeExternalAppPath);
-        bool isProcessHidden = false;
-
-        ProcessStartInfo startInfo = new ProcessStartInfo()
+        try
         {
-            FileName = fullExternalAppPath,
-            Arguments = $"{Process.GetCurrentProcess().Id} {namedPipeName} {isProcessHidden}", // takes string where spaces separate arguments
-            UseShellExecute = !isProcessHidden,
-            RedirectStandardOutput = false,
-            CreateNoWindow = isProcessHidden
-        };
+            string relativeExternalAppPath = @"AudioControl.exe";
+            string fullExternalAppPath = Path.Combine(Application.streamingAssetsPath, relativeExternalAppPath);
+            bool isProcessHidden = false;
 
-        audioControlProcess = new Process() { StartInfo = startInfo };
-        audioControlProcess.Start();
+            ProcessStartInfo startInfo = new ProcessStartInfo()
+            {
+                FileName = fullExternalAppPath,
+                Arguments = $"{Process.GetCurrentProcess().Id} {namedPipeName} {isProcessHidden}", // takes string where spaces separate arguments
+                UseShellExecute = !isProcessHidden,
+                RedirectStandardOutput = false,
+                CreateNoWindow = isProcessHidden
+            };
+
+            audioControlProcess = new Process() { StartInfo = startInfo };
+            audioControlProcess.Start();
+            stateTracker.UpdateSubState("StartAudioProcess", true);
+        }
+        catch
+        {
+            stateTracker.UpdateSubState("StartAudioProcess", false);
+            _experimentTabHandler.PrintToWarnings("Failed to 'StartAudioControlProcess'");
+        }
     }
 
 

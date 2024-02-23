@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,7 +13,7 @@ public class StatusesHandler : MonoBehaviour
     private ExperimentTabHandler _experimentTabHandler;
 
     private Dictionary<string, (StateTracker stateTracker, VisualElement visualElement)> _deviceNameToUxmlBlockMap;
-    private Dictionary<DeviceConnectionStatus, string> _deviceConnectionStatusToColorMap;
+    private Dictionary<StateTracker.DeviceConnectionStatus, string> _deviceConnectionStatusToColorMap;
 
 
 
@@ -42,11 +43,11 @@ public class StatusesHandler : MonoBehaviour
         };
 
         _deviceConnectionStatusToColorMap = new()
-        {                                                           // todo: try to read vars from uss (currently not possible)
-            { DeviceConnectionStatus.Connected,     "#5580ED" },    // blue
-            { DeviceConnectionStatus.Disconnected,  "#FC5858" },    // red
-            { DeviceConnectionStatus.InProgress,    "#FCBA58" },    // yellow
-            { DeviceConnectionStatus.NotRelevant,   "#9A9B9B" }     // gray
+        {                                                                       // todo: try to read vars from uss (currently not possible)
+            { StateTracker.DeviceConnectionStatus.Connected,     "#5580ED" },   // blue
+            { StateTracker.DeviceConnectionStatus.Disconnected,  "#FC5858" },   // red
+            { StateTracker.DeviceConnectionStatus.InProgress,    "#FCBA58" },   // yellow
+            { StateTracker.DeviceConnectionStatus.NotRelevant,   "#9A9B9B" }    // gray
         };
     }
 
@@ -82,28 +83,81 @@ public class StatusesHandler : MonoBehaviour
 
 
 
-// temp here
-public class StateTracker {
+
+/// <summary>
+/// Tracks the connection status of a device or a process based on multiple sub-states.
+/// The overall connection status is determined by individual sub-state values where:
+/// - If all sub-states are false, the overall status is set to Disconnected.
+/// - If at least one sub-state is false (and not all are false), the overall status is set to InProgress.
+/// - If all sub-states are true, the overall status is set to Connected.
+/// This class is useful for managing complex states where multiple conditions contribute to the final connection status.
+/// </summary>
+public class StateTracker
+{
+    private Dictionary<string, bool> _subStates;
+    // 'status' here is used for final result (DeviceConnectionStatus), and 'state' -- for boolean values
     public DeviceConnectionStatus Status { get; private set; }
 
-    public StateTracker(DeviceConnectionStatus initialStatus)
+
+    public StateTracker(IEnumerable<string> subStateNames)
     {
-        Status = initialStatus;
+        Status = DeviceConnectionStatus.NotRelevant;
+
+        _subStates = new();
+        foreach (var subStateName in subStateNames)
+        {
+            _subStates.Add(subStateName, false); 
+        }
     }
 
-    public void SetStatus(DeviceConnectionStatus newStatus)
+
+    public void UpdateSubState(string subStateName, bool subStateValue)
+    {
+        if (!_subStates.ContainsKey(subStateName))
+        {
+            UnityEngine.Debug.LogError("error in 'SetParameterState'");
+            return;
+        }
+
+        if (_subStates[subStateName] != subStateValue)
+        {
+            _subStates[subStateName] = subStateValue;
+            RecalculateOverallStatus();
+        }
+    }
+
+    private void RecalculateOverallStatus()
+    {
+        if (_subStates.Values.All(state => !state))
+        {
+            // If all of them are "false"
+            SetStatus(DeviceConnectionStatus.Disconnected);
+        }
+        else if (_subStates.Values.Any(state => !state))
+        {
+            // If there is at least one "false" (it means there is at least one "true" thanks to previous 'if' statement)
+            SetStatus(DeviceConnectionStatus.InProgress);
+        }
+        else
+        {
+            // If all of them are "true"
+            SetStatus(DeviceConnectionStatus.Connected);
+        }
+    }
+
+    private void SetStatus(DeviceConnectionStatus newStatus)
     {
         if (Status != newStatus)
         {
             Status = newStatus;
         }
     }
-}
 
-public enum DeviceConnectionStatus
-{
-    Connected,
-    Disconnected,
-    InProgress,
-    NotRelevant
+    public enum DeviceConnectionStatus
+    {
+        Connected,
+        Disconnected,
+        InProgress,
+        NotRelevant
+    }
 }

@@ -31,8 +31,8 @@ public class InputHandler : MonoBehaviour
 
     private void Awake()
     {
-        GamepadConnectionStatus = new(DeviceConnectionStatus.NotRelevant);
-        XRConnectionStatus = new(DeviceConnectionStatus.NotRelevant);
+        GamepadConnectionStatus = new StateTracker(new[] { "isConnected" });
+        XRConnectionStatus = new StateTracker(new[] { "isConnected" });
 
         _inputLogic     = GetComponent<InputLogic>();
         _cedrus         = GetComponent<Cedrus>();
@@ -98,7 +98,7 @@ public class InputHandler : MonoBehaviour
 
     void Start()
     {
-        _cedrus.stateTracker.SetStatus(_cedrus.TryConnect(doRequestPortName: true));
+        _cedrus.TryConnect(doRequestPortName: true);
         StartCoroutine(_cedrus.CheckPortConnection(_checkCedrusPortConnectionTimeInterval));
         StartCoroutine(CheckGamepadConnection(_checkGamepadConnectionTimeInterval));
         StartCoroutine(CheckXRConnection(_checkXRConnectionTimeInterval));
@@ -168,12 +168,14 @@ public class InputHandler : MonoBehaviour
         {
             try
             {
-                if (Gamepad.current != null)    GamepadConnectionStatus.SetStatus(DeviceConnectionStatus.Connected);
-                else                            GamepadConnectionStatus.SetStatus(DeviceConnectionStatus.Disconnected);
+                if (Gamepad.current != null)
+                    GamepadConnectionStatus.UpdateSubState("isConnected", true);
+                else
+                    GamepadConnectionStatus.UpdateSubState("isConnected", false);
             }
             catch
-            {                             
-                                                GamepadConnectionStatus.SetStatus(DeviceConnectionStatus.Disconnected);
+            {
+                GamepadConnectionStatus.UpdateSubState("isConnected", false);
             }
 
             yield return new WaitForSeconds(checkConnectionTimeInterval);
@@ -190,12 +192,14 @@ public class InputHandler : MonoBehaviour
         {
             try
             {
-                if (XRSettings.isDeviceActive)  XRConnectionStatus.SetStatus(DeviceConnectionStatus.Connected);
-                else                            XRConnectionStatus.SetStatus(DeviceConnectionStatus.Disconnected);
+                if (XRSettings.isDeviceActive)
+                    XRConnectionStatus.UpdateSubState("isConnected", true);
+                else
+                    XRConnectionStatus.UpdateSubState("isConnected", false);
             }
             catch
             {
-                                                XRConnectionStatus.SetStatus(DeviceConnectionStatus.Disconnected);
+                XRConnectionStatus.UpdateSubState("isConnected", false);
             }
 
             yield return new WaitForSeconds(checkConnectionTimeInterval);

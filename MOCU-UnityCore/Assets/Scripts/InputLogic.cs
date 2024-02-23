@@ -31,7 +31,7 @@ public class InputLogic : MonoBehaviour
 
     public void IntercomFromResearcherStarted()
     {
-        if (_audioHandler.stateTracker.Status != DeviceConnectionStatus.Connected) return;
+        if (_audioHandler.stateTracker.Status != StateTracker.DeviceConnectionStatus.Connected) return;
 
         startOutgoingIntercomStream?.Invoke();
         _uiHandler.mainTabScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
@@ -39,7 +39,7 @@ public class InputLogic : MonoBehaviour
     }
     public void IntercomFromResearcherStopped()
     {
-        if (_audioHandler.stateTracker.Status != DeviceConnectionStatus.Connected) return;
+        if (_audioHandler.stateTracker.Status != StateTracker.DeviceConnectionStatus.Connected) return;
 
         stopOutgoingIntercomStream?.Invoke();
         if (!_uiHandler.mainTabScreen.GetElement("controls-intercom-part").ClassListContains("isIncomming"))
@@ -52,7 +52,7 @@ public class InputLogic : MonoBehaviour
 
     public void IntercomFromParticipantStarted()
     {
-        if (_audioHandler.stateTracker.Status != DeviceConnectionStatus.Connected) return;
+        if (_audioHandler.stateTracker.Status != StateTracker.DeviceConnectionStatus.Connected) return;
 
         startIncomingIntercomStream?.Invoke();
         _uiHandler.mainTabScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
@@ -60,7 +60,7 @@ public class InputLogic : MonoBehaviour
     }
     public void IntercomFromParticipantStopped()
     {
-        if (_audioHandler.stateTracker.Status != DeviceConnectionStatus.Connected) return;
+        if (_audioHandler.stateTracker.Status != StateTracker.DeviceConnectionStatus.Connected) return;
 
         stopIncomingIntercomStream?.Invoke();
         if (!_uiHandler.mainTabScreen.GetElement("controls-intercom-part").ClassListContains("isOutcomming"))
