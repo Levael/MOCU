@@ -58,7 +58,6 @@ namespace AudioControl
             this.audioInputDeviceName = audioInputDeviceName == "same" ? this.audioInputDeviceName : audioInputDeviceName;
 
             if (string.IsNullOrEmpty(this.audioInputDeviceName)) throw new InvalidOperationException("Device name can't be Null or Empty");
-            if (isStreamOn) StopStream();
 
             _audioInputDevice = _audioManager.audioInputsDictionary[this.audioInputDeviceName];
         }
@@ -73,7 +72,6 @@ namespace AudioControl
             this.audioOutputDeviceVolume = audioOutputDeviceVolume == -1f ? this.audioOutputDeviceVolume : audioOutputDeviceVolume;
 
             if (string.IsNullOrEmpty(audioOutputDeviceName)) throw new InvalidOperationException("Device name can't be Null or Empty");
-            if (isStreamOn) StopStream();
 
             _audioOutputDevice = _audioManager.audioOutputsDictionary[this.audioOutputDeviceName];
             _audioOutputDevice.volume = this.audioOutputDeviceVolume;
@@ -85,6 +83,7 @@ namespace AudioControl
         public void UpdateAudioDevices(string audioInputDeviceName, string audioOutputDeviceName, float audioOutputDeviceVolume)
         {
             if (audioOutputDeviceVolume != -1f) this.audioOutputDeviceVolume = audioOutputDeviceVolume; // must be before "SetOutputDevice"
+            if (isStreamOn) StopStream();
 
             SetInputDevice(audioInputDeviceName);
             SetOutputDevice(audioOutputDeviceName, audioOutputDeviceVolume);

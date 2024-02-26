@@ -7,6 +7,8 @@ namespace AudioControl
 {
     public class AudioManager
     {
+        private AudioDevicesParameters audioDevicesParameters;
+
         private MMDeviceEnumerator enumerator;
         public MMDeviceCollection inputDevices;
         public MMDeviceCollection outputDevices;
@@ -22,6 +24,7 @@ namespace AudioControl
         public WaveFormat unifiedWaveFormat;
 
         public ObservableConcurrentQueue<string> outputMessagesQueue = null;
+
 
         public AudioManager()
         {
@@ -39,6 +42,17 @@ namespace AudioControl
             //LoadAudioFiles();
             InitOutputDevicesDictionary();
             InitInputDevicesDictionary();
+
+            //tests
+            audioDevicesParameters = new(outputsDict: audioOutputsDictionary, inputsDict: audioInputsDictionary);
+            audioDevicesParameters.SendResponseToUnity += RespondToCommand_UpdateDevicesParameters;
+        }
+
+
+        private void RespondToCommand_UpdateDevicesParameters(bool operationStatus)
+        {
+            var fullJsonResponse = CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "SetDevicesParameters_Command", hasError: operationStatus));
+            RespondToCommand(fullJsonResponse);
         }
 
         public void RespondToCommand(string response)
@@ -55,7 +69,7 @@ namespace AudioControl
             switch (commandName)
             {
                 // COMMON COMMANDS
-                // {} inside of each "case" are for using variable with same name
+                // '{}' inside of each "case" are for using variable with same name
 
                 case "SetDevicesParameters_Command":
                     {
@@ -80,7 +94,7 @@ namespace AudioControl
             case "PlayAudioFile_Command":
                     try {
                         Task.Run(() => PlayAudioFile(jsonCommand));
-                        RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "PlayAudioFile_Command", hasError: false)));
+                        //RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "PlayAudioFile_Command", hasError: false)));
                     } catch (Exception ex)
                     {
                         Console.WriteLine(ex);
@@ -99,22 +113,22 @@ namespace AudioControl
                 // INTERCOM COMMANDS
                 case "StartIntercomStream_ResearcherToParticipant_Command":
                     outgoingStream.StartStream();
-                    RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StartIntercomStream_ResearcherToParticipant_Command", hasError: false)));
+                    //RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StartIntercomStream_ResearcherToParticipant_Command", hasError: false)));
                     break;
 
                 case "StartIntercomStream_ParticipantToResearcher_Command":
                     incomingStream.StartStream();
-                    RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StartIntercomStream_ParticipantToResearcher_Command", hasError: false)));
+                    //RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StartIntercomStream_ParticipantToResearcher_Command", hasError: false)));
                     break;
 
                 case "StopIntercomStream_ResearcherToParticipant_Command":
                     outgoingStream.StopStream();
-                    RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StopIntercomStream_ResearcherToParticipant_Command", hasError: false)));
+                    //RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StopIntercomStream_ResearcherToParticipant_Command", hasError: false)));
                     break;
 
                 case "StopIntercomStream_ParticipantToResearcher_Command":
                     incomingStream.StopStream();
-                    RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StopIntercomStream_ParticipantToResearcher_Command", hasError: false)));
+                    //RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StopIntercomStream_ParticipantToResearcher_Command", hasError: false)));
                     break;
 
                 // CHANGE INPUT DEVICE COMMANDS

@@ -5,8 +5,8 @@ set EXE_PATH=.\MOCU-UnityCore\Build\MOCU.exe
 
 :: will show error message and wait for 2sec if there is no internet, then start old version of app
 echo Checking internet connection...
-ping -n 1 github.com > nul 2>&1
-if errorlevel 1 (
+curl -s --head https://github.com | findstr "200 OK"
+if %errorlevel% neq 0 (
     echo You are not connected to the Internet (GitHub), so it is not the newest version of the program that will start (potentially)
     timeout /t 2 /nobreak > nul
     goto :startApp
