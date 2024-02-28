@@ -35,23 +35,24 @@ namespace AudioControl
             enumerator = new();
 
             UpdateAudioDevices();
-
-            incomingStream = new(direction: IntercomStreamDirection.Incoming, audioManager: this);
-            outgoingStream = new(direction: IntercomStreamDirection.Outgoing, audioManager: this);
-
             //LoadAudioFiles();
             InitOutputDevicesDictionary();
             InitInputDevicesDictionary();
 
-            //tests
+            
             audioDevicesParameters = new(outputsDict: audioOutputsDictionary, inputsDict: audioInputsDictionary);
+
             audioDevicesParameters.SendResponseToUnity += RespondToCommand_UpdateDevicesParameters;
+            audioDevicesParameters.AudioDeviceHasChanged += UpdateIntercom;
+
+            incomingStream = new(direction: IntercomStreamDirection.Incoming);
+            outgoingStream = new(direction: IntercomStreamDirection.Outgoing);
         }
 
 
         private void RespondToCommand_UpdateDevicesParameters(bool operationStatus)
         {
-            var fullJsonResponse = CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "SetDevicesParameters_Command", hasError: operationStatus));
+            var fullJsonResponse = CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "UpdateDevicesParameters_Command", hasError: operationStatus));
             RespondToCommand(fullJsonResponse);
         }
 
@@ -71,10 +72,11 @@ namespace AudioControl
                 // COMMON COMMANDS
                 // '{}' inside of each "case" are for using variable with same name
 
-                case "SetDevicesParameters_Command":
+                case "UpdateDevicesParameters_Command":
                     {
-                        var response = SetDevicesParameters(jsonCommand);
-                        RespondToCommand(response);
+                        UpdateDevicesParameters(jsonCommand);
+                        /*var response = SetDevicesParameters(jsonCommand);
+                        RespondToCommand(response);*/
                         break;
                     }
 
@@ -215,42 +217,60 @@ namespace AudioControl
                 return CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "SendConfigs_Command", hasError: true));
             }
         }
+         
 
-        /*private void UnsubscribeDevice_TestMethod(ISampleProvider sampleProvider)
-        {
-            foreach (var test in audioOutputsDictionary.Keys.ToList())
-            {
-                audioOutputsDictionary[test].mixer.RemoveMixerInput(sampleProvider);
-            }
-        }*/
-
-
-        private string SetDevicesParameters(string jsonCommand)
+        private void UpdateDevicesParameters(string jsonCommand)
         {
             try
             {
-                var obj = CommonUtilities.DeserializeJson<SetDevicesParameters_Command>(jsonCommand);
+                var obj = CommonUtilities.DeserializeJson<UpdateDevicesParameters_Command>(jsonCommand);
+                audioDevicesParameters.Update(obj.audioDevicesInfo);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
 
-                outgoingStream.UpdateAudioDevices(
+        private void UpdateIntercom()
+        {
+            incomingStream.UpdateDevices(
+                audioInputDevice: audioDevicesParameters.audioInputDevice_Participant,
+                audioOutputDevice: audioDevicesParameters.audioOutputDevice_Researcher
+            );
+
+            incomingStream.UpdateDevices(
+                audioInputDevice: audioDevicesParameters.audioInputDevice_Participant,
+                audioOutputDevice: audioDevicesParameters.audioOutputDevice_Researcher
+            );
+        }
+
+        /*private string SetDevicesParameters(string jsonCommand)
+        {
+            try
+            {
+                var obj = CommonUtilities.DeserializeJson<UpdateDevicesParameters_Command>(jsonCommand);
+
+                outgoingStream.UpdateDevices(
                     audioInputDeviceName: obj.AudioInputDeviceNameResearcher,
                     audioOutputDeviceName: obj.AudioOutputDeviceNameParticipant,
                     audioOutputDeviceVolume: obj.AudioOutputDeviceVolumeParticipant
                 );
 
-                incomingStream.UpdateAudioDevices(
+                incomingStream.UpdateDevices(
                     audioInputDeviceName: obj.AudioInputDeviceNameParticipant,
                     audioOutputDeviceName: obj.AudioOutputDeviceNameResearcher,
                     audioOutputDeviceVolume: obj.AudioOutputDeviceVolumeResearcher
                 );
 
-                return CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "SetDevicesParameters_Command", hasError: false));
+                return CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "UpdateDevicesParameters_Command", hasError: false));
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "SetDevicesParameters_Command", hasError: true));
+                return CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "UpdateDevicesParameters_Command", hasError: true));
             }
-        }
+        }*/
 
         private string ChangeOutputDeviceVolume(string jsonCommand)
         {

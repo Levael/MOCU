@@ -2,6 +2,7 @@
 using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
 using System.Reflection;
+using Newtonsoft.Json.Linq;
 
 namespace AudioControl
 {
@@ -184,6 +185,9 @@ namespace AudioControl
     }
 
 
+
+
+
     
     /*/// <summary>
     /// Holds the configuration and state of audio devices used within the application. 
@@ -198,190 +202,144 @@ namespace AudioControl
         private Dictionary<string, AudioOutputDevice> _audioOutputsDictionary;
         private Dictionary<string, AudioInputDevice> _audioInputsDictionary;
 
-        // Event
+        // Events
         public event Action<bool>? SendResponseToUnity; // call only when error uccures
-        public event Action? OutputDeviceHasChanged;
-        public event Action? InputDeviceHasChanged;
+        public event Action? AudioDeviceHasChanged;     // to update intercom
 
-        // Private fields
-        private string? _audioOutputDeviceName_Researcher;
-        private string? _audioOutputDeviceName_Participant;
-        private string? _audioInputDeviceName_Researcher;
-        private string? _audioInputDeviceName_Participant;
+        private AudioDevicesInfo _audioDevicesInfo;
 
-        private float? _audioOutputDeviceVolume_Researcher;
-        private float? _audioOutputDeviceVolume_Participant;
-        private float? _audioInputDeviceVolume_Researcher;
-        private float? _audioInputDeviceVolume_Participant;
+        // Properties
+        public AudioOutputDevice? audioOutputDevice_Researcher { get; private set; }
+        public AudioOutputDevice? audioOutputDevice_Participant { get; private set; }
+        public AudioInputDevice? audioInputDevice_Researcher { get; private set; }
+        public AudioInputDevice? audioInputDevice_Participant { get; private set; }
 
-        private AudioOutputDevice? _audioOutputDevice_Researcher;
-        private AudioOutputDevice? _audioOutputDevice_Participant;
-        private AudioInputDevice? _audioInputDevice_Researcher;
-        private AudioInputDevice? _audioInputDevice_Participant;
-
-
+        // Constructor
         public AudioDevicesParameters(Dictionary<string, AudioOutputDevice> outputsDict, Dictionary<string, AudioInputDevice> inputsDict)
         {
             _audioOutputsDictionary = outputsDict;
             _audioInputsDictionary = inputsDict;
+            _audioDevicesInfo = new();
         }
 
+        
 
-        // Public properties
-        public string? audioOutputDeviceName_Researcher
+        // Todo: not pretty, refactor later
+        public void Update(AudioDevicesInfo updatedParameters)
         {
-            get => _audioOutputDeviceName_Researcher;
-            set
+            if (this._audioDevicesInfo.audioOutputDeviceName_Researcher != updatedParameters.audioOutputDeviceName_Researcher)
             {
                 try
                 {
-                    _audioOutputDeviceName_Researcher = value;
-                    _audioOutputDevice_Researcher = _audioOutputsDictionary[value];
-                    OutputDeviceHasChanged?.Invoke();
+                    if (updatedParameters.audioOutputDeviceName_Researcher == null)
+                        audioOutputDevice_Researcher = null;
+                    else
+                        audioOutputDevice_Researcher = _audioOutputsDictionary[updatedParameters.audioOutputDeviceName_Researcher];
+                    AudioDeviceHasChanged?.Invoke();
                 }
                 catch
                 {
-                    _audioOutputDeviceName_Researcher = null;
-                    _audioOutputDevice_Researcher = null;
+                    audioOutputDevice_Researcher = null;
                     SendResponseToUnity?.Invoke(false);
                 }
             }
-        }
 
-        public string? audioOutputDeviceName_Participant
-        {
-            get => _audioOutputDeviceName_Participant;
-            set
+            if (this._audioDevicesInfo.audioOutputDeviceName_Participant != updatedParameters.audioOutputDeviceName_Participant)
             {
                 try
                 {
-                    _audioOutputDeviceName_Participant = value;
-                    _audioOutputDevice_Participant = _audioOutputsDictionary[value];
-                    OutputDeviceHasChanged?.Invoke();
+                    if (updatedParameters.audioOutputDeviceName_Participant == null)
+                        audioOutputDevice_Participant = null;
+                    else
+                        audioOutputDevice_Participant = _audioOutputsDictionary[updatedParameters.audioOutputDeviceName_Participant];
+                    AudioDeviceHasChanged?.Invoke();
                 }
                 catch
                 {
-                    _audioOutputDeviceName_Participant = null;
-                    _audioOutputDevice_Participant = null;
+                    audioOutputDevice_Participant = null;
                     SendResponseToUnity?.Invoke(false);
                 }
             }
-        }
 
-        public string? audioInputDeviceName_Researcher
-        {
-            get => _audioInputDeviceName_Researcher;
-            set
+            if (this._audioDevicesInfo.audioInputDeviceName_Researcher != updatedParameters.audioInputDeviceName_Researcher)
             {
                 try
                 {
-                    _audioInputDeviceName_Researcher = value;
-                    _audioInputDevice_Researcher = _audioInputsDictionary[value];
-                    InputDeviceHasChanged?.Invoke();
+                    if (updatedParameters.audioInputDeviceName_Researcher == null)
+                        audioInputDevice_Researcher = null;
+                    else
+                        audioInputDevice_Researcher = _audioInputsDictionary[updatedParameters.audioInputDeviceName_Researcher];
+                    AudioDeviceHasChanged?.Invoke();
                 }
                 catch
                 {
-                    _audioInputDeviceName_Researcher = null;
-                    _audioInputDevice_Researcher = null;
+                    audioInputDevice_Researcher = null;
                     SendResponseToUnity?.Invoke(false);
                 }
             }
-        }
 
-        public string? audioInputDeviceName_Participant
-        {
-            get => _audioInputDeviceName_Participant;
-            set
+            if (this._audioDevicesInfo.audioInputDeviceName_Participant != updatedParameters.audioInputDeviceName_Participant)
             {
                 try
                 {
-                    _audioInputDeviceName_Participant = value;
-                    _audioInputDevice_Participant = _audioInputsDictionary[value];
-                    InputDeviceHasChanged?.Invoke();
+                    if (updatedParameters.audioInputDeviceName_Participant == null)
+                        audioInputDevice_Participant = null;
+                    else
+                        audioInputDevice_Participant = _audioInputsDictionary[updatedParameters.audioInputDeviceName_Participant];
+                    AudioDeviceHasChanged?.Invoke();
                 }
                 catch
                 {
-                    _audioInputDeviceName_Participant = null;
-                    _audioInputDevice_Participant = null;
+                    audioInputDevice_Participant = null;
                     SendResponseToUnity?.Invoke(false);
                 }
             }
-        }
 
-        public float? audioOutputDeviceVolume_Researcher
-        {
-            get => _audioOutputDeviceVolume_Researcher;
-            set
+            if (this._audioDevicesInfo.audioOutputDeviceVolume_Researcher != updatedParameters.audioOutputDeviceVolume_Researcher)
             {
                 try
                 {
+                    var value = updatedParameters.audioOutputDeviceVolume_Researcher;
                     if (value < 0f || value > 100f || value == null)
                         throw new Exception();
 
-                    _audioOutputDeviceVolume_Researcher = value;
-                    _audioOutputDevice_Researcher.volume = (float)value;
+                    audioOutputDevice_Researcher.volume = (float)value;
                 }
                 catch
                 {
                     SendResponseToUnity?.Invoke(false);
                 }
             }
-        }
 
-        public float? audioOutputDeviceVolume_Participant
-        {
-            get => _audioOutputDeviceVolume_Participant;
-            set
+            if (this._audioDevicesInfo.audioOutputDeviceVolume_Participant != updatedParameters.audioOutputDeviceVolume_Participant)
             {
                 try
                 {
+                    var value = updatedParameters.audioOutputDeviceVolume_Participant;
                     if (value < 0f || value > 100f || value == null)
                         throw new Exception();
 
-                    _audioOutputDeviceVolume_Participant = value;
-                    _audioOutputDevice_Participant.volume = (float)value;
+                    audioOutputDevice_Participant.volume = (float)value;
                 }
                 catch
                 {
                     SendResponseToUnity?.Invoke(false);
                 }
             }
+
+            // two more IFs for input devices volume change
+
+            _audioDevicesInfo = updatedParameters;
         }
 
-        public float? audioInputDeviceVolume_Researcher
-        {
-            // currently with no use
-            get => _audioInputDeviceVolume_Researcher;
-            set
-            {
-                _audioInputDeviceVolume_Researcher = value;
-            }
-        }
-
-        public float? audioInputDeviceVolume_Participant
-        {
-            // currently with no use
-            get => _audioInputDeviceVolume_Participant;
-            set
-            {
-                _audioInputDeviceVolume_Participant = value;
-            }
-        }
-
-        public AudioOutputDevice? audioOutputDevice_Researcher { get; private set; }
-        public AudioOutputDevice? audioOutputtDevice_Participant { get; private set; }
-        public AudioInputDevice? audioInputDevice_Researcher { get; private set; }
-        public AudioInputDevice? audioInputDevice_Participant { get; private set; }
 
 
-
-
-        /// <summary>
+        /*/// <summary>
         /// Updates properties of the current instance with values from another instance if they are different.
         /// </summary>
         /// <param name="updatedParams">The instance of AudioDevicesParameters with updated values (got from client JSON)</param>
         /// <returns>Return status of operation. True if everything is ok, and false if any error uccurred</returns>
-        public bool Update(AudioDevicesParameters updatedParameters)
+        public bool Update_Legacy(AudioDevicesParameters updatedParameters)
         {
             try
             {
@@ -399,7 +357,7 @@ namespace AudioControl
                 return true;
             }
             catch { return false; }
-        }
+        }*/
     }
 
 

@@ -29,7 +29,7 @@ public class InputHandler : MonoBehaviour
 
 
 
-    private void Awake()
+    void Awake()
     {
         GamepadConnectionStatus = new StateTracker(new[] { "isConnected" });
         XRConnectionStatus = new StateTracker(new[] { "isConnected" });

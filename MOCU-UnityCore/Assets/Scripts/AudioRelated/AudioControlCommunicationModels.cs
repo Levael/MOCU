@@ -113,33 +113,15 @@ namespace AudioControl {
         }
     }
 
-    public class SetDevicesParameters_Command : GeneralCommandToServer
+    public class UpdateDevicesParameters_Command : GeneralCommandToServer
     {
-        public new string Command                       { get; set; } = "SetDevicesParameters_Command";
+        public new string Command { get; set; } = "UpdateDevicesParameters_Command";
 
-        public string AudioOutputDeviceNameResearcher   { get; set; }
-        public string AudioInputDeviceNameResearcher    { get; set; }
-        public string AudioOutputDeviceNameParticipant  { get; set; }
-        public string AudioInputDeviceNameParticipant   { get; set; }
+        public AudioDevicesInfo audioDevicesInfo { get; set; }
 
-        public float AudioOutputDeviceVolumeResearcher  { get; set; }
-        public float AudioOutputDeviceVolumeParticipant { get; set; }
-
-        public SetDevicesParameters_Command(
-            string audioOutputDeviceNameResearcher = "same",
-            string audioInputDeviceNameResearcher = "same",
-            string audioOutputDeviceNameParticipant = "same",
-            string audioInputDeviceNameParticipant = "same",
-            float audioOutputDeviceVolumeResearcher = -1f,
-            float audioOutputDeviceVolumeParticipant = -1f
-            )
+        public UpdateDevicesParameters_Command(AudioDevicesInfo audioDevicesInfo)
         {
-            AudioOutputDeviceNameResearcher = audioOutputDeviceNameResearcher;
-            AudioInputDeviceNameResearcher = audioInputDeviceNameResearcher;
-            AudioOutputDeviceNameParticipant = audioOutputDeviceNameParticipant;
-            AudioInputDeviceNameParticipant = audioInputDeviceNameParticipant;
-            AudioOutputDeviceVolumeResearcher = audioOutputDeviceVolumeResearcher;
-            AudioOutputDeviceVolumeParticipant = audioOutputDeviceVolumeParticipant;
+            this.audioDevicesInfo = audioDevicesInfo;
         }
     }
 
@@ -156,6 +138,8 @@ namespace AudioControl {
         }
     }
 
+    // Not commands
+
     public class AudioDevicesInfo
     {
         public string? audioOutputDeviceName_Researcher     { get; set; }
@@ -167,6 +151,28 @@ namespace AudioControl {
         public float? audioOutputDeviceVolume_Participant   { get; set; }
         public float? audioInputDeviceVolume_Researcher     { get; set; }
         public float? audioInputDeviceVolume_Participant    { get; set; }
+
+        public AudioDevicesInfo(
+            string? audioOutputDeviceNameResearcher = null,
+            string? audioInputDeviceNameResearcher = null,
+            string? audioOutputDeviceNameParticipant = null,
+            string? audioInputDeviceNameParticipant = null,
+            float? audioOutputDeviceVolumeResearcher = null,
+            float? audioOutputDeviceVolumeParticipant = null,
+            float? audioInputDeviceVolumeResearcher = null,
+            float? audioInputDeviceVolumeParticipant = null
+            )
+        {
+            audioOutputDeviceName_Researcher = audioOutputDeviceNameResearcher;
+            audioOutputDeviceName_Participant = audioOutputDeviceNameParticipant;
+            audioInputDeviceName_Researcher = audioInputDeviceNameResearcher;
+            audioInputDeviceName_Participant = audioInputDeviceNameParticipant;
+
+            audioOutputDeviceVolume_Researcher = audioOutputDeviceVolumeResearcher;
+            audioOutputDeviceVolume_Participant = audioOutputDeviceVolumeParticipant;
+            audioInputDeviceVolume_Researcher = audioInputDeviceVolumeResearcher;
+            audioInputDeviceVolume_Participant = audioInputDeviceVolumeParticipant;
+        }
     }
 
 }

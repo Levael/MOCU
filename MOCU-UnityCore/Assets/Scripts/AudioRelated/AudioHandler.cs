@@ -26,7 +26,6 @@ public class AudioHandler : MonoBehaviour
     public List<string> outputAudioDevices;
 
     private Dictionary<string, string> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
-    private Dictionary<string, bool> stateTrackerComponents;
 
 
 
@@ -38,7 +37,7 @@ public class AudioHandler : MonoBehaviour
         _experimentTabHandler = GetComponent<ExperimentTabHandler>();
         _inputLogic = GetComponent<InputLogic>();
 
-        stateTracker = new StateTracker(new[] { "SetConfigs", "SetAudioDevices", "StartAudioProcess", "StartNamedPipeConnection" });
+        stateTracker = new StateTracker(new[] { "SetConfigs", "UpdateAudioDevices", "StartAudioProcess", "StartNamedPipeConnection" });    // todo: maybe read from config. maybe not
 
         inputAudioDevices = new();
         outputAudioDevices = new();
@@ -70,7 +69,7 @@ public class AudioHandler : MonoBehaviour
                 stateTracker.UpdateSubState("StartNamedPipeConnection", true);
 
                 SendConfigs();      // paths and file names
-                SetAudioDevices();  // send to server side devices parameters to initiate them there
+                UpdateAudioDevices();  // send to server side devices parameters to initiate them there
             }));
 
 
@@ -130,15 +129,15 @@ public class AudioHandler : MonoBehaviour
                                 stateTracker.UpdateSubState("SetConfigs", true);
                             }
                             break;
-                        case "SetDevicesParameters_Command":
+                        case "UpdateDevicesParameters_Command":
                             if (obj.HasError)
                             {
-                                stateTracker.UpdateSubState("SetAudioDevices", false);
-                                _experimentTabHandler.PrintToWarnings("Failed to 'SetAudioDevices'");
+                                stateTracker.UpdateSubState("UpdateAudioDevices", false);
+                                _experimentTabHandler.PrintToWarnings("Failed to 'UpdateAudioDevices'");
                             }
                             else
                             {
-                                stateTracker.UpdateSubState("SetAudioDevices", true);
+                                stateTracker.UpdateSubState("UpdateAudioDevices", true);
                             }
                             break;
                     }
@@ -240,16 +239,16 @@ public class AudioHandler : MonoBehaviour
         )));
     }
 
-    public void SetAudioDevices()
+    public void UpdateAudioDevices()
     {
-        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new SetDevicesParameters_Command(
+        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UpdateDevicesParameters_Command( new AudioDevicesInfo(
             audioOutputDeviceNameResearcher: "Speakers (Realtek High Definition Audio)",
             audioInputDeviceNameResearcher: "Microphone (fifine Microphone)",
             audioOutputDeviceNameParticipant: "Headphones (Rift Audio)",
             audioInputDeviceNameParticipant: "Microphone (Rift Audio)",
             audioOutputDeviceVolumeResearcher: 77f,
             audioOutputDeviceVolumeParticipant: 69f
-        )));
+        ))));
     }
 
     public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")
@@ -263,8 +262,8 @@ public class AudioHandler : MonoBehaviour
     }
 
     // didn't test
-    public void ChangeAudioDeviceVolume(string deviceName, float volume)
+    /*public void ChangeAudioDeviceVolume(string deviceName, float volume)
     {
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new ChangeOutputDeviceVolume_Command(name: deviceName, volume: volume)));
-    }
+    }*/
 }
