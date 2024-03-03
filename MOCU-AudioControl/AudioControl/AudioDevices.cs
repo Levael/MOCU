@@ -188,33 +188,39 @@ namespace AudioControl
 
 
 
-    
-    /*/// <summary>
-    /// Holds the configuration and state of audio devices used within the application. 
-    /// This includes both input and output devices for researchers and participants. 
-    /// It tracks current and previous volume levels to ensure proper audio management 
-    /// and restoration upon application closure. This class ensures that changes made 
-    /// within the application do not affect external system settings permanently.
-    /// </summary>*/
+
+    /// <summary>
+    /// Manages and tracks the parameters and state changes of audio devices,
+    /// including both input and output devices for researcher and participant.
+    /// 
+    /// This class handles updates to device selection and volume levels,
+    /// ensures synchronization with external systems,
+    /// and notifies other components about changes and errors.
+    /// </summary>
     public class AudioDevicesParameters
     {
-        // External links
+        // Public events
+        public event Action<bool>? SendResponseToUnity; // Called only when an error occurs
+        public event Action? AudioDeviceHasChanged;     // Triggered to update intercom settings when a change in audio devices is detected
+
+        // External links for mapping device names to device objects
         private Dictionary<string, AudioOutputDevice> _audioOutputsDictionary;
         private Dictionary<string, AudioInputDevice> _audioInputsDictionary;
 
-        // Events
-        public event Action<bool>? SendResponseToUnity; // call only when error uccures
-        public event Action? AudioDeviceHasChanged;     // to update intercom
-
+        // Tracks the current configuration of audio devices
         private AudioDevicesInfo _audioDevicesInfo;
 
-        // Properties
+        // Properties representing the selected audio devices for researcher and participant
         public AudioOutputDevice? audioOutputDevice_Researcher { get; private set; }
         public AudioOutputDevice? audioOutputDevice_Participant { get; private set; }
         public AudioInputDevice? audioInputDevice_Researcher { get; private set; }
         public AudioInputDevice? audioInputDevice_Participant { get; private set; }
 
-        // Constructor
+        /// <summary>
+        /// Initializes a new instance of the AudioDevicesParameters class with specified dictionaries mapping device names to their respective objects.
+        /// </summary>
+        /// <param name="outputsDict">A dictionary mapping output device names to their respective objects.</param>
+        /// <param name="inputsDict">A dictionary mapping input device names to their respective objects.</param>
         public AudioDevicesParameters(Dictionary<string, AudioOutputDevice> outputsDict, Dictionary<string, AudioInputDevice> inputsDict)
         {
             _audioOutputsDictionary = outputsDict;
@@ -222,9 +228,11 @@ namespace AudioControl
             _audioDevicesInfo = new();
         }
 
-        
 
-        // Todo: not pretty, refactor later
+        /// <summary>
+        /// Updates the state of audio devices based on the provided parameters. Notifies other components if changes occur or if an error is detected.
+        /// </summary>
+        /// <param name="updatedParameters">New audio device settings to be applied.</param>
         public void Update(AudioDevicesInfo updatedParameters)
         {
             var errorOccured = false;
@@ -342,49 +350,20 @@ namespace AudioControl
             // two more IFs for input devices volume change
 
 
-
+            // update these data only after IF statements
             _audioDevicesInfo = updatedParameters;
 
 
-
+            // Response to Unity in case "all good"
             if (!errorOccured)
-            {
                 SendResponseToUnity?.Invoke(false);
-            }
 
+            // update Intercoms if at least one device was updated
             if (audioDeviceHasChanged)
-            {
                 AudioDeviceHasChanged?.Invoke();
-            }
 
         }
 
-
-
-        /*/// <summary>
-        /// Updates properties of the current instance with values from another instance if they are different.
-        /// </summary>
-        /// <param name="updatedParams">The instance of AudioDevicesParameters with updated values (got from client JSON)</param>
-        /// <returns>Return status of operation. True if everything is ok, and false if any error uccurred</returns>
-        public bool Update_Legacy(AudioDevicesParameters updatedParameters)
-        {
-            try
-            {
-                foreach (PropertyInfo property in typeof(AudioDevicesParameters).GetProperties())
-                {
-                    var currentValue = property.GetValue(this);     // 'this' == current 'AudioDevicesParameters' class
-                    var newValue = property.GetValue(updatedParameters);
-
-                    if (!Equals(currentValue, newValue))
-                    {
-                        property.SetValue(this, newValue);
-                    }
-                }
-
-                return true;
-            }
-            catch { return false; }
-        }*/
     }
 
 

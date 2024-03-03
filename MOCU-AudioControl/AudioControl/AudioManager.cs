@@ -50,16 +50,7 @@ namespace AudioControl
         }
 
 
-        private void RespondToCommand_UpdateDevicesParameters(bool errorHasOccured)
-        {
-            var fullJsonResponse = CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "UpdateDevicesParameters_Command", hasError: errorHasOccured));
-            RespondToCommand(fullJsonResponse);
-        }
-
-        public void RespondToCommand(string response)
-        {
-            outputMessagesQueue.Enqueue(response);
-        }
+        
 
 
         public void ProcessCommand(string jsonCommand)
@@ -165,6 +156,17 @@ namespace AudioControl
             }
         }
 
+        private void RespondToCommand_UpdateDevicesParameters(bool errorHasOccured)
+        {
+            var fullJsonResponse = CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "UpdateDevicesParameters_Command", hasError: errorHasOccured));
+            RespondToCommand(fullJsonResponse);
+        }
+
+        public void RespondToCommand(string response)
+        {
+            outputMessagesQueue.Enqueue(response);
+        }
+
         private void InitOutputDevicesDictionary()
         {
             audioOutputsDictionary = new();
@@ -256,32 +258,6 @@ namespace AudioControl
             );
         }
 
-        /*private string SetDevicesParameters(string jsonCommand)
-        {
-            try
-            {
-                var obj = CommonUtilities.DeserializeJson<UpdateDevicesParameters_Command>(jsonCommand);
-
-                outgoingStream.UpdateDevices(
-                    audioInputDeviceName: obj.AudioInputDeviceNameResearcher,
-                    audioOutputDeviceName: obj.AudioOutputDeviceNameParticipant,
-                    audioOutputDeviceVolume: obj.AudioOutputDeviceVolumeParticipant
-                );
-
-                incomingStream.UpdateDevices(
-                    audioInputDeviceName: obj.AudioInputDeviceNameParticipant,
-                    audioOutputDeviceName: obj.AudioOutputDeviceNameResearcher,
-                    audioOutputDeviceVolume: obj.AudioOutputDeviceVolumeResearcher
-                );
-
-                return CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "UpdateDevicesParameters_Command", hasError: false));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "UpdateDevicesParameters_Command", hasError: true));
-            }
-        }*/
 
         private string ChangeOutputDeviceVolume(string jsonCommand)
         {
