@@ -50,9 +50,9 @@ namespace AudioControl
         }
 
 
-        private void RespondToCommand_UpdateDevicesParameters(bool operationStatus)
+        private void RespondToCommand_UpdateDevicesParameters(bool errorHasOccured)
         {
-            var fullJsonResponse = CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "UpdateDevicesParameters_Command", hasError: operationStatus));
+            var fullJsonResponse = CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "UpdateDevicesParameters_Command", hasError: errorHasOccured));
             RespondToCommand(fullJsonResponse);
         }
 
@@ -75,6 +75,7 @@ namespace AudioControl
                 case "UpdateDevicesParameters_Command":
                     {
                         UpdateDevicesParameters(jsonCommand);
+                        Console.WriteLine("UpdateDevicesParameters_Command");
                         /*var response = SetDevicesParameters(jsonCommand);
                         RespondToCommand(response);*/
                         break;
@@ -84,18 +85,21 @@ namespace AudioControl
                     {
                         var response = ChangeOutputDeviceVolume(jsonCommand);
                         RespondToCommand(response);
+                        Console.WriteLine("ChangeOutputDeviceVolume_Command");
                         break;
                     }
                 case "SendConfigs_Command":
                     {
                         var response = ApplyConfigs(jsonCommand);
                         RespondToCommand(response);
+                        Console.WriteLine("SendConfigs_Command");
                         break;
                     }
 
             case "PlayAudioFile_Command":
                     try {
                         Task.Run(() => PlayAudioFile(jsonCommand));
+                        Console.WriteLine("PlayAudioFile_Command");
                         //RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "PlayAudioFile_Command", hasError: false)));
                     } catch (Exception ex)
                     {
@@ -109,27 +113,32 @@ namespace AudioControl
                     {
                         var response = GetAudioDevicesAsJson(jsonCommand);
                         RespondToCommand(response);
+                        Console.WriteLine("GetAudioDevices_Command");
                         break;
                     }
 
                 // INTERCOM COMMANDS
                 case "StartIntercomStream_ResearcherToParticipant_Command":
                     outgoingStream.StartStream();
+                    Console.WriteLine("StartIntercomStream_ResearcherToParticipant_Command");
                     //RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StartIntercomStream_ResearcherToParticipant_Command", hasError: false)));
                     break;
 
                 case "StartIntercomStream_ParticipantToResearcher_Command":
                     incomingStream.StartStream();
+                    Console.WriteLine("StartIntercomStream_ParticipantToResearcher_Command");
                     //RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StartIntercomStream_ParticipantToResearcher_Command", hasError: false)));
                     break;
 
                 case "StopIntercomStream_ResearcherToParticipant_Command":
                     outgoingStream.StopStream();
+                    Console.WriteLine("StopIntercomStream_ResearcherToParticipant_Command");
                     //RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StopIntercomStream_ResearcherToParticipant_Command", hasError: false)));
                     break;
 
                 case "StopIntercomStream_ParticipantToResearcher_Command":
                     incomingStream.StopStream();
+                    Console.WriteLine("StopIntercomStream_ParticipantToResearcher_Command");
                     //RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "StopIntercomStream_ParticipantToResearcher_Command", hasError: false)));
                     break;
 
@@ -145,11 +154,13 @@ namespace AudioControl
                 case "DisconnectResearcherAudioOutputDevice_Command":
                 case "DisconnectParticipantAudioOutputDevice_Command":
                     RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "NotYetImplemented_Command", hasError: true)));
+                    Console.WriteLine("NotYetImplemented_Command");
                     break;
 
 
                 default:
                     RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "Unknown_Command", hasError: true)));
+                    Console.WriteLine("Unknown_Command");
                     break;
             }
         }
@@ -239,9 +250,9 @@ namespace AudioControl
                 audioOutputDevice: audioDevicesParameters.audioOutputDevice_Researcher
             );
 
-            incomingStream.UpdateDevices(
-                audioInputDevice: audioDevicesParameters.audioInputDevice_Participant,
-                audioOutputDevice: audioDevicesParameters.audioOutputDevice_Researcher
+            outgoingStream.UpdateDevices(
+                audioInputDevice: audioDevicesParameters.audioInputDevice_Researcher,
+                audioOutputDevice: audioDevicesParameters.audioOutputDevice_Participant
             );
         }
 

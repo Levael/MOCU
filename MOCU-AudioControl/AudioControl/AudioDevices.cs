@@ -227,6 +227,10 @@ namespace AudioControl
         // Todo: not pretty, refactor later
         public void Update(AudioDevicesInfo updatedParameters)
         {
+            var errorOccured = false;
+            var audioDeviceHasChanged = false;
+
+
             if (this._audioDevicesInfo.audioOutputDeviceName_Researcher != updatedParameters.audioOutputDeviceName_Researcher)
             {
                 try
@@ -235,12 +239,14 @@ namespace AudioControl
                         audioOutputDevice_Researcher = null;
                     else
                         audioOutputDevice_Researcher = _audioOutputsDictionary[updatedParameters.audioOutputDeviceName_Researcher];
-                    AudioDeviceHasChanged?.Invoke();
+
+                    audioDeviceHasChanged = true;
                 }
                 catch
                 {
                     audioOutputDevice_Researcher = null;
-                    SendResponseToUnity?.Invoke(false);
+                    errorOccured = true;
+                    SendResponseToUnity?.Invoke(errorOccured);
                 }
             }
 
@@ -252,12 +258,14 @@ namespace AudioControl
                         audioOutputDevice_Participant = null;
                     else
                         audioOutputDevice_Participant = _audioOutputsDictionary[updatedParameters.audioOutputDeviceName_Participant];
-                    AudioDeviceHasChanged?.Invoke();
+
+                    audioDeviceHasChanged = true;
                 }
                 catch
                 {
                     audioOutputDevice_Participant = null;
-                    SendResponseToUnity?.Invoke(false);
+                    errorOccured = true;
+                    SendResponseToUnity?.Invoke(errorOccured);
                 }
             }
 
@@ -274,7 +282,8 @@ namespace AudioControl
                 catch
                 {
                     audioInputDevice_Researcher = null;
-                    SendResponseToUnity?.Invoke(false);
+                    errorOccured = true;
+                    SendResponseToUnity?.Invoke(errorOccured);
                 }
             }
 
@@ -291,7 +300,8 @@ namespace AudioControl
                 catch
                 {
                     audioInputDevice_Participant = null;
-                    SendResponseToUnity?.Invoke(false);
+                    errorOccured = true;
+                    SendResponseToUnity?.Invoke(errorOccured);
                 }
             }
 
@@ -307,7 +317,8 @@ namespace AudioControl
                 }
                 catch
                 {
-                    SendResponseToUnity?.Invoke(false);
+                    errorOccured = true;
+                    SendResponseToUnity?.Invoke(errorOccured);
                 }
             }
 
@@ -323,13 +334,29 @@ namespace AudioControl
                 }
                 catch
                 {
-                    SendResponseToUnity?.Invoke(false);
+                    errorOccured = true;
+                    SendResponseToUnity?.Invoke(errorOccured);
                 }
             }
 
             // two more IFs for input devices volume change
 
+
+
             _audioDevicesInfo = updatedParameters;
+
+
+
+            if (!errorOccured)
+            {
+                SendResponseToUnity?.Invoke(false);
+            }
+
+            if (audioDeviceHasChanged)
+            {
+                AudioDeviceHasChanged?.Invoke();
+            }
+
         }
 
 
