@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Collections.Concurrent;
+using System;
+
 
 public class ExperimentTabHandler : MonoBehaviour
 {
@@ -8,6 +11,10 @@ public class ExperimentTabHandler : MonoBehaviour
 
     private TextElement _infoField;
     private TextElement _warningsField;
+
+    private ConcurrentQueue<Action> _deferredActions = new ConcurrentQueue<Action>();   // todo: describe later
+    private bool _classIsReady = false;
+
 
 
 
@@ -18,15 +25,19 @@ public class ExperimentTabHandler : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Entered 'ExperimentTabHandler' Start");
         _uiReference = _uiHandler.mainTabScreen;
         _infoField = (TextElement)_uiReference.GetElement("info-module-textbox");
         _warningsField = (TextElement)_uiReference.GetElement("warnings-module-textbox");
-        Debug.Log("Exited 'ExperimentTabHandler' Start");
+
+        _classIsReady = true;
     }
 
     void Update()
     {
+        while (_deferredActions.TryDequeue(out Action action))
+        {
+            action.Invoke();
+        }
     }
 
 
@@ -34,15 +45,25 @@ public class ExperimentTabHandler : MonoBehaviour
 
     public void PrintToInfo(string message, bool clearTextElement = false)
     {
-        if (clearTextElement) _infoField.text = "";
+        if (!_classIsReady)
+        {
+            _deferredActions.Enqueue(() => PrintToInfo(message, clearTextElement));
+            return;
+        }
 
+        if (clearTextElement) _infoField.text = "";
         _infoField.text += message;
     }
 
     public void PrintToWarnings(string message, bool clearTextElement = false)
     {
-        if (clearTextElement) _warningsField.text = "";
+        if (!_classIsReady)
+        {
+            _deferredActions.Enqueue(() => PrintToWarnings(message, clearTextElement));
+            return;
+        }
 
+        if (clearTextElement) _warningsField.text = "";
         _warningsField.text += message;
     }
 }

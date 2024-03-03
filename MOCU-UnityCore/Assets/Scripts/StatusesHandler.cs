@@ -84,17 +84,17 @@ public class StatusesHandler : MonoBehaviour
 
 
 
-/// <summary>
+/*/// <summary>
 /// Tracks the connection status of a device or a process based on multiple sub-states.
 /// The overall connection status is determined by individual sub-state values where:
 /// - If all sub-states are false, the overall status is set to Disconnected.
 /// - If at least one sub-state is false (and not all are false), the overall status is set to InProgress.
 /// - If all sub-states are true, the overall status is set to Connected.
 /// This class is useful for managing complex states where multiple conditions contribute to the final connection status.
-/// </summary>
+/// </summary>*/
 public class StateTracker
 {
-    private Dictionary<string, bool> _subStates;
+    private Dictionary<string, bool?> _subStates;
     // 'status' here is used for final result (DeviceConnectionStatus), and 'state' -- for boolean values
     public DeviceConnectionStatus Status { get; private set; }
 
@@ -106,7 +106,7 @@ public class StateTracker
         _subStates = new();
         foreach (var subStateName in subStateNames)
         {
-            _subStates.Add(subStateName, false); 
+            _subStates.Add(subStateName, null); 
         }
     }
 
@@ -128,20 +128,21 @@ public class StateTracker
 
     private void RecalculateOverallStatus()
     {
-        if (_subStates.Values.All(state => !state))
+        if (_subStates.Values.All(state => state == null))
         {
-            // If all of them are "false"
+            SetStatus(DeviceConnectionStatus.NotRelevant);
+        }
+        else if (_subStates.Values.Any(state => state == false))
+        {
             SetStatus(DeviceConnectionStatus.Disconnected);
         }
-        else if (_subStates.Values.Any(state => !state))
+        else if (_subStates.Values.All(state => state == true))
         {
-            // If there is at least one "false" (it means there is at least one "true" thanks to previous 'if' statement)
-            SetStatus(DeviceConnectionStatus.InProgress);
+            SetStatus(DeviceConnectionStatus.Connected);
         }
         else
         {
-            // If all of them are "true"
-            SetStatus(DeviceConnectionStatus.Connected);
+            SetStatus(DeviceConnectionStatus.InProgress);
         }
     }
 

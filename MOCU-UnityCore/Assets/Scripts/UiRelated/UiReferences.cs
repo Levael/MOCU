@@ -14,8 +14,6 @@ public class UiReferences : MonoBehaviour
 
     void Awake ()
     {
-        UnityEngine.Debug.Log("Entered 'UiReferences' Awake");
-
         _elements = new();
         _tab_body_relations = new();
 
@@ -23,8 +21,6 @@ public class UiReferences : MonoBehaviour
 
         SetupTabBodyRelations();
         SetupReferences();
-
-        UnityEngine.Debug.Log("Exited 'UiReferences' Awake");
     }
 
 
