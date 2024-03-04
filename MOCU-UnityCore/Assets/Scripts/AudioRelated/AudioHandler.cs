@@ -13,6 +13,7 @@ using System.Collections;
 public class AudioHandler : MonoBehaviour
 {
     public StateTracker stateTracker;
+    public AudioDevicesInfo audioDevicesInfo;
 
     private NamedPipeClient namedPipeClient;
     private Process audioControlProcess;
@@ -49,6 +50,16 @@ public class AudioHandler : MonoBehaviour
             {"StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ParticipantToResearcher_Command())},
         };
 
+        audioDevicesInfo = new(
+            audioOutputDeviceNameResearcher: "Speakers (Realtek High Definition Audio)",
+            audioInputDeviceNameResearcher: "Microphone (fifine Microphone)",
+            audioOutputDeviceNameParticipant: "Headphones (Rift Audio)",
+            audioInputDeviceNameParticipant: "Microphone (Rift Audio)",
+            audioOutputDeviceVolumeResearcher: 77f,
+            audioOutputDeviceVolumeParticipant: 42f,
+            audioInputDeviceVolumeResearcher: null,
+            audioInputDeviceVolumeParticipant: null
+        );
     }
 
     // Workaround for Unity's limitations with async in 'Start' method
@@ -241,14 +252,7 @@ public class AudioHandler : MonoBehaviour
 
     public void UpdateAudioDevices()
     {
-        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UpdateDevicesParameters_Command( new AudioDevicesInfo(
-            audioOutputDeviceNameResearcher: "Speakers (Realtek High Definition Audio)",
-            audioInputDeviceNameResearcher: "Microphone (fifine Microphone)",
-            audioOutputDeviceNameParticipant: "Headphones (Rift Audio)",
-            audioInputDeviceNameParticipant: "Microphone (Rift Audio)",
-            audioOutputDeviceVolumeResearcher: 77f,
-            audioOutputDeviceVolumeParticipant: 69f
-        ))));
+        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UpdateDevicesParameters_Command(audioDevicesInfo)));
     }
 
     public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")

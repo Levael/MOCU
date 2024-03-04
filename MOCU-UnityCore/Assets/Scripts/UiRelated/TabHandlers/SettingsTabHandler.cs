@@ -56,17 +56,22 @@ public class SettingsTabHandler : MonoBehaviour
 
     private void DeviceBoxClicked(ClickEvent eventObj)
     {
-        // if device parameters already opened
-        if (_uiReference.GetElement("settings-devices-choose-device-window").style.display == DisplayStyle.Flex) return;
-
         // if clicked on Slider -- ignore "OpenDeviceBoxParameters" action
         var currentElement = eventObj.target as VisualElement;
+
         while (currentElement != null)
         {
             if (currentElement.name == "settings-devices-module-window") break; // upper bound 
-            if (currentElement is Slider) return;
+            if (currentElement is Slider slider)
+            {
+                Debug.Log($"Pressed on slider. The value is {slider.value}");
+                return;
+            }
             currentElement = currentElement.parent;
         }
+
+        // if device parameters already opened (todo: maybe change it later)
+        if (_uiReference.GetElement("settings-devices-choose-device-window").style.display == DisplayStyle.Flex) return;
 
         OpenDeviceBoxParameters((VisualElement)eventObj.currentTarget);
     }
@@ -139,6 +144,7 @@ public class SettingsTabHandler : MonoBehaviour
         _uiReference.GetElement("settings-devices-update-btn").style.display = DisplayStyle.None;
     }
 
+    // todo: change name to 'load (down)' or smth else
     private void UpdateDevices(ClickEvent clickEvent) { }
 
     private void SendTestSoundToAudioOutputDevice(ClickEvent clickEvent)
