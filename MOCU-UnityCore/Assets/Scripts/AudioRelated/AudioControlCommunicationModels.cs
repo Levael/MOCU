@@ -125,7 +125,7 @@ namespace AudioControl {
         }
     }
 
-    public class ChangeOutputDeviceVolume_Command : GeneralCommandToServer
+    /*public class ChangeOutputDeviceVolume_Command : GeneralCommandToServer
     {
         public new string Command   { get; set; } = "ChangeOutputDeviceVolume_Command";
         public string Name          { get; set; }
@@ -136,7 +136,7 @@ namespace AudioControl {
             Name = name;
             Volume = volume;
         }
-    }
+    }*/
 
     // Not commands
 

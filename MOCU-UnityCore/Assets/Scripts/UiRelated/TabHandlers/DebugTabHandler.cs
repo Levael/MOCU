@@ -25,7 +25,6 @@ public class DebugTabHandler : MonoBehaviour
     void Awake()
     {
         _uiHandler = GetComponent<UiHandler>();
-        _uiReference = _uiHandler.secondaryTabScreen;
 
         _systemMemoryRecorder   = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "System Used Memory");
         _gcMemoryRecorder       = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Reserved Memory");
@@ -35,7 +34,7 @@ public class DebugTabHandler : MonoBehaviour
 
     void Start()
     {
-        
+        _uiReference = _uiHandler.secondaryTabScreen;
     }
 
     void Update()
