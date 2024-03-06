@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 public class SettingsTabHandler : MonoBehaviour
 {
     //
+
     public VisualTreeAsset chooseDeviceRowTemplate;
 
     private UiHandler _uiHandler;
@@ -103,8 +104,8 @@ public class SettingsTabHandler : MonoBehaviour
         {
             // "audio-output" class is to show "bell icon"
 
+            // change later: check if it speaker (currently mic passes too)
             var instance = chooseDeviceRowTemplate.CloneTree();
-            if (slider != null) instance.AddToClassList("audio-output");
             instance.AddToClassList("current-device");
             instance.Q<TextElement>(className: "device-option-left-part-text").text = $"Device 1";
             instance.Q<TextElement>(className: "device-option-full-name").text = $"Speakers (Realtek High Definition Audio)";
@@ -113,7 +114,6 @@ public class SettingsTabHandler : MonoBehaviour
             devicesList.Add(instance);
 
             var instance2 = chooseDeviceRowTemplate.CloneTree();
-            if (slider != null) instance2.AddToClassList("audio-output");
             instance2.AddToClassList("already-chosen-device");
             instance2.Q<TextElement>(className: "device-option-left-part-text").text = $"Device 2";
             instance2.Q<TextElement>(className: "device-option-full-name").text = $"Headphones (Rift Audio)";

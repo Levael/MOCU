@@ -36,7 +36,9 @@
     <VisualElement name="settings-devices-module-window" class="settings-module-window">
 
         <!-- Mic (researcher) : IntercomActiveIcon.svg -->
-        <VisualElement name="settings-device-box-microphone-researcher" class="settings-device-box">
+        <VisualElement name="settings-device-box-microphone-researcher" class="settings-device-box settings-device-box-mic-type">
+            <custom:CustomSlider name="device-mic-researcher-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50"/>
+
             <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/IntercomActiveIcon.svg');">
                 <VisualElement class="icon-color"></VisualElement>
             </VisualElement>
@@ -45,7 +47,9 @@
         </VisualElement>
 
         <!-- Mic (participant) : IntercomActiveIcon.svg -->
-        <VisualElement name="settings-device-box-microphone-participant" class="settings-device-box">
+        <VisualElement name="settings-device-box-microphone-participant" class="settings-device-box settings-device-box-mic-type">
+            <custom:CustomSlider name="device-mic-participant-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50"/>
+
             <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/IntercomActiveIcon.svg');">
                 <VisualElement class="icon-color"></VisualElement>
             </VisualElement>
@@ -54,7 +58,7 @@
         </VisualElement>
 
         <!-- Speaker (researcher) : SpeakerIcon.svg -->     <!-- Has additional "sound slider" and "ringing btn" -->
-        <VisualElement name="settings-device-box-speaker-researcher" class="settings-device-box">
+        <VisualElement name="settings-device-box-speaker-researcher" class="settings-device-box settings-device-box-speaker-type">
             <custom:CustomSlider name="device-speaker-researcher-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50"/>
 
             <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/SpeakerIcon.svg');">
@@ -65,7 +69,7 @@
         </VisualElement>
 
         <!-- Speaker (participant) : SpeakerIcon.svg -->    <!-- Has additional "sound slider" and "ringing btn" -->
-        <VisualElement name="settings-device-box-speaker-participant" class="settings-device-box">
+        <VisualElement name="settings-device-box-speaker-participant" class="settings-device-box settings-device-box-speaker-type">
             <custom:CustomSlider name="device-speaker-participant-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50" />
 
             <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/SpeakerIcon.svg');">

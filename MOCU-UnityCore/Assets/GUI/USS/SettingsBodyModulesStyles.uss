@@ -164,7 +164,8 @@
 
 .already-chosen-device .device-option-right-part .icon-shape.close-btn,
 .current-device .device-option-right-part .icon-shape.close-btn,
-.audio-output .device-option-right-part .icon-shape.bell-btn {
+.device-option-right-part .icon-shape.bell-btn,
+.settings-device-box-speaker-type, .settings-device-box-mic-type {	/* .audio-output */
 	visibility: visible;
 }
 
@@ -190,6 +191,9 @@
 	border-width: 0;
 	padding: 2px;
 	margin-top: 2px;
+}
+.device-volume-slider:hover {
+	/*height: 15px;*/
 }
 .device-volume-slider > VisualElement {}
 .device-volume-slider #unity-drag-container {

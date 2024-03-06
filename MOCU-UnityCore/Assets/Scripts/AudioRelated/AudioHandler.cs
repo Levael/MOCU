@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using AudioControl;
+using AudioControl; // custom class
 using CommonUtilitiesNamespace;
 using InterprocessCommunication;
 using System.Threading.Tasks;
@@ -60,6 +60,24 @@ public class AudioHandler : MonoBehaviour
             audioInputDeviceVolumeResearcher: null,
             audioInputDeviceVolumeParticipant: null
         );
+
+
+        // Event listeners for intercom
+        _inputLogic.startOutgoingIntercomStream += () => {
+            namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ResearcherToParticipant_Command"]);
+        };
+
+        _inputLogic.stopOutgoingIntercomStream += () => {
+            namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StopIntercomStream_ResearcherToParticipant_Command"]);
+        };
+
+        _inputLogic.startIncomingIntercomStream += () => {
+            namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ParticipantToResearcher_Command"]);
+        };
+
+        _inputLogic.stopIncomingIntercomStream += () => {
+            namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StopIntercomStream_ParticipantToResearcher_Command"]);
+        };
     }
 
     // Workaround for Unity's limitations with async in 'Start' method
@@ -68,47 +86,9 @@ public class AudioHandler : MonoBehaviour
         try
         {
             StartAudioControlProcess();
-
-            StartCoroutine(ConnectToServer(result => {
-                if (result == false)
-                {
-                    CloseConnection($"AudioHandler/Start/ConnectToServer");
-                    stateTracker.UpdateSubState("StartNamedPipeConnection", false);
-                    return;
-                }
-
-                stateTracker.UpdateSubState("StartNamedPipeConnection", true);
-
-                SendConfigs();      // paths and file names
-                UpdateAudioDevices();  // send to server side devices parameters to initiate them there
-            }));
-
-
-
-
-            // Event listeners for intercom
-            _inputLogic.startOutgoingIntercomStream += () => {
-                namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ResearcherToParticipant_Command"]);
-            };
-
-            _inputLogic.stopOutgoingIntercomStream += () => {
-                namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StopIntercomStream_ResearcherToParticipant_Command"]);
-            };
-
-            _inputLogic.startIncomingIntercomStream += () => {
-                namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ParticipantToResearcher_Command"]);
-            };
-
-            _inputLogic.stopIncomingIntercomStream += () => {
-                namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StopIntercomStream_ParticipantToResearcher_Command"]);
-            };
-
-            _uiHandler.mainTabScreen.GetElement("main-test-btn").RegisterCallback<ClickEvent>(evt => {
-                RequestAudioDevicesNames();
-            });
-
-
-        } catch (Exception ex)
+            TryConnectToServer();
+        }
+        catch (Exception ex)
         {
             CloseConnection($"AudioHandler/Start/error message: {ex}");
             stateTracker.UpdateSubState("StartNamedPipeConnection", false);
@@ -129,26 +109,40 @@ public class AudioHandler : MonoBehaviour
                     var obj = CommonUtilities.DeserializeJson<GeneralResponseFromServer_Command>(message);
                     switch (obj.ReceivedCommand)
                     {
+                        case "TryConnectToServer_Command":
+                            if (!obj.HasError)
+                            {
+                                stateTracker.UpdateSubState("StartNamedPipeConnection", true);
+                                SendConfigs();
+                            }
+                            else
+                            {
+                                stateTracker.UpdateSubState("StartNamedPipeConnection", false);
+                                CloseConnection($"AudioHandler/Start/TryConnectToServer");
+                            }
+                            break;
                         case "SendConfigs_Command":
-                            if (obj.HasError)
+                            if (!obj.HasError)
+                            {
+                                stateTracker.UpdateSubState("SetConfigs", true);
+                                UpdateAudioDevices();
+                            }
+                            else
                             {
                                 stateTracker.UpdateSubState("SetConfigs", false);
                                 _experimentTabHandler.PrintToWarnings("Failed to 'SendConfigs'");
                             }
-                            else
-                            {
-                                stateTracker.UpdateSubState("SetConfigs", true);
-                            }
                             break;
                         case "UpdateDevicesParameters_Command":
-                            if (obj.HasError)
+                            if (!obj.HasError)
+                            {
+                                stateTracker.UpdateSubState("UpdateAudioDevices", true);
+                                
+                            }
+                            else
                             {
                                 stateTracker.UpdateSubState("UpdateAudioDevices", false);
                                 _experimentTabHandler.PrintToWarnings("Failed to 'UpdateAudioDevices'");
-                            }
-                            else
-                            {
-                                stateTracker.UpdateSubState("UpdateAudioDevices", true);
                             }
                             break;
                     }
@@ -193,7 +187,7 @@ public class AudioHandler : MonoBehaviour
     }
 
     // Workaround for Unity's limitations with async in 'Start' method
-    private IEnumerator ConnectToServer(Action<bool> callback)
+    /*private IEnumerator TryConnectToServer_legacy(Action<bool> callback)
     {
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
@@ -212,6 +206,22 @@ public class AudioHandler : MonoBehaviour
 
         yield return new WaitUntil(() => tcs.Task.IsCompleted);
         callback?.Invoke(tcs.Task.Result);
+    }*/
+
+    private async void TryConnectToServer()
+    {
+        try
+        {
+            namedPipeClient = new NamedPipeClient(namedPipeName);
+            bool result = await namedPipeClient.StartAsync();
+            if (result == false) throw new Exception();
+            namedPipeClient.inputMessagesQueue.Enqueue(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "TryConnectToServer_Command", hasError: false)));
+            // not a real command (not a class in 'AudioControlCommunicationModels' but more for homogeneity of 'connection to server steps')
+        }
+        catch
+        {
+            namedPipeClient.inputMessagesQueue.Enqueue(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "TryConnectToServer_Command", hasError: true)));
+        }
     }
 
     private void StartAudioControlProcess()
@@ -260,7 +270,7 @@ public class AudioHandler : MonoBehaviour
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new PlayAudioFile_Command(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
     }
 
-    public void RequestAudioDevicesNames()
+    public void RequestAudioDevices()
     {
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: true)));
     }
