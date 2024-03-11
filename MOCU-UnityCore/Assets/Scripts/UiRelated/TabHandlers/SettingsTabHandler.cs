@@ -65,7 +65,9 @@ public class SettingsTabHandler : MonoBehaviour
             if (currentElement.name == "settings-devices-module-window") break; // upper bound 
             if (currentElement is Slider slider)
             {
-                Debug.Log($"Pressed on slider. The value is {slider.value}");
+                //Debug.Log($"Pressed on slider. The value is {slider.value},\n{currentElement.parent.name}\n");
+                var name = currentElement.parent.name;  // name of device box (like "settings-device-box-speaker-participant")
+                _audioHandler.ChangeAudioDeviceVolume(deviceName: name, volume: slider.value);
                 return;
             }
             currentElement = currentElement.parent;

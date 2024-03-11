@@ -9,6 +9,9 @@ using CommonUtilitiesNamespace;
 using InterprocessCommunication;
 using System.Threading.Tasks;
 using System.Collections;
+using UnityEngine.UI;
+using Newtonsoft.Json.Linq;
+using System.Xml.Linq;
 
 public class AudioHandler : MonoBehaviour
 {
@@ -27,6 +30,7 @@ public class AudioHandler : MonoBehaviour
     public List<string> outputAudioDevices;
 
     private Dictionary<string, string> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
+    private Dictionary<string, string> uiReferenceToDevicesInfoMap;
 
 
 
@@ -49,6 +53,16 @@ public class AudioHandler : MonoBehaviour
             {"StopIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ResearcherToParticipant_Command())},
             {"StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ParticipantToResearcher_Command())},
         };
+
+        uiReferenceToDevicesInfoMap = new()
+        {
+            {"settings-device-box-speaker-researcher", "audioOutputDeviceVolume_Researcher"},
+            {"settings-device-box-speaker-participant", "audioOutputDeviceVolume_Participant"},
+            {"settings-device-box-microphone-researcher", "audioInputDeviceVolume_Researcher"},
+            {"settings-device-box-microphone-participant", "audioInputDeviceVolume_Participant"},
+        };
+
+
 
         audioDevicesInfo = new(
             audioOutputDeviceNameResearcher: "Speakers (Realtek High Definition Audio)",
@@ -275,9 +289,29 @@ public class AudioHandler : MonoBehaviour
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: true)));
     }
 
-    // didn't test
-    /*public void ChangeAudioDeviceVolume(string deviceName, float volume)
+    // TODO: clean up and refactor
+    public void ChangeAudioDeviceVolume(string? deviceName, float? volume)
     {
-        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new ChangeOutputDeviceVolume_Command(name: deviceName, volume: volume)));
-    }*/
+        if (String.IsNullOrEmpty(deviceName))
+        {
+            // temp
+            UnityEngine.Debug.Log($"The device name is incorrect: {deviceName}");
+            return;
+        }
+
+        if (volume < 0f || volume > 100f || volume == null) //  || newVolume == oldVolume
+        {
+            // temp
+            UnityEngine.Debug.Log($"The device volume is incorrect: {volume}");
+            return;
+        }
+
+        UnityEngine.Debug.Log($"Before: {audioDevicesInfo.audioOutputDeviceVolume_Researcher}");
+        var linkToVolume = uiReferenceToDevicesInfoMap[deviceName];
+        audioDevicesInfo.GetType().GetProperty(linkToVolume)?.SetValue(audioDevicesInfo, volume);   // upd device volume
+        UnityEngine.Debug.Log($"After: {audioDevicesInfo.audioOutputDeviceVolume_Researcher}");
+        UpdateAudioDevices();
+
+        // maybe make it separate func
+    }
 }

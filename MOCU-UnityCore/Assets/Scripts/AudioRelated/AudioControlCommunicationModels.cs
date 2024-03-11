@@ -1,6 +1,8 @@
 ﻿using CommonUtilitiesNamespace;
 using System.Collections.Generic;
+
 #nullable enable
+#pragma warning disable CS8618 
 
 
 namespace AudioControl {
@@ -176,4 +178,6 @@ namespace AudioControl {
     }
 
 }
+
 #nullable disable
+#pragma warning restore CS8618
