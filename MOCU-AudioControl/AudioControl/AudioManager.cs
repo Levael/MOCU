@@ -72,13 +72,13 @@ namespace AudioControl
                         break;
                     }
 
-                case "ChangeOutputDeviceVolume_Command":
+                /*case "ChangeOutputDeviceVolume_Command":
                     {
                         var response = ChangeOutputDeviceVolume(jsonCommand);
                         RespondToCommand(response);
                         Console.WriteLine("ChangeOutputDeviceVolume_Command");
                         break;
-                    }
+                    }*/
                 case "SendConfigs_Command":
                     {
                         var response = ApplyConfigs(jsonCommand);
@@ -95,7 +95,7 @@ namespace AudioControl
                     } catch (Exception ex)
                     {
                         Console.WriteLine(ex);
-                        RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "PlayAudioFile_Command", hasError: true)));
+                        RespondToCommand(CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "PlayAudioFile_Command", hasError: true)));
                     }
                     break;
                     
@@ -144,13 +144,13 @@ namespace AudioControl
                 case "SetParticipantAudioOutputDevice_Command":
                 case "DisconnectResearcherAudioOutputDevice_Command":
                 case "DisconnectParticipantAudioOutputDevice_Command":
-                    RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "NotYetImplemented_Command", hasError: true)));
+                    RespondToCommand(CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "NotYetImplemented_Command", hasError: true)));
                     Console.WriteLine("NotYetImplemented_Command");
                     break;
 
 
                 default:
-                    RespondToCommand(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "Unknown_Command", hasError: true)));
+                    RespondToCommand(CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "Unknown_Command", hasError: true)));
                     Console.WriteLine("Unknown_Command");
                     break;
             }
@@ -158,7 +158,7 @@ namespace AudioControl
 
         private void RespondToCommand_UpdateDevicesParameters(bool errorHasOccured)
         {
-            var fullJsonResponse = CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "UpdateDevicesParameters_Command", hasError: errorHasOccured));
+            var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "UpdateDevicesParameters_Command", hasError: errorHasOccured));
             RespondToCommand(fullJsonResponse);
         }
 
@@ -222,12 +222,12 @@ namespace AudioControl
 
                 LoadAudioFiles();   // todo: move to other place
 
-                return CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "SendConfigs_Command", hasError: false));
+                return CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "SendConfigs_Command", hasError: false));
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
-                return CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "SendConfigs_Command", hasError: true));
+                return CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "SendConfigs_Command", hasError: true));
             }
         }
          
@@ -259,7 +259,7 @@ namespace AudioControl
         }
 
 
-        private string ChangeOutputDeviceVolume(string jsonCommand)
+        /*private string ChangeOutputDeviceVolume(string jsonCommand)
         {
             try
             {
@@ -274,7 +274,7 @@ namespace AudioControl
                 Console.WriteLine(ex);
                 return CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "ChangeOutputDeviceVolume_Command", hasError: true));
             }
-        }
+        }*/
 
         private void UpdateAudioDevices()
         {
@@ -300,13 +300,23 @@ namespace AudioControl
 
         private string GetAudioDevicesAsJson(string jsonCommand)
         {
-            var obj = CommonUtilities.DeserializeJson<GetAudioDevices_Command>(jsonCommand);
-            if (obj.DoUpdate) UpdateAudioDevices();
+            try
+            {
+                var obj = CommonUtilities.DeserializeJson<GetAudioDevices_Command>(jsonCommand);
+                if (obj.DoUpdate) UpdateAudioDevices();
 
-            return CommonUtilities.SerializeJson(new ResponseFromServer_GetAudioDevices_Command(
-                inputDevices: inputDevices.Select(device => device.FriendlyName).ToList(),
-                outputDevices: outputDevices.Select(device => device.FriendlyName).ToList()
-            ));
+                var responseData = new GetAudioDevices_ResponseData(
+                    inputDevices: inputDevices.Select(device => device.FriendlyName).ToList(),
+                    outputDevices: outputDevices.Select(device => device.FriendlyName).ToList()
+                );
+
+                return CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "GetAudioDevices_Command", hasError: false, different: responseData));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "GetAudioDevices_Command", hasError: true));
+            }
         }
 
         /// <summary>

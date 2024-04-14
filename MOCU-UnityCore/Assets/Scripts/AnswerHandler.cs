@@ -25,7 +25,7 @@ public class AnswerHandler : MonoBehaviour
 
 
 
-    public void AddAnswer(SignalFromParticipant signalFromParticipant)
+    public void AddAnswer(AnswerFromParticipant signalFromParticipant)
     {
         answers.Push(new ParticipantAnswerStruct(answer: signalFromParticipant, timestamp: DateTime.UtcNow));
     }

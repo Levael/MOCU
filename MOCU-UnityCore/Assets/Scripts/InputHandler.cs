@@ -14,7 +14,7 @@ public class InputHandler : MonoBehaviour
     
 
     private Dictionary<string, (Action<InputAction.CallbackContext> OnPressed, Action<InputAction.CallbackContext> OnReleased)> _inputSystem_actionHandlers;
-    private Dictionary<string, SignalFromParticipant> _actionNameToSignalMap;
+    private Dictionary<string, AnswerFromParticipant> _actionNameToSignalMap;
 
     //public DeviceConnectionStatus GamepadConnectionStatus;
     //public DeviceConnectionStatus XRConnectionStatus;
@@ -57,21 +57,21 @@ public class InputHandler : MonoBehaviour
 
         _actionNameToSignalMap = new()
         {
-            { "Left",   SignalFromParticipant.Left },
-            { "Right",  SignalFromParticipant.Right },
-            { "Up",     SignalFromParticipant.Up },
-            { "Down",   SignalFromParticipant.Down },
-            { "Center", SignalFromParticipant.Center }
+            { "Left",   AnswerFromParticipant.Left },
+            { "Right",  AnswerFromParticipant.Right },
+            { "Up",     AnswerFromParticipant.Up },
+            { "Down",   AnswerFromParticipant.Down },
+            { "Center", AnswerFromParticipant.Center }
         };
 
         // Cedrus ASCII codes are stored in "Cedrus class"
-        //private Dictionary<SignalFromParticipant, Action<string>> _cedrusSignalHandlers; (from header)
+        //private Dictionary<AnswerFromParticipant, Action<string>> _cedrusSignalHandlers; (from header)
         /*_cedrusCodes_answerSignals_Relations = new() {
-            { "a", SignalFromParticipant.Up    },
-            { "b", SignalFromParticipant.Left   },
-            { "c", SignalFromParticipant.Center },
-            { "d", SignalFromParticipant.Right  },
-            { "e", SignalFromParticipant.Down }
+            { "a", AnswerFromParticipant.Up    },
+            { "b", AnswerFromParticipant.Left   },
+            { "c", AnswerFromParticipant.Center },
+            { "d", AnswerFromParticipant.Right  },
+            { "e", AnswerFromParticipant.Down }
         };*/
 
         // activates every action from InputSystem and, if it's in dict, adds its handler
@@ -111,7 +111,7 @@ public class InputHandler : MonoBehaviour
 
     //THE NESTING IN FOLLOWING FUNCTIONS MAY SEEM REDUNDANT, BUT LET IT BE JUST IN CASE
 
-    private void GotSignalFromCedrus(SignalFromParticipant signalFromParticipant)
+    private void GotSignalFromCedrus(AnswerFromParticipant signalFromParticipant)
     {
         _inputLogic.GotAnswerFromCedrus(signalFromParticipant);
     }
@@ -122,13 +122,13 @@ public class InputHandler : MonoBehaviour
 
     private void GotSignalFromInputSystem(InputAction.CallbackContext context)
     {
-        if (_actionNameToSignalMap.TryGetValue(context.action.name, out SignalFromParticipant signalFromParticipant))
+        if (_actionNameToSignalMap.TryGetValue(context.action.name, out AnswerFromParticipant signalFromParticipant))
             _inputLogic.GotPressSignalFromInputSystem(signalFromParticipant);
 
     }
     private void InputSystemButtonWasReleased(InputAction.CallbackContext context)
     {
-        if (_actionNameToSignalMap.TryGetValue(context.action.name, out SignalFromParticipant signalFromParticipant))
+        if (_actionNameToSignalMap.TryGetValue(context.action.name, out AnswerFromParticipant signalFromParticipant))
             _inputLogic.GotReleaseSignalFromInputSystem(signalFromParticipant);
     }
 

@@ -8,13 +8,6 @@ using System.Collections.Generic;
 namespace AudioControl {
     // COMMON ====================================================================================================
 
-    public abstract class GeneralResponseFromServer
-    {
-        public string Command           { get; set; }
-        public string ReceivedCommand   { get; set; }
-        public bool HasError            { get; set; }
-    }
-
     public abstract class GeneralCommandToServer
     {
         public string Command           { get; set; }
@@ -22,29 +15,27 @@ namespace AudioControl {
 
     // RESPONSES =================================================================================================
 
-    public class GeneralResponseFromServer_Command : GeneralResponseFromServer
+    public class ResponseFromServer
     {
-        public new string Command           { get; set; } = "GeneralResponseFromServer_Command";
-        public new string ReceivedCommand   { get; set; }
-        public new bool HasError            { get; set; }
+        public string Command           { get; set; } = "ResponseFromServer";
+        public string ReceivedCommand   { get; set; }
+        public bool HasError            { get; set; }
+        public object? Different        { get; set; }
 
-        public GeneralResponseFromServer_Command(string receivedCommand, bool hasError)
+        public ResponseFromServer(string receivedCommand, bool hasError, object? different = null)
         {
             ReceivedCommand = receivedCommand;
             HasError = hasError;
+            Different = different;
         }
     }
 
-    public class ResponseFromServer_GetAudioDevices_Command : GeneralResponseFromServer
+    public class GetAudioDevices_ResponseData
     {
-        public new string Command           { get; set; } = "ResponseFromServer_GetAudioDevices_Command";
-        public new string ReceivedCommand   { get; set; } = "GetAudioDevices_Command";
-        public new bool HasError            { get; set; } = false;
-
         public List<string> InputDevices    { get; set; }
         public List<string> OutputDevices   { get; set; }
 
-        public ResponseFromServer_GetAudioDevices_Command(List<string> inputDevices, List<string> outputDevices)
+        public GetAudioDevices_ResponseData(List<string> inputDevices, List<string> outputDevices)
         {
             InputDevices = inputDevices;
             OutputDevices = outputDevices;

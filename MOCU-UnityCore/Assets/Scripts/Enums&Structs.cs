@@ -26,7 +26,7 @@ using System;
 /// <summary>
 /// Just to know on what participant pressed
 /// </summary>
-public enum SignalFromParticipant
+public enum AnswerFromParticipant
 {
     Left,
     Right,
@@ -43,10 +43,10 @@ public enum SignalFromParticipant
 /// </summary>
 public struct ParticipantAnswerStruct
 {
-    public SignalFromParticipant answer;
+    public AnswerFromParticipant answer;
     public DateTime timestamp;
 
-    public ParticipantAnswerStruct(SignalFromParticipant answer, DateTime timestamp)
+    public ParticipantAnswerStruct(AnswerFromParticipant answer, DateTime timestamp)
     {
         this.answer = answer;
         this.timestamp = timestamp;
@@ -64,18 +64,18 @@ public struct ParticipantAnswerStruct
         return HashCode.Combine(answer, timestamp);
     }
 
-    public void Deconstruct(out SignalFromParticipant answer, out DateTime timestamp)
+    public void Deconstruct(out AnswerFromParticipant answer, out DateTime timestamp)
     {
         answer = this.answer;
         timestamp = this.timestamp;
     }
 
-    public static implicit operator (SignalFromParticipant answer, DateTime timestamp)(ParticipantAnswerStruct value)
+    public static implicit operator (AnswerFromParticipant answer, DateTime timestamp)(ParticipantAnswerStruct value)
     {
         return (value.answer, value.timestamp);
     }
 
-    public static implicit operator ParticipantAnswerStruct((SignalFromParticipant answer, DateTime timestamp) value)
+    public static implicit operator ParticipantAnswerStruct((AnswerFromParticipant answer, DateTime timestamp) value)
     {
         return new ParticipantAnswerStruct(value.answer, value.timestamp);
     }

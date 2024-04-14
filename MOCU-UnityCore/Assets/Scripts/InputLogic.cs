@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class InputLogic : MonoBehaviour
 {
     private UiHandler _uiHandler;
+    private ExperimentTabHandler _experimentTabHandler;
+
     private AnswerHandler _answerHandler;
     private AudioHandler _audioHandler;
 
@@ -16,7 +18,9 @@ public class InputLogic : MonoBehaviour
 
     private void Awake()
     {
-        _uiHandler = GetComponent<UiHandler>();
+        _uiHandler = GetComponent<UiHandler>(); // todo: shouldn't be here, change all to "_experimentTabHandler"
+        _experimentTabHandler = GetComponent<ExperimentTabHandler>();
+
         _answerHandler = GetComponent<AnswerHandler>();
         _audioHandler = GetComponent<AudioHandler>();
     }
@@ -34,20 +38,20 @@ public class InputLogic : MonoBehaviour
         if (_audioHandler.stateTracker.Status != StateTracker.DeviceConnectionStatus.Connected) return;
 
         startOutgoingIntercomStream?.Invoke();
-        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
-        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").AddToClassList("isOutcomming");
+        _uiHandler.mainUiScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
+        _uiHandler.mainUiScreen.GetElement("controls-intercom-part").AddToClassList("isOutcoming");
     }
     public void IntercomFromResearcherStopped()
     {
         if (_audioHandler.stateTracker.Status != StateTracker.DeviceConnectionStatus.Connected) return;
 
         stopOutgoingIntercomStream?.Invoke();
-        if (!_uiHandler.mainTabScreen.GetElement("controls-intercom-part").ClassListContains("isIncomming"))
+        if (!_uiHandler.mainUiScreen.GetElement("controls-intercom-part").ClassListContains("isIncoming"))
         {
             // the check is necessary so that the highlight does not disappear completely when pressed simultaneously
-            _uiHandler.mainTabScreen.GetElement("controls-intercom-part").RemoveFromClassList("isActive");
+            _uiHandler.mainUiScreen.GetElement("controls-intercom-part").RemoveFromClassList("isActive");
         }
-        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").RemoveFromClassList("isOutcomming");
+        _uiHandler.mainUiScreen.GetElement("controls-intercom-part").RemoveFromClassList("isOutcoming");
     }
 
     public void IntercomFromParticipantStarted()
@@ -55,92 +59,92 @@ public class InputLogic : MonoBehaviour
         if (_audioHandler.stateTracker.Status != StateTracker.DeviceConnectionStatus.Connected) return;
 
         startIncomingIntercomStream?.Invoke();
-        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
-        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").AddToClassList("isIncomming");
+        _uiHandler.mainUiScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
+        _uiHandler.mainUiScreen.GetElement("controls-intercom-part").AddToClassList("isIncoming");
     }
     public void IntercomFromParticipantStopped()
     {
         if (_audioHandler.stateTracker.Status != StateTracker.DeviceConnectionStatus.Connected) return;
 
         stopIncomingIntercomStream?.Invoke();
-        if (!_uiHandler.mainTabScreen.GetElement("controls-intercom-part").ClassListContains("isOutcomming"))
+        if (!_uiHandler.mainUiScreen.GetElement("controls-intercom-part").ClassListContains("isOutcoming"))
         {
             // the check is necessary so that the highlight does not disappear completely when pressed simultaneously
-            _uiHandler.mainTabScreen.GetElement("controls-intercom-part").RemoveFromClassList("isActive");
+            _uiHandler.mainUiScreen.GetElement("controls-intercom-part").RemoveFromClassList("isActive");
         }
-        _uiHandler.mainTabScreen.GetElement("controls-intercom-part").RemoveFromClassList("isIncomming");
+        _uiHandler.mainUiScreen.GetElement("controls-intercom-part").RemoveFromClassList("isIncoming");
     }
 
 
 
-    public void GotPressSignalFromInputSystem(SignalFromParticipant signalFromParticipant)
+    public void GotPressSignalFromInputSystem(AnswerFromParticipant signalFromParticipant)
     {
         // All this is temp and dirty
 
         switch (signalFromParticipant)
         {
-            case SignalFromParticipant.Up:
+            case AnswerFromParticipant.Up:
                 AnswerUpPressed(source: "inputSystem");
                 break;
-            case SignalFromParticipant.Left:
+            case AnswerFromParticipant.Left:
                 AnswerLeftPressed(source: "inputSystem");
                 break;
-            case SignalFromParticipant.Center:
+            case AnswerFromParticipant.Center:
                 AnswerCenterPressed(source: "inputSystem");
                 break;
-            case SignalFromParticipant.Right:
+            case AnswerFromParticipant.Right:
                 AnswerRightPressed(source: "inputSystem");
                 break;
-            case SignalFromParticipant.Down:
+            case AnswerFromParticipant.Down:
                 AnswerDownPressed(source: "inputSystem");
                 break;
         }
         _answerHandler.AddAnswer(signalFromParticipant);
     }
 
-    public void GotReleaseSignalFromInputSystem(SignalFromParticipant signalFromParticipant)
+    public void GotReleaseSignalFromInputSystem(AnswerFromParticipant signalFromParticipant)
     {
         // All this is temp and dirty
 
         switch (signalFromParticipant)
         {
-            case SignalFromParticipant.Up:
+            case AnswerFromParticipant.Up:
                 AnswerUpReleased();
                 break;
-            case SignalFromParticipant.Left:
+            case AnswerFromParticipant.Left:
                 AnswerLeftReleased();
                 break;
-            case SignalFromParticipant.Center:
+            case AnswerFromParticipant.Center:
                 AnswerCenterReleased();
                 break;
-            case SignalFromParticipant.Right:
+            case AnswerFromParticipant.Right:
                 AnswerRightReleased();
                 break;
-            case SignalFromParticipant.Down:
+            case AnswerFromParticipant.Down:
                 AnswerDownReleased();
                 break;
         }
     }
 
-    public void GotAnswerFromCedrus(SignalFromParticipant signalFromParticipant)
+    public void GotAnswerFromCedrus(AnswerFromParticipant signalFromParticipant)
     {
         // All this is temp and dirty
 
         switch (signalFromParticipant)
         {
-            case SignalFromParticipant.Up:
+            case AnswerFromParticipant.Up:
                 AnswerUpPressed(source: "cedrus");
                 break;
-            case SignalFromParticipant.Left:
+            case AnswerFromParticipant.Left:
                 AnswerLeftPressed(source: "cedrus");
                 break;
-            case SignalFromParticipant.Center:
+            case AnswerFromParticipant.Center:
                 AnswerCenterPressed(source: "cedrus");
                 break;
-            case SignalFromParticipant.Right:
+            case AnswerFromParticipant.Right:
                 AnswerRightPressed(source: "cedrus");
                 break;
-            case SignalFromParticipant.Down:
+            case AnswerFromParticipant.Down:
                 AnswerDownPressed(source: "cedrus");
                 break;
         }
@@ -152,48 +156,48 @@ public class InputLogic : MonoBehaviour
 
     public void AnswerLeftPressed(string source)
     {
-        _uiHandler.ControllerButtonWasPressed("controller-left-btn");
+        _experimentTabHandler.ControllerButtonWasPressed("controller-left-btn");
         if (source == "ui" || source == "cedrus") { Invoke("AnswerLeftReleased", 0.1f); }       // with delay 0.5sec if clicked with mouse    // todo later to all
     }
     public void AnswerLeftReleased()
     {
-        _uiHandler.ControllerButtonWasReleased("controller-left-btn");
+        _experimentTabHandler.ControllerButtonWasReleased("controller-left-btn");
     }
     public void AnswerRightPressed(string source)
     {
-        _uiHandler.ControllerButtonWasPressed("controller-right-btn");
+        _experimentTabHandler.ControllerButtonWasPressed("controller-right-btn");
         if (source == "ui" || source == "cedrus") { Invoke("AnswerRightReleased", 0.1f); }
     }
     public void AnswerRightReleased()
     {
-        _uiHandler.ControllerButtonWasReleased("controller-right-btn");
+        _experimentTabHandler.ControllerButtonWasReleased("controller-right-btn");
     }
     public void AnswerUpPressed(string source)
     {
-        _uiHandler.ControllerButtonWasPressed("controller-up-btn");
+        _experimentTabHandler.ControllerButtonWasPressed("controller-up-btn");
         if (source == "ui" || source == "cedrus") { Invoke("AnswerUpReleased", 0.1f); }
     }
     public void AnswerUpReleased()
     {
-        _uiHandler.ControllerButtonWasReleased("controller-up-btn");
+        _experimentTabHandler.ControllerButtonWasReleased("controller-up-btn");
     }
     public void AnswerDownPressed(string source)
     {
-        _uiHandler.ControllerButtonWasPressed("controller-down-btn");
+        _experimentTabHandler.ControllerButtonWasPressed("controller-down-btn");
         if (source == "ui" || source == "cedrus") { Invoke("AnswerDownReleased", 0.1f); }
     }
     public void AnswerDownReleased()
     {
-        _uiHandler.ControllerButtonWasReleased("controller-down-btn");
+        _experimentTabHandler.ControllerButtonWasReleased("controller-down-btn");
     }
     public void AnswerCenterPressed(string source)
     {
-        _uiHandler.ControllerButtonWasPressed("controller-center-btn");
+        _experimentTabHandler.ControllerButtonWasPressed("controller-center-btn");
         if (source == "ui" || source == "cedrus") { Invoke("AnswerCenterReleased", 0.1f); }
     }
     public void AnswerCenterReleased()
     {
-        _uiHandler.ControllerButtonWasReleased("controller-center-btn");
+        _experimentTabHandler.ControllerButtonWasReleased("controller-center-btn");
     }
 
 }

@@ -241,11 +241,11 @@
 	background-color: var(--active-buttons-color) !important;
 }
 
-#controls-intercom-part.isActive.isIncomming #intercom-incomming-state {
+#controls-intercom-part.isActive.isIncoming #intercom-incomming-state {
 	display: flex;
 }
 
-#controls-intercom-part.isActive.isOutcomming #intercom-outcomming-state {
+#controls-intercom-part.isActive.isOutcoming #intercom-outcomming-state {
 	display: flex;
 }
 

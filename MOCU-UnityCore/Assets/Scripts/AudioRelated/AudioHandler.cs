@@ -23,6 +23,7 @@ public class AudioHandler : MonoBehaviour
     private string namedPipeName;
 
     private UiHandler _uiHandler;
+    private ConfigHandler _configHandler;
     private ExperimentTabHandler _experimentTabHandler;
     private InputLogic _inputLogic;
 
@@ -31,7 +32,7 @@ public class AudioHandler : MonoBehaviour
 
     private Dictionary<string, string> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
     private Dictionary<string, string> uiReferenceToDevicesInfoMap;
-
+    private Dictionary<string, (string? subState, Action<ResponseFromServer?> action)> CommandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
 
 
     void Awake()
@@ -39,41 +40,41 @@ public class AudioHandler : MonoBehaviour
         namedPipeName = "AudioPipe";
 
         _uiHandler = GetComponent<UiHandler>();
+        _configHandler = GetComponent<ConfigHandler>();
         _experimentTabHandler = GetComponent<ExperimentTabHandler>();
         _inputLogic = GetComponent<InputLogic>();
 
-        stateTracker = new StateTracker(new[] { "SetConfigs", "UpdateAudioDevices", "StartAudioProcess", "StartNamedPipeConnection" });    // todo: maybe read from config. maybe not
+        stateTracker = new StateTracker(new[] { "StartAudioProcess", "StartNamedPipeConnection", "SetConfigs", "RequestAudioDevices", "SendAudioDevices"});
 
         inputAudioDevices = new();
         outputAudioDevices = new();
 
         partlyOptimizedJsonCommands = new() {
-            {"StartIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new StartIntercomStream_ResearcherToParticipant_Command())},
-            {"StartIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StartIntercomStream_ParticipantToResearcher_Command())},
-            {"StopIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ResearcherToParticipant_Command())},
-            {"StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ParticipantToResearcher_Command())},
+            { "StartIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new StartIntercomStream_ResearcherToParticipant_Command()) },
+            { "StartIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StartIntercomStream_ParticipantToResearcher_Command()) },
+            { "StopIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ResearcherToParticipant_Command()) },
+            { "StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ParticipantToResearcher_Command()) },
         };
 
         uiReferenceToDevicesInfoMap = new()
         {
-            {"settings-device-box-speaker-researcher", "audioOutputDeviceVolume_Researcher"},
-            {"settings-device-box-speaker-participant", "audioOutputDeviceVolume_Participant"},
-            {"settings-device-box-microphone-researcher", "audioInputDeviceVolume_Researcher"},
-            {"settings-device-box-microphone-participant", "audioInputDeviceVolume_Participant"},
+            { "settings-device-box-speaker-researcher",      "audioOutputDeviceVolume_Researcher" },
+            { "settings-device-box-speaker-participant",     "audioOutputDeviceVolume_Participant" },
+            { "settings-device-box-microphone-researcher",   "audioInputDeviceVolume_Researcher" },
+            { "settings-device-box-microphone-participant",  "audioInputDeviceVolume_Participant" },
         };
 
+        CommandsToExecuteAccordingToServerResponse = new()
+        {
+            //{ "StartAudioControlProcess_Command",           (subState: "StartAudioProcess",         action: TryConnectToServer) },
+            { "TryConnectToServer_Command",                 (subState: "StartNamedPipeConnection",  action: SendConfigurationDetails) },
+            { "SendConfigs_Command",                        (subState: "SetConfigs",                action: RequestAudioDevices) },
+            { "GetAudioDevices_Command",                    (subState: "RequestAudioDevices",       action: SendAudioDevices) },
+            { "UpdateDevicesParameters_Command",            (subState: "SendAudioDevices",          action: UpdateConfig) }
+        };
 
-
-        audioDevicesInfo = new(
-            audioOutputDeviceNameResearcher: "Speakers (Realtek High Definition Audio)",
-            audioInputDeviceNameResearcher: "Microphone (fifine Microphone)",
-            audioOutputDeviceNameParticipant: "Headphones (Rift Audio)",
-            audioInputDeviceNameParticipant: "Microphone (Rift Audio)",
-            audioOutputDeviceVolumeResearcher: 77f,
-            audioOutputDeviceVolumeParticipant: 42f,
-            audioInputDeviceVolumeResearcher: null,
-            audioInputDeviceVolumeParticipant: null
-        );
+        // Reading from config Audio Devices Data
+        audioDevicesInfo = _configHandler.defaultConfig.AudioConfig;
 
 
         // Event listeners for intercom
@@ -94,85 +95,54 @@ public class AudioHandler : MonoBehaviour
         };
     }
 
-    // Workaround for Unity's limitations with async in 'Start' method
     void Start()
     {
-        try
-        {
-            StartAudioControlProcess();
-            TryConnectToServer();
-        }
-        catch (Exception ex)
-        {
-            CloseConnection($"AudioHandler/Start/error message: {ex}");
-            stateTracker.UpdateSubState("StartNamedPipeConnection", false);
-        }
-        
+        StartAudioControlProcess();
+        TryConnectToServer();
     }
 
+    // todo: make each loop a separate method
     void Update()
     {
+        if (namedPipeClient == null) return;    // in case it is still not ready
+
+        // Checking input queue of namedPipeClient to see is there anything new
         while (namedPipeClient.inputMessagesQueue.TryDequeue(out string message))
         {
-            var commandName = CommonUtilities.GetSerializedObjectType(message);
-
-            // { } are for using same variable 'obj'
-            switch (commandName)
+            try
             {
-                case "GeneralResponseFromServer_Command":
-                    var obj = CommonUtilities.DeserializeJson<GeneralResponseFromServer_Command>(message);
-                    switch (obj.ReceivedCommand)
+                // currently no check for "is it realy 'ResponseFromServer'", because this code only gets responses. maybe add later (todo)
+                var obj = CommonUtilities.DeserializeJson<ResponseFromServer>(message);
+                var subStateName = CommandsToExecuteAccordingToServerResponse[obj.ReceivedCommand].subState;
+                var funcToBeExecuted = CommandsToExecuteAccordingToServerResponse[obj.ReceivedCommand].action;
+
+                if (obj.HasError)
+                {
+                    stateTracker.UpdateSubState(subStateName, false);
+                    _experimentTabHandler.PrintToWarnings($"Failed to '{subStateName}'");
+
+                    if (subStateName == "StartNamedPipeConnection" || subStateName  == "StartNamedPipeConnection")
                     {
-                        case "TryConnectToServer_Command":
-                            if (!obj.HasError)
-                            {
-                                stateTracker.UpdateSubState("StartNamedPipeConnection", true);
-                                SendConfigs();
-                            }
-                            else
-                            {
-                                stateTracker.UpdateSubState("StartNamedPipeConnection", false);
-                                CloseConnection($"AudioHandler/Start/TryConnectToServer");
-                            }
-                            break;
-                        case "SendConfigs_Command":
-                            if (!obj.HasError)
-                            {
-                                stateTracker.UpdateSubState("SetConfigs", true);
-                                UpdateAudioDevices();
-                            }
-                            else
-                            {
-                                stateTracker.UpdateSubState("SetConfigs", false);
-                                _experimentTabHandler.PrintToWarnings("Failed to 'SendConfigs'");
-                            }
-                            break;
-                        case "UpdateDevicesParameters_Command":
-                            if (!obj.HasError)
-                            {
-                                stateTracker.UpdateSubState("UpdateAudioDevices", true);
-                                
-                            }
-                            else
-                            {
-                                stateTracker.UpdateSubState("UpdateAudioDevices", false);
-                                _experimentTabHandler.PrintToWarnings("Failed to 'UpdateAudioDevices'");
-                            }
-                            break;
+                        CloseConnection($"AudioHandler/{subStateName}");
                     }
-                    break;
-                case "ResponseFromServer_GetAudioDevices_Command":
-                    //_uiHandler.PrintToInfo($"2: {commandName}\n");
-                    break;
 
+                    // pass this message, go to the next (if there is any)
+                    continue;
+                }
 
-                default:
-                    //_uiHandler.PrintToInfo($"3: {commandName}\n");
-                    break;
+                // In case everything is fine
+                stateTracker.UpdateSubState(subStateName, true);
+                funcToBeExecuted.Invoke(obj);
+            }
+            catch
+            {
+                //stateTracker.UpdateSubState("StartAudioProcess", false);    // not realy it, but need to be something
+                _experimentTabHandler.PrintToWarnings($"Total fail while trying read incoming message from server");
             }
         }
 
 
+        // Checking inner queue of namedPipeClient to see is there anything new
         while (namedPipeClient.innerMessagesQueue.TryDequeue(out (string messageText, InnerMessageType messageType) message))
         {
             if (message.messageType == InnerMessageType.Info)
@@ -200,28 +170,6 @@ public class AudioHandler : MonoBehaviour
         OnDestroy();
     }
 
-    // Workaround for Unity's limitations with async in 'Start' method
-    /*private IEnumerator TryConnectToServer_legacy(Action<bool> callback)
-    {
-        TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-
-        Task.Run(async () => {
-            try
-            {
-                namedPipeClient = new NamedPipeClient(namedPipeName);
-                bool result = await namedPipeClient.StartAsync();
-                tcs.SetResult(result);
-            }
-            catch
-            {
-                tcs.SetResult(false);
-            }
-        });
-
-        yield return new WaitUntil(() => tcs.Task.IsCompleted);
-        callback?.Invoke(tcs.Task.Result);
-    }*/
-
     private async void TryConnectToServer()
     {
         try
@@ -229,12 +177,14 @@ public class AudioHandler : MonoBehaviour
             namedPipeClient = new NamedPipeClient(namedPipeName);
             bool result = await namedPipeClient.StartAsync();
             if (result == false) throw new Exception();
-            namedPipeClient.inputMessagesQueue.Enqueue(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "TryConnectToServer_Command", hasError: false)));
+
+            namedPipeClient.inputMessagesQueue.Enqueue(CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "TryConnectToServer_Command", hasError: false)));
             // not a real command (not a class in 'AudioControlCommunicationModels' but more for homogeneity of 'connection to server steps')
         }
         catch
         {
-            namedPipeClient.inputMessagesQueue.Enqueue(CommonUtilities.SerializeJson(new GeneralResponseFromServer_Command(receivedCommand: "TryConnectToServer_Command", hasError: true)));
+            namedPipeClient.inputMessagesQueue.Enqueue(CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "TryConnectToServer_Command", hasError: true)));
+            // not a real command (not a class in 'AudioControlCommunicationModels' but more for homogeneity of 'connection to server steps')
         }
     }
 
@@ -257,6 +207,7 @@ public class AudioHandler : MonoBehaviour
 
             audioControlProcess = new Process() { StartInfo = startInfo };
             audioControlProcess.Start();
+
             stateTracker.UpdateSubState("StartAudioProcess", true);
         }
         catch
@@ -267,15 +218,17 @@ public class AudioHandler : MonoBehaviour
     }
 
 
-    public void SendConfigs()
+    public void SendConfigurationDetails(ResponseFromServer response)
     {
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new SendConfigs_Command(
             unityAudioDirectory: Path.Combine(Application.dataPath, "Audio")
         )));
     }
 
-    public void UpdateAudioDevices()
+    public void SendAudioDevices(ResponseFromServer response)
     {
+        // todo: read devices data here from response
+        // todo: add here checks
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UpdateDevicesParameters_Command(audioDevicesInfo)));
     }
 
@@ -284,9 +237,9 @@ public class AudioHandler : MonoBehaviour
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new PlayAudioFile_Command(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
     }
 
-    public void RequestAudioDevices()
+    public void RequestAudioDevices(ResponseFromServer response)
     {
-        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: true)));
+        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: false)));
     }
 
     // TODO: clean up and refactor
@@ -310,8 +263,14 @@ public class AudioHandler : MonoBehaviour
         var linkToVolume = uiReferenceToDevicesInfoMap[deviceName];
         audioDevicesInfo.GetType().GetProperty(linkToVolume)?.SetValue(audioDevicesInfo, volume);   // upd device volume
         UnityEngine.Debug.Log($"After: {audioDevicesInfo.audioOutputDeviceVolume_Researcher}");
-        UpdateAudioDevices();
+        //SendAudioDevices();
 
         // maybe make it separate func
+    }
+
+    private void UpdateConfig(ResponseFromServer response)
+    {
+        // todo
+        //UnityEngine.Debug.Log($"Reached the end successfully");
     }
 }

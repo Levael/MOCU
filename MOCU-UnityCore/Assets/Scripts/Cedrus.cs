@@ -18,7 +18,7 @@ public class Cedrus : MonoBehaviour
     public StateTracker stateTracker;
     //public DeviceConnectionStatus CedrusConnectionStatus;
 
-    public event Action<SignalFromParticipant> gotData;     // calls every subscribed to it functions if got any data from participant (checks buffer every frame)
+    public event Action<AnswerFromParticipant> gotData;     // calls every subscribed to it functions if got any data from participant (checks buffer every frame)
 
     private UiHandler _uiHandler;
     private ExperimentTabHandler _experimentTabHandler;
@@ -30,7 +30,7 @@ public class Cedrus : MonoBehaviour
     private string _targetDeviceId;
     private string _portName;
 
-    private Dictionary<string, SignalFromParticipant> _cedrusCodes_answerSignals_Relations;
+    private Dictionary<string, AnswerFromParticipant> _cedrusCodes_answerSignals_Relations;
 
 
     void Awake()
@@ -43,11 +43,11 @@ public class Cedrus : MonoBehaviour
         stateTracker = new StateTracker(new[] { "isConnected" });
 
         _cedrusCodes_answerSignals_Relations = new() {
-            { "a", SignalFromParticipant.Up     },
-            { "b", SignalFromParticipant.Left   },
-            { "c", SignalFromParticipant.Center },
-            { "d", SignalFromParticipant.Right  },
-            { "e", SignalFromParticipant.Down   }
+            { "a", AnswerFromParticipant.Up     },
+            { "b", AnswerFromParticipant.Left   },
+            { "c", AnswerFromParticipant.Center },
+            { "d", AnswerFromParticipant.Right  },
+            { "e", AnswerFromParticipant.Down   }
         };
     }
 
@@ -72,14 +72,14 @@ public class Cedrus : MonoBehaviour
         {
             while (_dataQueue.TryDequeue(out string data))                                      // the loop is needed in case several clicks were made in one frame
             {
-                // Translates Cedrus ASCII string to "SignalFromParticipant" enum type
+                // Translates Cedrus ASCII string to "AnswerFromParticipant" enum type
 
-                var signalFromParticipant = SignalFromParticipant.Error;                        // ideally, this will not happen at all, it's needed as a stub
+                var signalFromParticipant = AnswerFromParticipant.Error;                        // ideally, this will not happen at all, it's needed as a stub
 
                 if (_cedrusCodes_answerSignals_Relations.ContainsKey(data))                     // the usual scenario when everything is ok 
                     signalFromParticipant = _cedrusCodes_answerSignals_Relations[data];
                 else if (data.Length > 1)                                                       // if several buttons were pressed simultaneously
-                    signalFromParticipant = SignalFromParticipant.MultipleAnswer;
+                    signalFromParticipant = AnswerFromParticipant.MultipleAnswer;
 
                 gotData?.Invoke(signalFromParticipant);                                         // trigger "InputHandler" function
             }

@@ -1,9 +1,10 @@
+using CustomUxmlElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class SettingsTabHandler : MonoBehaviour
 {
-    //
+    // FIELDS
 
     public VisualTreeAsset chooseDeviceRowTemplate;
 
@@ -22,7 +23,7 @@ public class SettingsTabHandler : MonoBehaviour
 
     void Start()
     {
-        _uiReference = _uiHandler.secondaryTabScreen;
+        _uiReference = _uiHandler.secondaryUiScreen;
         AddEventListeners();
         _classIsReady = true;
     }
@@ -37,15 +38,23 @@ public class SettingsTabHandler : MonoBehaviour
     {
         foreach (var deviceBox in _uiReference.GetDevicesBoxes())
         {
+            // Add click listener to whole device box
             deviceBox.pickingMode = PickingMode.Position;
             deviceBox.RegisterCallback<ClickEvent>(eventObj => DeviceBoxClicked(eventObj));
+
+            // // Add click listener to slider if there is one
+            var customSlider = deviceBox.Q<CustomSlider>();
+            if (customSlider != null)
+            {
+                customSlider.RegisterCallback<ClickEvent>(eventObj => DeviceVolumeSliderClicked(eventObj));
+            }
         }
 
         _uiReference.GetElement("settings-devices-back-btn").RegisterCallback<ClickEvent>(CloseDeviceBoxParameters);
         _uiReference.GetElement("settings-devices-update-btn").RegisterCallback<ClickEvent>(UpdateDevices);
 
-        //secondaryTabScreen.GetElement("settings-device-box-speaker-researcher").RegisterCallback<WheelEvent>(WeelSoundChange);
-        //secondaryTabScreen.GetElement("settings-device-box-speaker-participant").RegisterCallback<WheelEvent>(WeelSoundChange);
+        //secondaryUiScreen.GetElement("settings-device-box-speaker-researcher").RegisterCallback<WheelEvent>(WeelSoundChange);
+        //secondaryUiScreen.GetElement("settings-device-box-speaker-participant").RegisterCallback<WheelEvent>(WeelSoundChange);
     }
 
     private void WeelSoundChange(WheelEvent evt)
@@ -57,19 +66,22 @@ public class SettingsTabHandler : MonoBehaviour
 
     private void DeviceBoxClicked(ClickEvent eventObj)
     {
+        UnityEngine.Debug.Log("Device box clicked");
+
         // if clicked on Slider -- ignore "OpenDeviceBoxParameters" action
         var currentElement = eventObj.target as VisualElement;
 
         while (currentElement != null)
         {
-            if (currentElement.name == "settings-devices-module-window") break; // upper bound 
-            if (currentElement is Slider slider)
+            if (currentElement.name == "settings-devices-module-window") break; // upper bound
+            // todo: take care of it in "DeviceVolumeSliderClicked"
+            /*if (currentElement is Slider slider)
             {
                 //Debug.Log($"Pressed on slider. The value is {slider.value},\n{currentElement.parent.name}\n");
                 var name = currentElement.parent.name;  // name of device box (like "settings-device-box-speaker-participant")
                 _audioHandler.ChangeAudioDeviceVolume(deviceName: name, volume: slider.value);
                 return;
-            }
+            }*/
             currentElement = currentElement.parent;
         }
 
@@ -77,6 +89,16 @@ public class SettingsTabHandler : MonoBehaviour
         if (_uiReference.GetElement("settings-devices-choose-device-window").style.display == DisplayStyle.Flex) return;
 
         OpenDeviceBoxParameters((VisualElement)eventObj.currentTarget);
+    }
+
+    private void DeviceVolumeSliderClicked(ClickEvent eventObj)
+    {
+        // If cliked on slider than there is no need to call device box event
+        eventObj.StopPropagation();
+
+        var currentElement = eventObj.target as VisualElement;
+        UnityEngine.Debug.Log("Slider clicked");
+        // todo: continue working on it
     }
 
     private void OpenDeviceBoxParameters(VisualElement clickedDeviceBox)
@@ -153,7 +175,6 @@ public class SettingsTabHandler : MonoBehaviour
     {
         var outputDeviceName = ((VisualElement)clickEvent.currentTarget).parent.parent.Q<TextElement>(className: "device-option-full-name").text;
         _audioHandler.SendTestAudioSignalToDevice(audioOutputDeviceName: outputDeviceName);
-        Debug.Log($"bell btn: {outputDeviceName}");
     }
 
     private void DisconnectDevice(ClickEvent clickEvent)

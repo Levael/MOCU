@@ -250,7 +250,6 @@ GameObject:
   - component: {fileID: 75438431}
   - component: {fileID: 75438432}
   - component: {fileID: 75438433}
-  - component: {fileID: 75438446}
   - component: {fileID: 75438444}
   - component: {fileID: 75438445}
   - component: {fileID: 75438434}
@@ -260,6 +259,7 @@ GameObject:
   - component: {fileID: 75438439}
   - component: {fileID: 75438441}
   - component: {fileID: 75438442}
+  - component: {fileID: 75438446}
   m_Layer: 0
   m_Name: Scripts
   m_TagString: Untagged
@@ -308,9 +308,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainDisplayGameObject: {fileID: 603612049}
   secondDisplayGameObject: {fileID: 782628375}
-  mainTabScreen: {fileID: 603612052}
-  secondaryTabScreen: {fileID: 782628378}
-  chooseDeviceRowTemplate: {fileID: 9197481963319205126, guid: cc72a5c0ce95be84987e3a6e985fbad9, type: 3}
+  mainUiScreen: {fileID: 0}
+  secondaryUiScreen: {fileID: 0}
 --- !u!114 &75438434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -431,9 +430,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 75438430}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4bf43cc2a898ca4bbfff1258f4a2d9a, type: 3}
+  m_Script: {fileID: 11500000, guid: d2f8918d66daa34449357cb4f5e12212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chooseDeviceRowTemplate: {fileID: 9197481963319205126, guid: cc72a5c0ce95be84987e3a6e985fbad9, type: 3}
 --- !u!1 &78664784
 GameObject:
   m_ObjectHideFlags: 0

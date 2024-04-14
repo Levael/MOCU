@@ -9,6 +9,9 @@ Cedrus GIT: https://github.com/cedrus-opensource
 
 
 Notes:
+- ABOUT GENERAL:
+	- Edit/ProjectSettings/ScriptExecutionOrder for managing scipts execution order
+	(important, for example, to run config manager earlier than dependent on him scripts)
 - ABOUT EXTERNAL APPLICATIONS (audio and port finder):
 	- do not specify that the project is for Windows, otherwise the file size will increase from 64mb to 150mb
 	- project settings should be something like:

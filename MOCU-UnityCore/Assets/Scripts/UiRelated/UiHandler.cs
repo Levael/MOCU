@@ -1,7 +1,5 @@
 using Assets.Scripts;
 using System.Collections.Generic;
-using System.Xml.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,11 +12,11 @@ public class UiHandler : MonoBehaviour
     private UiReferences _mainDisplayUiReferences;
     private UiReferences _secondDisplayUiReferences;
 
-    private VisualElement _activeTab;           // main display
-    private VisualElement _openedTab;           // second display
+    private VisualElement _activeTabOnMainUiScreen;
+    private VisualElement _activeTabOnSecondaryUiScreen;
 
-    public UiReferences mainTabScreen;          // use this (instead of _mainDisplayUiReferences)
-    public UiReferences secondaryTabScreen;     // use this (instead of _secondDisplayUiReferences)
+    public UiReferences mainUiScreen;          // use this (instead of _mainDisplayUiReferences)
+    public UiReferences secondaryUiScreen;     // use this (instead of _secondDisplayUiReferences)
 
     
 
@@ -38,24 +36,15 @@ public class UiHandler : MonoBehaviour
     {
         AddEventListeners();
 
-        TabHasBeenClicked(mainTabScreen.GetElement("settings-tab"));
+        // default tabs to show (first secondary, than main (in case there is only one monitor))
+        TabHasBeenClicked(secondaryUiScreen.GetElement("debug-tab"));
+        TabHasBeenClicked(mainUiScreen.GetElement("experiment-tab"));
     }
 
     private void Update()
     { 
     }
 
-    
-
-
-    public void ControllerButtonWasPressed(string btn_name) {
-        mainTabScreen.GetElement(btn_name).AddToClassList("isActive");
-    }
-
-    public void ControllerButtonWasReleased(string btn_name)
-    {
-        mainTabScreen.GetElement(btn_name).RemoveFromClassList("isActive");
-    }
 
 
 
@@ -69,34 +58,26 @@ public class UiHandler : MonoBehaviour
 
         if (_openTabInSecondDisplay)
         {
-            mainTabScreen = _mainDisplayUiReferences;
-            secondaryTabScreen = _secondDisplayUiReferences;
+            mainUiScreen = _mainDisplayUiReferences;
+            secondaryUiScreen = _secondDisplayUiReferences;
             Display.displays[1].Activate();     // activation of second display
 
-            ShowBody("", secondaryTabScreen);
+            ShowBody("", secondaryUiScreen);
         }
         else
         {
-            mainTabScreen = _mainDisplayUiReferences;
-            secondaryTabScreen = _mainDisplayUiReferences;
+            mainUiScreen = _mainDisplayUiReferences;
+            secondaryUiScreen = _mainDisplayUiReferences;
 
             secondDisplayGameObject.SetActive(false);
             GameObject.Find("SecondMonitorCamera").GetComponent<Camera>().enabled = false;
         }
-
-        
-        //TabHasBeenClicked(mainTabScreen.GetElement("experiment-tab"));
-
-
-        //AddEventListeners();
-        //HideElements();
-        //UnhideElements();
     }
 
     private void AddEventListeners()
     {
         // HEADER TABS
-        foreach (var tab in mainTabScreen.GetHeaderTabs())
+        foreach (var tab in mainUiScreen.GetHeaderTabs())
         {
             tab.pickingMode = PickingMode.Position;
             tab.RegisterCallback<ClickEvent>(eventObj => { TabHasBeenClicked((VisualElement)eventObj.currentTarget); });
@@ -104,13 +85,13 @@ public class UiHandler : MonoBehaviour
         }
 
         // EXIT / MINIMIZE GAME
-        mainTabScreen.GetElement("close-game-btn").RegisterCallback<ClickEvent>(eventObj => { ShowExitConfirmationModalWindow(); });
-        mainTabScreen.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeGame(); });
+        mainUiScreen.GetElement("close-game-btn").RegisterCallback<ClickEvent>(eventObj         => { ShowExitConfirmationModalWindow(); });
+        mainUiScreen.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj      => { MinimizeGame(); });
 
-        mainTabScreen.GetElement("exit-confirm-btn").RegisterCallback<ClickEvent>(eventObj => { ConfirmGameQuit(); });
-        mainTabScreen.GetElement("exit-cancel-btn").RegisterCallback<ClickEvent>(eventObj => { CancelGameQuit(); });
+        mainUiScreen.GetElement("exit-confirm-btn").RegisterCallback<ClickEvent>(eventObj       => { ConfirmGameQuit(); });
+        mainUiScreen.GetElement("exit-cancel-btn").RegisterCallback<ClickEvent>(eventObj        => { CancelGameQuit(); });
 
-        secondaryTabScreen.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeSecondDisplay(); });
+        secondaryUiScreen.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeSecondDisplay(); });
     }
 
     private void HideElements()
@@ -162,7 +143,7 @@ public class UiHandler : MonoBehaviour
     {
         var showedByDefault = new List<VisualElement>();
 
-        showedByDefault.Add(mainTabScreen.GetElement("experiment-body"));
+        showedByDefault.Add(mainUiScreen.GetElement("experiment-body"));
 
 
         foreach (var element in showedByDefault)
@@ -174,43 +155,47 @@ public class UiHandler : MonoBehaviour
     private void TabHasBeenClicked(VisualElement clickedTab)
     {
         if (_openTabInSecondDisplay) WinAPI.RestoreWindow("Unity Secondary Display");
-        if (clickedTab == _activeTab || clickedTab == _openedTab) return;
+        if (clickedTab == _activeTabOnMainUiScreen || clickedTab == _activeTabOnSecondaryUiScreen) return;
 
 
         if (_openTabInSecondDisplay)
         {
-            if (clickedTab == mainTabScreen.GetElement("experiment-tab"))
+            if (clickedTab == mainUiScreen.GetElement("experiment-tab"))
             {
-                ActivateTab(clickedTab);
-                ShowBody(clickedTab.name, mainTabScreen);
+                OpenTabOnMainScreen(clickedTab);
+                ShowBody(clickedTab.name, mainUiScreen);
             }
             else
             {
-                OpeneTab(clickedTab);
-                ShowBody(clickedTab.name, secondaryTabScreen);
+                OpeneTabOnSecondaryScreen(clickedTab);
+                ShowBody(clickedTab.name, secondaryUiScreen);
             }
         }
         else // only one display
         {
-            ActivateTab(clickedTab);
-            ShowBody(clickedTab.name, mainTabScreen);
+            OpenTabOnMainScreen(clickedTab);
+            ShowBody(clickedTab.name, mainUiScreen);
         }
     }
 
-    private void ActivateTab(VisualElement clickedTab)
+    private void OpenTabOnMainScreen(VisualElement clickedTab)
     {
         // Tab is "Active" if there is only one display
-        if (_activeTab != null) _activeTab.RemoveFromClassList("isActive");
-        _activeTab = clickedTab;
-        _activeTab.AddToClassList("isActive");
+        if (_activeTabOnMainUiScreen != null) _activeTabOnMainUiScreen.RemoveFromClassList("isActive");
+        _activeTabOnMainUiScreen = clickedTab;
+        _activeTabOnMainUiScreen.AddToClassList("isActive");
+
+        // todo: change classes names later
     }
 
-    private void OpeneTab(VisualElement clickedTab)
+    private void OpeneTabOnSecondaryScreen(VisualElement clickedTab)
     {
         // Tab is "Opened" if it is opened on second display
-        if (_openedTab != null) _openedTab.RemoveFromClassList("isOpened");
-        _openedTab = clickedTab;
-        _openedTab.AddToClassList("isOpened");
+        if (_activeTabOnSecondaryUiScreen != null) _activeTabOnSecondaryUiScreen.RemoveFromClassList("isOpened");
+        _activeTabOnSecondaryUiScreen = clickedTab;
+        _activeTabOnSecondaryUiScreen.AddToClassList("isOpened");
+
+        // todo: change classes names later
     }
 
     private void ShowBody(string tabName, UiReferences uiReferences)
@@ -245,8 +230,8 @@ public class UiHandler : MonoBehaviour
 
         // And after that -- second display (imitates click on second display btn. unity somehow knows which screen minimize, but can't minimize both automaticaly)
         var clickEvent = new ClickEvent();
-        clickEvent.target = secondaryTabScreen.GetElement("minimize-game-btn");
-        secondaryTabScreen.GetElement("minimize-game-btn").SendEvent(clickEvent);
+        clickEvent.target = secondaryUiScreen.GetElement("minimize-game-btn");
+        secondaryUiScreen.GetElement("minimize-game-btn").SendEvent(clickEvent);
     }
 
     private void MinimizeSecondDisplay() {
@@ -255,14 +240,14 @@ public class UiHandler : MonoBehaviour
 
     private void ShowExitConfirmationModalWindow()
     {
-        mainTabScreen.GetElement("modal-windows").style.display = DisplayStyle.Flex;
-        mainTabScreen.GetElement("exit-confirmation-modal-window").style.display = DisplayStyle.Flex;
+        mainUiScreen.GetElement("modal-windows").style.display = DisplayStyle.Flex;
+        mainUiScreen.GetElement("exit-confirmation-modal-window").style.display = DisplayStyle.Flex;
     }
 
     private void CloseExitConfirmationModalWindow()
     {
-        mainTabScreen.GetElement("modal-windows").style.display = DisplayStyle.None;
-        mainTabScreen.GetElement("exit-confirmation-modal-window").style.display = DisplayStyle.None;
+        mainUiScreen.GetElement("modal-windows").style.display = DisplayStyle.None;
+        mainUiScreen.GetElement("exit-confirmation-modal-window").style.display = DisplayStyle.None;
     }
 
     private void ConfirmGameQuit()

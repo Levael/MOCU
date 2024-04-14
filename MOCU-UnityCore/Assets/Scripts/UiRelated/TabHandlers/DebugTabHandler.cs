@@ -34,7 +34,7 @@ public class DebugTabHandler : MonoBehaviour
 
     void Start()
     {
-        _uiReference = _uiHandler.secondaryTabScreen;
+        _uiReference = _uiHandler.secondaryUiScreen;
     }
 
     void Update()

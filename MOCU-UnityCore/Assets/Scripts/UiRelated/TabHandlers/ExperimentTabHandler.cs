@@ -25,7 +25,7 @@ public class ExperimentTabHandler : MonoBehaviour
 
     void Start()
     {
-        _uiReference = _uiHandler.mainTabScreen;
+        _uiReference = _uiHandler.mainUiScreen;
         _infoField = (TextElement)_uiReference.GetElement("info-module-textbox");
         _warningsField = (TextElement)_uiReference.GetElement("warnings-module-textbox");
 
@@ -65,5 +65,18 @@ public class ExperimentTabHandler : MonoBehaviour
 
         if (clearTextElement) _warningsField.text = "";
         _warningsField.text += message;
+    }
+
+
+
+
+    public void ControllerButtonWasPressed(string btn_name)
+    {
+        _uiReference.GetElement(btn_name).AddToClassList("isActive");
+    }
+
+    public void ControllerButtonWasReleased(string btn_name)
+    {
+        _uiReference.GetElement(btn_name).RemoveFromClassList("isActive");
     }
 }

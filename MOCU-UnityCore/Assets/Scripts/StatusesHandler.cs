@@ -28,18 +28,18 @@ public class StatusesHandler : MonoBehaviour
 
     void Start()
     {
-        // don't move it to "Awake", otherwise ".mainTabScreen.GetElement("moog-status-block")" can be inaccessible
+        // don't move it to "Awake", otherwise ".mainUiScreen.GetElement("moog-status-block")" can be inaccessible
 
         _deviceNameToUxmlBlockMap = new()
         {
-            //{ "Moog",       (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainTabScreen.GetElement("gamepad-status-block"))_uiHandler.mainTabScreen.GetElement("moog-status-block") },
-            { "Oculus",     (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainTabScreen.GetElement("oculus-status-block")) },
-            { "Cedrus",     (stateTracker: _cedrus.stateTracker, visualElement: _uiHandler.mainTabScreen.GetElement("cedrus-status-block")) },
-            { "Gamepad",    (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainTabScreen.GetElement("gamepad-status-block")) },
-            { "Audio",      (stateTracker: _audioHandler.stateTracker, visualElement: _uiHandler.mainTabScreen.GetElement("audio-status-block")) },
-            //{ "EEG",        _uiHandler.mainTabScreen.GetElement("eeg-status-block") },
-            //{ "Trials",     _uiHandler.mainTabScreen.GetElement("trials-status-block") },
-            //{ "Running",    _uiHandler.mainTabScreen.GetElement("running-status-block") }
+            //{ "Moog",       (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainUiScreen.GetElement("gamepad-status-block"))_uiHandler.mainUiScreen.GetElement("moog-status-block") },
+            { "Oculus",     (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainUiScreen.GetElement("oculus-status-block")) },
+            { "Cedrus",     (stateTracker: _cedrus.stateTracker, visualElement: _uiHandler.mainUiScreen.GetElement("cedrus-status-block")) },
+            { "Gamepad",    (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainUiScreen.GetElement("gamepad-status-block")) },
+            { "Audio",      (stateTracker: _audioHandler.stateTracker, visualElement: _uiHandler.mainUiScreen.GetElement("audio-status-block")) },
+            //{ "EEG",        _uiHandler.mainUiScreen.GetElement("eeg-status-block") },
+            //{ "Trials",     _uiHandler.mainUiScreen.GetElement("trials-status-block") },
+            //{ "Running",    _uiHandler.mainUiScreen.GetElement("running-status-block") }
         };
 
         _deviceConnectionStatusToColorMap = new()
