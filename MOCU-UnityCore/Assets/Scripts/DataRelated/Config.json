@@ -1,12 +1,12 @@
-﻿{
-	"AudioConfig": {
-		"audioOutputDeviceNameResearcher": "Speakers (Realtek High Definition Audio)",
-		"audioInputDeviceNameResearcher": "Microphone (fifine Microphone)",
-		"audioOutputDeviceNameParticipant": "Headphones (Rift Audio)",
-		"audioInputDeviceNameParticipant": "Microphone (Rift Audio)",
-		"audioOutputDeviceVolumeResearcher": 77,
-		"audioOutputDeviceVolumeParticipant": 42,
-		"audioInputDeviceVolumeResearcher": null,
-		"audioInputDeviceVolumeParticipant": null
-	}
+{
+  "AudioConfig": {
+    "audioOutputDeviceName_Researcher": null,
+    "audioOutputDeviceName_Participant": null,
+    "audioInputDeviceName_Researcher": null,
+    "audioInputDeviceName_Participant": null,
+    "audioOutputDeviceVolume_Researcher": null,
+    "audioOutputDeviceVolume_Participant": null,
+    "audioInputDeviceVolume_Researcher": null,
+    "audioInputDeviceVolume_Participant": null
+  }
 }

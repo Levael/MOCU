@@ -310,7 +310,7 @@ namespace AudioControl
                     outputDevices: outputDevices.Select(device => device.FriendlyName).ToList()
                 );
 
-                return CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "GetAudioDevices_Command", hasError: false, different: responseData));
+                return CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "GetAudioDevices_Command", hasError: false, extraData: responseData));
             }
             catch (Exception ex)
             {

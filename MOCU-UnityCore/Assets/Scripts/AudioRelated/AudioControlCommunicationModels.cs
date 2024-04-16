@@ -20,13 +20,13 @@ namespace AudioControl {
         public string Command           { get; set; } = "ResponseFromServer";
         public string ReceivedCommand   { get; set; }
         public bool HasError            { get; set; }
-        public object? Different        { get; set; }
+        public object? ExtraData        { get; set; }
 
-        public ResponseFromServer(string receivedCommand, bool hasError, object? different = null)
+        public ResponseFromServer(string receivedCommand, bool hasError, object? extraData  = null)
         {
             ReceivedCommand = receivedCommand;
             HasError = hasError;
-            Different = different;
+            ExtraData = extraData ;
         }
     }
 
@@ -65,7 +65,7 @@ namespace AudioControl {
         public new string Command { get; set; } = "StopIntercomStream_ParticipantToResearcher_Command";
     }
 
-    // different -------------------------------------------------------------------------------------------------
+    // extraData  -------------------------------------------------------------------------------------------------
     public class PlayAudioFile_Command : GeneralCommandToServer
     {
         public new string Command           { get; set; } = "PlayAudioFile_Command";

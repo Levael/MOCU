@@ -4,6 +4,8 @@ using System.Collections.Concurrent;
 using System;
 using System.Threading;
 
+#nullable enable
+
 namespace CommonUtilitiesNamespace
 {
     /// <summary>
@@ -11,11 +13,11 @@ namespace CommonUtilitiesNamespace
     /// </summary>
     public static class CommonUtilities
     {
-        public static T DeserializeJson<T>(string jsonString)
+        public static T DeserializeJson<T>(string jsonString, JsonSerializerSettings? optionalSettings = null)
         {
             try
             {
-                T deserializedObject = JsonConvert.DeserializeObject<T>(jsonString);
+                T deserializedObject = JsonConvert.DeserializeObject<T>(jsonString, optionalSettings);
                 return deserializedObject;
             }
             catch
@@ -24,11 +26,11 @@ namespace CommonUtilitiesNamespace
             }
         }
 
-        public static string SerializeJson<T>(T obj)
+        public static string SerializeJson<T>(T obj, JsonSerializerSettings? optionalSettings = null)
         {
             try
             {
-                string jsonString = JsonConvert.SerializeObject(obj);
+                string jsonString = JsonConvert.SerializeObject(obj, optionalSettings);
                 return jsonString;
             }
             catch
