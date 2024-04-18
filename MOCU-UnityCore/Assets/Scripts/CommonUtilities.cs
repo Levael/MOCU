@@ -45,6 +45,14 @@ namespace CommonUtilitiesNamespace
             string objectType = jsonObject["Command"].ToString();
             return objectType;
         }
+
+        public static T ConvertJObjectToType<T>(JObject jObject)
+        {
+            if (jObject == null)
+                throw new ArgumentNullException(nameof(jObject));
+
+            return jObject.ToObject<T>() ?? throw new InvalidOperationException("Conversion resulted in null.");
+        }
     }
 
 

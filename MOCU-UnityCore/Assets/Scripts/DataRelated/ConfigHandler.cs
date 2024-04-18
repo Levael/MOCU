@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
+using System.Reflection;
+using Unity.VisualScripting.FullSerializer;
 
 
 public class ConfigHandler : MonoBehaviour
@@ -15,13 +17,10 @@ public class ConfigHandler : MonoBehaviour
     {
         _defaultConfigFilePath = Path.Combine(Application.dataPath, "Scripts/DataRelated/Config.json");
         defaultConfig = ReadConfig(filePath: _defaultConfigFilePath);
-
-        UnityEngine.Debug.Log(defaultConfig.UnserializableData.Count);
     }
 
     void Start()
     {
-        
     }
 
     void Update()
@@ -35,7 +34,7 @@ public class ConfigHandler : MonoBehaviour
 
 
 
-    public static ProtocolConfig? ReadConfig(string filePath)
+    public ProtocolConfig? ReadConfig(string filePath)
     {
         try
         {
@@ -56,7 +55,7 @@ public class ConfigHandler : MonoBehaviour
         }
     }
 
-    public static void WriteConfig(string filePath, ProtocolConfig config)
+    public void WriteConfig(string filePath, ProtocolConfig config)
     {
         try
         {
@@ -67,11 +66,35 @@ public class ConfigHandler : MonoBehaviour
             };
 
             string jsonString = CommonUtilities.SerializeJson(config, settings);
+            // add check for "null"
             File.WriteAllText(filePath, jsonString);
         }
         catch (Exception ex)
         {
             UnityEngine.Debug.LogError($"Error writing or serializing the file: {ex.Message}");
+        }
+    }
+
+    public void UpdateSubConfig<T>(T newValue)
+    {
+        PropertyInfo propertyToUpdate = null;
+
+        foreach (PropertyInfo property in typeof(ProtocolConfig).GetProperties())
+        {
+            if (property.PropertyType == typeof(T))
+            {
+                propertyToUpdate = property;
+                break;
+            }
+        }
+
+        if (propertyToUpdate != null)
+        {
+            propertyToUpdate.SetValue(defaultConfig, newValue);
+        }
+        else
+        {
+            UnityEngine.Debug.LogError("No matching property found for type " + typeof(T).Name);
         }
     }
 }

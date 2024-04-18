@@ -6,6 +6,7 @@ using UnityEngine;
 using AudioControl; // custom class
 using CommonUtilitiesNamespace;
 using InterprocessCommunication;
+using Newtonsoft.Json.Linq;
 
 public class AudioHandler : MonoBehaviour
 {
@@ -249,17 +250,38 @@ public class AudioHandler : MonoBehaviour
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: false)));
     }
 
+    private void ValidateAndUpdateDevicesInfo(ResponseFromServer response)
+    {
+        // need this (JObject) convertion because of json lib. it doesn't know what 'object' is, so translates it to 'JObject'
+        var devicesData = CommonUtilities.ConvertJObjectToType<GetAudioDevices_ResponseData>((JObject)response.ExtraData);
+
+        inputAudioDevices = devicesData.InputDevices;
+        outputAudioDevices = devicesData.OutputDevices;
+
+        var op = audioDevicesInfo.audioOutputDeviceName_Participant;
+        var or = audioDevicesInfo.audioOutputDeviceName_Researcher;
+        var ip = audioDevicesInfo.audioInputDeviceName_Participant;
+        var ir = audioDevicesInfo.audioInputDeviceName_Researcher;
+
+        // if in reality there is no such device (but in config is), update it (in 'audioDevicesInfo') to 'null'
+        op = outputAudioDevices.Contains(op) ? op : null;
+        or = outputAudioDevices.Contains(or) ? or : null;
+        ip = inputAudioDevices.Contains(ip) ? ip : null;
+        ir = inputAudioDevices.Contains(ir) ? ir : null;
+    }
+
     private void SendAudioDevices(ResponseFromServer response)
     {
-        // todo: read devices data here from response
-        // todo: add here checks
+        ValidateAndUpdateDevicesInfo(response);
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UpdateDevicesParameters_Command(audioDevicesInfo)));
     }
 
+    /// <summary>
+    /// Called after successful devices update on the server side
+    /// </summary>
     private void UpdateConfigObject(ResponseFromServer response)
     {
-        // todo
-        //UnityEngine.Debug.Log($"Reached the end successfully");
+        _configHandler.UpdateSubConfig(audioDevicesInfo);
     }
 
     
