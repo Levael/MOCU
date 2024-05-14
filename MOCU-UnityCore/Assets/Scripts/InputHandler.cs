@@ -32,7 +32,7 @@ public class InputHandler : MonoBehaviour
     void Awake()
     {
         GamepadConnectionStatus = new StateTracker(new[] { "isConnected" });
-        XRConnectionStatus = new StateTracker(new[] { "isConnected" });
+        XRConnectionStatus = new StateTracker(new[] { "isConnected", "iOnHead" });
 
         _inputLogic     = GetComponent<InputLogic>();
         _cedrus         = GetComponent<Cedrus>();
@@ -160,7 +160,7 @@ public class InputHandler : MonoBehaviour
 
 
 
-    // CONNECTION CHECKERS  // todo: maybe combine all of them into one function
+    // CONNECTION CHECKERS
 
     private IEnumerator CheckGamepadConnection(float checkConnectionTimeInterval)
     {
@@ -168,7 +168,7 @@ public class InputHandler : MonoBehaviour
         {
             try
             {
-                if (Gamepad.current != null)
+                if (Gamepad.current?.enabled ?? false)
                     GamepadConnectionStatus.UpdateSubState("isConnected", true);
                 else
                     GamepadConnectionStatus.UpdateSubState("isConnected", false);
@@ -182,27 +182,97 @@ public class InputHandler : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// it works half-way -- it doesn't understand if you turn off the deviceю
-    /// and also considers it disabled even if it is connected but has not yet been put on your head
-    /// </summary>
     private IEnumerator CheckXRConnection(float checkConnectionTimeInterval)
     {
         while (true)
         {
             try
             {
-                if (XRSettings.isDeviceActive)
-                    XRConnectionStatus.UpdateSubState("isConnected", true);
-                else
+                List<XRInputSubsystem> subsystems = new List<XRInputSubsystem>();
+                SubsystemManager.GetInstances(subsystems);
+
+                if (subsystems.Count != 1)
+                {
                     XRConnectionStatus.UpdateSubState("isConnected", false);
+                    XRConnectionStatus.UpdateSubState("iOnHead", false);
+                }
+                else if (subsystems[0].running && IsHeadsetWorn())
+                {
+                    XRConnectionStatus.UpdateSubState("isConnected", true);
+                    XRConnectionStatus.UpdateSubState("iOnHead", true);
+                }
+                else
+                {
+                    XRConnectionStatus.UpdateSubState("isConnected", true);
+                    XRConnectionStatus.UpdateSubState("iOnHead", null);     // 'null' and not 'false' because I need status to be yellow, not red (half working)
+                }
             }
             catch
             {
                 XRConnectionStatus.UpdateSubState("isConnected", false);
+                XRConnectionStatus.UpdateSubState("iOnHead", false);
+
+                Debug.LogError("Crash in 'CheckXRConnection'");
             }
 
             yield return new WaitForSeconds(checkConnectionTimeInterval);
         }
     }
+
+    private bool IsHeadsetWorn()
+    {
+        List<XRNodeState> nodeStates = new List<XRNodeState>();
+        InputTracking.GetNodeStates(nodeStates);
+
+        foreach (var nodeState in nodeStates)
+        {
+            if (nodeState.nodeType == XRNode.Head)
+            {
+                return nodeState.tracked;
+            }
+        }
+
+        return false;
+    }
+
+    // for future
+    public bool GetHeadsetDirection(out Vector3 position, out Quaternion rotation)
+    {
+        position = Vector3.zero;
+        rotation = Quaternion.identity;
+
+        List<XRNodeState> nodeStates = new List<XRNodeState>();
+        InputTracking.GetNodeStates(nodeStates);
+
+        foreach (var nodeState in nodeStates)
+        {
+            if (nodeState.nodeType == XRNode.Head)
+            {
+                if (nodeState.tracked)
+                {
+                    nodeState.TryGetPosition(out position);
+                    nodeState.TryGetRotation(out rotation);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /*void SomeOtherMethod()
+    {
+        Vector3 headsetPosition;
+        Quaternion headsetRotation;
+
+        if (GetHeadsetDirection(out headsetPosition, out headsetRotation))
+        {
+            Debug.Log("Headset position: " + headsetPosition);
+            Debug.Log("Headset rotation: " + headsetRotation);
+        }
+        else
+        {
+            Debug.Log("Headset is not being tracked.");
+        }
+    }*/
 }

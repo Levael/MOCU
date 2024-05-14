@@ -35,7 +35,7 @@ public class StatusesHandler : MonoBehaviour
             //{ "Moog",       (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainUiScreen.GetElement("gamepad-status-block"))_uiHandler.mainUiScreen.GetElement("moog-status-block") },
             { "Oculus",     (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainUiScreen.GetElement("oculus-status-block")) },
             { "Cedrus",     (stateTracker: _cedrus.stateTracker, visualElement: _uiHandler.mainUiScreen.GetElement("cedrus-status-block")) },
-            { "Gamepad",    (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainUiScreen.GetElement("gamepad-status-block")) },
+            { "Gamepad",    (stateTracker: _inputHandler.GamepadConnectionStatus, visualElement: _uiHandler.mainUiScreen.GetElement("gamepad-status-block")) },
             { "Audio",      (stateTracker: _audioHandler.stateTracker, visualElement: _uiHandler.mainUiScreen.GetElement("audio-status-block")) },
             //{ "EEG",        _uiHandler.mainUiScreen.GetElement("eeg-status-block") },
             //{ "Trials",     _uiHandler.mainUiScreen.GetElement("trials-status-block") },
@@ -111,7 +111,7 @@ public class StateTracker
     }
 
 
-    public void UpdateSubState(string subStateName, bool subStateValue)
+    public void UpdateSubState(string subStateName, bool? subStateValue)
     {
         if (!_subStates.ContainsKey(subStateName))
         {
