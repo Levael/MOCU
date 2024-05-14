@@ -12,6 +12,8 @@ Notes:
 - ABOUT GENERAL:
 	- Edit/ProjectSettings/ScriptExecutionOrder for managing scipts execution order
 	(important, for example, to run config manager earlier than dependent on him scripts)
+	- About FPS: VR platforms ignore both QualitySettings.vSyncCount and Application.targetFrameRate. Instead, the VR SDK controls the frame rate
+	(which means you can control app fps but not while VR is active)
 - ABOUT EXTERNAL APPLICATIONS (audio and port finder):
 	- do not specify that the project is for Windows, otherwise the file size will increase from 64mb to 150mb
 	- project settings should be something like:
