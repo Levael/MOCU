@@ -59,6 +59,7 @@ public class AudioHandler : MonoBehaviour
             { "StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ParticipantToResearcher_Command()) },
         };
 
+        // todo: remove
         uiReferenceToDevicesInfoMap = new()
         {
             { "settings-device-box-speaker-researcher",      "audioOutputDeviceVolume_Researcher" },
@@ -72,7 +73,7 @@ public class AudioHandler : MonoBehaviour
             { "TryConnectToServer_Command",                 (subState: "StartNamedPipeConnection",  action: SendConfigurationDetails) },
             { "SendConfigs_Command",                        (subState: "SetConfigs",                action: RequestAudioDevices) },
             { "GetAudioDevices_Command",                    (subState: "RequestAudioDevices",       action: SendAudioDevices) },
-            { "UpdateDevicesParameters_Command",            (subState: "SendAudioDevices",          action: UpdateConfigObject) }
+            { "UpdateDevicesParameters_Command",            (subState: "SendAudioDevices",          action: UpdateClient) }
         };
 
         // Reading from config Audio Devices Data
@@ -121,9 +122,47 @@ public class AudioHandler : MonoBehaviour
 
     #region PUBLIC METHODS
 
-    public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")
+    public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")    // todo: move it to config
     {
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new PlayAudioFile_Command(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
+    }
+
+    public void ChangeAudioDevice(string deviceType, string deviceName)
+    {
+        if (String.IsNullOrEmpty(deviceType))
+        {
+            UnityEngine.Debug.LogError($"The device name is incorrect: {deviceType}");
+            return;
+        }
+
+        //var olddeviceName = audioDevicesInfo.GetType().GetProperty(deviceType)?.GetValue(audioDevicesInfo);
+        //if (there somebody already using this chosenDeviceName, set to that one NULL and later update both)
+        audioDevicesInfo.GetType().GetProperty(deviceType)?.SetValue(audioDevicesInfo, deviceName);
+    }
+
+    // TODO: clean up and refactor
+    public void ChangeAudioDeviceVolume(string deviceName, float volume)
+    {
+        if (String.IsNullOrEmpty(deviceName))
+        {
+            UnityEngine.Debug.LogError($"The device name is incorrect: {deviceName}");
+            return;
+        }
+
+        if (volume < 0f || volume > 100f || volume == null) //  || newVolume == oldVolume
+        {
+            // temp
+            UnityEngine.Debug.LogError($"The device volume is incorrect: {volume}");
+            return;
+        }
+
+        UnityEngine.Debug.Log($"Before: {audioDevicesInfo.audioOutputDeviceVolume_Researcher}");
+        var linkToVolume = uiReferenceToDevicesInfoMap[deviceName];
+        audioDevicesInfo.GetType().GetProperty(linkToVolume)?.SetValue(audioDevicesInfo, volume);   // upd device volume
+        UnityEngine.Debug.Log($"After: {audioDevicesInfo.audioOutputDeviceVolume_Researcher}");
+        //SendAudioDevices();
+
+        // maybe make it separate func
     }
 
     #endregion PUBLIC METHODS
@@ -279,39 +318,12 @@ public class AudioHandler : MonoBehaviour
     /// <summary>
     /// Called after successful devices update on the server side
     /// </summary>
-    private void UpdateConfigObject(ResponseFromServer response)
+    private void UpdateClient(ResponseFromServer response)
     {
         _configHandler.UpdateSubConfig(audioDevicesInfo);
+        // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
     }
 
-    
-
-
-    // TODO: clean up and refactor
-    private void ChangeAudioDeviceVolume(string? deviceName, float? volume)
-    {
-        if (String.IsNullOrEmpty(deviceName))
-        {
-            // temp
-            UnityEngine.Debug.Log($"The device name is incorrect: {deviceName}");
-            return;
-        }
-
-        if (volume < 0f || volume > 100f || volume == null) //  || newVolume == oldVolume
-        {
-            // temp
-            UnityEngine.Debug.Log($"The device volume is incorrect: {volume}");
-            return;
-        }
-
-        UnityEngine.Debug.Log($"Before: {audioDevicesInfo.audioOutputDeviceVolume_Researcher}");
-        var linkToVolume = uiReferenceToDevicesInfoMap[deviceName];
-        audioDevicesInfo.GetType().GetProperty(linkToVolume)?.SetValue(audioDevicesInfo, volume);   // upd device volume
-        UnityEngine.Debug.Log($"After: {audioDevicesInfo.audioOutputDeviceVolume_Researcher}");
-        //SendAudioDevices();
-
-        // maybe make it separate func
-    }
 
     #endregion PRIVATE METHODS
 }

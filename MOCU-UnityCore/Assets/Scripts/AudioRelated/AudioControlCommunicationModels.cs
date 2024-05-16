@@ -145,7 +145,7 @@ namespace AudioControl {
         public float? audioInputDeviceVolume_Researcher     { get; set; }
         public float? audioInputDeviceVolume_Participant    { get; set; }
 
-        public AudioDevicesInfo(
+        /*public AudioDevicesInfo(
             string? audioOutputDeviceNameResearcher = null,
             string? audioInputDeviceNameResearcher = null,
             string? audioOutputDeviceNameParticipant = null,
@@ -165,7 +165,7 @@ namespace AudioControl {
             audioOutputDeviceVolume_Participant = audioOutputDeviceVolumeParticipant;
             audioInputDeviceVolume_Researcher = audioInputDeviceVolumeResearcher;
             audioInputDeviceVolume_Participant = audioInputDeviceVolumeParticipant;
-        }
+        }*/
     }
 
 }

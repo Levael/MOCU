@@ -1,4 +1,9 @@
+using AudioControl;
+using CustomDataStructures;
 using CustomUxmlElements;
+using System;
+using System.Collections.Generic;
+using System.Reflection.Emit;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -13,18 +18,41 @@ public class SettingsTabHandler : MonoBehaviour
     private UiReferences _uiReference;
     private bool _classIsReady = false;
 
+    private InterlinkedCollection<DeviceParametersSet> uiToAudioHandlerConnector;
+
+
+
     // MANDATORY STANDARD FUNCTIONALITY
 
     void Awake()
     {
         _uiHandler = GetComponent<UiHandler>();
         _audioHandler = GetComponent<AudioHandler>();
+
+        
     }
 
     void Start()
     {
         _uiReference = _uiHandler.secondaryUiScreen;
         AddEventListeners();
+
+        uiToAudioHandlerConnector = new()
+        {
+            new DeviceParametersSet{
+                uiElementName = "settings-device-box-microphone-researcher",
+                chosenDeviceName = null,
+                dataObjectField_deviceName = "audioInputDeviceName_Researcher",         // in 'AudioHandler.audioDevicesInfo'
+                dataObjectField_deviceVolume = "audioInputDeviceVolume_Researcher",     // in 'AudioHandler.audioDevicesInfo'
+                dataObjectField_listOfOptions = "inputAudioDevices",                    // in 'AudioHandler'
+
+                listOfOptions = null,
+                iconUrl = "/Assets/Images/SVG/IntercomActiveIcon.svg",
+                label = "Mic (here)",
+                isEnabled = true
+            },
+        };
+
         _classIsReady = true;
     }
 
@@ -79,7 +107,7 @@ public class SettingsTabHandler : MonoBehaviour
             {
                 //Debug.Log($"Pressed on slider. The value is {slider.value},\n{currentElement.parent.name}\n");
                 var name = currentElement.parent.name;  // name of device box (like "settings-device-box-speaker-participant")
-                _audioHandler.ChangeAudioDeviceVolume(deviceName: name, volume: slider.value);
+                _audioHandler.ChangeAudioDeviceVolume(chosenDeviceName: name, volume: slider.value);
                 return;
             }*/
             currentElement = currentElement.parent;
@@ -116,6 +144,7 @@ public class SettingsTabHandler : MonoBehaviour
         // if it's a speaker -- show its volume slider (not only while :hover)
         var slider = clickedDeviceBox.Q<CustomUxmlElements.CustomSlider>();
         if (slider != null) slider.style.display = DisplayStyle.Flex;
+        // not here; slider.value = 10;
 
         // local root
         var devicesList = _uiReference.GetElement("settings-devices-choose-device-window").Q<ScrollView>();
@@ -149,6 +178,9 @@ public class SettingsTabHandler : MonoBehaviour
 
     private void CloseDeviceBoxParameters(ClickEvent clickEvent)
     {
+        // clears the data if will be open again
+
+
         // unhide every device box
         foreach (var deviceBox in _uiReference.GetDevicesBoxes())
         {
@@ -181,4 +213,37 @@ public class SettingsTabHandler : MonoBehaviour
     {
         Debug.Log($"close btn {((VisualElement)clickEvent.currentTarget).parent.parent.Q<TextElement>(className: "device-option-full-name").text}");
     }
+}
+
+
+public class DeviceParametersSet
+{
+    [CanBeKey(true)]
+    public string uiElementName { get; set; }
+
+    [CanBeKey(true)]
+    public string? chosenDeviceName { get; set; }
+
+    [CanBeKey(true)]
+    public string dataObjectField_deviceName { get; set; }
+
+    [CanBeKey(true)]
+    public string? dataObjectField_deviceVolume { get; set; }
+
+    [CanBeKey(true)]
+    public string dataObjectField_listOfOptions { get; set; }
+
+
+
+    [CanBeKey(false)]
+    public List<string>? listOfOptions { get; set; }
+
+    [CanBeKey(false)]
+    public string? iconUrl {  get; set; }
+
+    [CanBeKey(false)]
+    public string? label { get; set; }
+
+    [CanBeKey(false)]
+    public bool? isEnabled { get; set; }
 }

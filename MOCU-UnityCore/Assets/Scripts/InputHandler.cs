@@ -16,8 +16,6 @@ public class InputHandler : MonoBehaviour
     private Dictionary<string, (Action<InputAction.CallbackContext> OnPressed, Action<InputAction.CallbackContext> OnReleased)> _inputSystem_actionHandlers;
     private Dictionary<string, AnswerFromParticipant> _actionNameToSignalMap;
 
-    //public DeviceConnectionStatus GamepadConnectionStatus;
-    //public DeviceConnectionStatus XRConnectionStatus;
 
     public StateTracker GamepadConnectionStatus;
     public StateTracker XRConnectionStatus;
@@ -234,45 +232,4 @@ public class InputHandler : MonoBehaviour
 
         return false;
     }
-
-    // for future
-    public bool GetHeadsetDirection(out Vector3 position, out Quaternion rotation)
-    {
-        position = Vector3.zero;
-        rotation = Quaternion.identity;
-
-        List<XRNodeState> nodeStates = new List<XRNodeState>();
-        InputTracking.GetNodeStates(nodeStates);
-
-        foreach (var nodeState in nodeStates)
-        {
-            if (nodeState.nodeType == XRNode.Head)
-            {
-                if (nodeState.tracked)
-                {
-                    nodeState.TryGetPosition(out position);
-                    nodeState.TryGetRotation(out rotation);
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /*void SomeOtherMethod()
-    {
-        Vector3 headsetPosition;
-        Quaternion headsetRotation;
-
-        if (GetHeadsetDirection(out headsetPosition, out headsetRotation))
-        {
-            Debug.Log("Headset position: " + headsetPosition);
-            Debug.Log("Headset rotation: " + headsetRotation);
-        }
-        else
-        {
-            Debug.Log("Headset is not being tracked.");
-        }
-    }*/
 }
