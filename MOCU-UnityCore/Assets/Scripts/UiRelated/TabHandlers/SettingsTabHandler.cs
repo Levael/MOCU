@@ -3,7 +3,6 @@ using CustomDataStructures;
 using CustomUxmlElements;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Emit;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -39,16 +38,42 @@ public class SettingsTabHandler : MonoBehaviour
 
         uiToAudioHandlerConnector = new()
         {
+            // Input Researcher
             new DeviceParametersSet{
                 uiElementName = "settings-device-box-microphone-researcher",
                 chosenDeviceName = null,
                 dataObjectField_deviceName = "audioInputDeviceName_Researcher",         // in 'AudioHandler.audioDevicesInfo'
                 dataObjectField_deviceVolume = "audioInputDeviceVolume_Researcher",     // in 'AudioHandler.audioDevicesInfo'
-                dataObjectField_listOfOptions = "inputAudioDevices",                    // in 'AudioHandler'
 
-                listOfOptions = null,
+                listOfOptions = _audioHandler.inputAudioDevices,
                 iconUrl = "/Assets/Images/SVG/IntercomActiveIcon.svg",
                 label = "Mic (here)",
+                isEnabled = true
+            },
+
+            // Input Participant
+            new DeviceParametersSet{
+                uiElementName = "settings-device-box-microphone-participant",
+                chosenDeviceName = null,
+                dataObjectField_deviceName = "audioInputDeviceName_Participant",         // in 'AudioHandler.audioDevicesInfo'
+                dataObjectField_deviceVolume = "audioInputDeviceVolume_Participant",     // in 'AudioHandler.audioDevicesInfo'
+
+                listOfOptions = _audioHandler.inputAudioDevices,
+                iconUrl = "/Assets/Images/SVG/IntercomActiveIcon.svg",
+                label = "Mic (there)",
+                isEnabled = true
+            },
+
+            // Output Researcher
+            new DeviceParametersSet{
+                uiElementName = "settings-device-box-speaker-researcher",
+                chosenDeviceName = null,
+                dataObjectField_deviceName = "audioOutputDeviceName_Researcher",         // in 'AudioHandler.audioDevicesInfo'
+                dataObjectField_deviceVolume = "audioOutputDeviceVolume_Researcher",     // in 'AudioHandler.audioDevicesInfo'
+
+                listOfOptions = _audioHandler.outputAudioDevices,
+                iconUrl = "/Assets/Images/SVG/SpeakerIcon.svg",
+                label = "Speaker (here)",
                 isEnabled = true
             },
         };
@@ -61,6 +86,28 @@ public class SettingsTabHandler : MonoBehaviour
     }
 
     // CUSTOM FUNCTIONALITY
+
+
+    public void FillDevicesModule()
+    {
+        foreach (var device in uiToAudioHandlerConnector)
+        {
+            /*print(_audioHandler.GetAudioDeviceName(device.dataObjectField_deviceName));
+            print(device.chosenDeviceName);*/
+            /*print(uiToAudioHandlerConnector[device.uiElementName].uiElementName);
+            print(uiToAudioHandlerConnector[device.uiElementName].label);*/
+
+            print(device.chosenDeviceName);
+            uiToAudioHandlerConnector.UpdateSingleValue(device.uiElementName, "chosenDeviceName", _audioHandler.GetAudioDeviceName(device.dataObjectField_deviceName));
+            print(device.chosenDeviceName + "\n");
+
+            /*print(device.chosenDeviceName);
+            uiToAudioHandlerConnector.Update(device.uiElementName, "chosenDeviceName", _audioHandler.GetAudioDeviceName(device.dataObjectField_deviceName));
+            print(device.chosenDeviceName + "\n");*/
+        }
+    }
+
+
 
     private void AddEventListeners()
     {
@@ -229,9 +276,6 @@ public class DeviceParametersSet
 
     [CanBeKey(true)]
     public string? dataObjectField_deviceVolume { get; set; }
-
-    [CanBeKey(true)]
-    public string dataObjectField_listOfOptions { get; set; }
 
 
 

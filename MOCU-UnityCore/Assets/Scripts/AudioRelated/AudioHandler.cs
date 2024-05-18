@@ -3,10 +3,12 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
-using AudioControl; // custom class
+using Newtonsoft.Json.Linq;
+
+using AudioControl;
 using CommonUtilitiesNamespace;
 using InterprocessCommunication;
-using Newtonsoft.Json.Linq;
+
 
 public class AudioHandler : MonoBehaviour
 {
@@ -23,13 +25,13 @@ public class AudioHandler : MonoBehaviour
     private UiHandler _uiHandler;
     private ConfigHandler _configHandler;
     private ExperimentTabHandler _experimentTabHandler;
+    private SettingsTabHandler _settingsTabHandler;
     private InputLogic _inputLogic;
 
     public List<string> inputAudioDevices;
     public List<string> outputAudioDevices;
 
     private Dictionary<string, string> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
-    private Dictionary<string, string> uiReferenceToDevicesInfoMap;
     private Dictionary<string, (string? subState, Action<ResponseFromServer?> action)> CommandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
     #endregion PRIVATE FIELDS
 
@@ -45,6 +47,7 @@ public class AudioHandler : MonoBehaviour
         _uiHandler = GetComponent<UiHandler>();
         _configHandler = GetComponent<ConfigHandler>();
         _experimentTabHandler = GetComponent<ExperimentTabHandler>();
+        _settingsTabHandler = GetComponent<SettingsTabHandler>();
         _inputLogic = GetComponent<InputLogic>();
 
         stateTracker = new StateTracker(new[] { "StartAudioProcess", "StartNamedPipeConnection", "SetConfigs", "RequestAudioDevices", "SendAudioDevices"});
@@ -57,15 +60,6 @@ public class AudioHandler : MonoBehaviour
             { "StartIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StartIntercomStream_ParticipantToResearcher_Command()) },
             { "StopIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ResearcherToParticipant_Command()) },
             { "StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ParticipantToResearcher_Command()) },
-        };
-
-        // todo: remove
-        uiReferenceToDevicesInfoMap = new()
-        {
-            { "settings-device-box-speaker-researcher",      "audioOutputDeviceVolume_Researcher" },
-            { "settings-device-box-speaker-participant",     "audioOutputDeviceVolume_Participant" },
-            { "settings-device-box-microphone-researcher",   "audioInputDeviceVolume_Researcher" },
-            { "settings-device-box-microphone-participant",  "audioInputDeviceVolume_Participant" },
         };
 
         CommandsToExecuteAccordingToServerResponse = new()
@@ -122,47 +116,56 @@ public class AudioHandler : MonoBehaviour
 
     #region PUBLIC METHODS
 
-    public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")    // todo: move it to config
+    public string? GetAudioDeviceName(string fieldName)
+    {
+        return audioDevicesInfo.GetType().GetProperty(fieldName)?.GetValue(audioDevicesInfo).ToString();
+    }
+    public bool? SetAudioDeviceName(string fieldName, string deviceName)
+    {
+        if (String.IsNullOrEmpty(fieldName))
+        {
+            UnityEngine.Debug.LogError($"The device name is incorrect: {fieldName}");
+            return false;
+        }
+
+        audioDevicesInfo.GetType().GetProperty(fieldName)?.SetValue(audioDevicesInfo, deviceName);
+        return true;
+    }
+    public float? GetAudioDeviceVolume(string fieldName)
+    {
+        return (float)audioDevicesInfo.GetType().GetProperty(fieldName)?.GetValue(audioDevicesInfo);
+    }
+    public bool? SetAudioDeviceVolume(string fieldName, float? deviceVolume)
+    {
+        if (String.IsNullOrEmpty(fieldName))
+        {
+            UnityEngine.Debug.LogError($"The device name is incorrect: {fieldName}");
+            return false;
+        }
+
+        var linkToVolume = audioDevicesInfo.GetType().GetProperty(fieldName);
+
+        if (deviceVolume < 0f || deviceVolume > 100f || deviceVolume == null)
+        {
+            UnityEngine.Debug.LogError($"The device volume is incorrect: {deviceVolume}");
+            return false;
+        }
+
+        if ((float)linkToVolume.GetValue(audioDevicesInfo) == deviceVolume)
+        {
+            UnityEngine.Debug.LogWarning($"Same volume");
+            return false;
+        }
+
+        linkToVolume.SetValue(audioDevicesInfo, deviceVolume);
+        return true;
+    }
+
+
+
+    public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")    // todo: move 'audioFileName' to config
     {
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new PlayAudioFile_Command(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
-    }
-
-    public void ChangeAudioDevice(string deviceType, string deviceName)
-    {
-        if (String.IsNullOrEmpty(deviceType))
-        {
-            UnityEngine.Debug.LogError($"The device name is incorrect: {deviceType}");
-            return;
-        }
-
-        //var olddeviceName = audioDevicesInfo.GetType().GetProperty(deviceType)?.GetValue(audioDevicesInfo);
-        //if (there somebody already using this chosenDeviceName, set to that one NULL and later update both)
-        audioDevicesInfo.GetType().GetProperty(deviceType)?.SetValue(audioDevicesInfo, deviceName);
-    }
-
-    // TODO: clean up and refactor
-    public void ChangeAudioDeviceVolume(string deviceName, float volume)
-    {
-        if (String.IsNullOrEmpty(deviceName))
-        {
-            UnityEngine.Debug.LogError($"The device name is incorrect: {deviceName}");
-            return;
-        }
-
-        if (volume < 0f || volume > 100f || volume == null) //  || newVolume == oldVolume
-        {
-            // temp
-            UnityEngine.Debug.LogError($"The device volume is incorrect: {volume}");
-            return;
-        }
-
-        UnityEngine.Debug.Log($"Before: {audioDevicesInfo.audioOutputDeviceVolume_Researcher}");
-        var linkToVolume = uiReferenceToDevicesInfoMap[deviceName];
-        audioDevicesInfo.GetType().GetProperty(linkToVolume)?.SetValue(audioDevicesInfo, volume);   // upd device volume
-        UnityEngine.Debug.Log($"After: {audioDevicesInfo.audioOutputDeviceVolume_Researcher}");
-        //SendAudioDevices();
-
-        // maybe make it separate func
     }
 
     #endregion PUBLIC METHODS
@@ -322,6 +325,7 @@ public class AudioHandler : MonoBehaviour
     {
         _configHandler.UpdateSubConfig(audioDevicesInfo);
         // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
+        _settingsTabHandler.FillDevicesModule();
     }
 
 
