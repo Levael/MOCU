@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System;
 using System.Threading;
+using UnityEngine;
 
 #nullable enable
 
@@ -22,19 +23,23 @@ namespace CommonUtilitiesNamespace
             }
             catch
             {
-                return default(T);
+                return default;
             }
         }
 
-        public static string SerializeJson<T>(T obj, JsonSerializerSettings? optionalSettings = null)
+        public static string? SerializeJson<T>(T obj, JsonSerializerSettings? optionalSettings = null)
         {
             try
             {
                 string jsonString = JsonConvert.SerializeObject(obj, optionalSettings);
+                if (String.IsNullOrEmpty(jsonString) || jsonString == "null")
+                    throw new Exception("custom null");
+
                 return jsonString;
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.LogWarning($"SerializeJson return 'null' with error: {ex}");
                 return null;
             }
         }

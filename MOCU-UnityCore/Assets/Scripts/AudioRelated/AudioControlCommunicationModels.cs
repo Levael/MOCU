@@ -144,28 +144,6 @@ namespace AudioControl {
         public float? audioOutputDeviceVolume_Participant   { get; set; }
         public float? audioInputDeviceVolume_Researcher     { get; set; }
         public float? audioInputDeviceVolume_Participant    { get; set; }
-
-        /*public AudioDevicesInfo(
-            string? audioOutputDeviceNameResearcher = null,
-            string? audioInputDeviceNameResearcher = null,
-            string? audioOutputDeviceNameParticipant = null,
-            string? audioInputDeviceNameParticipant = null,
-            float? audioOutputDeviceVolumeResearcher = null,
-            float? audioOutputDeviceVolumeParticipant = null,
-            float? audioInputDeviceVolumeResearcher = null,
-            float? audioInputDeviceVolumeParticipant = null
-            )
-        {
-            audioOutputDeviceName_Researcher = audioOutputDeviceNameResearcher;
-            audioOutputDeviceName_Participant = audioOutputDeviceNameParticipant;
-            audioInputDeviceName_Researcher = audioInputDeviceNameResearcher;
-            audioInputDeviceName_Participant = audioInputDeviceNameParticipant;
-
-            audioOutputDeviceVolume_Researcher = audioOutputDeviceVolumeResearcher;
-            audioOutputDeviceVolume_Participant = audioOutputDeviceVolumeParticipant;
-            audioInputDeviceVolume_Researcher = audioInputDeviceVolumeResearcher;
-            audioInputDeviceVolume_Participant = audioInputDeviceVolumeParticipant;
-        }*/
     }
 
 }

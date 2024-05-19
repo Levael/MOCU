@@ -14,6 +14,7 @@ Notes:
 	(important, for example, to run config manager earlier than dependent on him scripts)
 	- About FPS: VR platforms ignore both QualitySettings.vSyncCount and Application.targetFrameRate. Instead, the VR SDK controls the frame rate
 	(which means you can control app fps but not while VR is active)
+	- sometimes Unity just F*CKING IGNORS EXCEPTIONS and continues its execution without any console notification (try catch DO help)
 - ABOUT EXTERNAL APPLICATIONS (audio and port finder):
 	- do not specify that the project is for Windows, otherwise the file size will increase from 64mb to 150mb
 	- project settings should be something like:
@@ -34,6 +35,7 @@ Notes:
 	connect bluetooth adapter to PC; from windows settings connect controller (first option). Goes off after some time of nothing-doing
 	- via cable: doesn't need batteries and never goes off
 - ABOUT SOUND:
+	- it is possible to do without writing a daemon, but then only one audio receiver can exist at the same time (native in unity)
 	- in Oculus App tap on device -> audio and mic should use Windows settings, not itself
 	- sound delay:
 		- intercom researcher to participant -- 172ms

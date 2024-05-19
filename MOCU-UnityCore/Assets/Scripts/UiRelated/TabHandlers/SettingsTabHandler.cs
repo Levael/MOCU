@@ -15,9 +15,9 @@ public class SettingsTabHandler : MonoBehaviour
     private UiHandler _uiHandler;
     private AudioHandler _audioHandler;
     private UiReferences _uiReference;
-    private bool _classIsReady = false;
+    public bool classIsReady = false;
 
-    private InterlinkedCollection<DeviceParametersSet> uiToAudioHandlerConnector;
+    private InterlinkedCollection<DeviceParametersSet> devicesInterlinkedCollection;
 
 
 
@@ -36,18 +36,17 @@ public class SettingsTabHandler : MonoBehaviour
         _uiReference = _uiHandler.secondaryUiScreen;
         AddEventListeners();
 
-        uiToAudioHandlerConnector = new()
+        // Devices
+        devicesInterlinkedCollection = new()
         {
             // Input Researcher
             new DeviceParametersSet{
                 uiElementName = "settings-device-box-microphone-researcher",
                 chosenDeviceName = null,
-                dataObjectField_deviceName = "audioInputDeviceName_Researcher",         // in 'AudioHandler.audioDevicesInfo'
-                dataObjectField_deviceVolume = "audioInputDeviceVolume_Researcher",     // in 'AudioHandler.audioDevicesInfo'
-
+                chosenDeviceVolume = null,
+                dataObjectField_deviceName = "audioInputDeviceName_Researcher",
+                dataObjectField_deviceVolume = "audioInputDeviceVolume_Researcher",
                 listOfOptions = _audioHandler.inputAudioDevices,
-                iconUrl = "/Assets/Images/SVG/IntercomActiveIcon.svg",
-                label = "Mic (here)",
                 isEnabled = true
             },
 
@@ -55,12 +54,10 @@ public class SettingsTabHandler : MonoBehaviour
             new DeviceParametersSet{
                 uiElementName = "settings-device-box-microphone-participant",
                 chosenDeviceName = null,
-                dataObjectField_deviceName = "audioInputDeviceName_Participant",         // in 'AudioHandler.audioDevicesInfo'
-                dataObjectField_deviceVolume = "audioInputDeviceVolume_Participant",     // in 'AudioHandler.audioDevicesInfo'
-
+                chosenDeviceVolume = null,
+                dataObjectField_deviceName = "audioInputDeviceName_Participant",
+                dataObjectField_deviceVolume = "audioInputDeviceVolume_Participant",
                 listOfOptions = _audioHandler.inputAudioDevices,
-                iconUrl = "/Assets/Images/SVG/IntercomActiveIcon.svg",
-                label = "Mic (there)",
                 isEnabled = true
             },
 
@@ -68,17 +65,15 @@ public class SettingsTabHandler : MonoBehaviour
             new DeviceParametersSet{
                 uiElementName = "settings-device-box-speaker-researcher",
                 chosenDeviceName = null,
-                dataObjectField_deviceName = "audioOutputDeviceName_Researcher",         // in 'AudioHandler.audioDevicesInfo'
-                dataObjectField_deviceVolume = "audioOutputDeviceVolume_Researcher",     // in 'AudioHandler.audioDevicesInfo'
-
+                chosenDeviceVolume = null,
+                dataObjectField_deviceName = "audioOutputDeviceName_Researcher",
+                dataObjectField_deviceVolume = "audioOutputDeviceVolume_Researcher",
                 listOfOptions = _audioHandler.outputAudioDevices,
-                iconUrl = "/Assets/Images/SVG/SpeakerIcon.svg",
-                label = "Speaker (here)",
                 isEnabled = true
             },
         };
 
-        _classIsReady = true;
+        classIsReady = true;
     }
 
     void Update()
@@ -88,23 +83,37 @@ public class SettingsTabHandler : MonoBehaviour
     // CUSTOM FUNCTIONALITY
 
 
-    public void FillDevicesModule()
+    public void UpdateDevicesCards()
     {
-        foreach (var device in uiToAudioHandlerConnector)
+        try
         {
-            /*print(_audioHandler.GetAudioDeviceName(device.dataObjectField_deviceName));
-            print(device.chosenDeviceName);*/
-            /*print(uiToAudioHandlerConnector[device.uiElementName].uiElementName);
-            print(uiToAudioHandlerConnector[device.uiElementName].label);*/
+            foreach (var device in devicesInterlinkedCollection)
+            {
+                // get data from AudioHandler
+                var chosenDeviceName = _audioHandler.GetAudioDeviceName(device.dataObjectField_deviceName);
+                var chosenDeviceVolume = _audioHandler.GetAudioDeviceVolume(device.dataObjectField_deviceVolume) ?? 0f;
 
-            print(device.chosenDeviceName);
-            uiToAudioHandlerConnector.UpdateSingleValue(device.uiElementName, "chosenDeviceName", _audioHandler.GetAudioDeviceName(device.dataObjectField_deviceName));
-            print(device.chosenDeviceName + "\n");
+                //update data in 'devicesInterlinkedCollection'
+                devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "chosenDeviceName", chosenDeviceName);
+                devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "chosenDeviceVolume", chosenDeviceVolume);
 
-            /*print(device.chosenDeviceName);
-            uiToAudioHandlerConnector.Update(device.uiElementName, "chosenDeviceName", _audioHandler.GetAudioDeviceName(device.dataObjectField_deviceName));
-            print(device.chosenDeviceName + "\n");*/
+                // update ui
+                _uiReference.GetElement(device.uiElementName).Q<CustomSlider>().value = (float)chosenDeviceVolume;
+
+                // debug log console
+                print(device.chosenDeviceName);
+                print(device.chosenDeviceVolume + "\n");
+            }
         }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error in UpdateDevicesCards: {ex}");
+        }
+    }
+
+    private void UpdateDeviceOptionsModule(DeviceParametersSet deviceParametersSet)
+    {
+
     }
 
 
@@ -278,15 +287,11 @@ public class DeviceParametersSet
     public string? dataObjectField_deviceVolume { get; set; }
 
 
+    [CanBeKey(false)]
+    public float? chosenDeviceVolume { get; set; }
 
     [CanBeKey(false)]
     public List<string>? listOfOptions { get; set; }
-
-    [CanBeKey(false)]
-    public string? iconUrl {  get; set; }
-
-    [CanBeKey(false)]
-    public string? label { get; set; }
 
     [CanBeKey(false)]
     public bool? isEnabled { get; set; }

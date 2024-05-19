@@ -133,7 +133,11 @@ public class AudioHandler : MonoBehaviour
     }
     public float? GetAudioDeviceVolume(string fieldName)
     {
-        return (float)audioDevicesInfo.GetType().GetProperty(fieldName)?.GetValue(audioDevicesInfo);
+        var answer = audioDevicesInfo.GetType().GetProperty(fieldName)?.GetValue(audioDevicesInfo);
+        if (answer == null)
+            return null;
+        else
+            return (float?)answer;
     }
     public bool? SetAudioDeviceVolume(string fieldName, float? deviceVolume)
     {
@@ -323,9 +327,12 @@ public class AudioHandler : MonoBehaviour
     /// </summary>
     private void UpdateClient(ResponseFromServer response)
     {
+        print("UpdateClient before");
         _configHandler.UpdateSubConfig(audioDevicesInfo);
+        print("UpdateClient in");
         // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
-        _settingsTabHandler.FillDevicesModule();
+        _settingsTabHandler.UpdateDevicesCards();
+        print("UpdateClient after");
     }
 
 
