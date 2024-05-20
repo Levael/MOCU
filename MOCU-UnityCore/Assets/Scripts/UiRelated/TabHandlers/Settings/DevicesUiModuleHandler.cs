@@ -1,42 +1,27 @@
-using AudioControl;
-using CustomDataStructures;
+﻿using CustomDataStructures;
 using CustomUxmlElements;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class SettingsTabHandler : MonoBehaviour
-{
-    // FIELDS
 
+public class DevicesUiModuleHandler : MonoBehaviour
+{
+    public InterlinkedCollection<DeviceParametersSet> devicesInterlinkedCollection;
     public VisualTreeAsset chooseDeviceRowTemplate;
 
-    private UiHandler _uiHandler;
     private AudioHandler _audioHandler;
     private UiReferences _uiReference;
-    public bool classIsReady = false;
+    private UiHandler _uiHandler;
 
-    private InterlinkedCollection<DeviceParametersSet> devicesInterlinkedCollection;
-
-
-
-    // MANDATORY STANDARD FUNCTIONALITY
 
     void Awake()
     {
         _uiHandler = GetComponent<UiHandler>();
         _audioHandler = GetComponent<AudioHandler>();
 
-        
-    }
 
-    void Start()
-    {
-        _uiReference = _uiHandler.secondaryUiScreen;
-        AddEventListeners();
-
-        // Devices
         devicesInterlinkedCollection = new()
         {
             // Input Researcher
@@ -72,16 +57,35 @@ public class SettingsTabHandler : MonoBehaviour
                 isEnabled = true
             },
         };
-
-        classIsReady = true;
     }
 
-    void Update()
+    void Start()
     {
+        _uiReference = _uiHandler.secondaryUiScreen;
+
+        AddEventListeners();
     }
 
-    // CUSTOM FUNCTIONALITY
 
+    private void AddEventListeners()
+    {
+        foreach (var device in devicesInterlinkedCollection)
+        {
+            var deviceCardUiElement = _uiReference.GetElement(device.uiElementName);
+
+            deviceCardUiElement.pickingMode = PickingMode.Position;
+            deviceCardUiElement.RegisterCallback<ClickEvent>(eventObj => DeviceBoxClicked(eventObj));
+
+            var customSlider = deviceCardUiElement.Q<CustomSlider>();
+            if (customSlider != null)
+            {
+                customSlider.RegisterCallback<ClickEvent>(eventObj => DeviceVolumeSliderClicked(eventObj));
+            }
+        }
+
+        _uiReference.GetElement("settings-devices-back-btn").RegisterCallback<ClickEvent>(CloseDeviceBoxParameters);
+        _uiReference.GetElement("settings-devices-update-btn").RegisterCallback<ClickEvent>(UpdateDevices);
+    }
 
     public void UpdateDevicesCards()
     {
@@ -128,31 +132,6 @@ public class SettingsTabHandler : MonoBehaviour
     private void SetDeviceOptionStatus()
     {
 
-    }
-
-
-
-    private void AddEventListeners()
-    {
-        foreach (var deviceBox in _uiReference.GetDevicesBoxes())
-        {
-            // Add click listener to whole device box
-            deviceBox.pickingMode = PickingMode.Position;
-            deviceBox.RegisterCallback<ClickEvent>(eventObj => DeviceBoxClicked(eventObj));
-
-            // // Add click listener to slider if there is one
-            var customSlider = deviceBox.Q<CustomSlider>();
-            if (customSlider != null)
-            {
-                customSlider.RegisterCallback<ClickEvent>(eventObj => DeviceVolumeSliderClicked(eventObj));
-            }
-        }
-
-        _uiReference.GetElement("settings-devices-back-btn").RegisterCallback<ClickEvent>(CloseDeviceBoxParameters);
-        _uiReference.GetElement("settings-devices-update-btn").RegisterCallback<ClickEvent>(UpdateDevices);
-
-        //secondaryUiScreen.GetElement("settings-device-box-speaker-researcher").RegisterCallback<WheelEvent>(WeelSoundChange);
-        //secondaryUiScreen.GetElement("settings-device-box-speaker-participant").RegisterCallback<WheelEvent>(WeelSoundChange);
     }
 
     private void WeelSoundChange(WheelEvent evt)
@@ -284,6 +263,8 @@ public class SettingsTabHandler : MonoBehaviour
         Debug.Log($"close btn {((VisualElement)clickEvent.currentTarget).parent.parent.Q<TextElement>(className: "device-option-full-name").text}");
     }
 }
+
+
 
 
 public class DeviceParametersSet

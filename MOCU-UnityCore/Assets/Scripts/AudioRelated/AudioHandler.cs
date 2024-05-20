@@ -64,10 +64,10 @@ public class AudioHandler : MonoBehaviour
 
         CommandsToExecuteAccordingToServerResponse = new()
         {
-            { "TryConnectToServer_Command",                 (subState: "StartNamedPipeConnection",  action: SendConfigurationDetails) },
-            { "SendConfigs_Command",                        (subState: "SetConfigs",                action: RequestAudioDevices) },
-            { "GetAudioDevices_Command",                    (subState: "RequestAudioDevices",       action: SendAudioDevices) },
-            { "UpdateDevicesParameters_Command",            (subState: "SendAudioDevices",          action: UpdateClient) }
+            { "TryConnectToServer_Command",         (subState: "StartNamedPipeConnection",  action: SendConfigurationDetails) },
+            { "SendConfigs_Command",                (subState: "SetConfigs",                action: RequestAudioDevices) },
+            { "GetAudioDevices_Command",            (subState: "RequestAudioDevices",       action: SendAudioDevices) },
+            { "UpdateDevicesParameters_Command",    (subState: "SendAudioDevices",          action: UpdateClient) }
         };
 
         // Reading from config Audio Devices Data
