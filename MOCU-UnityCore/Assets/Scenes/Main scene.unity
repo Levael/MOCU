@@ -435,6 +435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chooseDeviceRowTemplate: {fileID: 9197481963319205126, guid: cc72a5c0ce95be84987e3a6e985fbad9, type: 3}
+  classIsReady: 0
 --- !u!114 &75438447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -653,6 +654,7 @@ GameObject:
   - component: {fileID: 658132586}
   - component: {fileID: 658132585}
   - component: {fileID: 658132584}
+  - component: {fileID: 658132588}
   m_Layer: 3
   m_Name: FixationPoint
   m_TagString: Untagged
@@ -746,6 +748,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1818360608 &658132588
+PositionConstraint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 658132583}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Weight: 1
+  m_TranslationAtRest: {x: 0, y: 0, z: 100}
+  m_TranslationOffset: {x: 0, y: 0, z: 110}
+  m_AffectTranslationX: 1
+  m_AffectTranslationY: 1
+  m_AffectTranslationZ: 1
+  m_Active: 1
+  m_IsLocked: 0
+  m_Sources:
+  - sourceTransform: {fileID: 78664786}
+    weight: 1
 --- !u!1 &782628375
 GameObject:
   m_ObjectHideFlags: 0

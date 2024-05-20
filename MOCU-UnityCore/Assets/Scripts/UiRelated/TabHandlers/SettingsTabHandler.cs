@@ -91,7 +91,7 @@ public class SettingsTabHandler : MonoBehaviour
             {
                 // get data from AudioHandler
                 var chosenDeviceName = _audioHandler.GetAudioDeviceName(device.dataObjectField_deviceName);
-                var chosenDeviceVolume = _audioHandler.GetAudioDeviceVolume(device.dataObjectField_deviceVolume) ?? 0f;
+                var chosenDeviceVolume = _audioHandler.GetAudioDeviceVolume(device.dataObjectField_deviceVolume) ?? 0f; // if null -> 0
 
                 //update data in 'devicesInterlinkedCollection'
                 devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "chosenDeviceName", chosenDeviceName);
@@ -99,6 +99,7 @@ public class SettingsTabHandler : MonoBehaviour
 
                 // update ui
                 _uiReference.GetElement(device.uiElementName).Q<CustomSlider>().value = (float)chosenDeviceVolume;
+                // todo: color label if chosenDeviceName == null            <-- HERE
 
                 // debug log console
                 print(device.chosenDeviceName);
@@ -111,7 +112,20 @@ public class SettingsTabHandler : MonoBehaviour
         }
     }
 
+    // clear and refill with options (and set their statuses)
     private void UpdateDeviceOptionsModule(DeviceParametersSet deviceParametersSet)
+    {
+
+    }
+
+    // in DeviceModule to show if a device doesn't work properly (label color)
+    private void SetDeviceCardStatus()
+    {
+
+    }
+
+    // in DeviceOptionsModule to differ between currently chosen device and chosen by someone else (colorful dot before line)
+    private void SetDeviceOptionStatus()
     {
 
     }
@@ -295,4 +309,20 @@ public class DeviceParametersSet
 
     [CanBeKey(false)]
     public bool? isEnabled { get; set; }
+}
+
+public enum DeviceCardStatus
+{
+    Ready,              // is ok and can be used
+    Disabled,           // can't be chosen
+    Connecting,         // in the process of connecting
+    NotChosen,          // when the value is null
+    Error               // failed to connect or disconnected during runtime (for any reason)
+}
+
+public enum DeviceOptionStatus
+{
+    FreeToChoose,       // Device is available to be chosen
+    CurrentlyChosen,    // Device is currently chosen by this object
+    AlreadyChosen       // Device is already chosen by another object
 }
