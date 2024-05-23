@@ -8,12 +8,16 @@ using UnityEngine.UIElements;
 
 public class DevicesUiModuleHandler : MonoBehaviour
 {
-    public InterlinkedCollection<DeviceParametersSet> devicesInterlinkedCollection;
+    public InterlinkedCollection<DeviceParametersSet> devicesInterlinkedCollection;         // connects data objects with UI stuff
     public VisualTreeAsset chooseDeviceRowTemplate;
 
     private AudioHandler _audioHandler;
     private UiReferences _uiReference;
     private UiHandler _uiHandler;
+
+    private Dictionary<DeviceCardStatus, string> _deviceCardStatusToUssClassNameMap;        // classes for card labels
+    private Dictionary<DeviceOptionStatus, string> _deviceOptionStatusToUssClassNameMap;    // classes for options
+
 
 
     void Awake()
@@ -56,6 +60,24 @@ public class DevicesUiModuleHandler : MonoBehaviour
                 listOfOptions = _audioHandler.outputAudioDevices,
                 isEnabled = true
             },
+        };
+
+
+        _deviceCardStatusToUssClassNameMap = new()
+        {
+            {DeviceCardStatus.Ready, "deviceCardIsReady"},
+            {DeviceCardStatus.Disabled, "deviceCardIsDisabled"},
+            {DeviceCardStatus.Connecting, "deviceCardIsConnecting"},
+            {DeviceCardStatus.NotChosen, "deviceCardIsNotChosen"},
+            {DeviceCardStatus.Error, "deviceCardHasError"},
+        };
+
+
+        _deviceOptionStatusToUssClassNameMap = new()
+        {
+            {DeviceOptionStatus.FreeToChoose, "deviceOptionIsFreeToChoose"},
+            {DeviceOptionStatus.CurrentlyChosen, "deviceOptionIsCurrentlyChosen"},
+            {DeviceOptionStatus.AlreadyChosen, "deviceOptionIsAlreadyChosen"},
         };
     }
 
@@ -117,19 +139,19 @@ public class DevicesUiModuleHandler : MonoBehaviour
     }
 
     // clear and refill with options (and set their statuses)
-    private void UpdateDeviceOptionsModule(DeviceParametersSet deviceParametersSet)
+    private void RemakeDeviceOptionsModule(DeviceParametersSet deviceParametersSet)
     {
 
     }
 
     // in DeviceModule to show if a device doesn't work properly (label color)
-    private void SetDeviceCardStatus()
+    private void SetDeviceCardStatus(string uiElementName, DeviceCardStatus status)
     {
 
     }
 
     // in DeviceOptionsModule to differ between currently chosen device and chosen by someone else (colorful dot before line)
-    private void SetDeviceOptionStatus()
+    private void SetDeviceOptionStatus(VisualElement uiElement, DeviceOptionStatus status)
     {
 
     }

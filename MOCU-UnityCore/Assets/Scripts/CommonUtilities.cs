@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System;
 using System.Threading;
-using UnityEngine;
+//using UnityEngine;
 
 #nullable enable
 
@@ -39,7 +39,7 @@ namespace CommonUtilitiesNamespace
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"SerializeJson return 'null' with error: {ex}");
+                //UnityEngine.Debug.LogWarning($"SerializeJson return 'null' with error: {ex}");
                 return null;
             }
         }
