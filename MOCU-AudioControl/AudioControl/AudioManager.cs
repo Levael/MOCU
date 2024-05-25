@@ -1,11 +1,16 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
-using CommonUtilitiesNamespace;
+
+using UnityDeamonsCommon;
+using DeamonsNamespace.Common;
+using DeamonsNamespace.InterprocessCommunication;
 
 namespace AudioControl
 {
-    public class AudioManager
+    // Main part
+
+    public partial class AudioManager
     {
         private AudioDevicesParameters audioDevicesParameters;
 
@@ -24,6 +29,7 @@ namespace AudioControl
         public WaveFormat unifiedWaveFormat;
 
         public ObservableConcurrentQueue<string> outputMessagesQueue = null;
+        private Dictionary<string, Action<string>> commandsHandlers;
 
 
         public AudioManager()
@@ -34,8 +40,7 @@ namespace AudioControl
 
             enumerator = new();
 
-            UpdateAudioDevices();
-            //LoadAudioFiles();
+            UpdateMMDeviceCollections();
             InitOutputDevicesDictionary();
             InitInputDevicesDictionary();
 
@@ -47,6 +52,14 @@ namespace AudioControl
 
             incomingStream = new(direction: IntercomStreamDirection.Incoming);
             outgoingStream = new(direction: IntercomStreamDirection.Outgoing);
+
+            commandsHandlers = new()
+            {
+                { "UpdateDevicesParameters_Command", UpdateDevicesParameters_CommandHandler },
+                { "SendConfigs_Command", SendConfigs_CommandHandler },
+                { "PlayAudioFile_Command", PlayAudioFile_CommandHanler },
+                { "GetAudioDevices_Command", GetAudioDevices_CommandHandler },
+            };
         }
 
 
@@ -55,10 +68,23 @@ namespace AudioControl
 
         public void ProcessCommand(string jsonCommand)
         {
-            var commandName = CommonUtilities.GetSerializedObjectType(jsonCommand);
+            try
+            {
+                var commandName = CommonClientServerMethods.GetSerializedObjectType(jsonCommand);
+
+                if (commandName == null || !commandsHandlers.ContainsKey(commandName))
+                    throw new Exception("Command name is 'null' or not in 'commandsHandlers' dictionary");
+
+                commandsHandlers[commandName].Invoke(jsonCommand);
+                DeamonsUtilities.ConsoleInfo($"Command '{commandName}' was executed");
+            }
+            catch (Exception ex)
+            {
+                DeamonsUtilities.ConsoleError($"Error while 'ProcessCommand': {ex}");
+            }
 
 
-            switch (commandName)
+            /*switch (commandName)
             {
                 // COMMON COMMANDS
                 // '{}' inside of each "case" are for using variable with same name
@@ -67,18 +93,18 @@ namespace AudioControl
                     {
                         UpdateDevicesParameters(jsonCommand);
                         Console.WriteLine("UpdateDevicesParameters_Command");
-                        /*var response = SetDevicesParameters(jsonCommand);
-                        RespondToCommand(response);*/
+                        *//*var response = SetDevicesParameters(jsonCommand);
+                        RespondToCommand(response);*//*
                         break;
                     }
 
-                /*case "ChangeOutputDeviceVolume_Command":
+                *//*case "ChangeOutputDeviceVolume_Command":
                     {
                         var response = ChangeOutputDeviceVolume(jsonCommand);
                         RespondToCommand(response);
                         Console.WriteLine("ChangeOutputDeviceVolume_Command");
                         break;
-                    }*/
+                    }*//*
                 case "SendConfigs_Command":
                     {
                         var response = ApplyConfigs(jsonCommand);
@@ -144,26 +170,35 @@ namespace AudioControl
                 case "SetParticipantAudioOutputDevice_Command":
                 case "DisconnectResearcherAudioOutputDevice_Command":
                 case "DisconnectParticipantAudioOutputDevice_Command":
-                    RespondToCommand(CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "NotYetImplemented_Command", hasError: true)));
+                {
+                    var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "NotYetImplemented_Command", hasError: true));
+                    RespondToCommand(fullJsonResponse);
                     Console.WriteLine("NotYetImplemented_Command");
                     break;
+                } 
 
 
                 default:
-                    RespondToCommand(CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "Unknown_Command", hasError: true)));
+                {
+                    var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "Unknown_Command", hasError: true));
+                    RespondToCommand(fullJsonResponse);
                     Console.WriteLine("Unknown_Command");
                     break;
+                }
+                    
+            }*/
+        }
+
+        // INNER
+        private void RespondToCommand(string? response)
+        {
+            if (response == null)
+            {
+                string callerMethodName = CommonUtilities.GetCallerMethodName();
+                Console.WriteLine($"To method 'RespondToCommand' has past 'null' from method '{callerMethodName}'");
+                return;
             }
-        }
 
-        private void RespondToCommand_UpdateDevicesParameters(bool errorHasOccured)
-        {
-            var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "UpdateDevicesParameters_Command", hasError: errorHasOccured));
-            RespondToCommand(fullJsonResponse);
-        }
-
-        public void RespondToCommand(string response)
-        {
             outputMessagesQueue.Enqueue(response);
         }
 
@@ -173,7 +208,7 @@ namespace AudioControl
 
             foreach (var device in outputDevices)
             {
-                audioOutputsDictionary.Add( device.FriendlyName, new AudioOutputDevice(device, unifiedWaveFormat) );
+                audioOutputsDictionary.Add(device.FriendlyName, new AudioOutputDevice(device, unifiedWaveFormat));
             }
         }
 
@@ -183,7 +218,7 @@ namespace AudioControl
 
             foreach (var device in inputDevices)
             {
-                audioInputsDictionary.Add( device.FriendlyName, new AudioInputDevice(device, unifiedWaveFormat) );
+                audioInputsDictionary.Add(device.FriendlyName, new AudioInputDevice(device, unifiedWaveFormat));
             }
         }
 
@@ -213,37 +248,19 @@ namespace AudioControl
             }
         }
 
-        private string ApplyConfigs(string jsonCommand)
-        {
-            try
-            {
-                var obj = CommonUtilities.DeserializeJson<SendConfigs_Command>(jsonCommand);
-                pathToAudioFiles = obj.UnityAudioDirectory;
 
-                LoadAudioFiles();   // todo: move to other place
+        // COMMAND HANDLERS
 
-                return CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "SendConfigs_Command", hasError: false));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "SendConfigs_Command", hasError: true));
-            }
-        }
-         
+        
 
-        private void UpdateDevicesParameters(string jsonCommand)
-        {
-            try
-            {
-                var obj = CommonUtilities.DeserializeJson<UpdateDevicesParameters_Command>(jsonCommand);
-                audioDevicesParameters.Update(obj.audioDevicesInfo);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
+
+
+
+        
+
+
+
+
 
         private void UpdateIntercom()
         {
@@ -276,7 +293,7 @@ namespace AudioControl
             }
         }*/
 
-        private void UpdateAudioDevices()
+        private void UpdateMMDeviceCollections()
         {
             inputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
             outputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
@@ -298,12 +315,13 @@ namespace AudioControl
             return devices[index];
         }
 
-        private string GetAudioDevicesAsJson(string jsonCommand)
+        // TODO: change to regular response and put data into payLoadObject
+        /*private string GetAudioDevicesAsJson(string jsonCommand)
         {
             try
             {
                 var obj = CommonUtilities.DeserializeJson<GetAudioDevices_Command>(jsonCommand);
-                if (obj.DoUpdate) UpdateAudioDevices();
+                if (obj.DoUpdate) UpdateMMDeviceCollections();
 
                 var responseData = new GetAudioDevices_ResponseData(
                     inputDevices: inputDevices.Select(device => device.FriendlyName).ToList(),
@@ -317,16 +335,14 @@ namespace AudioControl
                 Console.WriteLine(ex);
                 return CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "GetAudioDevices_Command", hasError: true));
             }
-        }
+        }*/
 
         /// <summary>
         /// Copies pre-prepared and unified audio to a buffer subscribed to the mixer.
         /// If something is being played at the moment of calling the function, it purposely cuts it off and puts a newer one
         /// </summary>
-        private void PlayAudioFile(string jsonCommand)
+        private void PlayAudioFile(PlayAudioFile_Command commandData)
         {
-            var commandData = CommonUtilities.DeserializeJson<PlayAudioFile_Command>(jsonCommand);
-
             var audioData = preLoadedAudioFiles[commandData.AudioFileName];
             var buffer = audioOutputsDictionary[commandData.AudioOutputDeviceName].bufferForSingleAudioPlay;
 

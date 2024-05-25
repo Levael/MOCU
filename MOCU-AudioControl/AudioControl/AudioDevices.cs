@@ -1,8 +1,6 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
-using System.Reflection;
-using Newtonsoft.Json.Linq;
 
 namespace AudioControl
 {
@@ -200,7 +198,10 @@ namespace AudioControl
     public class AudioDevicesParameters
     {
         // Public events
-        public event Action<bool>? SendResponseToUnity; // Called only when an error occurs
+        /// <summary>
+        /// hasErrorOccured: bool, payLoadData: object?
+        /// </summary>
+        public event Action<bool, object?>? SendResponseToUnity; // Called only when an error occurs
         public event Action? AudioDeviceHasChanged;     // Triggered to update intercom settings when a change in audio devices is detected
 
         // External links for mapping device names to device objects
@@ -235,7 +236,7 @@ namespace AudioControl
         /// <param name="updatedParameters">New audio device settings to be applied.</param>
         public void Update(AudioDevicesInfo updatedParameters)
         {
-            var errorOccured = false;
+            int errorsOccured = 0;
             var audioDeviceHasChanged = false;
 
 
@@ -253,8 +254,7 @@ namespace AudioControl
                 catch
                 {
                     audioOutputDevice_Researcher = null;
-                    errorOccured = true;
-                    SendResponseToUnity?.Invoke(errorOccured);
+                    errorsOccured++;
                 }
             }
 
@@ -272,8 +272,7 @@ namespace AudioControl
                 catch
                 {
                     audioOutputDevice_Participant = null;
-                    errorOccured = true;
-                    SendResponseToUnity?.Invoke(errorOccured);
+                    errorsOccured++;
                 }
             }
 
@@ -290,8 +289,7 @@ namespace AudioControl
                 catch
                 {
                     audioInputDevice_Researcher = null;
-                    errorOccured = true;
-                    SendResponseToUnity?.Invoke(errorOccured);
+                    errorsOccured++;
                 }
             }
 
@@ -308,8 +306,7 @@ namespace AudioControl
                 catch
                 {
                     audioInputDevice_Participant = null;
-                    errorOccured = true;
-                    SendResponseToUnity?.Invoke(errorOccured);
+                    errorsOccured++;
                 }
             }
 
@@ -325,8 +322,7 @@ namespace AudioControl
                 }
                 catch
                 {
-                    errorOccured = true;
-                    SendResponseToUnity?.Invoke(errorOccured);
+                    errorsOccured++;
                 }
             }
 
@@ -342,8 +338,7 @@ namespace AudioControl
                 }
                 catch
                 {
-                    errorOccured = true;
-                    SendResponseToUnity?.Invoke(errorOccured);
+                    errorsOccured++;
                 }
             }
 
@@ -354,14 +349,15 @@ namespace AudioControl
             _audioDevicesInfo = updatedParameters;
 
 
-            // Response to Unity in case "all good"
-            if (!errorOccured)
-                SendResponseToUnity?.Invoke(false);
+            // Response to Unity
+            if (errorsOccured > 0)
+                SendResponseToUnity?.Invoke(true, _audioDevicesInfo);
+            else
+                SendResponseToUnity?.Invoke(false, null);
 
             // update Intercoms if at least one device was updated
             if (audioDeviceHasChanged)
                 AudioDeviceHasChanged?.Invoke();
-
         }
 
     }

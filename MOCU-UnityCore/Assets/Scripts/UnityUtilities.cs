@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace UnityUtilitiesNamespace
+namespace UnityNamespace
 {
     /*public static class UnityUtilities
     {

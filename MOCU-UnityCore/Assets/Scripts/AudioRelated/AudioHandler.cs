@@ -3,11 +3,11 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json.Linq;
 
 using AudioControl;
-using CommonUtilitiesNamespace;
-using InterprocessCommunication;
+using DeamonsNamespace.InterprocessCommunication;
+using UnityDeamonsCommon;
+using Newtonsoft.Json.Linq;
 
 
 public class AudioHandler : MonoBehaviour
@@ -62,6 +62,7 @@ public class AudioHandler : MonoBehaviour
             { "StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ParticipantToResearcher_Command()) },
         };
 
+        // todo: rename action to "{commandName}_commandHandler"
         CommandsToExecuteAccordingToServerResponse = new()
         {
             { "TryConnectToServer_Command",         (subState: "StartNamedPipeConnection",  action: SendConfigurationDetails) },
@@ -245,6 +246,7 @@ public class AudioHandler : MonoBehaviour
                 var subStateName = receivedCommand.subState;
                 var funcToBeExecuted = receivedCommand.action;
 
+                // todo: if 'UpdateDevicesParameters_Command' returned error, it doesn't mean the error is fatal. it needs attention
                 if (deserializedMessage.HasError)
                 {
                     stateTracker.UpdateSubState(subStateName, false);
@@ -256,7 +258,7 @@ public class AudioHandler : MonoBehaviour
 
                 // In case everything is fine
                 stateTracker.UpdateSubState(subStateName, true);
-                funcToBeExecuted.Invoke(deserializedMessage);
+                funcToBeExecuted.Invoke(deserializedMessage);       // pay attention: deserializedMessage.ExtraData is still 'JObject' type
             }
             catch
             {
@@ -298,8 +300,8 @@ public class AudioHandler : MonoBehaviour
 
     private void ValidateAndUpdateDevicesInfo(ResponseFromServer response)
     {
-        // need this (JObject) convertion because of json lib. it doesn't know what 'object' is, so translates it to 'JObject'
-        var devicesData = CommonUtilities.ConvertJObjectToType<GetAudioDevices_ResponseData>((JObject)response.ExtraData);
+        // need this (JObject) convertion because of json lib. It doesn't know what 'object' is, so translates it to 'JObject'
+        var devicesData = CommonUtilities.ConvertJObjectToType<AudioDevicesLists>((JObject)response.ExtraData);
 
         inputAudioDevices = devicesData.InputDevices;
         outputAudioDevices = devicesData.OutputDevices;
@@ -308,6 +310,8 @@ public class AudioHandler : MonoBehaviour
         var or = audioDevicesInfo.audioOutputDeviceName_Researcher;
         var ip = audioDevicesInfo.audioInputDeviceName_Participant;
         var ir = audioDevicesInfo.audioInputDeviceName_Researcher;
+
+        // HERE: I guess bug is somewhere here: check if it returns NULL and why
 
         // if in reality there is no such device (but in config is), update it (in 'audioDevicesInfo') to 'null'
         op = outputAudioDevices.Contains(op) ? op : null;
@@ -328,7 +332,7 @@ public class AudioHandler : MonoBehaviour
     private void UpdateClient(ResponseFromServer response)
     {
         print("UpdateClient before");
-        _configHandler.UpdateSubConfig(audioDevicesInfo);
+        //_configHandler.UpdateSubConfig(audioDevicesInfo);                     // if all ok -- server returns null (figure out how to handle half-errors)
         print("UpdateClient in");
         // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
         _settingsTabHandler.UpdateDevicesCards();

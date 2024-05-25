@@ -1,8 +1,9 @@
 ﻿// dotnet publish -c Release
 
 using System.Diagnostics;
+
 using AudioControl;
-using InterprocessCommunication;
+using DeamonsNamespace.InterprocessCommunication;
 
 
 class Program
