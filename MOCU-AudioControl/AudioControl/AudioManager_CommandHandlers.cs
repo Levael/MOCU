@@ -7,35 +7,36 @@ namespace AudioControl
 
     public partial class AudioManager
     {
-        /// <summary>
-        /// Doesn't return response imidiately, it happend from "audioDevicesParameters.Update" method, which call to "RespondToCommand_UpdateDevicesParameters"
-        /// </summary>
         private void UpdateDevicesParameters_CommandHandler(string jsonCommand)
         {
             try
             {
-                DeamonsUtilities.ConsoleWarning(jsonCommand);
+                //DeamonsUtilities.ConsoleWarning(jsonCommand);
                 var command = CommonUtilities.DeserializeJson<UpdateDevicesParameters_Command>(jsonCommand);
-                audioDevicesParameters.Update(command.audioDevicesInfo);
+                if (command == null)
+                    throw new Exception("deserialization of 'UpdateDevicesParameters_CommandHandler' got 'null'");
+
+                var report = audioDevicesParameters.Update(command.audioDevicesInfo);
+
+                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "UpdateDevicesParameters_Command", hasError: report.errorOccured, extraData: report.extraData));
+                RespondToCommand(fullJsonResponse);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in 'UpdateDevicesParameters_CommandHandler': {ex}");
+                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "UpdateDevicesParameters_Command", hasError: true, errorMessage: ex.ToString()));
+                RespondToCommand(fullJsonResponse);
             }
         }
-        private void RespondToCommand_UpdateDevicesParameters(bool errorHasOccured, object? extraData)
-        {
-            var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "UpdateDevicesParameters_Command", hasError: errorHasOccured, extraData: extraData));
-            RespondToCommand(fullJsonResponse);
-            DeamonsUtilities.ConsoleWarning(fullJsonResponse);
-        }
-
 
         private void SendConfigs_CommandHandler(string jsonCommand)
         {
             try
             {
                 var command = CommonUtilities.DeserializeJson<SendConfigs_Command>(jsonCommand);
+                if (command == null)
+                    throw new Exception("deserialization of 'SendConfigs_Command' got 'null'");
+
                 pathToAudioFiles = command.UnityAudioDirectory;
 
                 LoadAudioFiles();   // todo: move to other place
@@ -75,6 +76,9 @@ namespace AudioControl
             try
             {
                 var command = CommonUtilities.DeserializeJson<GetAudioDevices_Command>(jsonCommand);
+                if (command == null)
+                    throw new Exception("deserialization of 'GetAudioDevices_Command' got 'null'");
+
                 if (command.DoUpdate) UpdateMMDeviceCollections();
 
                 var extraData = new AudioDevicesLists()
@@ -90,6 +94,60 @@ namespace AudioControl
             {
                 Console.WriteLine($"Error in 'GetAudioDevices_CommandHandler': {ex}");
                 var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "GetAudioDevices_Command", hasError: true, errorMessage: ex.ToString()));
+                RespondToCommand(fullJsonResponse);
+            }
+        }
+
+
+        private void StartIntercomStream_R2P_CommandHandler(string jsonCommand)
+        {
+            try
+            {
+                outgoingStream.StartStream();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in 'StartIntercomStream_R2P_CommandHandler': {ex}");
+                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "StartIntercomStream_ResearcherToParticipant_Command", hasError: true, errorMessage: ex.ToString()));
+                RespondToCommand(fullJsonResponse);
+            }
+        }
+        private void StartIntercomStream_P2R_CommandHandler(string jsonCommand)
+        {
+            try
+            {
+                incomingStream.StartStream();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in 'StartIntercomStream_P2R_CommandHandler': {ex}");
+                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "StartIntercomStream_ParticipantToResearcher_Command", hasError: true, errorMessage: ex.ToString()));
+                RespondToCommand(fullJsonResponse);
+            }
+        }
+        private void StopIntercomStream_R2P_CommandHandler(string jsonCommand)
+        {
+            try
+            {
+                outgoingStream.StopStream();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in 'StopIntercomStream_R2P_CommandHandler': {ex}");
+                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "StopIntercomStream_ResearcherToParticipant_Command", hasError: true, errorMessage: ex.ToString()));
+                RespondToCommand(fullJsonResponse);
+            }
+        }
+        private void StopIntercomStream_P2R_CommandHandler(string jsonCommand)
+        {
+            try
+            {
+                incomingStream.StopStream();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in 'StopIntercomStream_P2R_CommandHandler': {ex}");
+                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "StopIntercomStream_ParticipantToResearcher_Command", hasError: true, errorMessage: ex.ToString()));
                 RespondToCommand(fullJsonResponse);
             }
         }

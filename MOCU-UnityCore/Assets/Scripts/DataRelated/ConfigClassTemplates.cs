@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 public class ProtocolConfig
 {
-    public AudioDevicesInfo AudioConfig { get; set; }
+    public AudioDevicesInfo AudioConfig;
 
 
     // For all data that doesn't match 'ProtocolConfig' format

@@ -128,8 +128,8 @@ public class DevicesUiModuleHandler : MonoBehaviour
                 // todo: color label if chosenDeviceName == null            <-- HERE
 
                 // debug log console
-                print(device.chosenDeviceName);
-                print(device.chosenDeviceVolume + "\n");
+                //print($"chosenDeviceName: {chosenDeviceName}. device.chosenDeviceName: {device.chosenDeviceName}");
+                //print($"chosenDeviceVolume: {chosenDeviceVolume}. device.chosenDeviceVolume: {device.chosenDeviceVolume}");
             }
         }
         catch (Exception ex)

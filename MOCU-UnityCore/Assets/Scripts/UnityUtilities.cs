@@ -4,11 +4,6 @@ using System.Collections.Concurrent;
 
 namespace UnityNamespace
 {
-    /*public static class UnityUtilities
-    {
-        
-    }*/
-
 
     /// <summary>
     /// A flexible (but not the fastest) mechanism for calling functions in the main thread from side threads (unity simply ignores them)

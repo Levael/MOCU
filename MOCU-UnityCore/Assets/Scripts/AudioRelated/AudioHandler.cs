@@ -8,6 +8,7 @@ using AudioControl;
 using DeamonsNamespace.InterprocessCommunication;
 using UnityDeamonsCommon;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 
 public class AudioHandler : MonoBehaviour
@@ -119,7 +120,7 @@ public class AudioHandler : MonoBehaviour
 
     public string? GetAudioDeviceName(string fieldName)
     {
-        return audioDevicesInfo.GetType().GetProperty(fieldName)?.GetValue(audioDevicesInfo).ToString();
+        return audioDevicesInfo.GetType().GetField(fieldName)?.GetValue(audioDevicesInfo).ToString();
     }
     public bool? SetAudioDeviceName(string fieldName, string deviceName)
     {
@@ -129,12 +130,12 @@ public class AudioHandler : MonoBehaviour
             return false;
         }
 
-        audioDevicesInfo.GetType().GetProperty(fieldName)?.SetValue(audioDevicesInfo, deviceName);
+        audioDevicesInfo.GetType().GetField(fieldName)?.SetValue(audioDevicesInfo, deviceName);
         return true;
     }
     public float? GetAudioDeviceVolume(string fieldName)
     {
-        var answer = audioDevicesInfo.GetType().GetProperty(fieldName)?.GetValue(audioDevicesInfo);
+        var answer = audioDevicesInfo.GetType().GetField(fieldName)?.GetValue(audioDevicesInfo);
         if (answer == null)
             return null;
         else
@@ -148,7 +149,7 @@ public class AudioHandler : MonoBehaviour
             return false;
         }
 
-        var linkToVolume = audioDevicesInfo.GetType().GetProperty(fieldName);
+        var linkToVolume = audioDevicesInfo.GetType().GetField(fieldName);
 
         if (deviceVolume < 0f || deviceVolume > 100f || deviceVolume == null)
         {
@@ -331,12 +332,9 @@ public class AudioHandler : MonoBehaviour
     /// </summary>
     private void UpdateClient(ResponseFromServer response)
     {
-        print("UpdateClient before");
         //_configHandler.UpdateSubConfig(audioDevicesInfo);                     // if all ok -- server returns null (figure out how to handle half-errors)
-        print("UpdateClient in");
         // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
         _settingsTabHandler.UpdateDevicesCards();
-        print("UpdateClient after");
     }
 
 

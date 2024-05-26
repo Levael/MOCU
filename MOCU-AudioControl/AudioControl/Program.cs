@@ -16,20 +16,22 @@ class Program
 
     static async Task Main(string[] args)
     {
-        if (args.Length != 3) {
+        if (args.Length != 3)
             CloseProgram("Program / Main :: Not enough arguments were passed from Unity.\nShould be 3: (int: parentProcessId, string: namedPipeName, bool: isProcessHidden)");
-        }
 
-        if (!bool.TryParse(args[2], out isProcessHidden)) {
+        if (!bool.TryParse(args[2], out isProcessHidden))
             CloseProgram("Program / Main :: 'isProcessHidden' argument is not valid");
-        }
 
-        if (!int.TryParse(args[0], out int parentProcessId)) {
+        if (!int.TryParse(args[0], out int parentProcessId))
             CloseProgram("Program / Main :: 'parentProcessId' argument is not valid");
-        }
+
+        Console.WriteLine($"Program name: AudioControl");
+        Console.WriteLine($"parentProcessId: {parentProcessId}");
+        Console.WriteLine($"isProcessHidden: {isProcessHidden}\n");
+
+
 
         var namedPipeName = args[1];
-
 
         StartParentProcessMonitoring(parentProcessId, checkIntervalMs: 500);
         DebugFunc(doDebug: false, tickIntervalMs: 250);
@@ -59,6 +61,7 @@ class Program
                 Thread.Sleep(checkIntervalMs);
             }
 
+            // todo: in abstract class add as option
             CloseProgram("Program / Main :: Parent process died");
         });
         monitorThread.Start();

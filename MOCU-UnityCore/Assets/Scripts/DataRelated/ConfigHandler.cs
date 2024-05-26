@@ -77,24 +77,21 @@ public class ConfigHandler : MonoBehaviour
 
     public void UpdateSubConfig<T>(T newValue)
     {
-        PropertyInfo propertyToUpdate = null;
+        FieldInfo fieldToUpdate = null;
 
-        foreach (PropertyInfo property in typeof(ProtocolConfig).GetProperties())
+        foreach (FieldInfo field in typeof(ProtocolConfig).GetFields())
         {
-            if (property.PropertyType == typeof(T))
+            if (field.FieldType == typeof(T))
             {
-                propertyToUpdate = property;
+                fieldToUpdate = field;
                 break;
             }
         }
 
-        if (propertyToUpdate != null)
-        {
-            propertyToUpdate.SetValue(defaultConfig, newValue);
-        }
+        if (fieldToUpdate != null)
+            fieldToUpdate.SetValue(defaultConfig, newValue);
         else
-        {
-            UnityEngine.Debug.LogError("No matching property found for type " + typeof(T).Name);
-        }
+            UnityEngine.Debug.LogError("No matching field found for type " + typeof(T).Name);
     }
+
 }

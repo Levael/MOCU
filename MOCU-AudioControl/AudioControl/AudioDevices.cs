@@ -198,10 +198,6 @@ namespace AudioControl
     public class AudioDevicesParameters
     {
         // Public events
-        /// <summary>
-        /// hasErrorOccured: bool, payLoadData: object?
-        /// </summary>
-        public event Action<bool, object?>? SendResponseToUnity; // Called only when an error occurs
         public event Action? AudioDeviceHasChanged;     // Triggered to update intercom settings when a change in audio devices is detected
 
         // External links for mapping device names to device objects
@@ -231,10 +227,11 @@ namespace AudioControl
 
 
         /// <summary>
-        /// Updates the state of audio devices based on the provided parameters. Notifies other components if changes occur or if an error is detected.
+        /// Updates the state of audio devices based on the provided parameters. Notifies other components if changes occur.
         /// </summary>
         /// <param name="updatedParameters">New audio device settings to be applied.</param>
-        public void Update(AudioDevicesInfo updatedParameters)
+        /// <returns>A tuple containing a boolean indicating if an error occurred and an optional object with extra data.</returns>
+        public (bool errorOccured, object? extraData) Update(AudioDevicesInfo updatedParameters)
         {
             int errorsOccured = 0;
             var audioDeviceHasChanged = false;
@@ -349,15 +346,15 @@ namespace AudioControl
             _audioDevicesInfo = updatedParameters;
 
 
-            // Response to Unity
-            if (errorsOccured > 0)
-                SendResponseToUnity?.Invoke(true, _audioDevicesInfo);
-            else
-                SendResponseToUnity?.Invoke(false, null);
-
             // update Intercoms if at least one device was updated
             if (audioDeviceHasChanged)
                 AudioDeviceHasChanged?.Invoke();
+
+            // Report
+            if (errorsOccured > 0)
+                return (errorOccured: true, extraData: _audioDevicesInfo);
+            else
+                return (errorOccured: false, extraData: null);
         }
 
     }
