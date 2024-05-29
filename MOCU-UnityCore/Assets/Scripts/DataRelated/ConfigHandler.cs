@@ -4,7 +4,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using System.Reflection;
 
-using UnityDeamonsCommon;
+using UnityDaemonsCommon;
 
 
 public class ConfigHandler : MonoBehaviour

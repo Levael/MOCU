@@ -2,15 +2,15 @@
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
-using UnityDeamonsCommon;
-using DeamonsNamespace.Common;
-using DeamonsNamespace.InterprocessCommunication;
+using UnityDaemonsCommon;
+using DaemonsNamespace.Common;
+using DaemonsNamespace.InterprocessCommunication;
 
 namespace AudioControl
 {
     // Main part
 
-    public partial class AudioManager
+    public partial class AudioManager : AbstractDaemonProgramManager
     {
         private AudioDevicesParameters audioDevicesParameters;
 
@@ -28,10 +28,6 @@ namespace AudioControl
         public List<string> audioFileNames;
         public WaveFormat unifiedWaveFormat;
 
-        // todo: those two should be from Interface or Abstract class
-        public ObservableConcurrentQueue<string> outputMessagesQueue = null;
-        private Dictionary<string, Action<string>> commandsHandlers;
-
 
         public AudioManager()
         {
@@ -45,7 +41,7 @@ namespace AudioControl
             InitOutputDevicesDictionary();
             InitInputDevicesDictionary();
 
-            
+
             audioDevicesParameters = new(outputsDict: audioOutputsDictionary, inputsDict: audioInputsDictionary);
             audioDevicesParameters.AudioDeviceHasChanged += UpdateIntercom;
 
@@ -64,51 +60,6 @@ namespace AudioControl
                 { "StopIntercomStream_ResearcherToParticipant_Command", StopIntercomStream_R2P_CommandHandler },
                 { "StopIntercomStream_ParticipantToResearcher_Command", StopIntercomStream_P2R_CommandHandler },
             };
-        }
-
-
-
-        /// <summary>
-        /// Processes a given JSON command by identifying its type and executing the corresponding handler.
-        /// If the command is not recognized or an error occurs, an error response is generated and logged.
-        /// </summary>
-        /// <param name="jsonCommand">The JSON string representing the command to be processed.</param>
-        public void ProcessCommand(string jsonCommand)
-        {
-            try
-            {
-                var commandName = CommonClientServerMethods.GetSerializedObjectType(jsonCommand);
-
-                if (commandName == null || !commandsHandlers.ContainsKey(commandName))
-                    throw new Exception($"Command name is 'null' or not in 'commandsHandlers' dictionary. Command name: {commandName}");
-
-                commandsHandlers[commandName].Invoke(jsonCommand);
-                DeamonsUtilities.ConsoleInfo($"Command '{commandName}' was executed");
-            }
-            catch (Exception ex)
-            {
-                DeamonsUtilities.ConsoleError($"Error while 'ProcessCommand': {ex}");
-
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "Unknown_Command", hasError: true, errorMessage: ex.ToString()));
-                RespondToCommand(fullJsonResponse);
-            }
-        }
-
-        /// <summary>
-        /// Enqueues the given response message for processing. 
-        /// Logs an error if the response is null, including the name of the calling method.
-        /// </summary>
-        /// <param name="response">The response message to be enqueued. If null, an error is logged.</param>
-        private void RespondToCommand(string? response)
-        {
-            if (response == null)
-            {
-                string callerMethodName = CommonUtilities.GetCallerMethodName();
-                DeamonsUtilities.ConsoleError($"To method 'RespondToCommand' has past 'null' from method '{callerMethodName}'");
-                return;
-            }
-
-            outputMessagesQueue.Enqueue(response);
         }
 
     }

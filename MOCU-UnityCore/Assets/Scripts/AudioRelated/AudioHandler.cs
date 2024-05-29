@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using AudioControl;
-using DeamonsNamespace.InterprocessCommunication;
-using UnityDeamonsCommon;
+using DaemonsNamespace.InterprocessCommunication;
+using UnityDaemonsCommon;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 

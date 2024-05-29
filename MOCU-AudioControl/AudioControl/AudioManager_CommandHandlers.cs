@@ -1,5 +1,5 @@
-﻿using UnityDeamonsCommon;
-using DeamonsNamespace.Common;
+﻿using UnityDaemonsCommon;
+using DaemonsNamespace.InterprocessCommunication;
 
 namespace AudioControl
 {
@@ -11,7 +11,7 @@ namespace AudioControl
         {
             try
             {
-                //DeamonsUtilities.ConsoleWarning(jsonCommand);
+                //DaemonsUtilities.ConsoleWarning(jsonCommand);
                 var command = CommonUtilities.DeserializeJson<UpdateDevicesParameters_Command>(jsonCommand);
                 if (command == null)
                     throw new Exception("deserialization of 'UpdateDevicesParameters_CommandHandler' got 'null'");
