@@ -164,8 +164,7 @@
 
 .already-chosen-device .device-option-right-part .icon-shape.close-btn,
 .current-device .device-option-right-part .icon-shape.close-btn,
-.device-option-right-part .icon-shape.bell-btn,
-.settings-device-box-speaker-type, .settings-device-box-mic-type {	/* .audio-output */
+.settings-device-box-speaker-type, .settings-device-box-mic-type {	/* .audio-output .device-option-right-part .icon-shape.bell-btn,*/
 	visibility: visible;
 }
 

@@ -34,7 +34,7 @@ public class ConfigHandler : MonoBehaviour
 
 
 
-    public ProtocolConfig? ReadConfig(string filePath)
+    private ProtocolConfig? ReadConfig(string filePath)
     {
         try
         {
@@ -55,7 +55,7 @@ public class ConfigHandler : MonoBehaviour
         }
     }
 
-    public void WriteConfig(string filePath, ProtocolConfig config)
+    private void WriteConfig(string filePath, ProtocolConfig config)
     {
         try
         {
@@ -66,7 +66,9 @@ public class ConfigHandler : MonoBehaviour
             };
 
             string jsonString = CommonUtilities.SerializeJson(config, settings);
-            // add check for "null"
+            if (String.IsNullOrEmpty(jsonString))
+                return;
+
             File.WriteAllText(filePath, jsonString);
         }
         catch (Exception ex)

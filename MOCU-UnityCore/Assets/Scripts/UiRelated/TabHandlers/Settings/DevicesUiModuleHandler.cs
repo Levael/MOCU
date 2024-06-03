@@ -1,9 +1,10 @@
-﻿using CustomDataStructures;
-using CustomUxmlElements;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+
+using CustomDataStructures;
+using CustomUxmlElements;
 
 
 public class DevicesUiModuleHandler : MonoBehaviour
@@ -31,33 +32,39 @@ public class DevicesUiModuleHandler : MonoBehaviour
             // Input Researcher
             new DeviceParametersSet{
                 uiElementName = "settings-device-box-microphone-researcher",
+                uiFriendlyName = "Mic (here)",
                 chosenDeviceName = null,
                 chosenDeviceVolume = null,
                 dataObjectField_deviceName = "audioInputDeviceName_Researcher",
                 dataObjectField_deviceVolume = "audioInputDeviceVolume_Researcher",
-                listOfOptions = _audioHandler.inputAudioDevices,
+                listOfOptions = null,
+                devicesListType = AudioHandler.DevicesListTypes.Input,
                 isEnabled = true
             },
 
             // Input Participant
             new DeviceParametersSet{
                 uiElementName = "settings-device-box-microphone-participant",
+                uiFriendlyName = "Mic (there)",
                 chosenDeviceName = null,
                 chosenDeviceVolume = null,
                 dataObjectField_deviceName = "audioInputDeviceName_Participant",
                 dataObjectField_deviceVolume = "audioInputDeviceVolume_Participant",
-                listOfOptions = _audioHandler.inputAudioDevices,
+                listOfOptions = null,
+                devicesListType = AudioHandler.DevicesListTypes.Input,
                 isEnabled = true
             },
 
             // Output Researcher
             new DeviceParametersSet{
                 uiElementName = "settings-device-box-speaker-researcher",
+                uiFriendlyName = "Speaker (here)",
                 chosenDeviceName = null,
                 chosenDeviceVolume = null,
                 dataObjectField_deviceName = "audioOutputDeviceName_Researcher",
                 dataObjectField_deviceVolume = "audioOutputDeviceVolume_Researcher",
-                listOfOptions = _audioHandler.outputAudioDevices,
+                listOfOptions = null,
+                devicesListType = AudioHandler.DevicesListTypes.Output,
                 isEnabled = true
             },
         };
@@ -118,23 +125,62 @@ public class DevicesUiModuleHandler : MonoBehaviour
                 // get data from AudioHandler
                 var chosenDeviceName = _audioHandler.GetAudioDeviceName(device.dataObjectField_deviceName);
                 var chosenDeviceVolume = _audioHandler.GetAudioDeviceVolume(device.dataObjectField_deviceVolume) ?? 0f; // if null -> 0
+                var listOfOptions = _audioHandler.GetDevicesList((AudioHandler.DevicesListTypes)device.devicesListType);
 
                 //update data in 'devicesInterlinkedCollection'
                 devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "chosenDeviceName", chosenDeviceName);
                 devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "chosenDeviceVolume", chosenDeviceVolume);
+                devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "listOfOptions", listOfOptions);
 
                 // update ui
                 _uiReference.GetElement(device.uiElementName).Q<CustomSlider>().value = (float)chosenDeviceVolume;
-                // todo: color label if chosenDeviceName == null            <-- HERE
+                if (String.IsNullOrEmpty(chosenDeviceName))
+                    SetDeviceCardStatus(device, DeviceCardStatus.NotChosen);
+                if (device.listOfOptions == null || device.listOfOptions.Count == 0)
+                    SetDeviceCardStatus(device, DeviceCardStatus.Error);
+                else
+                    SetDeviceCardStatus(device, DeviceCardStatus.Ready);
 
-                // debug log console
-                //print($"chosenDeviceName: {chosenDeviceName}. device.chosenDeviceName: {device.chosenDeviceName}");
-                //print($"chosenDeviceVolume: {chosenDeviceVolume}. device.chosenDeviceVolume: {device.chosenDeviceVolume}");
+
             }
         }
         catch (Exception ex)
         {
             Debug.LogError($"Error in UpdateDevicesCards: {ex}");
+        }
+    }
+
+    private void FillDeviceOptions(DeviceParametersSet deviceParametersSet)
+    {
+        var devicesList = _uiReference.GetElement("settings-devices-choose-device-window").Q<ScrollView>();
+        devicesList.Clear();
+
+        print($"listOfOptions: {deviceParametersSet.listOfOptions.Count}; deviceName: {deviceParametersSet.chosenDeviceName}");
+
+        foreach (var option in deviceParametersSet.listOfOptions)
+        {
+            print($"FillDeviceOptions: {option}");
+
+            var instance = chooseDeviceRowTemplate.CloneTree();
+            instance.Q<TextElement>(className: "device-option-left-part-text").text = $"Name";  // todo: think about it later (maybe add custom name for device)
+            instance.Q<TextElement>(className: "device-option-full-name").text = option;
+
+            // For output audio devices only
+            if (
+                deviceParametersSet.dataObjectField_deviceName == "audioOutputDeviceName_Researcher" ||
+                deviceParametersSet.dataObjectField_deviceName == "audioOutputDeviceName_Participant"
+            )
+            {
+                var bellIcon = instance.Q<VisualElement>(className: "bell-btn");
+
+                bellIcon.RegisterCallback<ClickEvent>(SendTestSoundToAudioOutputDevice);
+                bellIcon.style.visibility = Visibility.Visible;
+            }
+
+            instance.Q<VisualElement>(className: "device-option-full-name").RegisterCallback<ClickEvent>(ChooseThisDevice);
+            instance.Q<VisualElement>(className: "close-btn").RegisterCallback<ClickEvent>(DisconnectDevice);
+            
+            devicesList.Add(instance);
         }
     }
 
@@ -145,13 +191,13 @@ public class DevicesUiModuleHandler : MonoBehaviour
     }
 
     // in DeviceModule to show if a device doesn't work properly (label color)
-    private void SetDeviceCardStatus(string uiElementName, DeviceCardStatus status)
+    private void SetDeviceCardStatus(DeviceParametersSet deviceParametersSet, DeviceCardStatus status)
     {
 
     }
 
     // in DeviceOptionsModule to differ between currently chosen device and chosen by someone else (colorful dot before line)
-    private void SetDeviceOptionStatus(VisualElement uiElement, DeviceOptionStatus status)
+    private void SetDeviceOptionStatus(DeviceParametersSet deviceParametersSet, DeviceOptionStatus status)
     {
 
     }
@@ -159,7 +205,7 @@ public class DevicesUiModuleHandler : MonoBehaviour
     private void WeelSoundChange(WheelEvent evt)
     {
         var parentName = ((VisualElement)evt.currentTarget).name;
-        var slider = _uiReference.GetElement(parentName).Q<CustomUxmlElements.CustomSlider>();
+        var slider = _uiReference.GetElement(parentName).Q<CustomSlider>();
         slider.value += evt.delta.y > 0 ? -2 : +2;
     }
 
@@ -215,36 +261,9 @@ public class DevicesUiModuleHandler : MonoBehaviour
         // if it's a speaker -- show its volume slider (not only while :hover)
         var slider = clickedDeviceBox.Q<CustomUxmlElements.CustomSlider>();
         if (slider != null) slider.style.display = DisplayStyle.Flex;
-        // not here; slider.value = 10;
 
-        // local root
-        var devicesList = _uiReference.GetElement("settings-devices-choose-device-window").Q<ScrollView>();
-
-        // Clear devices list
-        devicesList.Clear();
-
-        // Fill devices list
-        for (int i = 0; i < 1; i++)
-        {
-            // "audio-output" class is to show "bell icon"
-
-            // change later: check if it speaker (currently mic passes too)
-            var instance = chooseDeviceRowTemplate.CloneTree();
-            instance.AddToClassList("current-device");
-            instance.Q<TextElement>(className: "device-option-left-part-text").text = $"Device 1";
-            instance.Q<TextElement>(className: "device-option-full-name").text = $"Speakers (Realtek High Definition Audio)";
-            instance.Q<VisualElement>(className: "bell-btn").RegisterCallback<ClickEvent>(SendTestSoundToAudioOutputDevice);
-            instance.Q<VisualElement>(className: "close-btn").RegisterCallback<ClickEvent>(DisconnectDevice);
-            devicesList.Add(instance);
-
-            var instance2 = chooseDeviceRowTemplate.CloneTree();
-            instance2.AddToClassList("already-chosen-device");
-            instance2.Q<TextElement>(className: "device-option-left-part-text").text = $"Device 2";
-            instance2.Q<TextElement>(className: "device-option-full-name").text = $"Headphones (Rift Audio)";
-            instance2.Q<VisualElement>(className: "bell-btn").RegisterCallback<ClickEvent>(SendTestSoundToAudioOutputDevice);
-            instance2.Q<VisualElement>(className: "close-btn").RegisterCallback<ClickEvent>(DisconnectDevice);
-            devicesList.Add(instance2);
-        }
+        print(clickedDeviceBox.Q<TextElement>(className: "settings-device-box-text").text);
+        FillDeviceOptions(devicesInterlinkedCollection[clickedDeviceBox.Q<TextElement>(className: "settings-device-box-text").text]);
     }
 
     private void CloseDeviceBoxParameters(ClickEvent clickEvent)
@@ -282,7 +301,19 @@ public class DevicesUiModuleHandler : MonoBehaviour
 
     private void DisconnectDevice(ClickEvent clickEvent)
     {
-        Debug.Log($"close btn {((VisualElement)clickEvent.currentTarget).parent.parent.Q<TextElement>(className: "device-option-full-name").text}");
+        // 'path' look at 'DeviceOptionModule.uxml'
+        var deviceName = ((VisualElement)clickEvent.currentTarget).parent.parent.Q<TextElement>(className: "device-option-full-name").text;
+
+        var deviceParametersSet = devicesInterlinkedCollection[deviceName];
+        deviceParametersSet.chosenDeviceName = null;
+
+        Debug.Log($"close btn {((VisualElement)clickEvent.currentTarget).parent.parent.Q<TextElement>(className: "device-option-full-name").text}; deviceName: {deviceName}");
+    }
+
+    private void ChooseThisDevice(ClickEvent clickEvent)
+    {
+        var deviceName = ((TextElement)clickEvent.currentTarget).text;
+        Debug.Log($"Func: ChooseThisDevice; deviceName: {deviceName}");
     }
 }
 
@@ -293,6 +324,9 @@ public class DeviceParametersSet
 {
     [CanBeKey(true)]
     public string uiElementName { get; set; }
+
+    [CanBeKey(true)]
+    public string uiFriendlyName { get; set; }
 
     [CanBeKey(true)]
     public string? chosenDeviceName { get; set; }
@@ -311,6 +345,9 @@ public class DeviceParametersSet
     public List<string>? listOfOptions { get; set; }
 
     [CanBeKey(false)]
+    public object? devicesListType { get; set; }
+
+    [CanBeKey(false)]
     public bool? isEnabled { get; set; }
 }
 
@@ -320,7 +357,8 @@ public enum DeviceCardStatus
     Disabled,           // can't be chosen
     Connecting,         // in the process of connecting
     NotChosen,          // when the value is null
-    Error               // failed to connect or disconnected during runtime (for any reason)
+    Error,              // failed to connect or disconnected during runtime (for any reason)
+    Warning             // If sound is too high or smth like that
 }
 
 public enum DeviceOptionStatus

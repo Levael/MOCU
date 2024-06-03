@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 
 using DaemonsNamespace.InterprocessCommunication;
+using Newtonsoft.Json;
 
 
 
@@ -91,15 +92,15 @@ namespace AudioControl {
     /// </summary>
     public class AudioDevicesInfo
     {
-        public string? audioOutputDeviceName_Researcher;
-        public string? audioOutputDeviceName_Participant;
-        public string? audioInputDeviceName_Researcher;
-        public string? audioInputDeviceName_Participant;
+        public string?  audioOutputDeviceName_Researcher;
+        public string?  audioOutputDeviceName_Participant;
+        public string?  audioInputDeviceName_Researcher;
+        public string?  audioInputDeviceName_Participant;
 
-        public float? audioOutputDeviceVolume_Researcher;
-        public float? audioOutputDeviceVolume_Participant;
-        public float? audioInputDeviceVolume_Researcher;
-        public float? audioInputDeviceVolume_Participant;
+        public float?   audioOutputDeviceVolume_Researcher  = 50;
+        public float?   audioOutputDeviceVolume_Participant = 50;
+        public float?   audioInputDeviceVolume_Researcher   = 70;
+        public float?   audioInputDeviceVolume_Participant  = 70;
     }
 
     public class AudioDevicesLists

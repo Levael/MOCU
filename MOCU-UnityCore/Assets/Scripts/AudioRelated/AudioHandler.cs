@@ -3,22 +3,19 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
+using System.Linq;
 
 using AudioControl;
 using DaemonsNamespace.InterprocessCommunication;
 using UnityDaemonsCommon;
-using Newtonsoft.Json.Linq;
-using System.Linq;
 
 
-public class AudioHandler : MonoBehaviour
+public partial class AudioHandler : MonoBehaviour
 {
-    #region PUBLIC FIELDS
-    public StateTracker stateTracker;
-    public AudioDevicesInfo audioDevicesInfo;
-    #endregion PUBLIC FIELDS
-
     #region PRIVATE FIELDS
+    private AudioDevicesInfo audioDevicesInfo;
+
     private NamedPipeClient namedPipeClient;
     private Process audioControlProcess;
     private string namedPipeName;
@@ -116,65 +113,7 @@ public class AudioHandler : MonoBehaviour
 
     #endregion MANDATORY STANDARD FUNCTIONALITY
 
-    #region PUBLIC METHODS
-
-    public string? GetAudioDeviceName(string fieldName)
-    {
-        return audioDevicesInfo.GetType().GetField(fieldName)?.GetValue(audioDevicesInfo).ToString();
-    }
-    public bool? SetAudioDeviceName(string fieldName, string deviceName)
-    {
-        if (String.IsNullOrEmpty(fieldName))
-        {
-            UnityEngine.Debug.LogError($"The device name is incorrect: {fieldName}");
-            return false;
-        }
-
-        audioDevicesInfo.GetType().GetField(fieldName)?.SetValue(audioDevicesInfo, deviceName);
-        return true;
-    }
-    public float? GetAudioDeviceVolume(string fieldName)
-    {
-        var answer = audioDevicesInfo.GetType().GetField(fieldName)?.GetValue(audioDevicesInfo);
-        if (answer == null)
-            return null;
-        else
-            return (float?)answer;
-    }
-    public bool? SetAudioDeviceVolume(string fieldName, float? deviceVolume)
-    {
-        if (String.IsNullOrEmpty(fieldName))
-        {
-            UnityEngine.Debug.LogError($"The device name is incorrect: {fieldName}");
-            return false;
-        }
-
-        var linkToVolume = audioDevicesInfo.GetType().GetField(fieldName);
-
-        if (deviceVolume < 0f || deviceVolume > 100f || deviceVolume == null)
-        {
-            UnityEngine.Debug.LogError($"The device volume is incorrect: {deviceVolume}");
-            return false;
-        }
-
-        if ((float)linkToVolume.GetValue(audioDevicesInfo) == deviceVolume)
-        {
-            UnityEngine.Debug.LogWarning($"Same volume");
-            return false;
-        }
-
-        linkToVolume.SetValue(audioDevicesInfo, deviceVolume);
-        return true;
-    }
-
-
-
-    public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")    // todo: move 'audioFileName' to config
-    {
-        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new PlayAudioFile_Command(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
-    }
-
-    #endregion PUBLIC METHODS
+    
 
     #region PRIVATE METHODS
 
@@ -203,7 +142,6 @@ public class AudioHandler : MonoBehaviour
         catch
         {
             stateTracker.UpdateSubState("StartAudioProcess", false);
-            //_experimentTabHandler.PrintToWarnings("Failed to 'StartAudioControlProcess'");
             CloseConnection($"Audio connection closed. Failed to 'StartAudioControlProcess'");
         }
     }
@@ -334,9 +272,17 @@ public class AudioHandler : MonoBehaviour
     {
         //_configHandler.UpdateSubConfig(audioDevicesInfo);                     // if all ok -- server returns null (figure out how to handle half-errors)
         // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
+        print($"inputAudioDevices: {inputAudioDevices.Count}");
+        print($"outputAudioDevices: {outputAudioDevices.Count}");
         _settingsTabHandler.UpdateDevicesCards();
     }
 
 
     #endregion PRIVATE METHODS
+
+    public enum DevicesListTypes
+    {
+        Output,
+        Input
+    }
 }
