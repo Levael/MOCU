@@ -12,7 +12,7 @@ public partial class AudioHandler : MonoBehaviour
 
 
 
-    public List<string> GetDevicesList(DevicesListTypes type)
+    /*public List<string> GetDevicesList(DevicesListTypes type)
     {
         if (type == DevicesListTypes.Input)
             return inputAudioDevices;
@@ -20,16 +20,18 @@ public partial class AudioHandler : MonoBehaviour
             return outputAudioDevices;
         else
             throw new Exception("DevicesListTypes is unknown or wrong");
-    }
+    }*/
+
+    // todo: maybe send AudioDataCrossClassesPacket
     public AudioDevicesInfo GetAudioDevicesInfo()
     {
         return audioDevicesInfo;
     }
 
-    public string? GetAudioDeviceName(string fieldName)
+    /*public string? GetAudioDeviceName(string fieldName)
     {
         return audioDevicesInfo.GetType().GetField(fieldName)?.GetValue(audioDevicesInfo).ToString();
-    }
+    }*/
     public bool? SetAudioDeviceName(string fieldName, string deviceName)
     {
         if (String.IsNullOrEmpty(fieldName))
@@ -41,14 +43,14 @@ public partial class AudioHandler : MonoBehaviour
         audioDevicesInfo.GetType().GetField(fieldName)?.SetValue(audioDevicesInfo, deviceName);
         return true;
     }
-    public float? GetAudioDeviceVolume(string fieldName)
+    /*public float? GetAudioDeviceVolume(string fieldName)
     {
         var answer = audioDevicesInfo.GetType().GetField(fieldName)?.GetValue(audioDevicesInfo);
         if (answer == null)
             return null;
         else
             return (float?)answer;
-    }
+    }*/
     public bool? SetAudioDeviceVolume(string fieldName, float? deviceVolume)
     {
         if (String.IsNullOrEmpty(fieldName))
@@ -80,4 +82,18 @@ public partial class AudioHandler : MonoBehaviour
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new PlayAudioFile_Command(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
     }
 
+}
+
+public class AudioDataCrossClassesPacket
+{
+    public readonly AudioDevicesInfo audioDevicesInfo;
+    public readonly List<string> inputAudioDevices;
+    public readonly List<string> outputAudioDevices;
+
+    public AudioDataCrossClassesPacket(AudioDevicesInfo audioDevicesInfo, List<string> inputAudioDevices, List<string> outputAudioDevices)
+    {
+        this.audioDevicesInfo = audioDevicesInfo;
+        this.inputAudioDevices = inputAudioDevices;
+        this.outputAudioDevices = outputAudioDevices;
+    }
 }

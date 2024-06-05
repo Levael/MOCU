@@ -224,7 +224,7 @@ public partial class AudioHandler : MonoBehaviour
         }
     }
 
-
+    // todo: think about path that external program can access to. also thing about an option to change audio files from UI dynamically
     private void SendConfigurationDetails(ResponseFromServer response)
     {
         namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new SendConfigs_Command(
@@ -272,9 +272,14 @@ public partial class AudioHandler : MonoBehaviour
     {
         //_configHandler.UpdateSubConfig(audioDevicesInfo);                     // if all ok -- server returns null (figure out how to handle half-errors)
         // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
-        print($"inputAudioDevices: {inputAudioDevices.Count}");
-        print($"outputAudioDevices: {outputAudioDevices.Count}");
-        _settingsTabHandler.UpdateDevicesCards();
+        //print($"inputAudioDevices: {inputAudioDevices.Count}");
+        //print($"outputAudioDevices: {outputAudioDevices.Count}");
+
+        _settingsTabHandler.UpdateAudioDevices(new AudioDataCrossClassesPacket(
+            audioDevicesInfo: audioDevicesInfo,
+            inputAudioDevices: inputAudioDevices,
+            outputAudioDevices: outputAudioDevices
+        ));
     }
 
 
