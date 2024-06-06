@@ -1,9 +1,10 @@
-﻿// add: AbstractManager, command, response, processor
+﻿using System.Collections.Generic;
+using System;
 
 using DaemonsNamespace.Common;
-using System.Collections.Generic;
-using System;
 using UnityDaemonsCommon;
+using CustomDataStructures;
+
 
 namespace DaemonsNamespace.InterprocessCommunication
 {

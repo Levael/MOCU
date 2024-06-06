@@ -117,6 +117,7 @@ public partial class AudioHandler : MonoBehaviour
 
     #region PRIVATE METHODS
 
+    // todo: make abstract for this function (in interprocessCommunication)
     private void StartAudioControlProcess()
     {
         try

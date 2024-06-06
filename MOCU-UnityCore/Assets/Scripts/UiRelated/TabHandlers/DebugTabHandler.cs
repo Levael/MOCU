@@ -84,6 +84,7 @@ public class DebugTabHandler : MonoBehaviour
         sb.AppendLine($"");
         sb.AppendLine($"GC Memory: {_gcMemoryRecorder.LastValue / (1024 * 1024)} MB");
         sb.AppendLine($"System Memory: {_systemMemoryRecorder.LastValue / (1024 * 1024)} MB");
+        sb.AppendLine($"Time from start: {(Time.realtimeSinceStartup / 60):F0} min");
         _statsText = sb.ToString();
 
         return _statsText;
