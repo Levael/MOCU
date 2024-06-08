@@ -1,27 +1,6 @@
 using System;
 
-/// <summary>
-/// Status of device connection. May be 'Connected', 'Disconnected' or 'InProgress'
-/// </summary>
-/*public enum DeviceConnectionStatus
-{
-    Connected,
-    Disconnected,
-    InProgress,
-    NotRelevant
-}*/
 
-/*public class DeviceInfo
-{
-    public DeviceInfo(string name, DeviceConnectionStatus status)
-    {
-        Status = status;
-        Name = name;
-    }
-
-    public DeviceConnectionStatus Status { get; set; }
-    public string Name { get; set; }
-}*/
 
 /// <summary>
 /// Just to know on what participant pressed

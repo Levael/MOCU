@@ -8,7 +8,9 @@ using CustomUxmlElements;
 using AudioControl;
 
 
-// doesn't have methods that call outside, it can only 'accept' (todo: remake comment later)
+// add to documentation: the only update this class can get are from outside. it only sends what is wanted to be changed
+
+
 public class DevicesUiModuleHandler : MonoBehaviour
 {
     public InterlinkedCollection<DeviceParametersSet> devicesInterlinkedCollection;         // connects data objects with UI stuff
@@ -154,6 +156,8 @@ public class DevicesUiModuleHandler : MonoBehaviour
             Debug.LogError($"Error in UpdateAudioDevicesData: {ex}");
         }
     }
+
+    // HERE <--
     
     /*private void UpdateAudioDevicesUi()
     {

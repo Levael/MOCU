@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-using InterprocessCommunication;
+using DaemonsNamespace.InterprocessCommunication;
 
 
 class DaemonProcess
@@ -9,8 +9,8 @@ class DaemonProcess
     public string namedPipeName;
     public bool isHidden;
 
-    public bool processIsOk = false;
-    public bool connectionIsOk = false;
+    public bool isProcessOk = false;
+    public bool isConnectionOk = false;
 
     public NamedPipeClient namedPipeClient;
     public Process process;

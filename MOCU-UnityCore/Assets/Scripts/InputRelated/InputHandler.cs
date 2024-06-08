@@ -29,8 +29,8 @@ public class InputHandler : MonoBehaviour
 
     void Awake()
     {
-        GamepadConnectionStatus = new StateTracker(new[] { "isConnected" });
-        XRConnectionStatus = new StateTracker(new[] { "isConnected", "iOnHead" });
+        GamepadConnectionStatus = new StateTracker(typeof(AnswerDevice_Statuses));
+        XRConnectionStatus = new StateTracker(typeof(VrHeadset_Statuses));
 
         _inputLogic     = GetComponent<InputLogic>();
         _cedrus         = GetComponent<Cedrus>();
@@ -167,13 +167,13 @@ public class InputHandler : MonoBehaviour
             try
             {
                 if (Gamepad.current?.enabled ?? false)
-                    GamepadConnectionStatus.UpdateSubState("isConnected", true);
+                    GamepadConnectionStatus.UpdateSubState(AnswerDevice_Statuses.isConnected, true);
                 else
-                    GamepadConnectionStatus.UpdateSubState("isConnected", false);
+                    GamepadConnectionStatus.UpdateSubState(AnswerDevice_Statuses.isConnected, false);
             }
             catch
             {
-                GamepadConnectionStatus.UpdateSubState("isConnected", false);
+                GamepadConnectionStatus.UpdateSubState(AnswerDevice_Statuses.isConnected, false);
             }
 
             yield return new WaitForSeconds(checkConnectionTimeInterval);
@@ -191,24 +191,24 @@ public class InputHandler : MonoBehaviour
 
                 if (subsystems.Count != 1)
                 {
-                    XRConnectionStatus.UpdateSubState("isConnected", false);
-                    XRConnectionStatus.UpdateSubState("iOnHead", false);
+                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.isConnected, false);
+                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.iOnHead, false);
                 }
                 else if (subsystems[0].running && IsHeadsetWorn())
                 {
-                    XRConnectionStatus.UpdateSubState("isConnected", true);
-                    XRConnectionStatus.UpdateSubState("iOnHead", true);
+                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.isConnected, true);
+                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.iOnHead, true);
                 }
                 else
                 {
-                    XRConnectionStatus.UpdateSubState("isConnected", true);
-                    XRConnectionStatus.UpdateSubState("iOnHead", null);     // 'null' and not 'false' because I need status to be yellow, not red (half working)
+                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.isConnected, true);
+                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.iOnHead, null);     // 'null' and not 'false' because I need status to be yellow, not red (half working)
                 }
             }
             catch
             {
-                XRConnectionStatus.UpdateSubState("isConnected", false);
-                XRConnectionStatus.UpdateSubState("iOnHead", false);
+                XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.isConnected, false);
+                XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.iOnHead, false);
 
                 Debug.LogError("Crash in 'CheckXRConnection'");
             }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ public class StatusesHandler : MonoBehaviour
     private ExperimentTabHandler _experimentTabHandler;
 
     private Dictionary<string, (StateTracker stateTracker, VisualElement visualElement)> _deviceNameToUxmlBlockMap;
-    private Dictionary<StateTracker.DeviceConnectionStatus, string> _deviceConnectionStatusToColorMap;
+    private Dictionary<DeviceConnection_Statuses, string> _deviceConnectionStatusToColorMap;
 
 
 
@@ -43,11 +44,11 @@ public class StatusesHandler : MonoBehaviour
         };
 
         _deviceConnectionStatusToColorMap = new()
-        {                                                                       // todo: try to read vars from uss (currently not possible)
-            { StateTracker.DeviceConnectionStatus.Connected,     "#5580ED" },   // blue
-            { StateTracker.DeviceConnectionStatus.Disconnected,  "#FC5858" },   // red
-            { StateTracker.DeviceConnectionStatus.InProgress,    "#FCBA58" },   // yellow
-            { StateTracker.DeviceConnectionStatus.NotRelevant,   "#9A9B9B" }    // gray
+        {
+            { DeviceConnection_Statuses.Connected,     "#5580ED" },   // blue
+            { DeviceConnection_Statuses.Disconnected,  "#FC5858" },   // red
+            { DeviceConnection_Statuses.InProgress,    "#FCBA58" },   // yellow
+            { DeviceConnection_Statuses.NotRelevant,   "#9A9B9B" }    // gray
         };
     }
 
@@ -94,24 +95,25 @@ public class StatusesHandler : MonoBehaviour
 /// </summary>*/
 public class StateTracker
 {
-    private Dictionary<string, bool?> _subStates;
-    // 'status' here is used for final result (DeviceConnectionStatus), and 'state' -- for boolean values
-    public DeviceConnectionStatus Status { get; private set; }
+    public DeviceConnection_Statuses Status { get; private set; }
+
+    private Dictionary<Enum, bool?> _subStates;    // 'T' here is used for final result (DeviceConnection_Statuses), and 'state' -- for boolean values
+    
 
 
-    public StateTracker(IEnumerable<string> subStateNames)
+    public StateTracker(Type statusesEnumType)
     {
-        Status = DeviceConnectionStatus.NotRelevant;
+        Status = DeviceConnection_Statuses.NotRelevant;
 
         _subStates = new();
-        foreach (var subStateName in subStateNames)
+        foreach (var subStateName in Enum.GetValues(statusesEnumType))
         {
-            _subStates.Add(subStateName, null); 
+            _subStates.Add((Enum)subStateName, null); 
         }
     }
 
 
-    public void UpdateSubState(string subStateName, bool? subStateValue)
+    public void UpdateSubState(Enum subStateName, bool? subStateValue)
     {
         if (!_subStates.ContainsKey(subStateName))
         {
@@ -130,35 +132,27 @@ public class StateTracker
     {
         if (_subStates.Values.All(state => state == null))
         {
-            SetStatus(DeviceConnectionStatus.NotRelevant);
+            SetStatus(DeviceConnection_Statuses.NotRelevant);
         }
         else if (_subStates.Values.Any(state => state == false))
         {
-            SetStatus(DeviceConnectionStatus.Disconnected);
+            SetStatus(DeviceConnection_Statuses.Disconnected);
         }
         else if (_subStates.Values.All(state => state == true))
         {
-            SetStatus(DeviceConnectionStatus.Connected);
+            SetStatus(DeviceConnection_Statuses.Connected);
         }
         else
         {
-            SetStatus(DeviceConnectionStatus.InProgress);
+            SetStatus(DeviceConnection_Statuses.InProgress);
         }
     }
 
-    private void SetStatus(DeviceConnectionStatus newStatus)
+    private void SetStatus(DeviceConnection_Statuses newStatus)
     {
         if (Status != newStatus)
         {
             Status = newStatus;
         }
-    }
-
-    public enum DeviceConnectionStatus
-    {
-        Connected,
-        Disconnected,
-        InProgress,
-        NotRelevant
     }
 }

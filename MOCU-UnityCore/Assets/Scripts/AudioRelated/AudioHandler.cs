@@ -15,22 +15,21 @@ public partial class AudioHandler : MonoBehaviour
 {
     #region PRIVATE FIELDS
     private AudioDevicesInfo audioDevicesInfo;
+    private List<string> inputAudioDevices;
+    private List<string> outputAudioDevices;
 
-    private NamedPipeClient namedPipeClient;
-    private Process audioControlProcess;
-    private string namedPipeName;
+    private DaemonProcess _daemon;
+    private string executableFileName;
 
     private UiHandler _uiHandler;
     private ConfigHandler _configHandler;
     private ExperimentTabHandler _experimentTabHandler;
     private SettingsTabHandler _settingsTabHandler;
     private InputLogic _inputLogic;
-
-    public List<string> inputAudioDevices;
-    public List<string> outputAudioDevices;
+    private DaemonsHandler _daemonsHandler;
 
     private Dictionary<string, string> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
-    private Dictionary<string, (string? subState, Action<ResponseFromServer?> action)> CommandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
+    private Dictionary<string, (AudioHandler_Statuses? subState, Action<ResponseFromServer?> action)> CommandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
     #endregion PRIVATE FIELDS
 
 
@@ -40,7 +39,7 @@ public partial class AudioHandler : MonoBehaviour
 
     void Awake()
     {
-        namedPipeName = "AudioPipe";    // todo: read it from config (private)
+        executableFileName = "AudioControl";    // todo: read it from config (private)
 
         _uiHandler = GetComponent<UiHandler>();
         _configHandler = GetComponent<ConfigHandler>();
@@ -48,7 +47,9 @@ public partial class AudioHandler : MonoBehaviour
         _settingsTabHandler = GetComponent<SettingsTabHandler>();
         _inputLogic = GetComponent<InputLogic>();
 
-        stateTracker = new StateTracker(new[] { "StartAudioProcess", "StartNamedPipeConnection", "SetConfigs", "RequestAudioDevices", "SendAudioDevices"});
+        _daemonsHandler = GetComponent<DaemonsHandler>();
+
+        stateTracker = new StateTracker(typeof(AudioHandler_Statuses));
 
         inputAudioDevices = new();
         outputAudioDevices = new();
@@ -63,10 +64,10 @@ public partial class AudioHandler : MonoBehaviour
         // todo: rename action to "{commandName}_commandHandler"
         CommandsToExecuteAccordingToServerResponse = new()
         {
-            { "TryConnectToServer_Command",         (subState: "StartNamedPipeConnection",  action: SendConfigurationDetails) },
-            { "SendConfigs_Command",                (subState: "SetConfigs",                action: RequestAudioDevices) },
-            { "GetAudioDevices_Command",            (subState: "RequestAudioDevices",       action: SendAudioDevices) },
-            { "UpdateDevicesParameters_Command",    (subState: "SendAudioDevices",          action: UpdateClient) }
+            { "TryConnectToServer_Command",         (subState: AudioHandler_Statuses.StartNamedPipeConnection,  action: SendConfigurationDetails) },
+            { "SendConfigs_Command",                (subState: AudioHandler_Statuses.SetConfigs,                action: RequestAudioDevices) },
+            { "GetAudioDevices_Command",            (subState: AudioHandler_Statuses.RequestAudioDevices,       action: SendAudioDevices) },
+            { "UpdateDevicesParameters_Command",    (subState: AudioHandler_Statuses.SendAudioDevices,          action: UpdateClient) }
         };
 
         // Reading from config Audio Devices Data
@@ -75,40 +76,41 @@ public partial class AudioHandler : MonoBehaviour
 
         // Event listeners for intercom
         _inputLogic.startOutgoingIntercomStream += () => {
-            namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ResearcherToParticipant_Command"]);
+            _daemon.namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ResearcherToParticipant_Command"]);
         };
 
         _inputLogic.stopOutgoingIntercomStream += () => {
-            namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StopIntercomStream_ResearcherToParticipant_Command"]);
+            _daemon.namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StopIntercomStream_ResearcherToParticipant_Command"]);
         };
 
         _inputLogic.startIncomingIntercomStream += () => {
-            namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ParticipantToResearcher_Command"]);
+            _daemon.namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ParticipantToResearcher_Command"]);
         };
 
         _inputLogic.stopIncomingIntercomStream += () => {
-            namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StopIntercomStream_ParticipantToResearcher_Command"]);
+            _daemon.namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StopIntercomStream_ParticipantToResearcher_Command"]);
         };
     }
 
-    void Start()
+    async void Start()
     {
-        StartAudioControlProcess();
-        TryConnectToServer();
+        _daemon = await _daemonsHandler.InitAndRunDaemon(executableFileName, isHidden: false);
+
+        stateTracker.UpdateSubState(AudioHandler_Statuses.StartAudioProcess, _daemon.isProcessOk);
+        stateTracker.UpdateSubState(AudioHandler_Statuses.StartNamedPipeConnection, _daemon.isConnectionOk);
+
+        if (_daemon.isProcessOk && _daemon.isConnectionOk)
+            SendConfigurationDetails();
+        else
+            CloseConnection("AudioHandler / Start : daemon error");
     }
 
     void Update()
     {
-        if (namedPipeClient == null) return;    // in case it is still not ready
+        if (_daemon == null) return;    // in case it is still not ready
 
         ProccessInputMessagesQueue();
         ProccessInnerMessagesQueue();
-    }
-
-    void OnDestroy()
-    {
-        try { namedPipeClient?.Destroy();   } catch { }
-        try { audioControlProcess?.Kill();  } catch { }
     }
 
     #endregion MANDATORY STANDARD FUNCTIONALITY
@@ -117,66 +119,17 @@ public partial class AudioHandler : MonoBehaviour
 
     #region PRIVATE METHODS
 
-    // todo: make abstract for this function (in interprocessCommunication)
-    private void StartAudioControlProcess()
-    {
-        try
-        {
-            string relativeExternalAppPath = @"AudioControl.exe";
-            string fullExternalAppPath = Path.Combine(Application.streamingAssetsPath, relativeExternalAppPath);
-            bool isProcessHidden = false;
-
-            ProcessStartInfo startInfo = new ProcessStartInfo()
-            {
-                FileName = fullExternalAppPath,
-                Arguments = $"{Process.GetCurrentProcess().Id} {namedPipeName} {isProcessHidden}", // takes string where spaces separate arguments
-                UseShellExecute = !isProcessHidden,
-                RedirectStandardOutput = false,
-                CreateNoWindow = isProcessHidden
-            };
-
-            audioControlProcess = new Process() { StartInfo = startInfo };
-            audioControlProcess.Start();
-
-            stateTracker.UpdateSubState("StartAudioProcess", true);
-        }
-        catch
-        {
-            stateTracker.UpdateSubState("StartAudioProcess", false);
-            CloseConnection($"Audio connection closed. Failed to 'StartAudioControlProcess'");
-        }
-    }
-
-    private async void TryConnectToServer()
-    {
-        try
-        {
-            namedPipeClient = new NamedPipeClient(namedPipeName);
-            bool result = await namedPipeClient.StartAsync();
-            if (result == false) throw new Exception();
-
-            namedPipeClient.inputMessagesQueue.Enqueue(CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "TryConnectToServer_Command", hasError: false)));
-            // not a real command (not a class in 'AudioControlCommunicationModels' but more for homogeneity of 'connection to server steps')
-        }
-        catch
-        {
-            namedPipeClient.inputMessagesQueue.Enqueue(CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "TryConnectToServer_Command", hasError: true)));
-            // not a real command (not a class in 'AudioControlCommunicationModels' but more for homogeneity of 'connection to server steps')
-            CloseConnection($"Audio connection closed. Failed to 'TryConnectToServer'");
-        }
-    }
-
     private void CloseConnection(string message)
     {
         _experimentTabHandler.PrintToWarnings(message);
-        OnDestroy();
+        _daemonsHandler.KillDaemon(_daemon);
     }
 
 
 
     private void ProccessInputMessagesQueue()
     {
-        while (namedPipeClient.inputMessagesQueue.TryDequeue(out string message))
+        while (_daemon.namedPipeClient.inputMessagesQueue.TryDequeue(out string message))
         {
             try
             {
@@ -210,32 +163,32 @@ public partial class AudioHandler : MonoBehaviour
 
     private void ProccessInnerMessagesQueue()
     {
-        while (namedPipeClient.innerMessagesQueue.TryDequeue(out (string messageText, InnerMessageType messageType) message))
+        while (_daemon.namedPipeClient.innerMessagesQueue.TryDequeue(out (string messageText, InnerMessageType messageType) message))
         {
             if (message.messageType == InnerMessageType.Info)
             {
-                //_uiHandler.PrintToInfo(message.messageText);
+                //_experimentTabHandler.PrintToInfo(message.messageText);
             }
 
             if (message.messageType == InnerMessageType.Error)
             {
                 CloseConnection($"Audio connection closed. {message.messageText}");
-                stateTracker.UpdateSubState("StartNamedPipeConnection", false);
+                stateTracker.UpdateSubState(AudioHandler_Statuses.StartNamedPipeConnection, false);
             }
         }
     }
 
     // todo: think about path that external program can access to. also thing about an option to change audio files from UI dynamically
-    private void SendConfigurationDetails(ResponseFromServer response)
+    private void SendConfigurationDetails(ResponseFromServer response = null)
     {
-        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new SendConfigs_Command(
+        _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new SendConfigs_Command(
             unityAudioDirectory: Path.Combine(Application.dataPath, "Audio")
         )));
     }
     
     private void RequestAudioDevices(ResponseFromServer response)
     {
-        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: false)));
+        _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: false)));
     }
 
     private void ValidateAndUpdateDevicesInfo(ResponseFromServer response)
@@ -263,7 +216,7 @@ public partial class AudioHandler : MonoBehaviour
     private void SendAudioDevices(ResponseFromServer response)
     {
         ValidateAndUpdateDevicesInfo(response);
-        namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UpdateDevicesParameters_Command(audioDevicesInfo)));
+        _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UpdateDevicesParameters_Command(audioDevicesInfo)));
     }
 
     /// <summary>
@@ -285,10 +238,4 @@ public partial class AudioHandler : MonoBehaviour
 
 
     #endregion PRIVATE METHODS
-
-    public enum DevicesListTypes
-    {
-        Output,
-        Input
-    }
 }

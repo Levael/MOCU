@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 
-using InterprocessCommunication;
+using DaemonsNamespace.InterprocessCommunication;
 
 #nullable enable
 #pragma warning disable CS8618
@@ -13,13 +13,14 @@ using InterprocessCommunication;
 
 class DaemonsHandler : MonoBehaviour
 {
-    private List<DaemonProcess> _externalDaemonsList;
+    private List<DaemonProcess> _externalDaemonsList = new();
 
     void OnDestroy()
     {
         foreach (var daemon in _externalDaemonsList)
         {
-            KillDaemon(daemon);
+            try { daemon.namedPipeClient?.Destroy(); } catch { }
+            try { daemon.process?.Kill(); } catch { }
         }
     }
 
@@ -35,16 +36,16 @@ class DaemonsHandler : MonoBehaviour
         {
             StartDaemonProcess(daemon);
             await ConnectToServer(daemon);
+            _externalDaemonsList.Add(daemon);
         }
-        catch
+        catch (Exception ex)
         {
-            UnityEngine.Debug.LogError($"couldn't execute 'InitAndRunDaemon' properly for {executableFileName} daemon");
+            UnityEngine.Debug.LogError($"couldn't execute 'InitAndRunDaemon' properly for {executableFileName} daemon. Exception: {ex}");
         }
 
         return daemon;
     }
 
-    
     public void StartDaemonProcess(DaemonProcess daemon)
     {
         try
@@ -60,14 +61,16 @@ class DaemonsHandler : MonoBehaviour
                 CreateNoWindow = daemon.isHidden
             };
 
+            print(startInfo.Arguments);
+
             daemon.process = new Process() { StartInfo = startInfo };
             daemon.process.Start();
 
-            daemon.processIsOk = true;
+            daemon.isProcessOk = true;
         }
         catch
         {
-            daemon.processIsOk = false;
+            daemon.isProcessOk = false;
             throw new Exception();
         }
     }
@@ -76,12 +79,12 @@ class DaemonsHandler : MonoBehaviour
     {
         try
         {
-            var namedPipeClient = new NamedPipeClient(daemon.namedPipeName);
-            daemon.connectionIsOk = await namedPipeClient.StartAsync();
+            daemon.namedPipeClient = new NamedPipeClient(daemon.namedPipeName);
+            daemon.isConnectionOk = await daemon.namedPipeClient.StartAsync();
         }
         catch
         {
-            daemon.connectionIsOk = false;
+            daemon.isConnectionOk = false;
             throw new Exception();
         }
     }
@@ -90,6 +93,8 @@ class DaemonsHandler : MonoBehaviour
     {
         try { daemon.namedPipeClient?.Destroy();    } catch { }
         try { daemon.process?.Kill();               } catch { }
+
+        _externalDaemonsList.Remove(daemon);
     }
 }
 
