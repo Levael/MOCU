@@ -13,23 +13,23 @@ using InterprocessCommunication;
 
 class DaemonsHandler : MonoBehaviour
 {
-    private List<ExternalDaemon> _externalDaemonsList;
+    private List<DaemonProcess> _externalDaemonsList;
 
     void OnDestroy()
     {
         foreach (var daemon in _externalDaemonsList)
         {
-            try { daemon.namedPipeClient?.Destroy(); } catch { }
-            try { daemon.process?.Kill(); } catch { }
+            KillDaemon(daemon);
         }
     }
 
 
+
     /// <param name="executableFileName">executable daemon file name without '.exe'</param>
     /// <param name="isHidden">choose 'false' for debugging purposes</param>
-    public async Task<ExternalDaemon> InitAndRunDaemon(string executableFileName, bool isHidden = true)
+    public async Task<DaemonProcess> InitAndRunDaemon(string executableFileName, bool isHidden = true)
     {
-        var daemon = new ExternalDaemon(executableFileName: executableFileName, isHidden: isHidden);
+        var daemon = new DaemonProcess(executableFileName: executableFileName, isHidden: isHidden);
 
         try
         {
@@ -45,7 +45,7 @@ class DaemonsHandler : MonoBehaviour
     }
 
     
-    public void StartDaemonProcess(ExternalDaemon daemon)
+    public void StartDaemonProcess(DaemonProcess daemon)
     {
         try
         {
@@ -72,7 +72,7 @@ class DaemonsHandler : MonoBehaviour
         }
     }
 
-    public async Task ConnectToServer(ExternalDaemon daemon)
+    public async Task ConnectToServer(DaemonProcess daemon)
     {
         try
         {
@@ -86,26 +86,10 @@ class DaemonsHandler : MonoBehaviour
         }
     }
 
-}
-
-class ExternalDaemon
-{
-    public string executableFileName;
-    public string namedPipeName;
-    public bool isHidden;
-
-    public bool processIsOk = false;
-    public bool connectionIsOk = false;
-
-    public NamedPipeClient namedPipeClient;
-    public Process process;
-
-
-    public ExternalDaemon(string executableFileName, bool isHidden = true)
+    public void KillDaemon(DaemonProcess daemon)
     {
-        this.executableFileName = executableFileName;
-        this.namedPipeName = executableFileName;
-        this.isHidden = isHidden;
+        try { daemon.namedPipeClient?.Destroy();    } catch { }
+        try { daemon.process?.Kill();               } catch { }
     }
 }
 
