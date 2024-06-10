@@ -44,8 +44,8 @@ public class SettingsTabHandler : MonoBehaviour
     {
     }
 
-    public void UpdateAudioDevices(AudioDataCrossClassesPacket parameters)
+    public void UpdateAudioDevices(UnifiedAudioDataPacket parameters)
     {
-        _devicesUiModuleHandler.UpdateAudioDevices(parameters);
+        _devicesUiModuleHandler.ApplyChanges(parameters);
     }
 }

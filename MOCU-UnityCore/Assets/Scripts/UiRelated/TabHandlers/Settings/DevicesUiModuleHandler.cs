@@ -38,9 +38,9 @@ public class DevicesUiModuleHandler : MonoBehaviour
                 uiElementName       = "settings-device-box-microphone-researcher",
                 deviceStatus        = DeviceCardStatus.NotChosen,
 
-                GetDeviceName       = (data) => ((AudioDataCrossClassesPacket)data).audioDevicesInfo.audioInputDeviceName_Researcher,
-                GetDeviceVolume     = (data) => ((AudioDataCrossClassesPacket)data).audioDevicesInfo.audioInputDeviceVolume_Researcher,
-                GetDevicesList      = (data) => ((AudioDataCrossClassesPacket)data).inputAudioDevices,
+                GetDeviceName       = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioInputDeviceName_Researcher,
+                GetDeviceVolume     = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioInputDeviceVolume_Researcher,
+                GetDevicesList      = (data) => ((UnifiedAudioDataPacket)data).inputAudioDevices,
 
                 chosenDeviceName    = null,
                 chosenDeviceVolume  = null,
@@ -52,9 +52,9 @@ public class DevicesUiModuleHandler : MonoBehaviour
                 uiElementName       = "settings-device-box-microphone-participant",
                 deviceStatus        = DeviceCardStatus.NotChosen,
 
-                GetDeviceName       = (data) => ((AudioDataCrossClassesPacket)data).audioDevicesInfo.audioInputDeviceName_Participant,
-                GetDeviceVolume     = (data) => ((AudioDataCrossClassesPacket)data).audioDevicesInfo.audioInputDeviceVolume_Participant,
-                GetDevicesList      = (data) => ((AudioDataCrossClassesPacket)data).inputAudioDevices,
+                GetDeviceName       = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioInputDeviceName_Participant,
+                GetDeviceVolume     = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioInputDeviceVolume_Participant,
+                GetDevicesList      = (data) => ((UnifiedAudioDataPacket)data).inputAudioDevices,
 
                 chosenDeviceName    = null,
                 chosenDeviceVolume  = null,
@@ -66,9 +66,9 @@ public class DevicesUiModuleHandler : MonoBehaviour
                 uiElementName       = "settings-device-box-speaker-researcher",
                 deviceStatus        = DeviceCardStatus.NotChosen,
 
-                GetDeviceName       = (data) => ((AudioDataCrossClassesPacket)data).audioDevicesInfo.audioOutputDeviceName_Researcher,
-                GetDeviceVolume     = (data) => ((AudioDataCrossClassesPacket)data).audioDevicesInfo.audioOutputDeviceVolume_Researcher,
-                GetDevicesList      = (data) => ((AudioDataCrossClassesPacket)data).outputAudioDevices,
+                GetDeviceName       = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioOutputDeviceName_Researcher,
+                GetDeviceVolume     = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioOutputDeviceVolume_Researcher,
+                GetDevicesList      = (data) => ((UnifiedAudioDataPacket)data).outputAudioDevices,
 
                 chosenDeviceName    = null,
                 chosenDeviceVolume  = null,
@@ -123,20 +123,22 @@ public class DevicesUiModuleHandler : MonoBehaviour
         _uiReference.GetElement("settings-devices-update-btn").RegisterCallback<ClickEvent>(UpdateDevices);
     }
 
-    public void UpdateAudioDevices(AudioDataCrossClassesPacket parameters)
+    public void ApplyChanges(UnifiedAudioDataPacket parameters)
     {
         UpdateAudioDevicesData(parameters);
         //UpdateAudioDevicesUi();
     }
 
+    private void UpdateDevices(ClickEvent clickEvent) { }
+
     // Locally
-    private void UpdateAudioDevicesData(AudioDataCrossClassesPacket parameters)
+    private void UpdateAudioDevicesData(UnifiedAudioDataPacket parameters)
     {
         try
         {
             foreach (var device in devicesInterlinkedCollection)
             {
-                // get data from 'AudioDataCrossClassesPacket'
+                // get data from 'UnifiedAudioDataPacket'
                 var chosenDeviceName    = device.GetDeviceName(parameters);
                 var chosenDeviceVolume  = device.GetDeviceVolume(parameters) ?? 0f;
                 var listOfOptions       = device.GetDevicesList(parameters);
@@ -321,8 +323,7 @@ public class DevicesUiModuleHandler : MonoBehaviour
         _uiReference.GetElement("settings-devices-update-btn").style.display = DisplayStyle.None;
     }
 
-    // todo: change name to 'load (down)' or smth else
-    private void UpdateDevices(ClickEvent clickEvent) { }
+    
 
     private void SendTestSoundToAudioOutputDevice(ClickEvent clickEvent)
     {

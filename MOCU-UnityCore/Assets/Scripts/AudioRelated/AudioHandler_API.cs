@@ -8,92 +8,41 @@ using UnityDaemonsCommon;
 
 public partial class AudioHandler : MonoBehaviour
 {
-    public StateTracker stateTracker            { get; private set; }
+    public StateTracker stateTracker { get; private set; }
 
 
-
-    /*public List<string> GetDevicesList(DevicesListTypes type)
+    /// <summary>
+    /// Returns data that client has (since last update).
+    /// May not be the most relevant at the moment. To get most updated one -- call 'RequestAudioDataUpdate' and then 'GetAudioData').
+    /// In case of UI (to get ost apdated data) enough to call 'RequestAudioDataUpdate'. UI update method will be called automatically.
+    /// </summary>
+    public UnifiedAudioDataPacket GetAudioData()
     {
-        if (type == DevicesListTypes.Input)
-            return inputAudioDevices;
-        else if (type == DevicesListTypes.Output)
-            return outputAudioDevices;
-        else
-            throw new Exception("DevicesListTypes is unknown or wrong");
-    }*/
-
-    // todo: maybe send AudioDataCrossClassesPacket
-    public AudioDevicesInfo GetAudioDevicesInfo()
-    {
-        return audioDevicesInfo;
+        return new UnifiedAudioDataPacket(
+            audioDevicesInfo : audioDevicesInfo,
+            inputAudioDevices : inputAudioDevices,
+            outputAudioDevices : outputAudioDevices
+        );
     }
 
-    /*public string? GetAudioDeviceName(string fieldName)
+    /// <summary>
+    /// Sends request to the server. Doesn't get the response, it's done using other logic.
+    /// </summary>
+    public void RequestAudioDataUpdate()
     {
-        return audioDevicesInfo.GetType().GetField(fieldName)?.GetValue(audioDevicesInfo).ToString();
-    }*/
-    public bool? SetAudioDeviceName(string fieldName, string deviceName)
-    {
-        if (String.IsNullOrEmpty(fieldName))
-        {
-            UnityEngine.Debug.LogError($"The device name is incorrect: {fieldName}");
-            return false;
-        }
-
-        audioDevicesInfo.GetType().GetField(fieldName)?.SetValue(audioDevicesInfo, deviceName);
-        return true;
+        //RequestAudioDevices();
+        //_daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: true)));
     }
-    /*public float? GetAudioDeviceVolume(string fieldName)
-    {
-        var answer = audioDevicesInfo.GetType().GetField(fieldName)?.GetValue(audioDevicesInfo);
-        if (answer == null)
-            return null;
-        else
-            return (float?)answer;
-    }*/
-    public bool? SetAudioDeviceVolume(string fieldName, float? deviceVolume)
-    {
-        if (String.IsNullOrEmpty(fieldName))
-        {
-            UnityEngine.Debug.LogError($"The device name is incorrect: {fieldName}");
-            return false;
-        }
 
-        var linkToVolume = audioDevicesInfo.GetType().GetField(fieldName);
-
-        if (deviceVolume < 0f || deviceVolume > 100f || deviceVolume == null)
-        {
-            UnityEngine.Debug.LogError($"The device volume is incorrect: {deviceVolume}");
-            return false;
-        }
-
-        if ((float)linkToVolume.GetValue(audioDevicesInfo) == deviceVolume)
-        {
-            UnityEngine.Debug.LogWarning($"Same volume");
-            return false;
-        }
-
-        linkToVolume.SetValue(audioDevicesInfo, deviceVolume);
-        return true;
-    }
+    /// <summary>
+    /// Instead of single changes, it sends the entire 'AudioDevicesInfo' updated object at once
+    /// </summary>
+    public void SetAudioData(AudioDevicesInfo audioDevicesInfo) {}
 
     public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")    // todo: move 'audioFileName' to config
     {
         _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new PlayAudioFile_Command(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
     }
-
+    public void PlayAudioClip(string clipName, string deviceName) { }
 }
 
-public class AudioDataCrossClassesPacket
-{
-    public readonly AudioDevicesInfo audioDevicesInfo;
-    public readonly List<string> inputAudioDevices;
-    public readonly List<string> outputAudioDevices;
-
-    public AudioDataCrossClassesPacket(AudioDevicesInfo audioDevicesInfo, List<string> inputAudioDevices, List<string> outputAudioDevices)
-    {
-        this.audioDevicesInfo = audioDevicesInfo;
-        this.inputAudioDevices = inputAudioDevices;
-        this.outputAudioDevices = outputAudioDevices;
-    }
-}

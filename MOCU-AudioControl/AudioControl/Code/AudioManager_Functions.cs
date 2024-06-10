@@ -8,24 +8,28 @@ namespace AudioControl
 
     public partial class AudioManager
     {
-        private void InitOutputDevicesDictionary()
+        private Dictionary<string, AudioOutputDevice> InitOutputDevicesDictionary(MMDeviceCollection outputDevices)
         {
-            audioOutputsDictionary = new();
+            Dictionary<string, AudioOutputDevice>? audioOutputsDictionary = new();
 
             foreach (var device in outputDevices)
             {
                 audioOutputsDictionary.Add(device.FriendlyName, new AudioOutputDevice(device, unifiedWaveFormat));
             }
+
+            return audioOutputsDictionary;
         }
 
-        private void InitInputDevicesDictionary()
+        private Dictionary<string, AudioInputDevice> InitInputDevicesDictionary(MMDeviceCollection inputDevices)
         {
-            audioInputsDictionary = new();
+            Dictionary<string, AudioInputDevice>? audioInputsDictionary = new();
 
             foreach (var device in inputDevices)
             {
                 audioInputsDictionary.Add(device.FriendlyName, new AudioInputDevice(device, unifiedWaveFormat));
             }
+
+            return audioInputsDictionary;
         }
 
         private void LoadAudioFiles()
@@ -67,13 +71,21 @@ namespace AudioControl
             );
         }
 
-        private void UpdateMMDeviceCollections()
+        private (bool errorOccured, object? extraData) UpdateAllDevicesCollections()
         {
-            inputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
-            outputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+            var enumerator = new MMDeviceEnumerator();
+
+            var inputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
+            var outputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+
+            var audioInputsDictionary = InitInputDevicesDictionary(inputDevices);
+            var audioOutputsDictionary = InitOutputDevicesDictionary(outputDevices);
+
+            var result = audioDevicesParameters.UpdateDevicesDictionaries(inputsDict: audioInputsDictionary, outputsDict: audioOutputsDictionary);
+            return result;
         }
 
-        public MMDevice GetDeviceByItsName(string deviceName, MMDeviceCollection devices)
+        private MMDevice GetDeviceByItsName(string deviceName, MMDeviceCollection devices)
         {
             int index = -1;
 
@@ -96,7 +108,7 @@ namespace AudioControl
         private void PlayAudioFile(PlayAudioFile_Command commandData)
         {
             var audioData = preLoadedAudioFiles[commandData.AudioFileName];
-            var buffer = audioOutputsDictionary[commandData.AudioOutputDeviceName].bufferForSingleAudioPlay;
+            var buffer = audioDevicesParameters.audioOutputsDictionary[commandData.AudioOutputDeviceName].bufferForSingleAudioPlay;
 
             buffer.ClearBuffer();
             buffer.AddSamples(audioData, 0, audioData.Length);

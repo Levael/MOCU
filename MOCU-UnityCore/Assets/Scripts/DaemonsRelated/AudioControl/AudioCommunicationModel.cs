@@ -103,10 +103,25 @@ namespace AudioControl {
         public float?   audioInputDeviceVolume_Participant  = 70;
     }
 
+    // todo: change later List to Enumerable
     public class AudioDevicesLists
     {
         public List<string>? InputDevices;
         public List<string>? OutputDevices;
+    }
+
+    public class UnifiedAudioDataPacket
+    {
+        public readonly AudioDevicesInfo? audioDevicesInfo;
+        public readonly List<string>? inputAudioDevices;
+        public readonly List<string>? outputAudioDevices;
+
+        public UnifiedAudioDataPacket(AudioDevicesInfo? audioDevicesInfo, List<string>? inputAudioDevices, List<string>? outputAudioDevices)
+        {
+            this.audioDevicesInfo = audioDevicesInfo;
+            this.inputAudioDevices = inputAudioDevices;
+            this.outputAudioDevices = outputAudioDevices;
+        }
     }
 
 }

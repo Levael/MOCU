@@ -14,16 +14,10 @@ namespace AudioControl
     {
         private AudioDevicesParameters audioDevicesParameters;
 
-        private MMDeviceEnumerator enumerator;
-        public MMDeviceCollection inputDevices;
-        public MMDeviceCollection outputDevices;
-
         public IntercomStream incomingStream;
         public IntercomStream outgoingStream;
 
         public string pathToAudioFiles;
-        public Dictionary<string, AudioOutputDevice> audioOutputsDictionary;
-        public Dictionary<string, AudioInputDevice> audioInputsDictionary;
         public Dictionary<string, byte[]> preLoadedAudioFiles;
         public List<string> audioFileNames;
         public WaveFormat unifiedWaveFormat;
@@ -35,15 +29,10 @@ namespace AudioControl
             //pathToAudioFiles = @"..\..\MOCU-UnityCore\Assets\Audio";          // todo: move it to config file later
             audioFileNames = new() { "test.mp3", "test2.mp3" };                 // todo: maybe read it from config or unity, idk
 
-            enumerator = new();
-
-            UpdateMMDeviceCollections();
-            InitOutputDevicesDictionary();
-            InitInputDevicesDictionary();
-
-
-            audioDevicesParameters = new(outputsDict: audioOutputsDictionary, inputsDict: audioInputsDictionary);
+            audioDevicesParameters = new();
             audioDevicesParameters.AudioDeviceHasChanged += UpdateIntercom;
+
+            UpdateAllDevicesCollections();
 
             incomingStream = new(direction: IntercomStreamDirection.Incoming);
             outgoingStream = new(direction: IntercomStreamDirection.Outgoing);

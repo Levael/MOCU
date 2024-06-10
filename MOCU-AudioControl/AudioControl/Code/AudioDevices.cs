@@ -1,6 +1,8 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
+using System.Numerics;
+using System.Reflection;
 
 namespace AudioControl
 {
@@ -19,6 +21,12 @@ namespace AudioControl
         private MMDevice device                 { get; set; }
         private BufferedWaveProvider? buffer    { get; set; }
         private WasapiCapture receiver          { get; set; }
+
+        private float _volume;
+        /// <summary>
+        /// Currently not in use
+        /// </summary>
+        public float volume { get; set; }
 
 
         public AudioInputDevice(MMDevice mmDevice, WaveFormat unifiedWaveFormat)
@@ -201,11 +209,8 @@ namespace AudioControl
         public event Action? AudioDeviceHasChanged;     // Triggered to update intercom settings when a change in audio devices is detected
 
         // External links for mapping device names to device objects
-        private Dictionary<string, AudioOutputDevice> _audioOutputsDictionary;
-        private Dictionary<string, AudioInputDevice> _audioInputsDictionary;
-
-        // Tracks the current configuration of audio devices
-        private AudioDevicesInfo _audioDevicesInfo;
+        public Dictionary<string, AudioOutputDevice>? audioOutputsDictionary { get; private set; }
+        public Dictionary<string, AudioInputDevice>? audioInputsDictionary { get; private set; }
 
         // Properties representing the selected audio devices for researcher and participant
         public AudioOutputDevice? audioOutputDevice_Researcher { get; private set; }
@@ -218,11 +223,42 @@ namespace AudioControl
         /// </summary>
         /// <param name="outputsDict">A dictionary mapping output device names to their respective objects.</param>
         /// <param name="inputsDict">A dictionary mapping input device names to their respective objects.</param>
-        public AudioDevicesParameters(Dictionary<string, AudioOutputDevice> outputsDict, Dictionary<string, AudioInputDevice> inputsDict)
+        public AudioDevicesParameters()
         {
-            _audioOutputsDictionary = outputsDict;
-            _audioInputsDictionary = inputsDict;
-            _audioDevicesInfo = new();
+            audioOutputsDictionary = null;
+            audioInputsDictionary = null;
+        }
+
+        public (bool errorOccured, object? extraData) UpdateDevicesDictionaries(Dictionary<string, AudioOutputDevice> outputsDict, Dictionary<string, AudioInputDevice> inputsDict)
+        {
+            audioOutputsDictionary = outputsDict;
+            audioInputsDictionary = inputsDict;
+
+
+            // Check if any previously selected device has been disconnected (disappeared from the dictionaries)
+            // It looks terrible, maybe I'll change it in the future
+            //
+            // In a nutshell: we go through all the devices and if they are disconnected, we write null.
+            // The 'Update' and 'GetAudioData' methods are needed in order not to duplicate the code
+
+            var audioData = GetAudioData();
+            var audioDevicesInfo = audioData.audioDevicesInfo;
+            if (audioDevicesInfo == null)
+                return (errorOccured: true, extraData: audioData);
+
+            foreach (FieldInfo field in typeof(AudioDevicesInfo).GetFields(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (field.FieldType == typeof(string))
+                {
+                    string? value = (string?)field.GetValue(audioDevicesInfo);
+                    if (!string.IsNullOrEmpty(value) && !audioOutputsDictionary.ContainsKey(value) && !audioInputsDictionary.ContainsKey(value))
+                        field.SetValue(audioDevicesInfo, null);
+
+                }
+            }
+
+            var result = Update(audioDevicesInfo);
+            return result;
         }
 
 
@@ -231,22 +267,27 @@ namespace AudioControl
         /// </summary>
         /// <param name="updatedParameters">New audio device settings to be applied.</param>
         /// <returns>A tuple containing a boolean indicating if an error occurred and an optional object with extra data.</returns>
-        public (bool errorOccured, object? extraData) Update(AudioDevicesInfo updatedParameters)
+        public (bool errorOccured, object? extraData) Update(AudioDevicesInfo? updatedParameters)
         {
+            if (audioOutputsDictionary == null || audioInputsDictionary == null || updatedParameters == null)
+                return (errorOccured: true, extraData: GetAudioData());
+
             int errorsOccured = 0;
-            var audioDeviceHasChanged = false;
+            var changesOccured = 0;
 
+            // example of naming: UAODNR = UpdatedAudioOutputDeviceNameResearcher
 
-            if (this._audioDevicesInfo.audioOutputDeviceName_Researcher != updatedParameters.audioOutputDeviceName_Researcher)
+            var UAODNR = updatedParameters.audioOutputDeviceName_Researcher;
+            if (audioOutputDevice_Researcher?.name != UAODNR)
             {
                 try
                 {
-                    if (updatedParameters.audioOutputDeviceName_Researcher == null)
+                    if (String.IsNullOrEmpty(UAODNR) || !audioOutputsDictionary.ContainsKey(UAODNR))
                         audioOutputDevice_Researcher = null;
                     else
-                        audioOutputDevice_Researcher = _audioOutputsDictionary[updatedParameters.audioOutputDeviceName_Researcher];
+                        audioOutputDevice_Researcher = audioOutputsDictionary[UAODNR];
 
-                    audioDeviceHasChanged = true;
+                    changesOccured++;
                 }
                 catch
                 {
@@ -255,16 +296,17 @@ namespace AudioControl
                 }
             }
 
-            if (this._audioDevicesInfo.audioOutputDeviceName_Participant != updatedParameters.audioOutputDeviceName_Participant)
+            var UAODNP = updatedParameters.audioOutputDeviceName_Participant;
+            if (audioOutputDevice_Participant?.name != UAODNP)
             {
                 try
                 {
-                    if (updatedParameters.audioOutputDeviceName_Participant == null)
+                    if (String.IsNullOrEmpty(UAODNP) || !audioOutputsDictionary.ContainsKey(UAODNP))
                         audioOutputDevice_Participant = null;
                     else
-                        audioOutputDevice_Participant = _audioOutputsDictionary[updatedParameters.audioOutputDeviceName_Participant];
+                        audioOutputDevice_Participant = audioOutputsDictionary[UAODNP];
 
-                    audioDeviceHasChanged = true;
+                    changesOccured++;
                 }
                 catch
                 {
@@ -273,15 +315,17 @@ namespace AudioControl
                 }
             }
 
-            if (this._audioDevicesInfo.audioInputDeviceName_Researcher != updatedParameters.audioInputDeviceName_Researcher)
+            var UAIDNR = updatedParameters.audioInputDeviceName_Researcher;
+            if (audioInputDevice_Researcher?.name != UAIDNR)
             {
                 try
                 {
-                    if (updatedParameters.audioInputDeviceName_Researcher == null)
+                    if (String.IsNullOrEmpty(UAIDNR) || !audioInputsDictionary.ContainsKey(UAIDNR))
                         audioInputDevice_Researcher = null;
                     else
-                        audioInputDevice_Researcher = _audioInputsDictionary[updatedParameters.audioInputDeviceName_Researcher];
-                    AudioDeviceHasChanged?.Invoke();
+                        audioInputDevice_Researcher = audioInputsDictionary[UAIDNR];
+
+                    changesOccured++;
                 }
                 catch
                 {
@@ -290,15 +334,17 @@ namespace AudioControl
                 }
             }
 
-            if (this._audioDevicesInfo.audioInputDeviceName_Participant != updatedParameters.audioInputDeviceName_Participant)
+            var UAIDNP = updatedParameters.audioInputDeviceName_Participant;
+            if (audioInputDevice_Participant?.name != UAIDNP)
             {
                 try
                 {
-                    if (updatedParameters.audioInputDeviceName_Participant == null)
+                    if (String.IsNullOrEmpty(UAIDNP) || !audioInputsDictionary.ContainsKey(UAIDNP))
                         audioInputDevice_Participant = null;
                     else
-                        audioInputDevice_Participant = _audioInputsDictionary[updatedParameters.audioInputDeviceName_Participant];
-                    AudioDeviceHasChanged?.Invoke();
+                        audioInputDevice_Participant = audioInputsDictionary[UAIDNP];
+
+                    changesOccured++;
                 }
                 catch
                 {
@@ -307,13 +353,14 @@ namespace AudioControl
                 }
             }
 
-            if (this._audioDevicesInfo.audioOutputDeviceVolume_Researcher != updatedParameters.audioOutputDeviceVolume_Researcher)
+            var UAODVR = updatedParameters.audioOutputDeviceVolume_Researcher;
+            if (audioOutputDevice_Researcher != null && audioOutputDevice_Researcher.volume != UAODVR)
             {
                 try
                 {
-                    var value = updatedParameters.audioOutputDeviceVolume_Researcher;
+                    var value = UAODVR;
                     if (value < 0f || value > 100f || value == null)
-                        throw new Exception();
+                        throw new ArgumentException("audioOutputDeviceVolume_Researcher value is ineligible");
 
                     audioOutputDevice_Researcher.volume = (float)value;
                 }
@@ -323,13 +370,14 @@ namespace AudioControl
                 }
             }
 
-            if (this._audioDevicesInfo.audioOutputDeviceVolume_Participant != updatedParameters.audioOutputDeviceVolume_Participant)
+            var UAODVP = updatedParameters.audioOutputDeviceVolume_Participant;
+            if (audioOutputDevice_Participant != null && audioOutputDevice_Participant.volume != UAODVP)
             {
                 try
                 {
-                    var value = updatedParameters.audioOutputDeviceVolume_Participant;
+                    var value = UAODVP;
                     if (value < 0f || value > 100f || value == null)
-                        throw new Exception();
+                        throw new ArgumentException("audioOutputDeviceVolume_Participant value is ineligible");
 
                     audioOutputDevice_Participant.volume = (float)value;
                 }
@@ -339,22 +387,76 @@ namespace AudioControl
                 }
             }
 
-            // two more IFs for input devices volume change
+            var UAIDVR = updatedParameters.audioInputDeviceVolume_Researcher;
+            if (audioInputDevice_Researcher != null && audioInputDevice_Researcher.volume != UAIDVR)
+            {
+                try
+                {
+                    var value = UAIDVR;
+                    if (value < 0f || value > 100f || value == null)
+                        throw new ArgumentException("audioInputDeviceVolume_Researcher value is ineligible");
 
+                    audioInputDevice_Researcher.volume = (float)value;
+                }
+                catch
+                {
+                    errorsOccured++;
+                }
+            }
 
-            // update these data only after IF statements
-            _audioDevicesInfo = updatedParameters;
+            var UAIDVP = updatedParameters.audioInputDeviceVolume_Participant;
+            if (audioInputDevice_Participant != null && audioInputDevice_Participant.volume != UAIDVP)
+            {
+                try
+                {
+                    var value = UAIDVP;
+                    if (value < 0f || value > 100f || value == null)
+                        throw new ArgumentException("audioInputDeviceVolume_Participant value is ineligible");
+
+                    audioInputDevice_Participant.volume = (float)value;
+                }
+                catch
+                {
+                    errorsOccured++;
+                }
+            }
 
 
             // update Intercoms if at least one device was updated
-            if (audioDeviceHasChanged)
+            if (changesOccured > 0)
                 AudioDeviceHasChanged?.Invoke();
 
             // Report
             if (errorsOccured > 0)
-                return (errorOccured: true, extraData: _audioDevicesInfo);
+                return (errorOccured: true, extraData: GetAudioData());
             else
                 return (errorOccured: false, extraData: null);
+        }
+
+        public UnifiedAudioDataPacket GetAudioData()
+        {
+            var audioDevicesInfo = new AudioDevicesInfo()
+            {
+                audioOutputDeviceName_Researcher = audioOutputDevice_Researcher?.name,
+                audioOutputDeviceName_Participant = audioOutputDevice_Participant?.name,
+                audioInputDeviceName_Researcher = audioInputDevice_Researcher?.name,
+                audioInputDeviceName_Participant = audioInputDevice_Participant?.name,
+
+                audioOutputDeviceVolume_Researcher = audioOutputDevice_Researcher?.volume,
+                audioOutputDeviceVolume_Participant = audioOutputDevice_Participant?.volume,
+                audioInputDeviceVolume_Researcher = audioInputDevice_Researcher?.volume,
+                audioInputDeviceVolume_Participant = audioInputDevice_Participant?.volume,
+            };
+
+            var inputAudioDevices = audioInputsDictionary != null ? new List<string>(audioInputsDictionary.Keys) : null;
+            var outputAudioDevices = audioOutputsDictionary != null ? new List<string>(audioOutputsDictionary.Keys) : null;
+
+
+            return new UnifiedAudioDataPacket(
+                audioDevicesInfo: audioDevicesInfo,
+                inputAudioDevices: inputAudioDevices,
+                outputAudioDevices: outputAudioDevices
+            );
         }
 
     }

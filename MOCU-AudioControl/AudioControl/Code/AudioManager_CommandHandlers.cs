@@ -11,7 +11,7 @@ namespace AudioControl
         {
             try
             {
-                //DaemonsUtilities.ConsoleWarning(jsonCommand);
+                // here
                 var command = CommonUtilities.DeserializeJson<UpdateDevicesParameters_Command>(jsonCommand);
                 if (command == null)
                     throw new Exception("deserialization of 'UpdateDevicesParameters_CommandHandler' got 'null'");
@@ -79,15 +79,17 @@ namespace AudioControl
                 if (command == null)
                     throw new Exception("deserialization of 'GetAudioDevices_Command' got 'null'");
 
-                if (command.DoUpdate) UpdateMMDeviceCollections();
+                if (command.DoUpdate) UpdateAllDevicesCollections();
 
-                var extraData = new AudioDevicesLists()
+                // TODO
+                var report = UpdateAllDevicesCollections();
+                /*var extraData = new AudioDevicesLists()
                 {
-                    InputDevices = inputDevices.Select(device => device.FriendlyName).ToList(),
+                    InputDevices = audioDevicesParameters.,
                     OutputDevices = outputDevices.Select(device => device.FriendlyName).ToList()
-                };
+                };*/
 
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "GetAudioDevices_Command", hasError: false, extraData: extraData));
+                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "GetAudioDevices_Command", hasError: false, extraData: report.extraData));
                 RespondToCommand(fullJsonResponse);
             }
             catch (Exception ex)

@@ -62,12 +62,17 @@ public partial class AudioHandler : MonoBehaviour
         };
 
         // todo: rename action to "{commandName}_commandHandler"
+        /// 1) sends configs (audio files path)
+        /// 2) sends desired data (which devices to use)
+        /// 3) 
         CommandsToExecuteAccordingToServerResponse = new()
         {
-            { "TryConnectToServer_Command",         (subState: AudioHandler_Statuses.StartNamedPipeConnection,  action: SendConfigurationDetails) },
-            { "SendConfigs_Command",                (subState: AudioHandler_Statuses.SetConfigs,                action: RequestAudioDevices) },
-            { "GetAudioDevices_Command",            (subState: AudioHandler_Statuses.RequestAudioDevices,       action: SendAudioDevices) },
-            { "UpdateDevicesParameters_Command",    (subState: AudioHandler_Statuses.SendAudioDevices,          action: UpdateClient) }
+            { "SendConfigs_Command",                (subState: AudioHandler_Statuses.SetConfigs,                action: SendClientAudioDataDesire) },
+            { "UpdateDevicesParameters_Command",    (subState: AudioHandler_Statuses.SendAudioDevices,          action: GetServerAudioDataDecision) }
+
+            /*{ "SendConfigs_Command",                (subState: AudioHandler_Statuses.SetConfigs,                action: RequestAudioDevices) },
+            { "GetAudioDevices_Command",            (subState: AudioHandler_Statuses.RequestAudioDevices,       action: SendClientAudioDataDesire) },
+            { "UpdateDevicesParameters_Command",    (subState: AudioHandler_Statuses.SendClientAudioDataDesire,          action: GetServerAudioDataDecision) }*/
         };
 
         // Reading from config Audio Devices Data
@@ -213,7 +218,7 @@ public partial class AudioHandler : MonoBehaviour
         ir = inputAudioDevices.Contains(ir) ? ir : null;
     }
 
-    private void SendAudioDevices(ResponseFromServer response)
+    private void SendClientAudioDataDesire(ResponseFromServer response)
     {
         ValidateAndUpdateDevicesInfo(response);
         _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UpdateDevicesParameters_Command(audioDevicesInfo)));
@@ -222,18 +227,22 @@ public partial class AudioHandler : MonoBehaviour
     /// <summary>
     /// Called after successful devices update on the server side
     /// </summary>
-    private void UpdateClient(ResponseFromServer response)
+    private void GetServerAudioDataDecision(ResponseFromServer response)
     {
         //_configHandler.UpdateSubConfig(audioDevicesInfo);                     // if all ok -- server returns null (figure out how to handle half-errors)
         // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
         //print($"inputAudioDevices: {inputAudioDevices.Count}");
         //print($"outputAudioDevices: {outputAudioDevices.Count}");
 
-        _settingsTabHandler.UpdateAudioDevices(new AudioDataCrossClassesPacket(
+        /*_settingsTabHandler.UpdateAudioDevices(new UnifiedAudioDataPacket(
             audioDevicesInfo: audioDevicesInfo,
             inputAudioDevices: inputAudioDevices,
             outputAudioDevices: outputAudioDevices
-        ));
+        ));*/
+        
+        _settingsTabHandler.UpdateAudioDevices((UnifiedAudioDataPacket)response.ExtraData);
+
+        // todo: update config too
     }
 
 
