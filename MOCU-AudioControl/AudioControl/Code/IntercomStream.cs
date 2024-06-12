@@ -1,7 +1,4 @@
-﻿using NAudio.CoreAudioApi;
-using NAudio.Wave;
-
-namespace AudioControl
+﻿namespace AudioControl
 {
     public class IntercomStream
     {
@@ -54,6 +51,7 @@ namespace AudioControl
             if (_audioInputDevice == null || _audioOutputDevice == null)
             {
                 isStreamOn = false;
+                isStreamReady = false;
                 return;
             }
 

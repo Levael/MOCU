@@ -3,6 +3,6 @@
     StartAudioProcess,
     StartNamedPipeConnection,
     SetConfigs,
-    RequestAudioDevices,
-    SendAudioDevices
+    GetAudioDevices,
+    //SendAudioDevices
 }

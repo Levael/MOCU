@@ -10,6 +10,8 @@ using AudioControl;
 using DaemonsNamespace.InterprocessCommunication;
 using UnityDaemonsCommon;
 
+// todo: not allow intercom (on the client side) if any device is missing (null)
+
 
 public partial class AudioHandler : MonoBehaviour
 {
@@ -67,12 +69,9 @@ public partial class AudioHandler : MonoBehaviour
         /// 3) 
         CommandsToExecuteAccordingToServerResponse = new()
         {
-            { "SendConfigs_Command",                (subState: AudioHandler_Statuses.SetConfigs,                action: SendClientAudioDataDesire) },
-            { "UpdateDevicesParameters_Command",    (subState: AudioHandler_Statuses.SendAudioDevices,          action: GetServerAudioDataDecision) }
-
-            /*{ "SendConfigs_Command",                (subState: AudioHandler_Statuses.SetConfigs,                action: RequestAudioDevices) },
-            { "GetAudioDevices_Command",            (subState: AudioHandler_Statuses.RequestAudioDevices,       action: SendClientAudioDataDesire) },
-            { "UpdateDevicesParameters_Command",    (subState: AudioHandler_Statuses.SendClientAudioDataDesire,          action: GetServerAudioDataDecision) }*/
+            { "SendConfigs_Command",                            (subState: AudioHandler_Statuses.SetConfigs,        action: SendClientAudioDataDesire) },
+            //{ "UpdateDevicesParameters_Command",                (subState: AudioHandler_Statuses.SendAudioDevices,  action: GotServerAudioDataDecision) },
+            { "ServerInitiative_NotificationOfAudioDataUpdate", (subState: AudioHandler_Statuses.GetAudioDevices,   action: GotServerAudioDataDecision) }
         };
 
         // Reading from config Audio Devices Data
@@ -80,6 +79,7 @@ public partial class AudioHandler : MonoBehaviour
 
 
         // Event listeners for intercom
+        // todo: is there any check of status?
         _inputLogic.startOutgoingIntercomStream += () => {
             _daemon.namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ResearcherToParticipant_Command"]);
         };
@@ -144,6 +144,9 @@ public partial class AudioHandler : MonoBehaviour
                 var subStateName = receivedCommand.subState;
                 var funcToBeExecuted = receivedCommand.action;
 
+                // todo: delete after tests
+                print(message);
+
                 // todo: if 'UpdateDevicesParameters_Command' returned error, it doesn't mean the error is fatal. it needs attention
                 if (deserializedMessage.HasError)
                 {
@@ -155,7 +158,9 @@ public partial class AudioHandler : MonoBehaviour
                 }
 
                 // In case everything is fine
-                stateTracker.UpdateSubState(subStateName, true);
+                if (subStateName != null)
+                    stateTracker.UpdateSubState(subStateName, true);
+
                 funcToBeExecuted.Invoke(deserializedMessage);       // pay attention: deserializedMessage.ExtraData is still 'JObject' type
             }
             catch
@@ -173,6 +178,7 @@ public partial class AudioHandler : MonoBehaviour
             if (message.messageType == InnerMessageType.Info)
             {
                 //_experimentTabHandler.PrintToInfo(message.messageText);
+                //print($"{message.messageText}\n");
             }
 
             if (message.messageType == InnerMessageType.Error)
@@ -191,12 +197,12 @@ public partial class AudioHandler : MonoBehaviour
         )));
     }
     
-    private void RequestAudioDevices(ResponseFromServer response)
+    /*private void RequestAudioDevices(ResponseFromServer response)
     {
         _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: false)));
-    }
+    }*/
 
-    private void ValidateAndUpdateDevicesInfo(ResponseFromServer response)
+    /*private void ValidateAndUpdateDevicesInfo(ResponseFromServer response)
     {
         // need this (JObject) convertion because of json lib. It doesn't know what 'object' is, so translates it to 'JObject'
         var devicesData = CommonUtilities.ConvertJObjectToType<AudioDevicesLists>((JObject)response.ExtraData);
@@ -216,18 +222,20 @@ public partial class AudioHandler : MonoBehaviour
         or = outputAudioDevices.Contains(or) ? or : null;
         ip = inputAudioDevices.Contains(ip) ? ip : null;
         ir = inputAudioDevices.Contains(ir) ? ir : null;
-    }
+    }*/
 
     private void SendClientAudioDataDesire(ResponseFromServer response)
     {
-        ValidateAndUpdateDevicesInfo(response);
+        //ValidateAndUpdateDevicesInfo(response);
+        //print("before 'SendClientAudioDataDesire'");
         _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UpdateDevicesParameters_Command(audioDevicesInfo)));
+        //print("after 'SendClientAudioDataDesire'");
     }
 
     /// <summary>
     /// Called after successful devices update on the server side
     /// </summary>
-    private void GetServerAudioDataDecision(ResponseFromServer response)
+    private void GotServerAudioDataDecision(ResponseFromServer response)
     {
         //_configHandler.UpdateSubConfig(audioDevicesInfo);                     // if all ok -- server returns null (figure out how to handle half-errors)
         // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
