@@ -43,20 +43,24 @@
 
         public void UpdateDevices(AudioInputDevice? audioInputDevice, AudioOutputDevice? audioOutputDevice)
         {
-            if (isStreamOn) StopStream();
-
-            _audioInputDevice = audioInputDevice;
-            _audioOutputDevice = audioOutputDevice;
-
-            if (_audioInputDevice == null || _audioOutputDevice == null)
+            try
             {
-                isStreamOn = false;
-                isStreamReady = false;
-                return;
-            }
+                if (isStreamOn) StopStream();
 
-            BindInputToOutput();
-            isStreamReady = true;
+                _audioInputDevice = audioInputDevice;
+                _audioOutputDevice = audioOutputDevice;
+
+                if (_audioInputDevice == null || _audioOutputDevice == null)
+                {
+                    isStreamOn = false;
+                    isStreamReady = false;
+                    return;
+                }
+
+                BindInputToOutput();
+                isStreamReady = true;
+            }
+            catch (Exception ex) { Console.WriteLine("Error occurred while Updating Intercom: " + ex.ToString()); }
         }
 
         private void BindInputToOutput()

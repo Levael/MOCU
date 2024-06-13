@@ -61,7 +61,7 @@ class DaemonsHandler : MonoBehaviour
                 CreateNoWindow = daemon.isHidden
             };
 
-            print(startInfo.Arguments);
+            //print(startInfo.Arguments);
 
             daemon.process = new Process() { StartInfo = startInfo };
             daemon.process.Start();

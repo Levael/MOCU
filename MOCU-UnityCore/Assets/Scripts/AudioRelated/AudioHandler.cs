@@ -31,7 +31,7 @@ public partial class AudioHandler : MonoBehaviour
     private DaemonsHandler _daemonsHandler;
 
     private Dictionary<string, string> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
-    private Dictionary<string, (AudioHandler_Statuses? subState, Action<ResponseFromServer?> action)> CommandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
+    private Dictionary<string, (AudioHandler_Statuses? subState, Action<UnifiedResponseFromServer> action)> CommandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
     #endregion PRIVATE FIELDS
 
 
@@ -57,10 +57,10 @@ public partial class AudioHandler : MonoBehaviour
         outputAudioDevices = new();
 
         partlyOptimizedJsonCommands = new() {
-            { "StartIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new StartIntercomStream_ResearcherToParticipant_Command()) },
-            { "StartIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StartIntercomStream_ParticipantToResearcher_Command()) },
-            { "StopIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ResearcherToParticipant_Command()) },
-            { "StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new StopIntercomStream_ParticipantToResearcher_Command()) },
+            { "StartIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "StartOutgoingIntercomStream_Command")) },
+            { "StartIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "StartIncomingIntercomStream_Command")) },
+            { "StopIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "StopOutgoingIntercomStream_Command")) },
+            { "StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "StopIncomingIntercomStream_Command")) },
         };
 
         // todo: rename action to "{commandName}_commandHandler"
@@ -69,9 +69,8 @@ public partial class AudioHandler : MonoBehaviour
         /// 3) 
         CommandsToExecuteAccordingToServerResponse = new()
         {
-            { "SendConfigs_Command",                            (subState: AudioHandler_Statuses.SetConfigs,        action: SendClientAudioDataDesire) },
-            //{ "UpdateDevicesParameters_Command",                (subState: AudioHandler_Statuses.SendAudioDevices,  action: GotServerAudioDataDecision) },
-            { "ServerInitiative_NotificationOfAudioDataUpdate", (subState: AudioHandler_Statuses.GetAudioDevices,   action: GotServerAudioDataDecision) }
+            { "SetConfigurations_Response",       (subState: AudioHandler_Statuses.SetConfigs,        action: SendClientAudioDataDesire) },
+            { "AudioDataHasBeenUpdated_Response", (subState: AudioHandler_Statuses.GetAudioDevices,   action: GotServerAudioDataDecision) }
         };
 
         // Reading from config Audio Devices Data
@@ -139,8 +138,8 @@ public partial class AudioHandler : MonoBehaviour
             try
             {
                 // currently no check for "is it realy 'ResponseFromServer'", because this code only gets responses. maybe add later (todo)
-                var deserializedMessage = CommonUtilities.DeserializeJson<ResponseFromServer>(message);
-                var receivedCommand = CommandsToExecuteAccordingToServerResponse[deserializedMessage.ReceivedCommand];
+                var deserializedMessage = CommonUtilities.DeserializeJson<UnifiedResponseFromServer>(message);
+                var receivedCommand = CommandsToExecuteAccordingToServerResponse[deserializedMessage.name];
                 var subStateName = receivedCommand.subState;
                 var funcToBeExecuted = receivedCommand.action;
 
@@ -148,14 +147,17 @@ public partial class AudioHandler : MonoBehaviour
                 print(message);
 
                 // todo: if 'UpdateDevicesParameters_Command' returned error, it doesn't mean the error is fatal. it needs attention
-                if (deserializedMessage.HasError)
+                if (deserializedMessage.errorOccurred == true && deserializedMessage.errorIsFatal != true)
+                {
+                    _experimentTabHandler.PrintToWarnings($"Minor error: {deserializedMessage.errorMessage}");
+                }
+                else if (deserializedMessage.errorOccurred == true && deserializedMessage.errorIsFatal == true)
                 {
                     stateTracker.UpdateSubState(subStateName, false);
-                    _experimentTabHandler.PrintToWarnings($"Failed to '{subStateName}'");
-
-                    // pass this message, go to the next (if there is any). Will not continue to execute methods in the chain
+                    _experimentTabHandler.PrintToWarnings($"Fatal error: {deserializedMessage.errorMessage}");
                     continue;
                 }
+
 
                 // In case everything is fine
                 if (subStateName != null)
@@ -190,11 +192,21 @@ public partial class AudioHandler : MonoBehaviour
     }
 
     // todo: think about path that external program can access to. also thing about an option to change audio files from UI dynamically
-    private void SendConfigurationDetails(ResponseFromServer response = null)
+    private void SendConfigurationDetails(UnifiedResponseFromServer response = null)
     {
-        _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new SendConfigs_Command(
-            unityAudioDirectory: Path.Combine(Application.dataPath, "Audio")
-        )));
+        var commandName = "SetConfigurations_Command";
+        var payloadData = new SetConfigurations_CommandDetails(unityAudioDirectory: Path.Combine(Application.dataPath, "Audio"));
+        var fullCommand = new UnifiedCommandFromClient(name: commandName, extraData: payloadData);
+
+        SendCommand(fullCommand);
+    }
+
+
+    private void SendCommand(UnifiedCommandFromClient command)
+    {
+        var jsonCommand = CommonUtilities.SerializeJson(command);
+        print(jsonCommand);
+        _daemon.namedPipeClient.SendCommandAsync(jsonCommand);
     }
     
     /*private void RequestAudioDevices(ResponseFromServer response)
@@ -224,18 +236,18 @@ public partial class AudioHandler : MonoBehaviour
         ir = inputAudioDevices.Contains(ir) ? ir : null;
     }*/
 
-    private void SendClientAudioDataDesire(ResponseFromServer response)
+    private void SendClientAudioDataDesire(UnifiedResponseFromServer response)
     {
         //ValidateAndUpdateDevicesInfo(response);
         //print("before 'SendClientAudioDataDesire'");
-        _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UpdateDevicesParameters_Command(audioDevicesInfo)));
+        _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "SetUpdatedAudioDevicesInfo_Command", extraData: audioDevicesInfo)));
         //print("after 'SendClientAudioDataDesire'");
     }
 
     /// <summary>
     /// Called after successful devices update on the server side
     /// </summary>
-    private void GotServerAudioDataDecision(ResponseFromServer response)
+    private void GotServerAudioDataDecision(UnifiedResponseFromServer response)
     {
         //_configHandler.UpdateSubConfig(audioDevicesInfo);                     // if all ok -- server returns null (figure out how to handle half-errors)
         // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
@@ -248,7 +260,7 @@ public partial class AudioHandler : MonoBehaviour
             outputAudioDevices: outputAudioDevices
         ));*/
         
-        _settingsTabHandler.UpdateAudioDevices((UnifiedAudioDataPacket)response.ExtraData);
+        _settingsTabHandler.UpdateAudioDevices(response.GetExtraData<UnifiedAudioDataPacket>());
 
         // todo: update config too
     }

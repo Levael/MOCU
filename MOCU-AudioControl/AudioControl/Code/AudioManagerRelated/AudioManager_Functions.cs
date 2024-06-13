@@ -1,6 +1,5 @@
 ﻿using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
-using NAudio.CoreAudioApi;
 
 namespace AudioControl
 {
@@ -51,10 +50,10 @@ namespace AudioControl
         /// Copies pre-prepared and unified audio to a buffer subscribed to the mixer.
         /// If something is being played at the moment of calling the function, it purposely cuts it off and puts a newer one
         /// </summary>
-        private void PlayAudioFile(PlayAudioFile_Command commandData)
+        private void PlayAudioFile(PlayAudioFile_CommandDetails commandData)
         {
-            var audioData = preLoadedAudioFiles[commandData.AudioFileName];
-            var buffer = audioDevicesParameters.audioOutputsDictionary[commandData.AudioOutputDeviceName].bufferForSingleAudioPlay;
+            var audioData = preLoadedAudioFiles[commandData.audioFileName];
+            var buffer = audioDevicesParameters.audioOutputsDictionary[commandData.audioOutputDeviceName].bufferForSingleAudioPlay;
 
             buffer.ClearBuffer();
             buffer.AddSamples(audioData, 0, audioData.Length);

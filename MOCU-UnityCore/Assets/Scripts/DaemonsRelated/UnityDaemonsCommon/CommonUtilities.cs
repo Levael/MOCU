@@ -13,14 +13,23 @@ namespace UnityDaemonsCommon
         {
             try
             {
-                T? deserializedObject = JsonConvert.DeserializeObject<T>(jsonString, optionalSettings);
+                // test
+                var settings = optionalSettings ?? new JsonSerializerSettings();
+                settings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+                {
+                    DefaultMembersSearchFlags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
+                };
+
+                T? deserializedObject = JsonConvert.DeserializeObject<T>(jsonString, settings);
+                //T? deserializedObject = JsonConvert.DeserializeObject<T>(jsonString, optionalSettings);
                 if (deserializedObject == null)
                     throw new Exception();
 
                 return deserializedObject;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("CommonUtilities - DeserializeJson: " + ex.ToString());
                 return null;
             }
         }
@@ -57,4 +66,36 @@ namespace UnityDaemonsCommon
         }
     }
 
+    public class TypeNameHandlingConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            if (value is Type type)
+            {
+                writer.WriteValue(type.AssemblyQualifiedName);
+            }
+            else
+            {
+                writer.WriteNull();
+            }
+        }
+
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.String)
+            {
+                string? typeName = reader.Value?.ToString();
+                if (!string.IsNullOrEmpty(typeName))
+                {
+                    return Type.GetType(typeName);
+                }
+            }
+            return null;
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(Type);
+        }
+    }
 }

@@ -1,28 +1,21 @@
 ﻿using UnityDaemonsCommon;
 using DaemonsNamespace.InterprocessCommunication;
-using DaemonsNamespace.Common;
 
 namespace AudioControl
 {
-    // Commands Handlers part
-
     public partial class AudioManager
     {
-        private void UpdateDevicesParameters_CommandHandler(string jsonCommand)
+        private void UpdateDevicesParameters_CommandHandler(UnifiedCommandFromClient command)
         {
             try
             {
-                var command = CommonUtilities.DeserializeJson<UpdateDevicesParameters_Command>(jsonCommand);
-                if (command == null)
-                    throw new Exception("deserialization of 'UpdateDevicesParameters_CommandHandler' got 'null'");
-
-                audioDevicesParameters.UpdateParameters(command.audioDevicesInfo);
+                audioDevicesParameters.UpdateParameters(updatedParameters: command.GetExtraData<AudioDevicesInfo>());
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in 'UpdateDevicesParameters_CommandHandler': {ex}");
-                //var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "UpdateDevicesParameters_Command", hasError: true, errorMessage: ex.ToString()));
-                //RespondToCommand(fullJsonResponse);
+                var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "AudioDataHasBeenUpdated_Response", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
+                RespondToCommand(fullJsonResponse);
             }
         }
 
@@ -30,84 +23,48 @@ namespace AudioControl
         {
             Console.WriteLine($"Sending AudioData to the client");
 
-            var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "ServerInitiative_NotificationOfAudioDataUpdate", hasError: false, extraData: audioDevicesParameters.GetAudioData()));
+            var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "AudioDataHasBeenUpdated_Response", errorOccurred: false, extraData: audioDevicesParameters.GetAudioData()));
             RespondToCommand(fullJsonResponse);
         }
 
-        private void SendConfigs_CommandHandler(string jsonCommand)
+        private void SendConfigs_CommandHandler(UnifiedCommandFromClient command)
         {
             try
             {
-                var command = CommonUtilities.DeserializeJson<SendConfigs_Command>(jsonCommand);
-                if (command == null)
-                    throw new Exception("deserialization of 'SendConfigs_Command' got 'null'");
-
-                pathToAudioFiles = command.UnityAudioDirectory;
+                Console.WriteLine(command);
+                Console.WriteLine(command.GetExtraData<SetConfigurations_CommandDetails>());
+                pathToAudioFiles = command.GetExtraData<SetConfigurations_CommandDetails>().unityAudioDirectory;
+                Console.WriteLine(pathToAudioFiles);
 
                 LoadAudioFiles();   // todo: move to other place
 
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "SendConfigs_Command", hasError: false));
+                var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "SetConfigurations_Response", errorOccurred: false));
                 RespondToCommand(fullJsonResponse);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in 'SendConfigs_CommandHandler': {ex}");
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "SendConfigs_Command", hasError: true, errorMessage: ex.ToString()));
+                var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "SetConfigurations_Response", errorOccurred: true, errorIsFatal: true, errorMessage: ex.ToString()));
                 RespondToCommand(fullJsonResponse);
             }
         }
 
-        private void PlayAudioFile_CommandHanler(string jsonCommand)
+        private void PlayAudioFile_CommandHanler(UnifiedCommandFromClient command)
         {
             try
             {
-                var command = CommonUtilities.DeserializeJson<PlayAudioFile_Command>(jsonCommand);
-                if (command == null)
-                    throw new Exception("deserialization of 'PlayAudioFile_Command' got 'null'");
-
-                Task.Run(() => PlayAudioFile(command));
+                Task.Run(() => PlayAudioFile(command.GetExtraData<PlayAudioFile_CommandDetails>()));
                 // No response (for now at least. I don't think there should be one)
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in 'SendConfigs_PlayAudioFile_CommandHanlerCommandHandler': {ex}");
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "PlayAudioFile_Command", hasError: true, errorMessage: ex.ToString()));
+                Console.WriteLine($"Error in 'PlayAudioFile_CommandDetails': {ex}");
+                var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "PlayAudioFile_Command", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
                 RespondToCommand(fullJsonResponse);
             }
         }
 
-        private void GetAudioDevices_CommandHandler(string jsonCommand)
-        {
-            try
-            {
-                var command = CommonUtilities.DeserializeJson<GetAudioDevices_Command>(jsonCommand);
-                if (command == null)
-                    throw new Exception("deserialization of 'GetAudioDevices_Command' got 'null'");
-
-                //if (command.DoUpdate) UpdateAllDevicesCollections();
-
-                // TODO
-                //var report = UpdateAllDevicesCollections();
-                var report = audioDevicesParameters.GetAudioData();
-                /*var extraData = new AudioDevicesLists()
-                {
-                    InputDevices = audioDevicesParameters.,
-                    OutputDevices = outputDevices.Select(device => device.FriendlyName).ToList()
-                };*/
-
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "GetAudioDevices_Command", hasError: false, extraData: report));
-                RespondToCommand(fullJsonResponse);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error in 'GetAudioDevices_CommandHandler': {ex}");
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "GetAudioDevices_Command", hasError: true, errorMessage: ex.ToString()));
-                RespondToCommand(fullJsonResponse);
-            }
-        }
-
-
-        private void StartIntercomStream_R2P_CommandHandler(string jsonCommand)
+        private void StartIntercomStream_R2P_CommandHandler(UnifiedCommandFromClient command)
         {
             try
             {
@@ -116,11 +73,11 @@ namespace AudioControl
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in 'StartIntercomStream_R2P_CommandHandler': {ex}");
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "StartIntercomStream_ResearcherToParticipant_Command", hasError: true, errorMessage: ex.ToString()));
+                var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "StartIntercomStream_ResearcherToParticipant_Command", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
                 RespondToCommand(fullJsonResponse);
             }
         }
-        private void StartIntercomStream_P2R_CommandHandler(string jsonCommand)
+        private void StartIntercomStream_P2R_CommandHandler(UnifiedCommandFromClient command)
         {
             try
             {
@@ -129,11 +86,11 @@ namespace AudioControl
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in 'StartIntercomStream_P2R_CommandHandler': {ex}");
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "StartIntercomStream_ParticipantToResearcher_Command", hasError: true, errorMessage: ex.ToString()));
+                var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "StartIntercomStream_ParticipantToResearcher_Command", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
                 RespondToCommand(fullJsonResponse);
             }
         }
-        private void StopIntercomStream_R2P_CommandHandler(string jsonCommand)
+        private void StopIntercomStream_R2P_CommandHandler(UnifiedCommandFromClient command)
         {
             try
             {
@@ -142,11 +99,11 @@ namespace AudioControl
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in 'StopIntercomStream_R2P_CommandHandler': {ex}");
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "StopIntercomStream_ResearcherToParticipant_Command", hasError: true, errorMessage: ex.ToString()));
+                var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "StopIntercomStream_ResearcherToParticipant_Command", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
                 RespondToCommand(fullJsonResponse);
             }
         }
-        private void StopIntercomStream_P2R_CommandHandler(string jsonCommand)
+        private void StopIntercomStream_P2R_CommandHandler(UnifiedCommandFromClient command)
         {
             try
             {
@@ -155,7 +112,7 @@ namespace AudioControl
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in 'StopIntercomStream_P2R_CommandHandler': {ex}");
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "StopIntercomStream_ParticipantToResearcher_Command", hasError: true, errorMessage: ex.ToString()));
+                var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "StopIntercomStream_ParticipantToResearcher_Command", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
                 RespondToCommand(fullJsonResponse);
             }
         }

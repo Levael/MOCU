@@ -11,30 +11,28 @@ namespace DaemonsNamespace.InterprocessCommunication
     public abstract class AbstractDaemonProgramManager
     {
         public ObservableConcurrentQueue<string> outputMessagesQueue = null;
-        public Dictionary<string, Action<string>> commandsHandlers;
+        public Dictionary<string, Action<UnifiedCommandFromClient>> commandsHandlers;
 
-        /// <summary>
-        /// Processes a given JSON command by identifying its type and executing the corresponding handler.
-        /// If the command is not recognized or an error occurs, an error response is generated and logged.
-        /// </summary>
-        /// <param name="jsonCommand">The JSON string representing the command to be processed.</param>
         public void ProcessCommand(string jsonCommand)
         {
             try
             {
-                var commandName = CommonClientServerMethods.GetSerializedObjectType(jsonCommand);
+                var command = CommonUtilities.DeserializeJson<UnifiedCommandFromClient>(jsonCommand);
+                DaemonsUtilities.ConsoleWarning($"jsonCommand: {jsonCommand}");
+                DaemonsUtilities.ConsoleWarning($"command: {command}");
 
-                if (commandName == null || !commandsHandlers.ContainsKey(commandName))
-                    throw new Exception($"Command name is 'null' or not in 'commandsHandlers' dictionary. Command name: {commandName}");
+                if (command == null || !commandsHandlers.ContainsKey(command.name))
+                    throw new Exception($"Command from client is incorrect or unknown");
 
-                commandsHandlers[commandName].Invoke(jsonCommand);
-                DaemonsUtilities.ConsoleInfo($"Command '{commandName}' was executed");
+                commandsHandlers[command.name].Invoke(command);
+
+                DaemonsUtilities.ConsoleInfo($"Command '{command.name}' was executed");
             }
             catch (Exception ex)
             {
                 DaemonsUtilities.ConsoleError($"Error while 'ProcessCommand': {ex}");
-
-                var fullJsonResponse = CommonUtilities.SerializeJson(new ResponseFromServer(receivedCommand: "Unknown_Command", hasError: true, errorMessage: ex.ToString()));
+                
+                var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "CommandProcessingError", errorOccurred: true, errorMessage: ex.ToString(), errorIsFatal: false));
                 RespondToCommand(fullJsonResponse);
             }
         }

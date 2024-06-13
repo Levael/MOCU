@@ -5,18 +5,18 @@ namespace AudioControl
 {
     public class NotificatorForAudioDevicesParameters : IMMNotificationClient
     {
-        private AudioDevicesParameters _caller;
+        private AudioDevicesParameters _notificationTarget;
 
-        public NotificatorForAudioDevicesParameters(AudioDevicesParameters caller)
+        public NotificatorForAudioDevicesParameters(AudioDevicesParameters notificationTarget)
         {
-            _caller = caller;
+            _notificationTarget = notificationTarget;
         }
 
 
 
         public void OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
-            _caller.OnDeviceStateChanged(deviceId, newState);
+            _notificationTarget.OnDeviceStateChanged(deviceId, newState);
         }
 
 

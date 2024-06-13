@@ -99,7 +99,7 @@ namespace DaemonsNamespace.InterprocessCommunication
                         await _streamWriter.WriteLineAsync(message);
                         await _streamWriter.FlushAsync();
 
-                        innerMessagesQueue.Enqueue(($"Connection manager/Client/ProcessMessages/command sent: {message}", InnerMessageType.Info));
+                        innerMessagesQueue.Enqueue(($"Connection manager/Client/ProcessMessages/name sent: {message}", InnerMessageType.Info));
                     }
                     catch
                     {

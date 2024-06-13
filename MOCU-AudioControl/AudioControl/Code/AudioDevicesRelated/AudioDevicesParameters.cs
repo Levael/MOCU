@@ -96,7 +96,7 @@ namespace AudioControl
         {
             int errorsOccurred = 0;
             var deviceChangesOccurred = 0;
-            var volumeChangesOccurred = 0;
+            var volumeChangesOccurred = 0;  // not in use
 
             // example of naming: UAODNR = UpdatedAudioOutputDeviceNameResearcher
 
@@ -285,46 +285,6 @@ namespace AudioControl
             Console.WriteLine($"OnDeviceStateChanged. deviceId: {deviceId}, newState: {newState}");
 
             UpdateDictionaries();
-
-            /*var device = enumerator.GetDevice(deviceId);
-            if (device == null) return;
-
-            if (newState == DeviceState.Active)
-                OnDeviceAdded(device);
-            else if (newState == DeviceState.Unplugged || newState == DeviceState.NotPresent)
-                OnDeviceRemoved(device);*/
-
-            // 'OnDeviceAdded' and 'OnDeviceRemoved' update dictionaries, this event updates devices that currently in use (if there is any)
-            
         }
-
-        /*public void OnDeviceAdded(MMDevice device)
-        {
-            Console.WriteLine($"OnDeviceAdded: {device.FriendlyName}");
-
-            if (device.DataFlow == DataFlow.Capture)
-            {
-                if (!audioInputsDictionary.ContainsKey(device.FriendlyName))
-                    audioInputsDictionary.Add(device.FriendlyName, new AudioInputDevice(device, unifiedWaveFormat));
-            }
-            else if (device.DataFlow == DataFlow.Render)
-            {
-                if (!audioOutputsDictionary.ContainsKey(device.FriendlyName)) { }
-                    audioOutputsDictionary.Add(device.FriendlyName, new AudioOutputDevice(device, unifiedWaveFormat));
-            }
-        }
-
-        public void OnDeviceRemoved(MMDevice device)
-        {
-            Console.WriteLine($"OnDeviceRemoved: {device.FriendlyName}");
-
-            if (audioInputsDictionary.ContainsKey(device.FriendlyName))
-                audioInputsDictionary.Remove(device.FriendlyName);
-            
-            if (audioOutputsDictionary.ContainsKey(device.FriendlyName))
-                audioOutputsDictionary.Remove(device.FriendlyName);
-
-            CleanUpAfterDictionariesUpdate();
-        }*/
     }
 }
