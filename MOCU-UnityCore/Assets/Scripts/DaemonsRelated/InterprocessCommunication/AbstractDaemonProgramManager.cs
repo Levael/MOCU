@@ -18,8 +18,6 @@ namespace DaemonsNamespace.InterprocessCommunication
             try
             {
                 var command = CommonUtilities.DeserializeJson<UnifiedCommandFromClient>(jsonCommand);
-                DaemonsUtilities.ConsoleWarning($"jsonCommand: {jsonCommand}");
-                DaemonsUtilities.ConsoleWarning($"command: {command}");
 
                 if (command == null || !commandsHandlers.ContainsKey(command.name))
                     throw new Exception($"Command from client is incorrect or unknown");

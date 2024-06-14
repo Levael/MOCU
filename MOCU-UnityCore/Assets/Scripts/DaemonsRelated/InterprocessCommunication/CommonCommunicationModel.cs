@@ -15,9 +15,8 @@ namespace DaemonsNamespace.InterprocessCommunication
         [JsonProperty]
         private readonly string? _extraDataJson;
 
-        [JsonConverter(typeof(TypeNameHandlingConverter))]
         [JsonProperty]
-        private readonly Type? _extraDataType;
+        private readonly string? _extraDataTypeName;
 
         public UnifiedDataTransferObject(string name, object? extraData = null)
         {
@@ -29,26 +28,26 @@ namespace DaemonsNamespace.InterprocessCommunication
             if (extraData != null)
             {
                 _extraDataJson = CommonUtilities.SerializeJson(extraData);
-                _extraDataType = extraData?.GetType();
+                _extraDataTypeName = extraData.GetType().FullName;
             }
             else
             {
                 _extraDataJson = null;
-                _extraDataType = null;
+                _extraDataTypeName = null;
             }
         }
 
         public T? GetExtraData<T>() where T : class
         {
-            if (String.IsNullOrEmpty(_extraDataJson) || _extraDataType == null)
+            if (String.IsNullOrEmpty(_extraDataJson) || _extraDataTypeName == null)
             {
-                Console.WriteLine($"String.IsNullOrEmpty(_extraDataJson) || _extraDataType == null  --> returned null: _extraDataJson: {_extraDataJson}; _extraDataType: {_extraDataType}");
+                Console.WriteLine($"String.IsNullOrEmpty(_extraDataJson) || _extraDataTypeName == null  --> returned null: _extraDataJson: {_extraDataJson}; _extraDataTypeName: {_extraDataTypeName}");
                 return null;
             }
                 
 
-            if (_extraDataType != typeof(T))
-                throw new InvalidOperationException($"GetExtraData: Expected type {_extraDataType.FullName} but got type {typeof(T).FullName}");
+            if (_extraDataTypeName != typeof(T).FullName)
+                throw new InvalidOperationException($"GetExtraData: Expected type {_extraDataTypeName} but got type {typeof(T).FullName}");
 
             try
             {
@@ -81,7 +80,7 @@ namespace DaemonsNamespace.InterprocessCommunication
             this.errorIsFatal = errorIsFatal;
             this.errorMessage = errorMessage;
 
-            if (errorOccurred != null && (errorIsFatal == null || errorMessage == null))
+            if (errorOccurred == true && (errorIsFatal == null || errorMessage == null))
                 throw new ArgumentException("If error occurred, you have to specify is it fatal and provide its decription.");
         }
     }

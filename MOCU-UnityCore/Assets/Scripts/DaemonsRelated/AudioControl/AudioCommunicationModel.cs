@@ -1,19 +1,26 @@
 ﻿#nullable enable
 
-
-// TODO: change every property to simple field
-
 using System.Collections.Generic;
 
+
 namespace AudioControl {
+    public enum ClientCommands
+    {
+        SetConfigurations,
+        SetNewAudioData,
+        PlayAudioFile,
 
-    // intercom --------------------------------------------------------------------------------------------------
-    /*public class StartIncomingIntercomStream_Command : GeneralDataTransferObject { }    
-    public class StartOutgoingIntercomStream_Command : GeneralDataTransferObject { }
-    public class StopIncomingIntercomStream_Command : GeneralDataTransferObject { }    
-    public class StopOutgoingIntercomStream_Command : GeneralDataTransferObject { }*/
+        StartOutgoingIntercomStream,
+        StartIncomingIntercomStream,
+        StopOutgoingIntercomStream,
+        StopIncomingIntercomStream
+    }
 
-
+    public enum ServerResponses
+    {
+        ConfigurationsHaveBeenSet,
+        AudioDataHasBeenUpdated
+    }
 
 
     public class AudioDevicesInfo

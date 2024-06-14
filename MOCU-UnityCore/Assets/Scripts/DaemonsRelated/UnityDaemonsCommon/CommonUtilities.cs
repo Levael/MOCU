@@ -13,15 +13,7 @@ namespace UnityDaemonsCommon
         {
             try
             {
-                // test
-                var settings = optionalSettings ?? new JsonSerializerSettings();
-                settings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
-                {
-                    DefaultMembersSearchFlags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
-                };
-
-                T? deserializedObject = JsonConvert.DeserializeObject<T>(jsonString, settings);
-                //T? deserializedObject = JsonConvert.DeserializeObject<T>(jsonString, optionalSettings);
+                T? deserializedObject = JsonConvert.DeserializeObject<T>(jsonString, optionalSettings);
                 if (deserializedObject == null)
                     throw new Exception();
 
