@@ -2,13 +2,30 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace UnityNamespace
+
+public class UnityUtilities
 {
+    public static void ConsoleError(string message)
+    {
+        UnityEngine.Debug.LogError(message);
+    }
+
+    public static void ConsoleWarning(string message)
+    {
+        UnityEngine.Debug.LogWarning(message);
+    }
+
+    public static void ConsoleInfo(string message)
+    {
+        UnityEngine.Debug.Log(message);
+    }
+}
+
 
     /// <summary>
     /// A flexible (but not the fastest) mechanism for calling functions in the main thread from side threads (unity simply ignores them)
     /// </summary>
-    public class UnityMainThreadDispatcher : MonoBehaviour
+    /*public class UnityMainThreadDispatcher : MonoBehaviour
     {
         /// <summary>
         /// Needed to secure adding a pair (method, parameters) to the queue
@@ -44,7 +61,4 @@ namespace UnityNamespace
                 invocation.Method.DynamicInvoke(invocation.Parameters);
             }
         }
-    }
-
-
-}
+    }*/

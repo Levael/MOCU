@@ -9,6 +9,9 @@ namespace UnityDaemonsCommon
 {
     public static class CommonUtilities
     {
+        // TODO: add to 'SerializeJson' and 'DeserializeJson' error-resistant protection -- 
+        // an immutable string that will signal bad json
+
         public static T? DeserializeJson<T>(string jsonString, JsonSerializerSettings? optionalSettings = null) where T : class
         {
             try

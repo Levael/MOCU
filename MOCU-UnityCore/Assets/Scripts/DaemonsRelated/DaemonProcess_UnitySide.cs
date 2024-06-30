@@ -22,4 +22,16 @@ class DaemonProcess
         this.namedPipeName = executableFileName;
         this.isHidden = isHidden;
     }
+
+    /*public UnifiedResponseFrom_Server ReceiveResponse()
+    {
+        string? potentialResponse;
+        namedPipeClient.inputMessagesQueue.TryDequeue(out potentialResponse);
+        return potentialResponse;
+    }
+
+    public void SendCommand(UnifiedCommandFrom_Client command)
+    {
+
+    }*/
 }

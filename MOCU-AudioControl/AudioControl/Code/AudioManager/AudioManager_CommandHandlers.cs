@@ -15,7 +15,7 @@ namespace AudioControl
             {
                 Console.WriteLine($"Error in 'UpdateDevicesParameters_CommandHandler': {ex}");
                 var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "AudioDataHasBeenUpdated_Response", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
-                RespondToCommand(fullJsonResponse);
+                Respond(fullJsonResponse);
             }
         }
 
@@ -24,28 +24,25 @@ namespace AudioControl
             Console.WriteLine($"Sending AudioData to the client");
 
             var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "AudioDataHasBeenUpdated_Response", errorOccurred: false, extraData: audioDevicesParameters.GetAudioData()));
-            RespondToCommand(fullJsonResponse);
+            Respond(fullJsonResponse);
         }
 
         private void SendConfigs_CommandHandler(UnifiedCommandFromClient command)
         {
             try
             {
-                Console.WriteLine(command);
-                Console.WriteLine(command.GetExtraData<SetConfigurations_CommandDetails>());
                 pathToAudioFiles = command.GetExtraData<SetConfigurations_CommandDetails>().unityAudioDirectory;
-                Console.WriteLine(pathToAudioFiles);
 
                 LoadAudioFiles();   // todo: move to other place
 
                 var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "SetConfigurations_Response", errorOccurred: false));
-                RespondToCommand(fullJsonResponse);
+                Respond(fullJsonResponse);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in 'SendConfigs_CommandHandler': {ex}");
                 var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "SetConfigurations_Response", errorOccurred: true, errorIsFatal: true, errorMessage: ex.ToString()));
-                RespondToCommand(fullJsonResponse);
+                Respond(fullJsonResponse);
             }
         }
 
@@ -60,7 +57,7 @@ namespace AudioControl
             {
                 Console.WriteLine($"Error in 'PlayAudioFile_CommandDetails': {ex}");
                 var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "PlayAudioFile_Command", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
-                RespondToCommand(fullJsonResponse);
+                Respond(fullJsonResponse);
             }
         }
 
@@ -74,7 +71,7 @@ namespace AudioControl
             {
                 Console.WriteLine($"Error in 'StartIntercomStream_R2P_CommandHandler': {ex}");
                 var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "StartIntercomStream_ResearcherToParticipant_Command", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
-                RespondToCommand(fullJsonResponse);
+                Respond(fullJsonResponse);
             }
         }
         private void StartIntercomStream_P2R_CommandHandler(UnifiedCommandFromClient command)
@@ -87,7 +84,7 @@ namespace AudioControl
             {
                 Console.WriteLine($"Error in 'StartIntercomStream_P2R_CommandHandler': {ex}");
                 var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "StartIntercomStream_ParticipantToResearcher_Command", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
-                RespondToCommand(fullJsonResponse);
+                Respond(fullJsonResponse);
             }
         }
         private void StopIntercomStream_R2P_CommandHandler(UnifiedCommandFromClient command)
@@ -100,7 +97,7 @@ namespace AudioControl
             {
                 Console.WriteLine($"Error in 'StopIntercomStream_R2P_CommandHandler': {ex}");
                 var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "StopIntercomStream_ResearcherToParticipant_Command", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
-                RespondToCommand(fullJsonResponse);
+                Respond(fullJsonResponse);
             }
         }
         private void StopIntercomStream_P2R_CommandHandler(UnifiedCommandFromClient command)
@@ -113,7 +110,7 @@ namespace AudioControl
             {
                 Console.WriteLine($"Error in 'StopIntercomStream_P2R_CommandHandler': {ex}");
                 var fullJsonResponse = CommonUtilities.SerializeJson(new UnifiedResponseFromServer(name: "StopIntercomStream_ParticipantToResearcher_Command", errorOccurred: true, errorIsFatal: false, errorMessage: ex.ToString()));
-                RespondToCommand(fullJsonResponse);
+                Respond(fullJsonResponse);
             }
         }
 

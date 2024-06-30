@@ -26,14 +26,14 @@ public partial class AudioHandler : MonoBehaviour
         );
     }
 
-    /// <summary>
+    /*/// <summary>
     /// Sends request to the server. Doesn't get the response, it's done using other logic.
     /// </summary>
     public void RequestAudioDataUpdate()
     {
         //RequestAudioDevices();
         //_daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: true)));
-    }
+    }*/
 
     /// <summary>
     /// Instead of single changes, it sends the entire 'AudioDevicesInfo' updated object at once

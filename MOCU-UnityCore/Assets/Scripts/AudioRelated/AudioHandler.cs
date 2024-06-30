@@ -106,15 +106,15 @@ public partial class AudioHandler : MonoBehaviour
         if (_daemon.isProcessOk && _daemon.isConnectionOk)
             SendConfigurationDetails();
         else
-            CloseConnection("AudioHandler / Start : daemon error");
+            CloseConnectionWithDaemon("AudioHandler / Start : daemon error");
     }
 
     void Update()
     {
         if (_daemon == null) return;    // in case it is still not ready
 
-        ProccessInputMessagesQueue();
-        ProccessInnerMessagesQueue();
+        ProcessInputMessagesQueue();
+        ProcessInnerMessagesQueue();
     }
 
     #endregion MANDATORY STANDARD FUNCTIONALITY
@@ -123,7 +123,7 @@ public partial class AudioHandler : MonoBehaviour
 
     #region PRIVATE METHODS
 
-    private void CloseConnection(string message)
+    private void CloseConnectionWithDaemon(string message)
     {
         _experimentTabHandler.PrintToWarnings(message);
         _daemonsHandler.KillDaemon(_daemon);
@@ -131,22 +131,18 @@ public partial class AudioHandler : MonoBehaviour
 
 
 
-    private void ProccessInputMessagesQueue()
+
+    private void ProcessInputMessagesQueue()
     {
         while (_daemon.namedPipeClient.inputMessagesQueue.TryDequeue(out string message))
         {
             try
             {
-                // currently no check for "is it realy 'ResponseFromServer'", because this code only gets responses. maybe add later (todo)
                 var deserializedMessage = CommonUtilities.DeserializeJson<UnifiedResponseFromServer>(message);
                 var receivedCommand = CommandsToExecuteAccordingToServerResponse[deserializedMessage.name];
                 var subStateName = receivedCommand.subState;
                 var funcToBeExecuted = receivedCommand.action;
 
-                // todo: delete after tests
-                print(message);
-
-                // todo: if 'UpdateDevicesParameters_Command' returned error, it doesn't mean the error is fatal. it needs attention
                 if (deserializedMessage.errorOccurred == true && deserializedMessage.errorIsFatal != true)
                 {
                     _experimentTabHandler.PrintToWarnings($"Minor error: {deserializedMessage.errorMessage}");
@@ -162,8 +158,7 @@ public partial class AudioHandler : MonoBehaviour
                 // In case everything is fine
                 if (subStateName != null)
                     stateTracker.UpdateSubState(subStateName, true);
-
-                funcToBeExecuted.Invoke(deserializedMessage);       // pay attention: deserializedMessage.ExtraData is still 'JObject' type
+                funcToBeExecuted.Invoke(deserializedMessage);
             }
             catch
             {
@@ -173,19 +168,19 @@ public partial class AudioHandler : MonoBehaviour
         }
     }
 
-    private void ProccessInnerMessagesQueue()
+    private void ProcessInnerMessagesQueue()
     {
-        while (_daemon.namedPipeClient.innerMessagesQueue.TryDequeue(out (string messageText, InnerMessageType messageType) message))
+        while (_daemon.namedPipeClient.innerMessagesQueue.TryDequeue(out (string messageText, DebugMessageType messageType) message))
         {
-            if (message.messageType == InnerMessageType.Info)
+            if (message.messageType == DebugMessageType.Info)
             {
                 //_experimentTabHandler.PrintToInfo(message.messageText);
                 //print($"{message.messageText}\n");
             }
 
-            if (message.messageType == InnerMessageType.Error)
+            if (message.messageType == DebugMessageType.Error)
             {
-                CloseConnection($"Audio connection closed. {message.messageText}");
+                CloseConnectionWithDaemon($"Audio connection closed. {message.messageText}");
                 stateTracker.UpdateSubState(AudioHandler_Statuses.StartNamedPipeConnection, false);
             }
         }
