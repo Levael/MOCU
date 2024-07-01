@@ -1,5 +1,6 @@
 ﻿using System.IO.Pipes;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace InterprocessCommunication
 {
@@ -17,10 +18,10 @@ namespace InterprocessCommunication
             writer = new StreamWriter(writePipe);
         }
 
-        public override void Start()
+        public async Task StartAsync()
         {
-            readPipe.Connect();
-            writePipe.Connect();
+            await readPipe.ConnectAsync();
+            await writePipe.ConnectAsync();
             base.Start();
         }
 

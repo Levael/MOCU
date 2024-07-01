@@ -19,7 +19,7 @@ using DaemonsNamespace.Common;
 /// - DaemonHandler_Server manages additional tasks:
 ///     - _commandExecutionTask: Processes incoming command tasks from _commandQueue.
 ///     - _responseSendingTask: Processes outgoing messages from _outputMessageQueue.
-///     Although the communicator also handles sending messages using same technic, this task is included for code clarity and future flexibility.
+///     Although the communicator also handles sending messages using the same technique, this task is included for code clarity and future flexibility.
 ///     - _parentProcessMonitoringTask: Monitors the parent process and triggers application shutdown if it exits.
 /// 
 /// Initialization:
@@ -59,9 +59,10 @@ namespace InterprocessCommunication
             ParseAndValidateArguments(argsFromCaller);
 
             _communicator = new InterprocessCommunicator_Server(_pipeName);
-            _communicator.MessageReceived += HandleReceivedMessage;
+            _communicator.MessageReceived += HandleInputMessage;
 
             _commandProcessor = commandProcessor;
+            _commandProcessor.SendResponse += HandleOutputMessage;
 
             _commandQueue = new BlockingCollection<Action>();
             _outputMessageQueue = new BlockingCollection<string>();
@@ -72,9 +73,9 @@ namespace InterprocessCommunication
 
 
         
-        public void StartDaemon()
+        public async void StartDaemon()
         {
-            _communicator.Start();
+            await _communicator.StartAsync();
 
             _commandExecutionTask =         Task.Run(() => ExecuteCommands(_cancellationTokenSource.Token));
             _responseSendingTask =          Task.Run(() => SendResponses(_cancellationTokenSource.Token));
@@ -86,26 +87,12 @@ namespace InterprocessCommunication
             _cancellationTokenSource.Cancel();
 
             try { _communicator.Dispose(); }                catch { }
-            try { _commandQueue.CompleteAdding(); }            catch { }
+            try { _commandQueue.CompleteAdding(); }         catch { }
             try { _outputMessageQueue.CompleteAdding(); }   catch { }
-            try { _commandExecutionTask.Wait(); }                 catch { }
-            try { _responseSendingTask.Wait(); }                    catch { }
+            try { _commandExecutionTask.Wait(); }           catch { }
+            try { _responseSendingTask.Wait(); }            catch { }
             try { _parentProcessMonitoringTask.Wait(); }    catch { }
         }
-
-        public void SendMessage(UnifiedResponseFrom_Server response)
-        {
-            try
-            {
-                var message = UnityDaemonsCommon.CommonUtilities.SerializeJson(response);
-                _outputMessageQueue.Add(message);
-            }
-            catch (Exception ex)
-            {
-                DaemonsUtilities.ConsoleError($"Error serializing response: {ex.Message}");
-            }
-        }
-
 
 
         private void ParseAndValidateArguments(string[] arguments)
@@ -130,7 +117,7 @@ namespace InterprocessCommunication
             DaemonsUtilities.ConsoleInfo($"Parent process id: {parentProcessId}\n");
         }
 
-        private void HandleReceivedMessage(string message)
+        private void HandleInputMessage(string message)
         {
             try
             {
@@ -140,6 +127,19 @@ namespace InterprocessCommunication
             catch (Exception ex)
             {
                 DaemonsUtilities.ConsoleError($"Error deserializing command: {ex.Message}");
+            }
+        }
+
+        private void HandleOutputMessage(UnifiedResponseFrom_Server response)
+        {
+            try
+            {
+                var message = UnityDaemonsCommon.CommonUtilities.SerializeJson(response);
+                _outputMessageQueue.Add(message);
+            }
+            catch (Exception ex)
+            {
+                DaemonsUtilities.ConsoleError($"Error serializing response: {ex.Message}");
             }
         }
 

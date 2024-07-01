@@ -1,19 +1,23 @@
-﻿using DaemonsNamespace.InterprocessCommunication;
+﻿using DaemonsNamespace.Common;
+using InterprocessCommunication;
+using UnityDaemonsCommon;
 
 
 namespace AudioControl
 {
-    public partial class AudioManager : AbstractDaemonProgramManager
+    public partial class AudioManager : IBusinessLogic_Server
     {
+        public event Action<UnifiedResponseFrom_Server> SendResponse;
+
         private AudioDevicesParameters audioDevicesParameters;
+        private Dictionary<string, Action<UnifiedCommandFrom_Client>> commandsHandlers;
 
-        public IntercomStream incomingStream;
-        public IntercomStream outgoingStream;
+        private IntercomStream incomingStream;
+        private IntercomStream outgoingStream;
 
-        public string? pathToAudioFiles;
-        public Dictionary<string, byte[]>? preLoadedAudioFiles;
-        public List<string>? audioFileNames;
-        
+        private string? pathToAudioFiles;
+        private Dictionary<string, byte[]>? preLoadedAudioFiles;
+        private List<string>? audioFileNames;
 
 
         public AudioManager()
@@ -40,5 +44,24 @@ namespace AudioControl
             };
         }
 
+
+        public void ProcessCommand(UnifiedCommandFrom_Client command)
+        {
+            try
+            {
+                if (command == null || !commandsHandlers.ContainsKey(command.name))
+                    throw new Exception($"Command from client is incorrect or unknown");
+
+                commandsHandlers[command.name].Invoke(command);
+
+                DaemonsUtilities.ConsoleInfo($"Command '{command.name}' was executed");
+            }
+            catch (Exception ex)
+            {
+                SendResponse?.Invoke(new UnifiedResponseFrom_Server(name: "CommandProcessingError", errorOccurred: true, errorMessage: ex.ToString(), errorIsFatal: false));
+
+                DaemonsUtilities.ConsoleError($"Error while 'ProcessCommand': {ex}");
+            }
+        }
     }
 }

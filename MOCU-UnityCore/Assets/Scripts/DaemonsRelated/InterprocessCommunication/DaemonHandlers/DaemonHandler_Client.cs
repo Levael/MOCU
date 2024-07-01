@@ -21,9 +21,10 @@ namespace InterprocessCommunication
         public DaemonHandler_Client(string pipeName, IBusinessLogic_Client responseProcessor)
         {
             _communicator = new InterprocessCommunicator_Client(pipeName);
-            _communicator.MessageReceived += HandleReceivedMessage;
+            _communicator.MessageReceived += HandleInputMessage;
 
             _responseProcessor = responseProcessor;
+            _responseProcessor.SendCommand += HandleOutputMessage;
 
             _responseQueue = new BlockingCollection<Action>();
             _outputMessageQueue = new BlockingCollection<string>();
@@ -33,9 +34,9 @@ namespace InterprocessCommunication
 
 
 
-        public void StartDaemon()
+        public async void StartDaemon()
         {
-            _communicator.Start();
+            await _communicator.StartAsync();
 
             _commandSendingTask = Task.Run(() => SendCommands(_cancellationTokenSource.Token));
         }
@@ -44,26 +45,13 @@ namespace InterprocessCommunication
         {
             _cancellationTokenSource.Cancel();
 
-            try { _communicator.Dispose(); } catch { }
-            try { _responseQueue.CompleteAdding(); } catch { }
-            try { _outputMessageQueue.CompleteAdding(); } catch { }
-            try { _commandSendingTask.Wait(); } catch { }
+            try { _communicator.Dispose(); }                catch { }
+            try { _responseQueue.CompleteAdding(); }        catch { }
+            try { _outputMessageQueue.CompleteAdding(); }   catch { }
+            try { _commandSendingTask.Wait(); }             catch { }
         }
 
-        public void SendMessage(UnifiedResponseFrom_Server response)
-        {
-            try
-            {
-                var message = UnityDaemonsCommon.CommonUtilities.SerializeJson(response);
-                _outputMessageQueue.Add(message);
-            }
-            catch (Exception ex)
-            {
-                UnityUtilities.ConsoleError($"Error serializing response: {ex.Message}");
-            }
-        }
-
-        private void HandleReceivedMessage(string message)
+        private void HandleInputMessage(string message)
         {
             try
             {
@@ -76,6 +64,19 @@ namespace InterprocessCommunication
             catch (Exception ex)
             {
                 UnityUtilities.ConsoleError($"Error deserializing response: {ex.Message}");
+            }
+        }
+
+        private void HandleOutputMessage(UnifiedCommandFrom_Client command)
+        {
+            try
+            {
+                var message = UnityDaemonsCommon.CommonUtilities.SerializeJson(command);
+                _outputMessageQueue.Add(message);
+            }
+            catch (Exception ex)
+            {
+                UnityUtilities.ConsoleError($"Error serializing command: {ex.Message}");
             }
         }
 
