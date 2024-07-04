@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <!-- ============================ -->
+  <!-- COMMON PART FOR EVERY DAEMON -->
+  <!-- ============================ -->
+  
+  <!-- Settings for project that compiles into single selfcontained '.exe' file which will be coppied to Unity project folder and executed from there -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Optimize>true</Optimize>
+    
+    <DebugType>none</DebugType>    <!-- To prevent the generation of a debug file in the publish folder -->
+    <PublishDir>$(MSBuildProjectDirectory)\</PublishDir>
+
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+  </PropertyGroup>
+
+  
+  <!-- Paths for external files -->
+  <PropertyGroup>
+    <MocuScriptsPath>..\..\MOCU-UnityCore\Assets\Scripts</MocuScriptsPath>
+    
+    <DaemonsRelated>$(MocuScriptsPath)\DaemonsRelated</DaemonsRelated>
+    <UnityDaemonsCommon>$(DaemonsRelated)\UnityDaemonsCommon</UnityDaemonsCommon>
+    <DaemonsOnlyCommon>$(DaemonsRelated)\DaemonsOnlyCommon</DaemonsOnlyCommon>
+    <InterprocessCommunication>$(DaemonsRelated)\InterprocessCommunication</InterprocessCommunication>
+    <Communicators>$(InterprocessCommunication)\Communicators</Communicators>
+    <DaemonHandlers>$(InterprocessCommunication)\DaemonHandlers</DaemonHandlers>
+    <DTOs>$(InterprocessCommunication)\DTOs</DTOs>
+  </PropertyGroup>
+
+  
+  <!-- Linked files -->
+  <ItemGroup>
+    <Compile Include="$(Communicators)\InterprocessCommunicator_Base.cs"      Link="Linked code\Communicators\InterprocessCommunicator_Base.cs" />
+    <Compile Include="$(Communicators)\InterprocessCommunicator_Server.cs"    Link="Linked code\Communicators\InterprocessCommunicator_Server.cs" />
+    <Compile Include="$(Communicators)\InterprocessCommunicator_Interface.cs" Link="Linked code\Communicators\InterprocessCommunicator_Interface.cs" />
+    
+    <Compile Include="$(DaemonHandlers)\DaemonHandler_Server.cs"              Link="Linked code\DaemonHandlers\DaemonHandler_Server.cs" />
+    <Compile Include="$(DaemonHandlers)\IBusinessLogic_Server.cs"             Link="Linked code\DaemonHandlers\IBusinessLogic_Server.cs" />
+    
+    <Compile Include="$(DTOs)\UnifiedDataTransferObject.cs"                   Link="Linked code\DTOs\UnifiedDataTransferObject.cs" />
+    <Compile Include="$(DTOs)\UnifiedCommandFrom_Client.cs"                   Link="Linked code\DTOs\UnifiedCommandFrom_Client.cs" />
+    <Compile Include="$(DTOs)\UnifiedResponseFrom_Server.cs"                  Link="Linked code\DTOs\UnifiedResponseFrom_Server.cs" />
+    
+    <Compile Include="$(UnityDaemonsCommon)\CommonUtilities.cs"               Link="Linked code\CommonUtilities.cs" />
+    <Compile Include="$(DaemonsOnlyCommon)\DaemonsUtilities.cs"               Link="Linked code\DaemonsUtilities.cs" />
+  </ItemGroup>
+
+  <!-- Libraries -->
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  
+  <!-- ========================================= -->
+  <!-- EXCLUSIVE PART FOR THIS PARTICULAR DAEMON -->
+  <!-- ========================================= -->
+  
+  <!-- Linked files -->
+  <ItemGroup>
+    <Compile Include="$(DaemonsRelated)\AudioControl\AudioCommunicationModel.cs" Link="Linked code\AudioCommunicationModel.cs" />
+  </ItemGroup>
+  
+
+  <!-- NAudio uses some stuff that are incompatible with "PublishSingleFile SelfContained" compilation. Therefore this setting solves the problem -->
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Runtime.InteropServices.BuiltInComInterop.IsSupported" Value="true" />
+  </ItemGroup>
+
+  
+  <!-- Libraries -->
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
+  </ItemGroup>
+
+</Project>
