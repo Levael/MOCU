@@ -9,19 +9,19 @@ using System.Linq;
 using AudioControl;
 using DaemonsNamespace.InterprocessCommunication;
 using UnityDaemonsCommon;
+using InterprocessCommunication;
 
 // todo: not allow intercom (on the client side) if any device is missing (null)
 
 
-public partial class AudioHandler : MonoBehaviour
+public partial class AudioHandler : MonoBehaviour, IDaemonUser
 {
     #region PRIVATE FIELDS
+    private DaemonHandler_Client _daemon;
+
     private AudioDevicesInfo audioDevicesInfo;
     private List<string> inputAudioDevices;
     private List<string> outputAudioDevices;
-
-    private DaemonProcess _daemon;
-    private string executableFileName;
 
     private UiHandler _uiHandler;
     private ConfigHandler _configHandler;
@@ -31,7 +31,7 @@ public partial class AudioHandler : MonoBehaviour
     private DaemonsHandler _daemonsHandler;
 
     private Dictionary<string, string> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
-    private Dictionary<string, (AudioHandler_Statuses? subState, Action<UnifiedResponseFromServer> action)> CommandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
+    private Dictionary<string, (AudioHandler_Statuses? subState, Action<UnifiedResponseFrom_Server> action)> CommandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
     #endregion PRIVATE FIELDS
 
 
@@ -41,8 +41,6 @@ public partial class AudioHandler : MonoBehaviour
 
     void Awake()
     {
-        executableFileName = "AudioControl";    // todo: read it from config (private)
-
         _uiHandler = GetComponent<UiHandler>();
         _configHandler = GetComponent<ConfigHandler>();
         _experimentTabHandler = GetComponent<ExperimentTabHandler>();
@@ -57,10 +55,10 @@ public partial class AudioHandler : MonoBehaviour
         outputAudioDevices = new();
 
         partlyOptimizedJsonCommands = new() {
-            { "StartIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "StartOutgoingIntercomStream_Command")) },
-            { "StartIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "StartIncomingIntercomStream_Command")) },
-            { "StopIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "StopOutgoingIntercomStream_Command")) },
-            { "StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "StopIncomingIntercomStream_Command")) },
+            { "StartIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new UnifiedCommandFrom_Client(name: "StartOutgoingIntercomStream_Command")) },
+            { "StartIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new UnifiedCommandFrom_Client(name: "StartIncomingIntercomStream_Command")) },
+            { "StopIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new UnifiedCommandFrom_Client(name: "StopOutgoingIntercomStream_Command")) },
+            { "StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new UnifiedCommandFrom_Client(name: "StopIncomingIntercomStream_Command")) },
         };
 
         // todo: rename action to "{commandName}_commandHandler"
@@ -98,7 +96,7 @@ public partial class AudioHandler : MonoBehaviour
 
     async void Start()
     {
-        _daemon = await _daemonsHandler.InitAndRunDaemon(executableFileName, isHidden: false);
+        _daemon = await _daemonsHandler.CreateDaemon(DaemonsHandler.Daemons.Audio);
 
         stateTracker.UpdateSubState(AudioHandler_Statuses.StartAudioProcess, _daemon.isProcessOk);
         stateTracker.UpdateSubState(AudioHandler_Statuses.StartNamedPipeConnection, _daemon.isConnectionOk);
@@ -119,7 +117,15 @@ public partial class AudioHandler : MonoBehaviour
 
     #endregion MANDATORY STANDARD FUNCTIONALITY
 
-    
+
+
+    public void ProcessResponse(UnifiedResponseFrom_Server response)
+    {
+        print("Got message from Audio Daemon");
+        //throw new NotImplementedException();
+    }
+
+
 
     #region PRIVATE METHODS
 

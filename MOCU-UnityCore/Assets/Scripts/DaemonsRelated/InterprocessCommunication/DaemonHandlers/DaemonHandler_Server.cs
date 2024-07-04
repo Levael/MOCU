@@ -40,7 +40,7 @@ namespace InterprocessCommunication
     public class DaemonHandler_Server
     {
         private InterprocessCommunicator_Server _communicator;
-        private IBusinessLogic_Server _commandProcessor;
+        private IBusinessLogic_Server _businessLogic;
 
         private BlockingCollection<Action> _commandQueue;
         private BlockingCollection<string> _outputMessageQueue;
@@ -54,15 +54,15 @@ namespace InterprocessCommunication
         private int _parentProcessId;
         private bool _isProcessHidden;
 
-        public DaemonHandler_Server(string[] argsFromCaller, IBusinessLogic_Server commandProcessor)
+        public DaemonHandler_Server(string[] argsFromCaller, IBusinessLogic_Server businessLogic)
         {
             ParseAndValidateArguments(argsFromCaller);
 
             _communicator = new InterprocessCommunicator_Server(_pipeName);
             _communicator.MessageReceived += HandleInputMessage;
 
-            _commandProcessor = commandProcessor;
-            _commandProcessor.SendResponse += HandleOutputMessage;
+            _businessLogic = businessLogic;
+            _businessLogic.SendResponse += HandleOutputMessage;
 
             _commandQueue = new BlockingCollection<Action>();
             _outputMessageQueue = new BlockingCollection<string>();
@@ -113,7 +113,7 @@ namespace InterprocessCommunication
             _parentProcessId = parentProcessId;
             _isProcessHidden = isProcessHidden;
 
-            DaemonsUtilities.ConsoleInfo($"Program name: {_commandProcessor.GetType()}");
+            DaemonsUtilities.ConsoleInfo($"Program name: {_businessLogic.GetType()}");
             DaemonsUtilities.ConsoleInfo($"Parent process id: {parentProcessId}\n");
         }
 
@@ -122,7 +122,7 @@ namespace InterprocessCommunication
             try
             {
                 var command = UnityDaemonsCommon.CommonUtilities.DeserializeJson<UnifiedCommandFrom_Client>(message);
-                _commandQueue.Add(() => _commandProcessor.ProcessCommand(command));
+                _commandQueue.Add(() => _businessLogic.ProcessCommand(command));
             }
             catch (Exception ex)
             {

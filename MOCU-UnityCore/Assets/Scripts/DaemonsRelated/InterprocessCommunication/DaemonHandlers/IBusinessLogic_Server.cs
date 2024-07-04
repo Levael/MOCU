@@ -1,4 +1,6 @@
-﻿namespace InterprocessCommunication
+﻿using System;
+
+namespace InterprocessCommunication
 {
     public interface IBusinessLogic_Server
     {

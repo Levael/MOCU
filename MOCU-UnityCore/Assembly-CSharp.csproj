@@ -98,6 +98,7 @@
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\DebugTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityDaemonsCommon\CommonUtilities.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\IBusinessLogic_Server.cs" />
+    <Compile Include="Assets\Scripts\DaemonsRelated\IDaemonUser.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\AudioHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonProgram_ExternalSide.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />

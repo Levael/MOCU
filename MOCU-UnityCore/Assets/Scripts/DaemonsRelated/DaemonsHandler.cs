@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 
-using DaemonsNamespace.InterprocessCommunication;
+using InterprocessCommunication;
 
 #nullable enable
 #pragma warning disable CS8618
@@ -13,88 +13,59 @@ using DaemonsNamespace.InterprocessCommunication;
 
 class DaemonsHandler : MonoBehaviour
 {
-    private List<DaemonProcess> _externalDaemonsList = new();
+    public enum Daemons
+    {
+        Audio,
+        Moog,
+        EEG,
+        Video
+    }
+
+    private Dictionary<Daemons, (string fullPath, bool isHidden, IDaemonUser businessLogic)> _daemonControlPaths;
+    private List<DaemonHandler_Client> _daemonHandlers = new();
+
+
+    void Awake()
+    {
+        _daemonControlPaths = new()
+        {
+            { Daemons.Audio, (
+                fullPath: Path.Combine(Application.streamingAssetsPath, "AudioControl.exe"),
+                isHidden: false,
+                businessLogic: GetComponent<AudioHandler>()
+            )},
+        };
+    }
 
     void OnDestroy()
     {
-        foreach (var daemon in _externalDaemonsList)
-        {
-            try { daemon.namedPipeClient?.Destroy(); } catch { }
-            try { daemon.process?.Kill(); } catch { }
-        }
+        foreach (var daemon in _daemonHandlers)
+            try { daemon.StopDaemon(); } catch { }
     }
 
 
 
     /// <param name="executableFileName">executable daemon file name without '.exe'</param>
     /// <param name="isHidden">choose 'false' for debugging purposes</param>
-    public async Task<DaemonProcess> InitAndRunDaemon(string executableFileName, bool isHidden = true)
+    public async Task<DaemonHandler_Client> CreateDaemon(Daemons daemonControlsEnum)
     {
-        var daemon = new DaemonProcess(executableFileName: executableFileName, isHidden: isHidden);
+        var daemon = new DaemonHandler_Client(
+            exeFullFilePath: _daemonControlPaths[daemonControlsEnum].fullPath,
+            isDaemonHidden: _daemonControlPaths[daemonControlsEnum].isHidden,
+            businessLogic: _daemonControlPaths[daemonControlsEnum].businessLogic
+        );
 
         try
         {
-            StartDaemonProcess(daemon);
-            await ConnectToServer(daemon);
-            _externalDaemonsList.Add(daemon);
+            await daemon.StartDaemon();
+            _daemonHandlers.Add(daemon);
         }
         catch (Exception ex)
         {
-            UnityEngine.Debug.LogError($"couldn't execute 'InitAndRunDaemon' properly for {executableFileName} daemon. Exception: {ex}");
+            UnityEngine.Debug.LogError($"couldn't execute 'InitAndRunDaemon' properly for {daemonControlsEnum} daemon. Exception: {ex}");
         }
 
         return daemon;
-    }
-
-    public void StartDaemonProcess(DaemonProcess daemon)
-    {
-        try
-        {
-            string fullExternalAppPath = Path.Combine(Application.streamingAssetsPath, $"{daemon.executableFileName}.exe");
-
-            ProcessStartInfo startInfo = new ProcessStartInfo()
-            {
-                FileName = fullExternalAppPath,
-                Arguments = $"{Process.GetCurrentProcess().Id} {daemon.namedPipeName} {daemon.isHidden}", // takes string where spaces separate arguments
-                UseShellExecute = !daemon.isHidden,
-                RedirectStandardOutput = false,
-                CreateNoWindow = daemon.isHidden
-            };
-
-            //print(startInfo.Arguments);
-
-            daemon.process = new Process() { StartInfo = startInfo };
-            daemon.process.Start();
-
-            daemon.isProcessOk = true;
-        }
-        catch
-        {
-            daemon.isProcessOk = false;
-            throw new Exception();
-        }
-    }
-
-    public async Task ConnectToServer(DaemonProcess daemon)
-    {
-        try
-        {
-            daemon.namedPipeClient = new NamedPipeClient(daemon.namedPipeName);
-            daemon.isConnectionOk = await daemon.namedPipeClient.StartAsync();
-        }
-        catch
-        {
-            daemon.isConnectionOk = false;
-            throw new Exception();
-        }
-    }
-
-    public void KillDaemon(DaemonProcess daemon)
-    {
-        try { daemon.namedPipeClient?.Destroy();    } catch { }
-        try { daemon.process?.Kill();               } catch { }
-
-        _externalDaemonsList.Remove(daemon);
     }
 }
 

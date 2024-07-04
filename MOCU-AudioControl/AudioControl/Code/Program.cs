@@ -8,7 +8,7 @@ class Program
     public static void Main(string[] args)
     {
         new DaemonHandler_Server(
-            commandProcessor: new AudioManager(),
+            businessLogic: new AudioManager(),
             argsFromCaller: args
         ).StartDaemon();
     }

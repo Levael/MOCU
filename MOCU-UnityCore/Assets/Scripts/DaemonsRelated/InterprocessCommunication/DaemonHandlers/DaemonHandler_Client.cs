@@ -3,7 +3,8 @@ using System.Threading;
 using System;
 using System.Threading.Tasks;
 
-using DaemonsNamespace.Common;
+using System.Diagnostics;
+using System.IO;
 
 
 namespace InterprocessCommunication
@@ -11,20 +12,31 @@ namespace InterprocessCommunication
     public class DaemonHandler_Client
     {
         private InterprocessCommunicator_Client _communicator;
-        private IBusinessLogic_Client _responseProcessor;
+        private IBusinessLogic_Client _businessLogic;
 
         private BlockingCollection<Action> _responseQueue;
         private BlockingCollection<string> _outputMessageQueue;
         private Task _commandSendingTask;
         private CancellationTokenSource _cancellationTokenSource;
 
-        public DaemonHandler_Client(string pipeName, IBusinessLogic_Client responseProcessor)
+        // todo: not sure where to place it
+        private Process _daemonProcess;
+        private string _daemonPath;
+        private string _daemonName;
+        private bool _isDaemonHidden;
+        private bool _isProcessOk;
+        private bool _isConnectionOk;
+
+        public DaemonHandler_Client(string exeFullFilePath, bool isDaemonHidden, IBusinessLogic_Client businessLogic)
         {
-            _communicator = new InterprocessCommunicator_Client(pipeName);
+            _daemonPath = exeFullFilePath;
+            _daemonName = Path.GetFileNameWithoutExtension(_daemonPath);
+            _isDaemonHidden = isDaemonHidden;
+
+            _communicator = new InterprocessCommunicator_Client(_daemonName);
             _communicator.MessageReceived += HandleInputMessage;
 
-            _responseProcessor = responseProcessor;
-            _responseProcessor.SendCommand += HandleOutputMessage;
+            _businessLogic = businessLogic;
 
             _responseQueue = new BlockingCollection<Action>();
             _outputMessageQueue = new BlockingCollection<string>();
@@ -34,8 +46,9 @@ namespace InterprocessCommunication
 
 
 
-        public async void StartDaemon()
+        public async Task StartDaemon()
         {
+            StartDaemonProcess();
             await _communicator.StartAsync();
 
             _commandSendingTask = Task.Run(() => SendCommands(_cancellationTokenSource.Token));
@@ -49,7 +62,15 @@ namespace InterprocessCommunication
             try { _responseQueue.CompleteAdding(); }        catch { }
             try { _outputMessageQueue.CompleteAdding(); }   catch { }
             try { _commandSendingTask.Wait(); }             catch { }
+            try { _daemonProcess.Kill(); }                  catch { }
         }
+
+        public void SendCommand(UnifiedCommandFrom_Client command)
+        {
+            HandleOutputMessage(command);
+        }
+
+
 
         private void HandleInputMessage(string message)
         {
@@ -58,7 +79,7 @@ namespace InterprocessCommunication
                 var response = UnityDaemonsCommon.CommonUtilities.DeserializeJson<UnifiedResponseFrom_Server>(message);
                 UnityMainThreadDispatcher.Enqueue(() =>
                 {
-                    _responseProcessor.ProcessResponse(response);
+                    _businessLogic.ProcessResponse(response);
                 });
             }
             catch (Exception ex)
@@ -84,6 +105,31 @@ namespace InterprocessCommunication
         {
             foreach (var message in _outputMessageQueue.GetConsumingEnumerable(token))
                 _communicator.SendMessage(message);
+        }
+
+        private void StartDaemonProcess()
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo()
+                {
+                    FileName = _daemonPath,
+                    Arguments = $"{Process.GetCurrentProcess().Id} {_daemonName} {_isDaemonHidden}", // takes string where spaces separate arguments
+                    UseShellExecute = !_isDaemonHidden,
+                    RedirectStandardOutput = false,
+                    CreateNoWindow = _isDaemonHidden
+                };
+
+                _daemonProcess = new Process() { StartInfo = startInfo };
+                _daemonProcess.Start();
+
+                //daemon.isProcessOk = true;
+            }
+            catch
+            {
+                //daemon.isProcessOk = false;
+                throw new Exception();
+            }
         }
     }
 }
