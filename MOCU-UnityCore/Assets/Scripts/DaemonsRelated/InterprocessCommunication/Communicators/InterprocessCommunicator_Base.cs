@@ -14,8 +14,8 @@ namespace InterprocessCommunication
         protected CancellationTokenSource cancellationTokenSource;
         protected BlockingCollection<string> outputMessagesQueue;
 
-        protected string readPipeName;
-        protected string writePipeName;
+        protected string pipeName_clientWritesServerReads;
+        protected string pipeName_serverWritesClientReads;
 
         public event Action<string> MessageReceived;
 
@@ -24,8 +24,8 @@ namespace InterprocessCommunication
             cancellationTokenSource = new CancellationTokenSource();
             outputMessagesQueue = new BlockingCollection<string>();
 
-            readPipeName = $"{pipeName}Read";
-            writePipeName = $"{pipeName}Write";
+            pipeName_clientWritesServerReads = $"{pipeName}C2S";
+            pipeName_serverWritesClientReads = $"{pipeName}S2C";
         }
 
         public virtual void Start()

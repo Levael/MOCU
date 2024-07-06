@@ -73,13 +73,15 @@ namespace InterprocessCommunication
 
 
         
-        public async void StartDaemon()
+        public async Task StartDaemon()
         {
             await _communicator.StartAsync();
 
-            _commandExecutionTask =         Task.Run(() => ExecuteCommands(_cancellationTokenSource.Token));
-            _responseSendingTask =          Task.Run(() => SendResponses(_cancellationTokenSource.Token));
-            _parentProcessMonitoringTask =  Task.Run(() => MonitorParentProcessAsync(_cancellationTokenSource.Token));
+            _commandExecutionTask = Task.Run(() => ExecuteCommands(_cancellationTokenSource.Token));
+            _responseSendingTask = Task.Run(() => SendResponses(_cancellationTokenSource.Token));
+            _parentProcessMonitoringTask = Task.Run(() => MonitorParentProcessAsync(_cancellationTokenSource.Token));
+
+            Task.WaitAll(_commandExecutionTask, _responseSendingTask);
         }
 
         public void StopDaemon()
@@ -113,7 +115,7 @@ namespace InterprocessCommunication
             _parentProcessId = parentProcessId;
             _isProcessHidden = isProcessHidden;
 
-            DaemonsUtilities.ConsoleInfo($"Program name: {_businessLogic.GetType()}");
+            DaemonsUtilities.ConsoleInfo($"Program name: {_pipeName}");
             DaemonsUtilities.ConsoleInfo($"Parent process id: {parentProcessId}\n");
         }
 

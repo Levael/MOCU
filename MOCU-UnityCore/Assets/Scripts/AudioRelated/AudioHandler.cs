@@ -1,15 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json.Linq;
-using System.Linq;
 
 using AudioControl;
-using DaemonsNamespace.InterprocessCommunication;
-using UnityDaemonsCommon;
 using InterprocessCommunication;
+using UnityDaemonsCommon;
 
 // todo: not allow intercom (on the client side) if any device is missing (null)
 
@@ -30,7 +26,7 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
     private InputLogic _inputLogic;
     private DaemonsHandler _daemonsHandler;
 
-    private Dictionary<string, string> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
+    private Dictionary<string, UnifiedCommandFrom_Client> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
     private Dictionary<string, (AudioHandler_Statuses? subState, Action<UnifiedResponseFrom_Server> action)> CommandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
     #endregion PRIVATE FIELDS
 
@@ -55,10 +51,10 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
         outputAudioDevices = new();
 
         partlyOptimizedJsonCommands = new() {
-            { "StartIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new UnifiedCommandFrom_Client(name: "StartOutgoingIntercomStream_Command")) },
-            { "StartIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new UnifiedCommandFrom_Client(name: "StartIncomingIntercomStream_Command")) },
-            { "StopIntercomStream_ResearcherToParticipant_Command", CommonUtilities.SerializeJson(new UnifiedCommandFrom_Client(name: "StopOutgoingIntercomStream_Command")) },
-            { "StopIntercomStream_ParticipantToResearcher_Command", CommonUtilities.SerializeJson(new UnifiedCommandFrom_Client(name: "StopIncomingIntercomStream_Command")) },
+            { "StartIntercomStream_ResearcherToParticipant_Command", new UnifiedCommandFrom_Client(name: "StartOutgoingIntercomStream_Command") },
+            { "StartIntercomStream_ParticipantToResearcher_Command", new UnifiedCommandFrom_Client(name: "StartIncomingIntercomStream_Command") },
+            { "StopIntercomStream_ResearcherToParticipant_Command", new UnifiedCommandFrom_Client(name: "StopOutgoingIntercomStream_Command") },
+            { "StopIntercomStream_ParticipantToResearcher_Command", new UnifiedCommandFrom_Client(name: "StopIncomingIntercomStream_Command") },
         };
 
         // todo: rename action to "{commandName}_commandHandler"
@@ -78,19 +74,19 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
         // Event listeners for intercom
         // todo: is there any check of status?
         _inputLogic.startOutgoingIntercomStream += () => {
-            _daemon.namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ResearcherToParticipant_Command"]);
+            _daemon.SendCommand(partlyOptimizedJsonCommands["StartIntercomStream_ResearcherToParticipant_Command"]);
         };
 
         _inputLogic.stopOutgoingIntercomStream += () => {
-            _daemon.namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StopIntercomStream_ResearcherToParticipant_Command"]);
+            _daemon.SendCommand(partlyOptimizedJsonCommands["StopIntercomStream_ResearcherToParticipant_Command"]);
         };
 
         _inputLogic.startIncomingIntercomStream += () => {
-            _daemon.namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StartIntercomStream_ParticipantToResearcher_Command"]);
+            _daemon.SendCommand(partlyOptimizedJsonCommands["StartIntercomStream_ParticipantToResearcher_Command"]);
         };
 
         _inputLogic.stopIncomingIntercomStream += () => {
-            _daemon.namedPipeClient.SendCommandAsync(partlyOptimizedJsonCommands["StopIntercomStream_ParticipantToResearcher_Command"]);
+            _daemon.SendCommand(partlyOptimizedJsonCommands["StopIntercomStream_ParticipantToResearcher_Command"]);
         };
     }
 
@@ -107,13 +103,13 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
             CloseConnectionWithDaemon("AudioHandler / Start : daemon error");
     }
 
-    void Update()
+    /*void Update()
     {
         if (_daemon == null) return;    // in case it is still not ready
 
         ProcessInputMessagesQueue();
         ProcessInnerMessagesQueue();
-    }
+    }*/
 
     #endregion MANDATORY STANDARD FUNCTIONALITY
 
@@ -122,7 +118,34 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
     public void ProcessResponse(UnifiedResponseFrom_Server response)
     {
         print("Got message from Audio Daemon");
-        //throw new NotImplementedException();
+
+        try
+        {
+            var receivedCommand = CommandsToExecuteAccordingToServerResponse[response.name];
+            var subStateName = receivedCommand.subState;
+            var funcToBeExecuted = receivedCommand.action;
+
+            if (response.errorOccurred == true && response.errorIsFatal != true)
+            {
+                _experimentTabHandler.PrintToWarnings($"Minor error: {response.errorMessage}");
+            }
+            else if (response.errorOccurred == true && response.errorIsFatal == true)
+            {
+                stateTracker.UpdateSubState(subStateName, false);
+                _experimentTabHandler.PrintToWarnings($"Fatal error: {response.errorMessage}");
+                return;
+            }
+
+
+            // In case everything is fine
+            if (subStateName != null)
+                stateTracker.UpdateSubState(subStateName, true);
+            funcToBeExecuted.Invoke(response);
+        }
+        catch
+        {
+            _experimentTabHandler.PrintToWarnings($"Total fail while trying read incoming message from server");
+        }
     }
 
 
@@ -132,13 +155,13 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
     private void CloseConnectionWithDaemon(string message)
     {
         _experimentTabHandler.PrintToWarnings(message);
-        _daemonsHandler.KillDaemon(_daemon);
+        //_daemon.StopDaemon(); // temp todo
     }
 
 
 
 
-    private void ProcessInputMessagesQueue()
+    /*private void ProcessInputMessagesQueue()
     {
         while (_daemon.namedPipeClient.inputMessagesQueue.TryDequeue(out string message))
         {
@@ -172,9 +195,9 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
                 _experimentTabHandler.PrintToWarnings($"Total fail while trying read incoming message from server");
             }
         }
-    }
+    }*/
 
-    private void ProcessInnerMessagesQueue()
+    /*private void ProcessInnerMessagesQueue()
     {
         while (_daemon.namedPipeClient.innerMessagesQueue.TryDequeue(out (string messageText, DebugMessageType messageType) message))
         {
@@ -190,24 +213,16 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
                 stateTracker.UpdateSubState(AudioHandler_Statuses.StartNamedPipeConnection, false);
             }
         }
-    }
+    }*/
 
     // todo: think about path that external program can access to. also thing about an option to change audio files from UI dynamically
-    private void SendConfigurationDetails(UnifiedResponseFromServer response = null)
+    private void SendConfigurationDetails(UnifiedResponseFrom_Server response = null)
     {
         var commandName = "SetConfigurations_Command";
-        var payloadData = new SetConfigurations_CommandDetails(unityAudioDirectory: Path.Combine(Application.dataPath, "Audio"));
-        var fullCommand = new UnifiedCommandFromClient(name: commandName, extraData: payloadData);
+        var payloadData = new SetConfigurations_CommandDetails(unityAudioDirectory: Path.Combine(Application.streamingAssetsPath, "Audio"));
+        var fullCommand = new UnifiedCommandFrom_Client(name: commandName, extraData: payloadData);
 
-        SendCommand(fullCommand);
-    }
-
-
-    private void SendCommand(UnifiedCommandFromClient command)
-    {
-        var jsonCommand = CommonUtilities.SerializeJson(command);
-        print(jsonCommand);
-        _daemon.namedPipeClient.SendCommandAsync(jsonCommand);
+        _daemon.SendCommand(fullCommand);
     }
     
     /*private void RequestAudioDevices(ResponseFromServer response)
@@ -237,18 +252,18 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
         ir = inputAudioDevices.Contains(ir) ? ir : null;
     }*/
 
-    private void SendClientAudioDataDesire(UnifiedResponseFromServer response)
+    private void SendClientAudioDataDesire(UnifiedResponseFrom_Server response)
     {
         //ValidateAndUpdateDevicesInfo(response);
         //print("before 'SendClientAudioDataDesire'");
-        _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "SetUpdatedAudioDevicesInfo_Command", extraData: audioDevicesInfo)));
+        _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "SetUpdatedAudioDevicesInfo_Command", extraData: audioDevicesInfo));
         //print("after 'SendClientAudioDataDesire'");
     }
 
     /// <summary>
     /// Called after successful devices update on the server side
     /// </summary>
-    private void GotServerAudioDataDecision(UnifiedResponseFromServer response)
+    private void GotServerAudioDataDecision(UnifiedResponseFrom_Server response)
     {
         //_configHandler.UpdateSubConfig(audioDevicesInfo);                     // if all ok -- server returns null (figure out how to handle half-errors)
         // todo: trigger event in SettingsTabHandler to update UI               <--- HERE

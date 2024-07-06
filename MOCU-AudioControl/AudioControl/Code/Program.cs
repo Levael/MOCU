@@ -5,11 +5,20 @@ using InterprocessCommunication;
 
 class Program
 {
-    public static void Main(string[] args)
+    public async static Task Main(string[] args)
     {
-        new DaemonHandler_Server(
-            businessLogic: new AudioManager(),
-            argsFromCaller: args
-        ).StartDaemon();
+        try
+        {
+            await new DaemonHandler_Server(
+                businessLogic: new AudioManager(),
+                argsFromCaller: args
+            //argsFromCaller: new string[] { "69", "AudioControl", "False" }
+            ).StartDaemon();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("error: " + ex.ToString());
+            Console.ReadLine();
+        }
     }
 }

@@ -11,8 +11,8 @@ namespace InterprocessCommunication
 
         public InterprocessCommunicator_Client(string pipeName) : base(pipeName)
         {
-            readPipe = new NamedPipeClientStream(".", readPipeName, PipeDirection.In);
-            writePipe = new NamedPipeClientStream(".", writePipeName, PipeDirection.Out);
+            readPipe = new NamedPipeClientStream(".", pipeName_serverWritesClientReads, PipeDirection.In);
+            writePipe = new NamedPipeClientStream(".", pipeName_clientWritesServerReads, PipeDirection.Out);
 
             reader = new StreamReader(readPipe);
             writer = new StreamWriter(writePipe);
@@ -20,6 +20,8 @@ namespace InterprocessCommunication
 
         public async Task StartAsync()
         {
+            Task.Delay(3000).Wait();
+
             await readPipe.ConnectAsync();
             await writePipe.ConnectAsync();
             base.Start();

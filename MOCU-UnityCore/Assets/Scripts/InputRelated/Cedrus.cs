@@ -137,7 +137,7 @@ public class Cedrus : MonoBehaviour
     private string GetCedrusPortName(string deviceId)
     {
         try {
-            string relativeExternalAppPath = "PortFinder.exe";
+            string relativeExternalAppPath = "Daemons/PortFinder.exe";
             string fullExternalAppPath = System.IO.Path.Combine(Application.streamingAssetsPath, relativeExternalAppPath);
 
             ProcessStartInfo startInfo = new ProcessStartInfo

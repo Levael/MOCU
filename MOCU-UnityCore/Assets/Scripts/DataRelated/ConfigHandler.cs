@@ -15,7 +15,7 @@ public class ConfigHandler : MonoBehaviour
 
     void Awake()
     {
-        _defaultConfigFilePath = Path.Combine(Application.dataPath, "Scripts/DataRelated/Config.json");
+        _defaultConfigFilePath = Path.Combine(Application.streamingAssetsPath, "Config/config.json");
         defaultConfig = ReadConfig(filePath: _defaultConfigFilePath);
     }
 

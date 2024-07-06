@@ -33,6 +33,8 @@ namespace AudioControl
             {
                 pathToAudioFiles = command.GetExtraData<SetConfigurations_CommandDetails>().unityAudioDirectory;
 
+                Console.WriteLine(pathToAudioFiles);
+
                 LoadAudioFiles();   // todo: move to other place
 
                 var response = new UnifiedResponseFrom_Server(name: "SetConfigurations_Response", errorOccurred: false);

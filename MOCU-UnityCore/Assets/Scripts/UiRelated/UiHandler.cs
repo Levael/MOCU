@@ -62,7 +62,7 @@ public class UiHandler : MonoBehaviour
             secondaryUiScreen = _secondDisplayUiReferences;
             Display.displays[1].Activate();     // activation of second display
 
-            ShowBody("", secondaryUiScreen);
+            //ShowBody("", secondaryUiScreen);
         }
         else
         {

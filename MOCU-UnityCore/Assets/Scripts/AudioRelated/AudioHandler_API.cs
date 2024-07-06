@@ -4,7 +4,7 @@ using UnityEngine;
 
 using AudioControl;
 using UnityDaemonsCommon;
-using DaemonsNamespace.InterprocessCommunication;
+using InterprocessCommunication;
 
 
 public partial class AudioHandler : MonoBehaviour
@@ -26,14 +26,6 @@ public partial class AudioHandler : MonoBehaviour
         );
     }
 
-    /*/// <summary>
-    /// Sends request to the server. Doesn't get the response, it's done using other logic.
-    /// </summary>
-    public void RequestAudioDataUpdate()
-    {
-        //RequestAudioDevices();
-        //_daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: true)));
-    }*/
 
     /// <summary>
     /// Instead of single changes, it sends the entire 'AudioDevicesInfo' updated object at once
@@ -42,7 +34,7 @@ public partial class AudioHandler : MonoBehaviour
 
     public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")    // todo: move 'audioFileName' to config
     {
-        _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new UnifiedCommandFromClient(name: "PlayAudioFile_Command", extraData: new PlayAudioFile_CommandDetails(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName))));
+        _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "PlayAudioFile_Command", extraData: new PlayAudioFile_CommandDetails(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
     }
     public void PlayAudioClip(string clipName, string deviceName) { }
 }

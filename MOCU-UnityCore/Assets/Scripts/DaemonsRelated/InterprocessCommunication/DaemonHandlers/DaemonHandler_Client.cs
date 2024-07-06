@@ -24,17 +24,14 @@ namespace InterprocessCommunication
         private string _daemonPath;
         private string _daemonName;
         private bool _isDaemonHidden;
-        private bool _isProcessOk;
-        private bool _isConnectionOk;
+        public bool isProcessOk;
+        public bool isConnectionOk;
 
         public DaemonHandler_Client(string exeFullFilePath, bool isDaemonHidden, IBusinessLogic_Client businessLogic)
         {
             _daemonPath = exeFullFilePath;
             _daemonName = Path.GetFileNameWithoutExtension(_daemonPath);
             _isDaemonHidden = isDaemonHidden;
-
-            _communicator = new InterprocessCommunicator_Client(_daemonName);
-            _communicator.MessageReceived += HandleInputMessage;
 
             _businessLogic = businessLogic;
 
@@ -49,7 +46,11 @@ namespace InterprocessCommunication
         public async Task StartDaemon()
         {
             StartDaemonProcess();
+
+            _communicator = new InterprocessCommunicator_Client(_daemonName);
+            _communicator.MessageReceived += HandleInputMessage;
             await _communicator.StartAsync();
+            isConnectionOk = true;
 
             _commandSendingTask = Task.Run(() => SendCommands(_cancellationTokenSource.Token));
         }
@@ -123,12 +124,12 @@ namespace InterprocessCommunication
                 _daemonProcess = new Process() { StartInfo = startInfo };
                 _daemonProcess.Start();
 
-                //daemon.isProcessOk = true;
+                isProcessOk = true;
             }
-            catch
+            catch (Exception ex)
             {
-                //daemon.isProcessOk = false;
-                throw new Exception();
+                isProcessOk = false;
+                throw new Exception(ex.Message);
             }
         }
     }

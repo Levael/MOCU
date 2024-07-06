@@ -1,4 +1,6 @@
-﻿using System.IO.Pipes;
+﻿using System.IO;
+using System.IO.Pipes;
+using System.Threading.Tasks;
 
 
 namespace InterprocessCommunication
@@ -10,8 +12,8 @@ namespace InterprocessCommunication
 
         public InterprocessCommunicator_Server(string pipeName) : base(pipeName)
         {
-            readPipe = new NamedPipeServerStream(readPipeName, PipeDirection.In);
-            writePipe = new NamedPipeServerStream(writePipeName, PipeDirection.Out);
+            readPipe = new NamedPipeServerStream(pipeName_clientWritesServerReads, PipeDirection.In);
+            writePipe = new NamedPipeServerStream(pipeName_serverWritesClientReads, PipeDirection.Out);
 
             reader = new StreamReader(readPipe);
             writer = new StreamWriter(writePipe);

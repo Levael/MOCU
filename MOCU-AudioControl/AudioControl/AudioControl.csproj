@@ -12,10 +12,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Optimize>true</Optimize>
-    
-    <DebugType>none</DebugType>    <!-- To prevent the generation of a debug file in the publish folder -->
-    <PublishDir>$(MSBuildProjectDirectory)\</PublishDir>
 
+    <DebugType>none</DebugType>     <!-- To prevent the generation of a debug file in the publish folder -->
+    <PublishDir>$(MSBuildProjectDirectory)\</PublishDir>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
