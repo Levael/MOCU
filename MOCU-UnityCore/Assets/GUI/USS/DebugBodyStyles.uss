@@ -40,15 +40,12 @@
 
 
 #debug-body-trial {
-	height: 40%;
+	height: 50%;
 }
 
-#debug-body-cpu {
-	height: 30%;
-}
-
-#debug-body-memory {
-	height: 30%;
+#debug-body-info-panels {
+	height: 50%;
+	width: 100%;
 }
 
 #debug-body-experiment-timeline, #debug-body-experiment-timeline-wrapper,
@@ -58,11 +55,13 @@
 
 
 
-.debug-module-data {
+.debug-module-data,
+#debug-body-fps {
 	min-width: 220px;
 	max-width: 220px;
 }
 
-.debug-module-chart {
+.debug-module-chart,
+#debug-body-all-but-fps {
 	width: 100%;
 }

@@ -38,3 +38,76 @@
 #debug-console-textbox {
 	/* same as #info-module-textbox and #warnings-module-textbox in Experiment Body */
 }
+
+
+/* Info panels */
+#debug-body-info-panels-data {
+	flex-direction: row;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+#debug-body-all-but-fps {
+	flex-direction: row;
+	margin: 0;
+}
+
+#debug-body-fps,
+#debug-body-devices,
+#debug-body-daemons,
+#debug-body-defferent {
+	background-color: var(--main-modules-color);
+	flex-direction: column;
+}
+
+#debug-different-info-submodule-data {
+	height: 85%;
+}
+#debug-different-info-submodule-buttons {
+	background-color: var(--main-window-color);
+	height: 15%;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: 10px;
+}
+.debug-different-info-submodule-button {
+	width: 50%;
+	height: 100%;
+	background-color: var(--main-buttons-color);
+	border-color: #565656;
+	border-width: 2px;
+	border-radius: 5px;
+	align-items: center;
+	justify-content: center;
+}
+#debug-test-btn-1 {
+	margin-right: 10px;
+}
+
+
+#debug-body-fps {
+}
+
+#debug-body-devices {
+	width: 50%;
+}
+
+#debug-body-daemons {
+	width: 25%;
+}
+
+#debug-body-defferent {
+	width: 25%;
+	justify-content: space-between;
+}
+
+#debug-different-info-submodule-data-memory,
+#debug-different-info-submodule-data-gc,
+#debug-different-info-submodule-data-time {
+	width: 100%;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 0 5px;
+}

@@ -22,7 +22,7 @@
             <VisualElement class="main-btns-row-name"><TextElement text="Trials"/></VisualElement>
             <VisualElement class="main-btns-row-btns">
                 <VisualElement class="button" name="trials-generate-btn"><TextElement text="Generate"/></VisualElement>
-                <VisualElement class="button" name="main-test-btn"><TextElement text="Test"/></VisualElement>
+                <VisualElement class="button" name="empty-place-for-future-btn"><TextElement text=""/></VisualElement>
                 <VisualElement class="button" name="test-trials-generate-btn"><TextElement text="Generate         test run"/></VisualElement>
             </VisualElement>
         </VisualElement>

@@ -7,6 +7,9 @@ using UnityEngine.UIElements;
 
 public class DebugTabHandler : MonoBehaviour
 {
+    public event Action<ClickEvent> testBtn1Clicked;
+    public event Action<ClickEvent> testBtn2Clicked;
+
     private UiHandler _uiHandler;
     private UiReferences _uiReference;
 
@@ -35,6 +38,9 @@ public class DebugTabHandler : MonoBehaviour
     void Start()
     {
         _uiReference = _uiHandler.secondaryUiScreen;
+
+        _uiReference.GetElement("debug-test-btn-1").RegisterCallback<ClickEvent>(eventObj => { testBtn1Clicked?.Invoke(eventObj); });
+        _uiReference.GetElement("debug-test-btn-2").RegisterCallback<ClickEvent>(eventObj => { testBtn2Clicked?.Invoke(eventObj); });
     }
 
     void Update()

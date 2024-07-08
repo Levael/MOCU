@@ -130,6 +130,17 @@ TextElement .is-inactive {
 	-unity-font-style: normal;
 }
 
+.module-title {
+	position: relative;
+	width: 100%;
+	height: auto;
+	margin: 3px 0;
+	color: var(--main-font-color);
+	font-size: 16px;
+	-unity-font-style: bold;
+	-unity-text-align: middle-center;
+}
+
 
 
 #modal-windows {
@@ -153,7 +164,7 @@ TextField * {
 
 
 #modal-windows, #modal-windows > *,
-#experiment-body, #debug-body, #data-body, #info-body, #cameras-body,	/* , #settings-body -- for dev it's open in redactor */
+#experiment-body, #data-body, #info-body, #cameras-body,      #settings-body,	/* , #settings-body -- for dev it's open in redactor #debug-body*/
 #experiment-body-right-part-monitors-eeg, #eeg-status-block {
 	display: none;
 }

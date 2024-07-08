@@ -63,7 +63,6 @@ public class UiReferences : MonoBehaviour
         _elements.Add("moog-engage-btn", root.Q<VisualElement>("moog-engage-btn"));
         _elements.Add("moog-park-btn", root.Q<VisualElement>("moog-park-btn"));
         _elements.Add("trials-generate-btn", root.Q<VisualElement>("trials-generate-btn"));
-        _elements.Add("main-test-btn", root.Q<VisualElement>("main-test-btn"));
         _elements.Add("test-trials-generate-btn", root.Q<VisualElement>("test-trials-generate-btn"));
         _elements.Add("experiment-start-btn", root.Q<VisualElement>("experiment-start-btn"));
         _elements.Add("experiment-pause-btn", root.Q<VisualElement>("experiment-pause-btn"));
@@ -118,6 +117,9 @@ public class UiReferences : MonoBehaviour
 
         _elements.Add("cpu-data-average-usage", root.Q<VisualElement>("cpu-data-average-usage"));
         _elements.Add("memory-data-average-usage", root.Q<VisualElement>("memory-data-average-usage"));
+
+        _elements.Add("debug-test-btn-1", root.Q<VisualElement>("debug-test-btn-1"));
+        _elements.Add("debug-test-btn-2", root.Q<VisualElement>("debug-test-btn-2"));
 
 
         // Settings

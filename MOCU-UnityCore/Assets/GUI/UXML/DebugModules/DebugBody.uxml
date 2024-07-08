@@ -9,8 +9,7 @@
 <!-- TEMPLATES ====================================================================== -->
 <Template src="/Assets/GUI/UXML/DebugModules/ExperimentTimelineModule.uxml"     name="ExperimentTimelineModule-template"/>
 <Template src="/Assets/GUI/UXML/DebugModules/LastTrialDataModule.uxml"          name="LastTrialDataModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/CpuModule.uxml"                    name="CpuModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/MemoryModule.uxml"                 name="MemoryModule-template"/>
+<Template src="/Assets/GUI/UXML/DebugModules/InfoPanelsModule.uxml"             name="InfoPanelsModule-template"/>
 <Template src="/Assets/GUI/UXML/DebugModules/ConsoleModule.uxml"                name="ConsoleModule-template"/>
 <Template src="/Assets/GUI/UXML/DebugModules/MovementGraphModule.uxml"          name="MovementGraphModule-template"/>
 <Template src="/Assets/GUI/UXML/DebugModules/MoogAccelerationGraphModule.uxml"  name="MoogAccelerationGraphModule-template"/>
@@ -28,8 +27,7 @@
     <VisualElement name="debug-body-center-part">
         <VisualElement name="debug-body-center-left-part" class="body-container">
             <Instance template="LastTrialDataModule-template"           name="debug-body-trial"                 class="body-container"/>
-            <Instance template="CpuModule-template"                     name="debug-body-cpu"                   class="body-container"/>
-            <Instance template="MemoryModule-template"                  name="debug-body-memory"                class="body-container"/>
+            <Instance template="InfoPanelsModule-template"           name="debug-body-info-panels"                 class="body-container"/>
         </VisualElement>
 
         <VisualElement name="debug-body-center-right-part" class="body-container">
