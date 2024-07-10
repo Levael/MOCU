@@ -241,7 +241,7 @@
 	display: flex;
 }
 
-#controls-intercom-part.isActive.isOutcoming #intercom-outcomming-state {
+#controls-intercom-part.isActive.isOutgoing #intercom-outcomming-state {
 	display: flex;
 }
 

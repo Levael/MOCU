@@ -51,12 +51,13 @@
 #debug-body-all-but-fps {
 	flex-direction: row;
 	margin: 0;
+	/* align-items: stretch; */ /* not sure in its purpose */
 }
 
 #debug-body-fps,
 #debug-body-devices,
 #debug-body-daemons,
-#debug-body-defferent {
+#debug-body-different {
 	background-color: var(--main-modules-color);
 	flex-direction: column;
 }
@@ -71,6 +72,7 @@
 	justify-content: space-between;
 	align-items: center;
 	padding-top: 10px;
+	width: 100%;
 }
 .debug-different-info-submodule-button {
 	width: 50%;
@@ -127,18 +129,74 @@
 	-unity-font-style: normal;
 }
 
+/* Daemons */
+#number_of_running_daemons_label {
+	margin-left: 10px;
+	font-size: 12px;
+	-unity-font-style: normal;
+}
+#debug-daemons-activities {
+	width: 100%;
+	flex-grow: 1;
+	flex-direction: column;
+	padding: 3px;
+}
+.debug-daemons-activitie {
+	flex-direction: row;
+	width: 100%;
+	margin-bottom: 3px;
+}
+.debug-daemons-activitie * {
+	flex-shrink: 0;
+}
+.debug-daemons-activity-icon {
+	width: 15px;
+	height: 15px;
+	margin: 0 2px;
+	align-items: center;
+	justify-content: center;
+}
+.debug-daemons-activity-icon .icon-color {
+	background-color: var(--main-images-color);
+}
+.debug-daemons-activity-icon.isIncoming {
+	background-image: url('/Assets/Images/SVG/IncomingMessageIcon.svg');
+}
+.debug-daemons-activity-icon.isOutgoing {
+	background-image: url('/Assets/Images/SVG/OutgoingMessageIcon.svg');
+	rotate: 45deg;
+}
+.debug-daemons-activity-daemon {
+	font-size: 12px;
+	-unity-font-style: bold;
+	white-space: nowrap;
+	margin: 0 1px;
+}
+.debug-daemons-activity-message {
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+	font-size: 12px;
+	-unity-font-style: normal;
+	flex-shrink: 1;	/* allows to shrink */
+}
+
+
 
 /*  */
 #debug-body-devices {
-	width: 50%;
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: 0;
 }
 
 #debug-body-daemons {
-	width: 25%;
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: 0;
 }
 
-#debug-body-defferent {
-	width: 25%;
+#debug-body-different {
 	justify-content: space-between;
 }
 .debug-different-info-submodule-data-parameter-name {

@@ -5,7 +5,6 @@ using UnityEngine;
 
 using AudioControl;
 using InterprocessCommunication;
-using UnityDaemonsCommon;
 
 // todo: not allow intercom (on the client side) if any device is missing (null)
 

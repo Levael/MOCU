@@ -23,9 +23,14 @@ class DaemonsHandler : MonoBehaviour
     private Dictionary<Daemons, (string fullPath, bool isHidden, IDaemonUser businessLogic)> _daemonControlPaths;
     private List<DaemonHandler_Client> _daemonHandlers = new();
 
+    private DebugTabHandler _debugTabHandler;
+
 
     void Awake()
     {
+        _debugTabHandler = GetComponent<DebugTabHandler>();
+
+
         _daemonControlPaths = new()
         {
             { Daemons.Audio, (
@@ -56,6 +61,9 @@ class DaemonsHandler : MonoBehaviour
         {
             await daemon.StartDaemon();
             _daemonHandlers.Add(daemon);
+
+            daemon.MessageSended += LogDaemonOutgoingActivity;
+            daemon.MessageReceived += LogDaemonIncomingActivity;
         }
         catch (Exception ex)
         {
@@ -63,6 +71,29 @@ class DaemonsHandler : MonoBehaviour
         }
 
         return daemon;
+    }
+
+    public int GetDaemonsNumber()
+    {
+        return _daemonControlPaths.Count;
+    }
+
+
+
+
+    private void LogDaemonIncomingActivity(string daemonName, string messageName)
+    {
+        LogDaemonActivity(daemonName: daemonName, messageName: messageName, direction: MessageDirection.Incoming);
+    }
+
+    private void LogDaemonOutgoingActivity(string daemonName, string messageName)
+    {
+        LogDaemonActivity(daemonName: daemonName, messageName: messageName, direction: MessageDirection.Outgoing);
+    }
+
+    private void LogDaemonActivity(string daemonName, string messageName, MessageDirection direction)
+    {
+        _debugTabHandler.AddDaemonActivity(daemonName: daemonName, messageName: messageName, direction: direction);
     }
 }
 

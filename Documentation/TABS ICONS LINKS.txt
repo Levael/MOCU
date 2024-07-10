@@ -27,3 +27,5 @@ Update: https://www.svgrepo.com/svg/447524/update-alt
 Trash can: https://www.svgrepo.com/svg/500199/edit-delete
 Edit: https://www.svgrepo.com/svg/432468/edit-detailed
 BellIcon: https://www.svgrepo.com/svg/308841/ringing-bell-alarm-notify
+Incoming message: https://www.svgrepo.com/svg/136629/dot-in-a-circle
+Outgoing message: https://www.svgrepo.com/svg/486930/add-circle

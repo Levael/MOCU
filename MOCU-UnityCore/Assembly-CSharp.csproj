@@ -62,6 +62,7 @@
     <Compile Include="Assets\Scripts\StatusesHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonsOnlyCommon\DaemonsUtilities.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\Communicators\InterprocessCommunicator_Server.cs" />
+    <Compile Include="Assets\Scripts\DaemonsRelated\MessageDirection.cs" />
     <Compile Include="Assets\Scripts\WinAPI.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\DaemonHandler_Server.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DTOs\UnifiedResponseFrom_Server.cs" />
@@ -156,6 +157,7 @@
     <None Include="Assets\GUI\UXML\SettingsModules\ModulesModule.uxml" />
     <None Include="Assets\GUI\UXML\InfoBody.uxml" />
     <None Include="Assets\GUI\UXML\SettingsModules\SettingsBody.uxml" />
+    <None Include="Assets\GUI\UXML\DebugModules\DaemonsSubModule_ActivityTemplate.uxml" />
     <None Include="Assets\GUI\UXML\ExitConfirmationModalWindow.uxml" />
     <None Include="Assets\GUI\USS\SettingsBodyModulesStyles.uss" />
     <None Include="Assets\GUI\UXML\DebugModules\DaemonsSubModule.uxml" />

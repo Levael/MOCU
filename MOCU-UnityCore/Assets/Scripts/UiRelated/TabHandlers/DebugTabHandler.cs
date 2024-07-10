@@ -5,6 +5,8 @@ using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+
+// todo: separate to different monobehaviours (like settings)
 public class DebugTabHandler : MonoBehaviour
 {
     public event Action<ClickEvent> testBtn1Clicked;
@@ -12,6 +14,7 @@ public class DebugTabHandler : MonoBehaviour
 
     private UiHandler _uiHandler;
     private UiReferences _uiReference;
+    private DaemonsHandler _daemonsHandler;
 
     private ProfilerRecorder _systemMemoryRecorder;
     private ProfilerRecorder _gcMemoryRecorder;
@@ -36,11 +39,18 @@ public class DebugTabHandler : MonoBehaviour
     // Console
     private TextElement _console;
 
+    // Daemons
+    private TextElement _numberOfDaemonsCell;
+    private ScrollView _daemonsActivities;
+    [SerializeField]
+    private VisualTreeAsset _daemonActivitieTemplate;
+
 
 
     void Awake()
     {
         _uiHandler = GetComponent<UiHandler>();
+        _daemonsHandler = GetComponent<DaemonsHandler>();
 
         _systemMemoryRecorder   = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "System Used Memory");
         _gcMemoryRecorder       = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Reserved Memory");
@@ -64,12 +74,17 @@ public class DebugTabHandler : MonoBehaviour
         _averageFrameTimeValueCell = (TextElement)_uiReference.GetElement("debug-average-frame-value");
 
         _console = (TextElement)_uiReference.GetElement("debug-console-module-textbox");
+
+        _daemonsActivities = (ScrollView)_uiReference.GetElement("debug-daemons-activities");
+        _daemonsActivities.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
+        _numberOfDaemonsCell = (TextElement)_uiReference.GetElement("number_of_running_daemons_label");
     }
 
     void Update()
     {
         UpdateDifferentInfoModule();
         UpdateFpsModule();
+        UpdateDaemonsModule();
     }
 
 
@@ -80,6 +95,37 @@ public class DebugTabHandler : MonoBehaviour
         if (clearTextElement) _console.text = "";
         _console.text += message;
     }
+
+    public void AddDaemonActivity(string daemonName, string messageName, MessageDirection direction)
+    {
+        var instance = _daemonActivitieTemplate.CloneTree();
+
+        var iconClass = $"is{direction}";   // "isIncoming" or "isOutgoing"
+        var icon = instance.Q<VisualElement>(className: "debug-daemons-activity-icon");
+        var name = (TextElement)instance.Q<VisualElement>(className: "debug-daemons-activity-daemon");
+        var description = (TextElement)instance.Q<VisualElement>(className: "debug-daemons-activity-message");
+
+        icon.AddToClassList(iconClass);
+        name.text = daemonName;
+        description.text = $" - {messageName}";
+
+        _daemonsActivities.Add(instance);
+
+        // note: this **** needs to be postponed because UI updates with some delay
+        // Force layout update and scroll to the bottom ensuring full visibility
+        _daemonsActivities.schedule.Execute(() =>
+        {
+            _daemonsActivities.ScrollTo(instance);
+            _daemonsActivities.schedule.Execute(() =>
+            {
+                _daemonsActivities.verticalScroller.value = _daemonsActivities.verticalScroller.highValue > 0 ? _daemonsActivities.verticalScroller.highValue : 0;
+            }).ExecuteLater(0); // Execute on the next frame to ensure layout is updated
+        }).ExecuteLater(0); // Execute on the next frame
+
+    }
+
+
+
 
     private void UpdateDifferentInfoModule()
     {
@@ -95,6 +141,11 @@ public class DebugTabHandler : MonoBehaviour
         _currentFpsValueCell.text = $"{1000 / (averageFrameDuration * (1e-6f)):F0}";
         _lastFrameTimeValueCell.text = $"{_mainThreadTimeRecorder.LastValue * (1e-6f):F1} ms";
         _averageFrameTimeValueCell.text = $"{averageFrameDuration * (1e-6f):F1} ms";
+    }
+
+    private void UpdateDaemonsModule()
+    {
+        _numberOfDaemonsCell.text = $"({_daemonsHandler.GetDaemonsNumber()})";
     }
 
 

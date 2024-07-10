@@ -39,7 +39,7 @@ public class InputLogic : MonoBehaviour
 
         startOutgoingIntercomStream?.Invoke();
         _uiHandler.mainUiScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
-        _uiHandler.mainUiScreen.GetElement("controls-intercom-part").AddToClassList("isOutcoming");
+        _uiHandler.mainUiScreen.GetElement("controls-intercom-part").AddToClassList("isOutgoing");
     }
     public void IntercomFromResearcherStopped()
     {
@@ -51,7 +51,7 @@ public class InputLogic : MonoBehaviour
             // the check is necessary so that the highlight does not disappear completely when pressed simultaneously
             _uiHandler.mainUiScreen.GetElement("controls-intercom-part").RemoveFromClassList("isActive");
         }
-        _uiHandler.mainUiScreen.GetElement("controls-intercom-part").RemoveFromClassList("isOutcoming");
+        _uiHandler.mainUiScreen.GetElement("controls-intercom-part").RemoveFromClassList("isOutgoing");
     }
 
     public void IntercomFromParticipantStarted()
@@ -67,7 +67,7 @@ public class InputLogic : MonoBehaviour
         if (_audioHandler.stateTracker.Status != DeviceConnection_Statuses.Connected) return;
 
         stopIncomingIntercomStream?.Invoke();
-        if (!_uiHandler.mainUiScreen.GetElement("controls-intercom-part").ClassListContains("isOutcoming"))
+        if (!_uiHandler.mainUiScreen.GetElement("controls-intercom-part").ClassListContains("isOutgoing"))
         {
             // the check is necessary so that the highlight does not disappear completely when pressed simultaneously
             _uiHandler.mainUiScreen.GetElement("controls-intercom-part").RemoveFromClassList("isActive");

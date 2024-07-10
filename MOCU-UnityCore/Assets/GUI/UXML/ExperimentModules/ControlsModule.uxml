@@ -40,7 +40,7 @@
     </VisualElement>
 
 
-    <VisualElement name="controls-intercom-part" class="">  <!-- "", "isActive", "isDisabled", "isActive isIncoming", "isActive isOutcoming" -->
+    <VisualElement name="controls-intercom-part" class="">  <!-- "", "isActive", "isDisabled", "isActive isIncoming", "isActive isOutgoing" -->
         <VisualElement name="intercom-inner-wrapper">
 
             <VisualElement class="icon-shape" name="intercom-main-icon">

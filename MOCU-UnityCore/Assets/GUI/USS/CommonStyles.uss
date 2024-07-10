@@ -144,6 +144,8 @@ TextElement .is-inactive {
 	-unity-font-style: bold;
 	-unity-text-align: middle-center;
 	margin-bottom: 10px;
+	flex-direction: row;
+	justify-content: center;
 }
 
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+>
+
+
+<VisualElement class="debug-daemons-activitie">
+     <VisualElement class="icon-shape debug-daemons-activity-icon">     <!-- isIncoming / isOutgoing -->
+        <VisualElement class="icon-color"></VisualElement>
+    </VisualElement>
+
+    <TextElement class="debug-daemons-activity-daemon" text=""/>
+    <TextElement class="debug-daemons-activity-message" text=""/>
+</VisualElement>
+
+    
+</UXML>

@@ -126,6 +126,10 @@ public class UiReferences : MonoBehaviour
         _elements.Add("debug-last-frame-value", root.Q<VisualElement>("debug-last-frame-value"));
         _elements.Add("debug-average-frame-value", root.Q<VisualElement>("debug-average-frame-value"));
 
+        _elements.Add("number_of_running_daemons_label", root.Q<VisualElement>("number_of_running_daemons_label"));
+        _elements.Add("debug-daemons-activities", root.Q<VisualElement>("debug-daemons-activities"));
+        
+
 
         // Settings
         _elements.Add("settings-devices-update-btn", root.Q<VisualElement>("settings-devices-update-btn"));

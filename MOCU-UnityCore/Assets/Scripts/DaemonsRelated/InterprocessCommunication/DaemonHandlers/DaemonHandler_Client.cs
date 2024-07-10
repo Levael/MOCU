@@ -11,6 +11,10 @@ namespace InterprocessCommunication
 {
     public class DaemonHandler_Client
     {
+        // those 2 event are for 'DaemonsHandler' to log incoming/outgoing messages
+        public event Action<string, string> MessageSended;      // <daemon name, command name>
+        public event Action<string, string> MessageReceived;    // <daemon name, response name>
+
         private InterprocessCommunicator_Client _communicator;
         private IBusinessLogic_Client _businessLogic;
 
@@ -81,6 +85,7 @@ namespace InterprocessCommunication
                 UnityMainThreadDispatcher.Enqueue(() =>
                 {
                     _businessLogic.ProcessResponse(response);
+                    MessageReceived?.Invoke(_daemonName, response.name);
                 });
             }
             catch (Exception ex)
@@ -95,6 +100,12 @@ namespace InterprocessCommunication
             {
                 var message = UnityDaemonsCommon.CommonUtilities.SerializeJson(command);
                 _outputMessageQueue.Add(message);
+
+                // 'ThreadDispatcher' is used so as not to interfere messages sending
+                UnityMainThreadDispatcher.Enqueue(() =>
+                {
+                    MessageSended?.Invoke(_daemonName, command.name);
+                });
             }
             catch (Exception ex)
             {
