@@ -2,7 +2,7 @@
 {
     public interface IDaemonHandler
     {
-        async void StartDaemon() { }
-        void StopDaemon() { }
+        /*async void StartDaemon() { }
+        void StopDaemon() { }*/
     }
 }

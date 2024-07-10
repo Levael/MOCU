@@ -103,13 +103,6 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
             CloseConnectionWithDaemon("AudioHandler / Start : daemon error");
     }
 
-    /*void Update()
-    {
-        if (_daemon == null) return;    // in case it is still not ready
-
-        ProcessInputMessagesQueue();
-        ProcessInnerMessagesQueue();
-    }*/
 
     #endregion MANDATORY STANDARD FUNCTIONALITY
 
@@ -136,10 +129,10 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
                 return;
             }
 
-
             // In case everything is fine
             if (subStateName != null)
                 stateTracker.UpdateSubState(subStateName, true);
+
             funcToBeExecuted.Invoke(response);
         }
         catch
@@ -155,69 +148,17 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
     private void CloseConnectionWithDaemon(string message)
     {
         _experimentTabHandler.PrintToWarnings(message);
-        //_daemon.StopDaemon(); // temp todo
+        _daemon.StopDaemon();
     }
 
-
-
-
-    /*private void ProcessInputMessagesQueue()
-    {
-        while (_daemon.namedPipeClient.inputMessagesQueue.TryDequeue(out string message))
-        {
-            try
-            {
-                var deserializedMessage = CommonUtilities.DeserializeJson<UnifiedResponseFromServer>(message);
-                var receivedCommand = CommandsToExecuteAccordingToServerResponse[deserializedMessage.name];
-                var subStateName = receivedCommand.subState;
-                var funcToBeExecuted = receivedCommand.action;
-
-                if (deserializedMessage.errorOccurred == true && deserializedMessage.errorIsFatal != true)
-                {
-                    _experimentTabHandler.PrintToWarnings($"Minor error: {deserializedMessage.errorMessage}");
-                }
-                else if (deserializedMessage.errorOccurred == true && deserializedMessage.errorIsFatal == true)
-                {
-                    stateTracker.UpdateSubState(subStateName, false);
-                    _experimentTabHandler.PrintToWarnings($"Fatal error: {deserializedMessage.errorMessage}");
-                    continue;
-                }
-
-
-                // In case everything is fine
-                if (subStateName != null)
-                    stateTracker.UpdateSubState(subStateName, true);
-                funcToBeExecuted.Invoke(deserializedMessage);
-            }
-            catch
-            {
-                //stateTracker.UpdateSubState("StartAudioProcess", false);    // not realy it, but need to be something
-                _experimentTabHandler.PrintToWarnings($"Total fail while trying read incoming message from server");
-            }
-        }
-    }*/
-
-    /*private void ProcessInnerMessagesQueue()
-    {
-        while (_daemon.namedPipeClient.innerMessagesQueue.TryDequeue(out (string messageText, DebugMessageType messageType) message))
-        {
-            if (message.messageType == DebugMessageType.Info)
-            {
-                //_experimentTabHandler.PrintToInfo(message.messageText);
-                //print($"{message.messageText}\n");
-            }
-
-            if (message.messageType == DebugMessageType.Error)
-            {
-                CloseConnectionWithDaemon($"Audio connection closed. {message.messageText}");
-                stateTracker.UpdateSubState(AudioHandler_Statuses.StartNamedPipeConnection, false);
-            }
-        }
-    }*/
-
-    // todo: think about path that external program can access to. also thing about an option to change audio files from UI dynamically
     private void SendConfigurationDetails(UnifiedResponseFrom_Server response = null)
     {
+        if (!IsDaemonOk())
+        {
+            UnityEngine.Debug.LogError("Custom: 'SendConfigurationDetails' is unavailable right now. 'IsDaemonOk' returned 'false'");
+            return;
+        }
+
         var commandName = "SetConfigurations_Command";
         var payloadData = new SetConfigurations_CommandDetails(unityAudioDirectory: Path.Combine(Application.streamingAssetsPath, "Audio"));
         var fullCommand = new UnifiedCommandFrom_Client(name: commandName, extraData: payloadData);
@@ -256,6 +197,12 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
     {
         //ValidateAndUpdateDevicesInfo(response);
         //print("before 'SendClientAudioDataDesire'");
+        if (!IsDaemonOk())
+        {
+            UnityEngine.Debug.LogError("Custom: 'SendClientAudioDataDesire' is unavailable right now. 'IsDaemonOk' returned 'false'");
+            return;
+        }
+
         _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "SetUpdatedAudioDevicesInfo_Command", extraData: audioDevicesInfo));
         //print("after 'SendClientAudioDataDesire'");
     }
@@ -281,6 +228,10 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
         // todo: update config too
     }
 
+    private bool IsDaemonOk()
+    {
+        return (_daemon != null && _daemon.isConnectionOk && _daemon.isProcessOk);
+    }
 
     #endregion PRIVATE METHODS
 }

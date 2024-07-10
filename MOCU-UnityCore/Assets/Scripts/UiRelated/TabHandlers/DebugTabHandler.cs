@@ -23,6 +23,19 @@ public class DebugTabHandler : MonoBehaviour
 
     private string _statsText;
 
+    // Diff. info
+    private TextElement _memoryValueCell;
+    private TextElement _gcValueCell;
+    private TextElement _timeWorkingValueCell;
+
+    // Fps
+    private TextElement _currentFpsValueCell;
+    private TextElement _lastFrameTimeValueCell;
+    private TextElement _averageFrameTimeValueCell;
+
+    // Console
+    private TextElement _console;
+
 
 
     void Awake()
@@ -41,11 +54,22 @@ public class DebugTabHandler : MonoBehaviour
 
         _uiReference.GetElement("debug-test-btn-1").RegisterCallback<ClickEvent>(eventObj => { testBtn1Clicked?.Invoke(eventObj); });
         _uiReference.GetElement("debug-test-btn-2").RegisterCallback<ClickEvent>(eventObj => { testBtn2Clicked?.Invoke(eventObj); });
+
+        _memoryValueCell = (TextElement)_uiReference.GetElement("debug-memory-value");
+        _gcValueCell = (TextElement)_uiReference.GetElement("debug-gc-value");
+        _timeWorkingValueCell = (TextElement)_uiReference.GetElement("debug-time-working-value");
+
+        _currentFpsValueCell = (TextElement)_uiReference.GetElement("debug-current-fps-value");
+        _lastFrameTimeValueCell = (TextElement)_uiReference.GetElement("debug-last-frame-value");
+        _averageFrameTimeValueCell = (TextElement)_uiReference.GetElement("debug-average-frame-value");
+
+        _console = (TextElement)_uiReference.GetElement("debug-console-module-textbox");
     }
 
     void Update()
     {
-        PrintToConsole(getStats(), clearTextElement: true);
+        UpdateDifferentInfoModule();
+        UpdateFpsModule();
     }
 
 
@@ -53,9 +77,24 @@ public class DebugTabHandler : MonoBehaviour
 
     public void PrintToConsole(string message, bool clearTextElement = false)
     {
-        var textElement = (TextElement)_uiReference.GetElement("debug-console-module-textbox");
-        if (clearTextElement) textElement.text = "";
-        textElement.text += message;
+        if (clearTextElement) _console.text = "";
+        _console.text += message;
+    }
+
+    private void UpdateDifferentInfoModule()
+    {
+        _memoryValueCell.text = $"{_systemMemoryRecorder.LastValue / (1024 * 1024)} MB";
+        _gcValueCell.text = $"{_gcMemoryRecorder.LastValue / (1024 * 1024)} MB";
+        _timeWorkingValueCell.text = $"{(Time.realtimeSinceStartup / 60):F0} min";
+    }
+
+    private void UpdateFpsModule()
+    {
+        var averageFrameDuration = GetAverageFrameDuration(_mainThreadTimeRecorder);
+
+        _currentFpsValueCell.text = $"{1000 / (averageFrameDuration * (1e-6f)):F0}";
+        _lastFrameTimeValueCell.text = $"{_mainThreadTimeRecorder.LastValue * (1e-6f):F1} ms";
+        _averageFrameTimeValueCell.text = $"{averageFrameDuration * (1e-6f):F1} ms";
     }
 
 
@@ -79,7 +118,7 @@ public class DebugTabHandler : MonoBehaviour
 
 
 
-    public string getStats()
+    /*public string getStats()
     {
         var averageFrameDuration = GetAverageFrameDuration(_mainThreadTimeRecorder);
 
@@ -94,5 +133,5 @@ public class DebugTabHandler : MonoBehaviour
         _statsText = sb.ToString();
 
         return _statsText;
-    }
+    }*/
 }

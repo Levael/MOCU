@@ -34,6 +34,11 @@ public partial class AudioHandler : MonoBehaviour
 
     public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")    // todo: move 'audioFileName' to config
     {
+        if (_daemon == null || !_daemon.isConnectionOk || !_daemon.isProcessOk)
+        {
+            UnityEngine.Debug.LogError("Custom: 'SendTestAudioSignalToDevice' is unavailable right now");
+            return;
+        }
         _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "PlayAudioFile_Command", extraData: new PlayAudioFile_CommandDetails(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
     }
     public void PlayAudioClip(string clipName, string deviceName) { }

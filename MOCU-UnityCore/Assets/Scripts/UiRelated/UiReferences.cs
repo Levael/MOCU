@@ -115,11 +115,16 @@ public class UiReferences : MonoBehaviour
         _elements.Add("trial-data-received-answer", root.Q<VisualElement>("trial-data-received-answer"));
         _elements.Add("trial-data-received-answer-is-correct", root.Q<VisualElement>("trial-data-received-answer-is-correct"));
 
-        _elements.Add("cpu-data-average-usage", root.Q<VisualElement>("cpu-data-average-usage"));
-        _elements.Add("memory-data-average-usage", root.Q<VisualElement>("memory-data-average-usage"));
+        _elements.Add("debug-memory-value", root.Q<VisualElement>("debug-memory-value"));
+        _elements.Add("debug-gc-value", root.Q<VisualElement>("debug-gc-value"));
+        _elements.Add("debug-time-working-value", root.Q<VisualElement>("debug-time-working-value"));
 
         _elements.Add("debug-test-btn-1", root.Q<VisualElement>("debug-test-btn-1"));
         _elements.Add("debug-test-btn-2", root.Q<VisualElement>("debug-test-btn-2"));
+
+        _elements.Add("debug-current-fps-value", root.Q<VisualElement>("debug-current-fps-value"));
+        _elements.Add("debug-last-frame-value", root.Q<VisualElement>("debug-last-frame-value"));
+        _elements.Add("debug-average-frame-value", root.Q<VisualElement>("debug-average-frame-value"));
 
 
         // Settings

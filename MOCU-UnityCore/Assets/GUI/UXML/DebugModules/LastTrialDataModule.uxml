@@ -8,7 +8,7 @@
 
 <VisualElement name="debug-body-trial-wrapper" class="wrapper">
     <VisualElement name="debug-body-trial-data" class="debug-module-data body-module">
-        <TextElement class="debug-module-data-name" text="Last trial data"/>
+        <TextElement class="module-title" text="Last trial data"/>
 
         <VisualElement class="debug-module-data-rows">
             <VisualElement class="debug-module-data-row">

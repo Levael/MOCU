@@ -12,20 +12,20 @@
     <VisualElement name="debug-different-info-submodule-data">
         <VisualElement name="debug-different-info-submodule-data-memory">
             <TextElement class="debug-different-info-submodule-data-parameter-name" text="Memory"/>
-            <TextElement class="debug-different-info-submodule-data-parameter-value" text=""/>
-            <TextElement class="debug-different-info-submodule-data-parameter-units" text="MB"/>
+            <TextElement class="debug-different-info-submodule-data-parameter-value" name="debug-memory-value" text=""/>
+            <!-- <TextElement class="debug-different-info-submodule-data-parameter-units" text="MB"/> -->
         </VisualElement>
 
         <VisualElement name="debug-different-info-submodule-data-gc">
             <TextElement class="debug-different-info-submodule-data-parameter-name" text="GC"/>
-            <TextElement class="debug-different-info-submodule-data-parameter-value" text=""/>
-            <TextElement class="debug-different-info-submodule-data-parameter-units" text="MB"/>
+            <TextElement class="debug-different-info-submodule-data-parameter-value" name="debug-gc-value" text=""/>
+            <!-- <TextElement class="debug-different-info-submodule-data-parameter-units" text="MB"/> -->
         </VisualElement>
 
         <VisualElement name="debug-different-info-submodule-data-time">
             <TextElement class="debug-different-info-submodule-data-parameter-name" text="Time working"/>
-            <TextElement class="debug-different-info-submodule-data-parameter-value" text=""/>
-            <TextElement class="debug-different-info-submodule-data-parameter-units" text="min"/>
+            <TextElement class="debug-different-info-submodule-data-parameter-value" name="debug-time-working-value" text=""/>
+            <!-- <TextElement class="debug-different-info-submodule-data-parameter-units" text="min"/> -->
         </VisualElement>
     </VisualElement>
 

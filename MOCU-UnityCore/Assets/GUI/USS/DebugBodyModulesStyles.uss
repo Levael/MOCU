@@ -86,10 +86,49 @@
 	margin-right: 10px;
 }
 
-
-#debug-body-fps {
+/* FPS */
+#debug-body-fps {}
+#debug-fps-data {
+	flex-direction: row;
+	justify-content: space-between;
+	height: 100%;
+	width: 100%;
+}
+#debug-fps-bar-side,
+#debug-fps-numbers-side {
+	flex-direction: column;
+	height: 100%;
+}
+#debug-fps-bar-side {
+	width: 10%;
+}
+#debug-fps-numbers-side {
+	justify-content: space-around;
+	width: 90%;
 }
 
+#debug-fps-numbers-side-current-fps {}
+#debug-fps-numbers-side-current-fps TextElement {
+	font-size: 80px;
+	-unity-font-style: bold;
+}
+#debug-fps-numbers-side-last-frame,
+#debug-fps-numbers-side-average-frame {
+	flex-direction: column;
+}
+
+#debug-current-fps-value {}
+.debug-fps-timing-value {
+	font-size: 20px;
+	-unity-font-style: bold;
+}
+.debug-fps-timing-label {
+	font-size: 12px;
+	-unity-font-style: normal;
+}
+
+
+/*  */
 #debug-body-devices {
 	width: 50%;
 }
@@ -101,6 +140,14 @@
 #debug-body-defferent {
 	width: 25%;
 	justify-content: space-between;
+}
+.debug-different-info-submodule-data-parameter-name {
+	-unity-font-style: normal;
+	font-size: 14px;
+}
+.debug-different-info-submodule-data-parameter-value {
+	-unity-font-style: normal;
+	font-size: 15px;
 }
 
 #debug-different-info-submodule-data-memory,

@@ -18,7 +18,7 @@
 <VisualElement name="debug-body-info-panels-wrapper" class="wrapper">
     <VisualElement name="debug-body-info-panels-data" class="body-module">
 
-        <Instance template="FpsSubModule-template"              name="debug-body-fps"       class="body-module"/>
+        <Instance template="FpsSubModule-template"                  name="debug-body-fps"       class="body-module"/>
 
         <VisualElement name="debug-body-all-but-fps" class="body-module">
             <Instance template="DevicesSubModule-template"          name="debug-body-devices"   class="body-module"/>

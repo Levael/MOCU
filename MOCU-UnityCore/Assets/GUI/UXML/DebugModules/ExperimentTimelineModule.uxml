@@ -8,7 +8,7 @@
 
 <VisualElement name="debug-body-experiment-timeline-wrapper" class="wrapper">
     <VisualElement name="debug-body-experiment-timeline-data" class="debug-module-data body-module">
-        <TextElement class="debug-module-data-name" text="Experiment timeline"/>
+        <TextElement class="module-title" text="Experiment timeline"/>
 
         <VisualElement class="debug-module-data-rows">
             <VisualElement class="debug-module-data-row">
