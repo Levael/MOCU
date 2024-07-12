@@ -10,8 +10,8 @@
 <VisualElement name="inputs-module-template-wrapper">
     <VisualElement name="inputs-protocol-part">
         <DropdownField name="protocol-dropdown"/>
-        <VisualElement class="button" name="protocol-browse-btn"><TextElement text="Browse"/></VisualElement>
-        <VisualElement class="button" name="protocol-save-btn"><TextElement text="Save"/></VisualElement>
+        <VisualElement class="button" name="protocol-update-btn"><TextElement text="update"/></VisualElement>
+        <VisualElement class="button" name="protocol-saveAsNew-btn"><TextElement text="save as new"/></VisualElement>
     </VisualElement>
 
     <VisualElement name="inputs-names-part">

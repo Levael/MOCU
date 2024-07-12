@@ -61,6 +61,7 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityDaemonsCommon\DebugMessageType.cs" />
     <Compile Include="Assets\Scripts\StatusesHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonsOnlyCommon\DaemonsUtilities.cs" />
+    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Fps_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\Communicators\InterprocessCommunicator_Server.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\MessageDirection.cs" />
     <Compile Include="Assets\Scripts\WinAPI.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Assets\Scripts\UnityMainThreadDispatcher.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigHandler.cs" />
     <Compile Include="Assets\Scripts\CustomBuildProcessor.cs" />
+    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DebugTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\Communicators\InterprocessCommunicator_Client.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\DaemonHandler_Base.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\InterlinkedCollection.cs" />
@@ -80,15 +82,14 @@
     <Compile Include="Assets\Scripts\InputRelated\InputLogic.cs" />
     <Compile Include="Assets\Scripts\InputRelated\Cedrus.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\IDaemonHandler.cs" />
+    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Experiment\ExperimentTabHandler.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\AudioHandler_Statuses.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputHandler.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\ObservableConcurrentQueue.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonsHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\IBusinessLogic_Client.cs" />
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
-    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\ExperimentTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DTOs\UnifiedDataTransferObject.cs" />
-    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\SettingsTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\Communicators\InterprocessCommunicator_Interface.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\AudioHandler_API.cs" />
@@ -96,19 +97,23 @@
     <Compile Include="Assets\For tests\ForTests.cs" />
     <Compile Include="Assets\Scripts\ParticipantResponseRelated\ParticipantAnswer_enum.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\Communicators\InterprocessCommunicator_Base.cs" />
-    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\DebugTabHandler.cs" />
+    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DifferentInfo_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityDaemonsCommon\CommonUtilities.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\IBusinessLogic_Server.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\IDaemonUser.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\AudioHandler.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigClassTemplates.cs" />
+    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\Devices_SettingsUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\UiHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\UiReferences.cs" />
+    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Daemons_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\InputRelated\VrHeadset_Statuses.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DTOs\UnifiedCommandFrom_Client.cs" />
+    <Compile Include="Assets\Scripts\CustomDataStructures\SafeExpandoObject.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\AudioControl\AudioCommunicationModel.cs" />
     <Compile Include="Assets\Scripts\InputRelated\AnswerDevice_Statuses.cs" />
+    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Console_DebugUiModuleHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\GUI\USS\ModalWindows.uss" />

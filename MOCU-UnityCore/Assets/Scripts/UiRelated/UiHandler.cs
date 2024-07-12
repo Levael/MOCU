@@ -1,5 +1,6 @@
 using Assets.Scripts;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -37,8 +38,8 @@ public class UiHandler : MonoBehaviour
         AddEventListeners();
 
         // default tabs to show (first secondary, than main (in case there is only one monitor))
-        TabHasBeenClicked(secondaryUiScreen.GetElement("debug-tab"));
-        TabHasBeenClicked(mainUiScreen.GetElement("experiment-tab"));
+        TabHasBeenClicked(secondaryUiScreen.elements.debugTab.tabBtn);
+        TabHasBeenClicked(mainUiScreen.elements.experimentTab.tabBtn);
     }
 
     private void Update()
@@ -85,71 +86,13 @@ public class UiHandler : MonoBehaviour
         }
 
         // EXIT / MINIMIZE GAME
-        mainUiScreen.GetElement("close-game-btn").RegisterCallback<ClickEvent>(eventObj         => { ShowExitConfirmationModalWindow(); });
-        mainUiScreen.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj      => { MinimizeGame(); });
+        ((VisualElement)mainUiScreen.elements.window.modals.closeBtn).RegisterCallback<ClickEvent>(eventObj         => { ShowExitConfirmationModalWindow(); });
+        ((VisualElement)mainUiScreen.elements.window.modals.minimizeBtn).RegisterCallback<ClickEvent>(eventObj      => { MinimizeGame(); });
 
-        mainUiScreen.GetElement("exit-confirm-btn").RegisterCallback<ClickEvent>(eventObj       => { ConfirmGameQuit(); });
-        mainUiScreen.GetElement("exit-cancel-btn").RegisterCallback<ClickEvent>(eventObj        => { CancelGameQuit(); });
+        ((VisualElement)mainUiScreen.elements.window.modals.confirmCloseBtn).RegisterCallback<ClickEvent>(eventObj  => { ConfirmGameQuit(); });
+        ((VisualElement)mainUiScreen.elements.window.modals.cancelCloseBtn).RegisterCallback<ClickEvent>(eventObj   => { CancelGameQuit(); });
 
-        secondaryUiScreen.GetElement("minimize-game-btn").RegisterCallback<ClickEvent>(eventObj => { MinimizeSecondDisplay(); });
-    }
-
-    private void HideElements()
-    {
-        var hiddenByDefault = new List<VisualElement>();
-
-        /*hiddenByDefault.Add(_mainDisplayUiReferences.GetElement("modal-windows"));
-        hiddenByDefault.Add(_secondDisplayUiReferences.GetElement("modal-windows"));
-
-        hiddenByDefault.Add(_mainDisplayUiReferences.GetElement("experiment-body-right-part-monitors-eeg"));
-        hiddenByDefault.Add(_mainDisplayUiReferences.GetElement("eeg-status-block"));*/
-
-        //hiddenByDefault.Add(_secondDisplayUiReferences.GetElement("close-game-btn"));
-
-
-        /*foreach (var body in _mainDisplayUiReferences.GetElement("main-body").Children())
-        {
-            hiddenByDefault.Add(body);
-        }
-
-        foreach (var body in _secondDisplayUiReferences.GetElement("main-body").Children())
-        {
-            hiddenByDefault.Add(body);
-        }*/
-
-        /*foreach (var modal in _mainDisplayUiReferences.GetElement("modal-windows").Children())
-        {
-            hiddenByDefault.Add(modal);
-        }
-
-        foreach (var modal in _secondDisplayUiReferences.GetElement("modal-windows").Children())
-        {
-            hiddenByDefault.Add(modal);
-        }
-
-        foreach (var tab in _secondDisplayUiReferences.GetHeaderTabs())
-        {
-            hiddenByDefault.Add(tab);
-        }*/
-
-
-        foreach (var element in hiddenByDefault)
-        {
-            element.AddToClassList("hidden");
-        }
-    }
-
-    private void UnhideElements()
-    {
-        var showedByDefault = new List<VisualElement>();
-
-        showedByDefault.Add(mainUiScreen.GetElement("experiment-body"));
-
-
-        foreach (var element in showedByDefault)
-        {
-            element.RemoveFromClassList("hidden");
-        }
+        ((VisualElement)secondaryUiScreen.elements.window.modals.minimizeBtn).RegisterCallback<ClickEvent>(eventObj => { MinimizeSecondDisplay(); });
     }
 
     private void TabHasBeenClicked(VisualElement clickedTab)
@@ -200,13 +143,13 @@ public class UiHandler : MonoBehaviour
 
     private void ShowBody(string tabName, UiReferences uiReferences)
     {
-        foreach (var body in uiReferences.GetElement("main-body").Children())
+        foreach (var body in ((VisualElement)uiReferences.elements.window.body).Children())
         {
             body.style.display = DisplayStyle.None;
         }
 
         if (tabName == "") return;
-        uiReferences.GetElement(uiReferences.GetTabBodyRelation(tabName)).style.display = DisplayStyle.Flex;
+        uiReferences.GetElement(uiReferences.GetTabBodyRelation(tabName)).style.display = DisplayStyle.Flex;    // todo: remake
     }
 
 
@@ -230,8 +173,8 @@ public class UiHandler : MonoBehaviour
 
         // And after that -- second display (imitates click on second display btn. unity somehow knows which screen minimize, but can't minimize both automaticaly)
         var clickEvent = new ClickEvent();
-        clickEvent.target = secondaryUiScreen.GetElement("minimize-game-btn");
-        secondaryUiScreen.GetElement("minimize-game-btn").SendEvent(clickEvent);
+        clickEvent.target = ((VisualElement)secondaryUiScreen.elements.window.modals.minimizeBtn);
+        ((VisualElement)secondaryUiScreen.elements.window.modals.minimizeBtn).SendEvent(clickEvent);
     }
 
     private void MinimizeSecondDisplay() {
@@ -240,14 +183,14 @@ public class UiHandler : MonoBehaviour
 
     private void ShowExitConfirmationModalWindow()
     {
-        mainUiScreen.GetElement("modal-windows").style.display = DisplayStyle.Flex;
-        mainUiScreen.GetElement("exit-confirmation-modal-window").style.display = DisplayStyle.Flex;
+        ((VisualElement)mainUiScreen.elements.window.modals.modalWindows).style.display = DisplayStyle.Flex;
+        ((VisualElement)mainUiScreen.elements.window.modals.exitWindow).style.display = DisplayStyle.Flex;
     }
 
     private void CloseExitConfirmationModalWindow()
     {
-        mainUiScreen.GetElement("modal-windows").style.display = DisplayStyle.None;
-        mainUiScreen.GetElement("exit-confirmation-modal-window").style.display = DisplayStyle.None;
+        ((VisualElement)mainUiScreen.elements.window.modals.modalWindows).style.display = DisplayStyle.None;
+        ((VisualElement)mainUiScreen.elements.window.modals.exitWindow).style.display = DisplayStyle.None;
     }
 
     private void ConfirmGameQuit()

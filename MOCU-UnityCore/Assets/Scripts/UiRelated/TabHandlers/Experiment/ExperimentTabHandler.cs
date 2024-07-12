@@ -12,7 +12,7 @@ public class ExperimentTabHandler : MonoBehaviour
     private TextElement _infoField;
     private TextElement _warningsField;
 
-    private ConcurrentQueue<Action> _deferredActions = new ConcurrentQueue<Action>();   // todo: describe later
+    private ConcurrentQueue<Action> _deferredActions = new ConcurrentQueue<Action>();   // todo: move to separate class and refactor
     private bool _classIsReady = false;
 
 
@@ -26,8 +26,8 @@ public class ExperimentTabHandler : MonoBehaviour
     void Start()
     {
         _uiReference = _uiHandler.mainUiScreen;
-        _infoField = (TextElement)_uiReference.GetElement("info-module-textbox");
-        _warningsField = (TextElement)_uiReference.GetElement("warnings-module-textbox");
+        _infoField = _uiReference.elements.experimentTab.outputsModule.info;
+        _warningsField = _uiReference.elements.experimentTab.outputsModule.warnings;
 
         _classIsReady = true;
     }

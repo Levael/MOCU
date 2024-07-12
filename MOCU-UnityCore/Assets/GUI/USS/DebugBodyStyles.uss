@@ -58,13 +58,10 @@
 .debug-module-data,
 #debug-body-fps,
 #debug-body-different{
-	/* min-width: 220px;
-	max-width: 220px; */
 	width: 220px;
 }
 
 .debug-module-chart,
 #debug-body-all-but-fps {
-	/* width: 100%; */
 	flex-grow: 1;
 }

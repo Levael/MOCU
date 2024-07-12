@@ -1,10 +1,7 @@
-using AudioControl;
-using CustomDataStructures;
-using CustomUxmlElements;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+
+using AudioControl;
+
 
 public class SettingsTabHandler : MonoBehaviour
 {
@@ -12,7 +9,7 @@ public class SettingsTabHandler : MonoBehaviour
     private UiHandler _uiHandler;
     private AudioHandler _audioHandler;
     private UiReferences _uiReference;
-    private DevicesUiModuleHandler _devicesUiModuleHandler;
+    private Devices_SettingsUiModuleHandler _devicesUiModuleHandler;
     public bool classIsReady = false;
 
     
@@ -23,7 +20,7 @@ public class SettingsTabHandler : MonoBehaviour
     {
         _uiHandler = GetComponent<UiHandler>();
         _audioHandler = GetComponent<AudioHandler>();
-        _devicesUiModuleHandler = GetComponent<DevicesUiModuleHandler>();
+        _devicesUiModuleHandler = GetComponent<Devices_SettingsUiModuleHandler>();
     }
 
     void Start()

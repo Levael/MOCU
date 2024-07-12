@@ -11,7 +11,7 @@ using AudioControl;
 // add to documentation: the only update this class can get are from outside. it only sends what is wanted to be changed
 
 
-public class DevicesUiModuleHandler : MonoBehaviour
+public class Devices_SettingsUiModuleHandler : MonoBehaviour
 {
     public InterlinkedCollection<DeviceParametersSet> devicesInterlinkedCollection;         // connects data objects with UI stuff
     public VisualTreeAsset chooseDeviceRowTemplate;
@@ -22,6 +22,9 @@ public class DevicesUiModuleHandler : MonoBehaviour
 
     private Dictionary<DeviceCardStatus, string> _deviceCardStatusToUssClassNameMap;        // classes for card labels
     private Dictionary<DeviceOptionStatus, string> _deviceOptionStatusToUssClassNameMap;    // classes for options
+
+    private VisualElement _backToMainBtn;
+    private VisualElement _openChoosingWindowBtn;
 
 
 
@@ -98,6 +101,8 @@ public class DevicesUiModuleHandler : MonoBehaviour
     void Start()
     {
         _uiReference = _uiHandler.secondaryUiScreen;
+        _backToMainBtn = _uiReference.elements.settingsTab.devicesModule.backToMainBtn;
+        _openChoosingWindowBtn = _uiReference.elements.settingsTab.devicesModule.choosingWindow;
 
         AddEventListeners();
     }
@@ -119,8 +124,7 @@ public class DevicesUiModuleHandler : MonoBehaviour
             }
         }
 
-        _uiReference.GetElement("settings-devices-back-btn").RegisterCallback<ClickEvent>(CloseDeviceBoxParameters);
-        _uiReference.GetElement("settings-devices-update-btn").RegisterCallback<ClickEvent>(UpdateDevices);
+        _backToMainBtn.RegisterCallback<ClickEvent>(CloseDeviceBoxParameters);
     }
 
     public void ApplyChanges(UnifiedAudioDataPacket parameters)
@@ -264,7 +268,7 @@ public class DevicesUiModuleHandler : MonoBehaviour
         }
 
         // if device parameters already opened (todo: maybe change it later)
-        if (_uiReference.GetElement("settings-devices-choose-device-window").style.display == DisplayStyle.Flex) return;
+        if (_openChoosingWindowBtn.style.display == DisplayStyle.Flex) return;
 
         OpenDeviceBoxParameters((VisualElement)eventObj.currentTarget);
     }
@@ -287,9 +291,8 @@ public class DevicesUiModuleHandler : MonoBehaviour
             deviceBox.style.display = DisplayStyle.None;
         }
 
-        _uiReference.GetElement("settings-devices-choose-device-window").style.display = DisplayStyle.Flex;   // show device parameters window
-        _uiReference.GetElement("settings-devices-back-btn").style.display = DisplayStyle.Flex;               // show close btn
-        _uiReference.GetElement("settings-devices-update-btn").style.display = DisplayStyle.Flex;             // show upd btn
+        _openChoosingWindowBtn.style.display = DisplayStyle.Flex;   // show device parameters window
+        _backToMainBtn.style.display = DisplayStyle.Flex;               // show close btn
 
         // if it's a speaker -- show its volume slider (not only while :hover)
         var slider = clickedDeviceBox.Q<CustomUxmlElements.CustomSlider>();
@@ -316,11 +319,9 @@ public class DevicesUiModuleHandler : MonoBehaviour
         }
 
         // hide device parameters window
-        _uiReference.GetElement("settings-devices-choose-device-window").style.display = DisplayStyle.None;
+        _openChoosingWindowBtn.style.display = DisplayStyle.None;
         // hide close btn
-        _uiReference.GetElement("settings-devices-back-btn").style.display = DisplayStyle.None;
-        // hide upd btn
-        _uiReference.GetElement("settings-devices-update-btn").style.display = DisplayStyle.None;
+        _backToMainBtn.style.display = DisplayStyle.None;
     }
 
     

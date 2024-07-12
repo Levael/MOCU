@@ -17,11 +17,11 @@
         <VisualElement class="settings-module-header-left-part">
             <TextElement class="module-header-text" text="Devices"/>
 
-            <VisualElement name="settings-devices-update-btn">
+            <!-- <VisualElement name="settings-devices-update-btn">
                 <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/UpdateIcon.svg');">
                     <VisualElement class="icon-color"></VisualElement>
                 </VisualElement>
-            </VisualElement>
+            </VisualElement> -->
         </VisualElement>
 
         <VisualElement name="settings-devices-back-btn">
