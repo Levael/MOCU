@@ -64,7 +64,7 @@ public class InputHandler : MonoBehaviour
 
         // Cedrus ASCII codes are stored in "Cedrus class"
         //private Dictionary<AnswerFromParticipant, Action<string>> _cedrusSignalHandlers; (from header)
-        /*_cedrusCodes_answerSignals_Relations = new() {
+        /*_codes_ProtocolASCII = new() {
             { "a", AnswerFromParticipant.Up    },
             { "b", AnswerFromParticipant.Left   },
             { "c", AnswerFromParticipant.Center },

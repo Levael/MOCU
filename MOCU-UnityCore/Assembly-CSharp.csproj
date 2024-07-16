@@ -89,6 +89,7 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonsHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\IBusinessLogic_Client.cs" />
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
+    <Compile Include="Assets\Scripts\InputRelated\ProtocolHandler_XID.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DTOs\UnifiedDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\SettingsTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\Communicators\InterprocessCommunicator_Interface.cs" />

@@ -109,8 +109,6 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
 
     public void ProcessResponse(UnifiedResponseFrom_Server response)
     {
-        print("Got message from Audio Daemon");
-
         try
         {
             var receivedCommand = CommandsToExecuteAccordingToServerResponse[response.name];

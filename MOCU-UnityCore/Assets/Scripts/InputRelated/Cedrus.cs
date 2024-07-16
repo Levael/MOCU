@@ -1,17 +1,19 @@
 ﻿using System.IO.Ports;
 using System.Diagnostics;
 using UnityEngine;
-using System.Text;
 using System.Collections;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
+// 0001 = XID 9600 (best)
+// 0011 = ASCII 9600 (simplest)
 
 /// <summary>
 /// Make sure that the pins on the device itself are set as follows: 1(down) 2(down) 3(up) 4(up)
 /// It configures Cedrus to work with ASCII encoding with baud rate 9600 (bits per second)
 /// Cedrus documentation about it: https://cedrus.com/support/rb_series/tn1544_dip_switches.htm
+/// XID commands: https://www.cedrus.com/support/xid/commands.htm
 /// </summary>
 public class Cedrus : MonoBehaviour
 {
@@ -24,14 +26,15 @@ public class Cedrus : MonoBehaviour
     private ExperimentTabHandler _experimentTabHandler;
 
     private SerialPort _serialPort;
-    //private float _checkPortConnectionTimeInterval = 0.1f;  // sec
     private int _checkPortConnectionReadTimeout = 0;        // ms. If there will be any issue -- change to 1
     private ConcurrentQueue<string> _dataQueue;             // todo: rename it later
     private string _targetDeviceId;
     private string _portName;
 
-    private Dictionary<string, AnswerFromParticipant> _cedrusCodes_answerSignals_Relations;
-
+    private Dictionary<string, AnswerFromParticipant> _codes_ProtocolASCII;
+    private Dictionary<int, AnswerFromParticipant> _codes_ProtocolXID;
+    private Dictionary<string, ulong> _masks_ProtocolXID;
+    private Dictionary<AnswerFromParticipant, int> _answerState;
 
     void Awake()
     {
@@ -42,12 +45,39 @@ public class Cedrus : MonoBehaviour
         _targetDeviceId = @"FTDIBUS\VID_0403+PID_6001";   // todo: move to config
         stateTracker = new StateTracker(typeof(AnswerDevice_Statuses));
 
-        _cedrusCodes_answerSignals_Relations = new() {
+        _codes_ProtocolASCII = new() {
             { "a", AnswerFromParticipant.Up     },
             { "b", AnswerFromParticipant.Left   },
             { "c", AnswerFromParticipant.Center },
             { "d", AnswerFromParticipant.Right  },
             { "e", AnswerFromParticipant.Down   }
+        };
+
+        _codes_ProtocolXID = new()
+        {
+            { 1, AnswerFromParticipant.Up       },
+            { 3, AnswerFromParticipant.Left     },
+            { 4, AnswerFromParticipant.Center   },
+            { 5, AnswerFromParticipant.Right    },
+            { 6, AnswerFromParticipant.Down     }
+        };
+
+        _masks_ProtocolXID = new()
+        {
+            { "character",  ConvertToBitMask("00000000 00000000 00000000 00000000 00000000 11111111") },    // always 'k'
+            { "port",       ConvertToBitMask("00000000 00000000 00000000 00000000 00001111 00000000") },    // always 0 (0 for keys, 3 for light)
+            { "actionFlag", ConvertToBitMask("00000000 00000000 00000000 00000000 00010000 00000000") },    // 1-pressed, 0-released
+            { "keyCode",    ConvertToBitMask("00000000 00000000 00000000 00000000 11100000 00000000") },    // actual answer
+            { "timestamp",  ConvertToBitMask("11111111 11111111 11111111 11111111 00000000 00000000") }     // from cedrus' inner timer
+        };
+
+        _answerState = new()
+        {
+            { AnswerFromParticipant.Up, 0 },
+            { AnswerFromParticipant.Left, 0 },
+            { AnswerFromParticipant.Center, 0 },
+            { AnswerFromParticipant.Right, 0 },
+            { AnswerFromParticipant.Down, 0 },
         };
     }
 
@@ -66,7 +96,7 @@ public class Cedrus : MonoBehaviour
 
     void Update()
     {
-        if (stateTracker.Status == DeviceConnection_Statuses.Connected) ReadDataFromBufer();    // checks por buffer every frame in case any new data
+        if (stateTracker.Status == DeviceConnection_Statuses.Connected) ReadData();    // checks por buffer every frame in case any new data
         
         if (_dataQueue.Count > 0)
         {
@@ -76,12 +106,17 @@ public class Cedrus : MonoBehaviour
 
                 var signalFromParticipant = AnswerFromParticipant.Error;                        // ideally, this will not happen at all, it's needed as a stub
 
-                if (_cedrusCodes_answerSignals_Relations.ContainsKey(data))                     // the usual scenario when everything is ok 
-                    signalFromParticipant = _cedrusCodes_answerSignals_Relations[data];
+                if (_codes_ProtocolASCII.ContainsKey(data))                     // the usual scenario when everything is ok 
+                    signalFromParticipant = _codes_ProtocolASCII[data];
                 else if (data.Length > 1)                                                       // if several buttons were pressed simultaneously
                     signalFromParticipant = AnswerFromParticipant.MultipleAnswer;
+                                        // trigger "InputHandler" function
+                //gotData?.Invoke(signalFromParticipant);                                         // trigger "InputHandler" function
 
-                gotData?.Invoke(signalFromParticipant);                                         // trigger "InputHandler" function
+                // temp
+                //print(_portName);
+                print(data);
+                //print("data");
             }
         }
     }
@@ -94,7 +129,7 @@ public class Cedrus : MonoBehaviour
         // SOME NOTES:
         // serialPort.Open() -- is pretty heavy function. It takes about 4sec. But it shouldn't...
         // GetCedrusPortName() -- is pretty heavy function too. It takes about 2sec
-        //_serialPort.DataReceived += ReadDataFromBufer;    // doesn't work in Unity (because of thread system), although it was the best option
+        //_serialPort.DataReceived += ReadData;    // doesn't work in Unity (because of thread system), although it was the best option
 
         try
         {
@@ -166,24 +201,27 @@ public class Cedrus : MonoBehaviour
     /// <summary>
     /// Tries read data from port buffer to "_dataQueue". If fails -- then device was disconnected and so the connection status is updated
     /// </summary>
-    private void ReadDataFromBufer()
+    private void ReadData()
     {
         try
         {
             int bytesToRead = _serialPort.BytesToRead;                      // Read the number of bytes that are ready to be read from the serial buffer
-            if (bytesToRead == 0) return;                                   // Exit if nothing getted
+            if (bytesToRead < 6) return;                                   // Exit if nothing getted
 
-            byte[] buffer = new byte[bytesToRead];                          // Create a buffer array to hold the incoming bytes
-            _serialPort.Read(buffer, 0, bytesToRead);                       // Read the available bytes from the serial port into the buffer
+            byte[] buffer = new byte[6];                          // Create a buffer array to hold the incoming bytes
+            _serialPort.Read(buffer, 0, 6);                       // Read the available bytes from the serial port into the buffer
 
-            _dataQueue.Enqueue(Encoding.ASCII.GetString(buffer));           // the data transfer protocol is defined by the pin settings on the device itself
+            _dataQueue.Enqueue(ParseData_ProtocolXID(buffer));  // temp
+            //_dataQueue.Enqueue(ByteArrayToBitString(buffer));  // temp
+            //_dataQueue.Enqueue(Encoding.ASCII.GetString(buffer));           // the data transfer protocol is defined by the pin settings on the device itself
         }
         catch
         {
-            stateTracker.UpdateSubState(AnswerDevice_Statuses.isConnected, false);              // May occure if "CheckPortConnection" didn't check yet, but "ReadDataFromBufer" was called
+            stateTracker.UpdateSubState(AnswerDevice_Statuses.isConnected, false);              // May occure if "CheckPortConnection" didn't check yet, but "ReadData" was called
         }
     }
 
+    // todo: remove later -- InputHandler will take responsobility on that
     /// <summary>
     /// Coroutine that checks every "_checkPortConnectionTimeInterval" seconds if device is still connected and if not -- updates "CedrusConnectionStatus"
     /// </summary>
@@ -199,4 +237,90 @@ public class Cedrus : MonoBehaviour
         }
     }
 
+    private string GetRawBinaryDataAsString(ulong number)
+    {
+        return Convert.ToString((long)number, 2).PadLeft(48, '0');
+    }
+
+    private ulong GetRawData_BigEndianNotation(byte[] byteArray)
+    {
+        ulong value = 0;
+
+        for (int i = 0; i < byteArray.Length; i++)
+            value |= (ulong)byteArray[i] << (i * 8);
+
+        return value;
+    }
+
+    private ulong ConvertToBitMask(string mask)
+    {
+        return Convert.ToUInt64(mask.Replace(" ", ""), 2);
+    }
+
+    private ulong ExtractDataUsingMask(ulong rawData, ulong mask)
+    {
+        int shiftAmount = 0;
+
+        while ((mask & 1) == 0)
+        {
+            mask >>= 1;
+            rawData >>= 1;
+            shiftAmount++;
+        }
+
+        return rawData & mask;
+    }
+
+    private string ParseData_ProtocolXID(byte[] byteArray)
+    {
+        // program can work for ~50 days (2^48 milliseconds)
+
+        ulong rawData = GetRawData_BigEndianNotation(byteArray);
+
+        short keyCode = (short)ExtractDataUsingMask(rawData, _masks_ProtocolXID["keyCode"]);
+        int timestamp = (int)ExtractDataUsingMask(rawData, _masks_ProtocolXID["timestamp"]);
+        bool actionFlag = ExtractDataUsingMask(rawData, _masks_ProtocolXID["actionFlag"]) == 1;
+        char character = (char)ExtractDataUsingMask(rawData, _masks_ProtocolXID["character"]);
+        int port = (int)ExtractDataUsingMask(rawData, _masks_ProtocolXID["port"]);
+
+        if (actionFlag)
+            KeyPressed(keyCode, timestamp);
+        else
+            KeyReleased(keyCode, timestamp);
+
+        return $"done";
+        //return $"character: {character}, port: {port}, actionFlag: {actionFlag}, keyCode: {keyCode}, timestamp: {timestamp}\nraw message: {GetRawBinaryDataAsString(rawData)}"; //character: { character}, port: { port}, 
+    }
+
+    private void KeyPressed(short keyCode, int timestamp)
+    {
+        _answerState[_codes_ProtocolXID[keyCode]] = timestamp;
+        print($"pressed {keyCode}");
+    }
+    private void KeyReleased(short keyCode, int timestamp)
+    {
+        var timePassed = timestamp - _answerState[_codes_ProtocolXID[keyCode]];
+        _answerState[_codes_ProtocolXID[keyCode]] = 0;
+        print($"released {keyCode}. time took {timePassed}ms");
+    }
+
+    private class ParsedData
+    {
+        public readonly char? character;
+        public readonly int? port;
+        public readonly bool isKeyPressed;
+        public readonly bool isKeyReleased;
+        public readonly int timestampMs;
+        public readonly AnswerFromParticipant answer;
+
+        public ParsedData(bool isKeyPressed, bool isKeyReleased, int timestampMs, AnswerFromParticipant answer, char? character = null, int? port = null)
+        {
+            this.character = character;
+            this.port = port;
+            this.isKeyPressed = isKeyPressed;
+            this.isKeyReleased = isKeyReleased;
+            this.timestampMs = timestampMs;
+            this.answer = answer;
+        }
+    }
 }
