@@ -80,9 +80,9 @@
     <Compile Include="Assets\Scripts\UnityUtilities.cs" />
     <Compile Include="Assets\GUI\CustomSlider.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputLogic.cs" />
-    <Compile Include="Assets\Scripts\InputRelated\Cedrus.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\IDaemonHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Experiment\ExperimentTabHandler.cs" />
+    <Compile Include="Assets\Scripts\InputRelated\Cedrus_old.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\AudioHandler_Statuses.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputHandler.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\ObservableConcurrentQueue.cs" />
@@ -104,12 +104,14 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\IDaemonUser.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\AudioHandler.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
+    <Compile Include="Assets\Scripts\InputRelated\ICustomInputDevice.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigClassTemplates.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\Devices_SettingsUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\UiHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\UiReferences.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Daemons_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\InputRelated\VrHeadset_Statuses.cs" />
+    <Compile Include="Assets\Scripts\InputRelated\InputDevices\Cedrus.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DTOs\UnifiedCommandFrom_Client.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\SafeExpandoObject.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\AudioControl\AudioCommunicationModel.cs" />

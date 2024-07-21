@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class StatusesHandler : MonoBehaviour
 {
-    private Cedrus _cedrus;
+    private Cedrus_old _cedrus;
     private UiHandler _uiHandler;
     private InputHandler _inputHandler;
     private AudioHandler _audioHandler;
@@ -20,7 +20,7 @@ public class StatusesHandler : MonoBehaviour
 
     void Awake()
     {
-        _cedrus = GetComponent<Cedrus>();
+        _cedrus = GetComponent<Cedrus_old>();
         _uiHandler = GetComponent<UiHandler>();
         _inputHandler = GetComponent<InputHandler>();
         _audioHandler = GetComponent<AudioHandler>();
@@ -36,7 +36,7 @@ public class StatusesHandler : MonoBehaviour
             //{ "Moog",       (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainUiScreen.GetElement("gamepad-status-block"))_uiHandler.mainUiScreen.GetElement("moog-status-block") },
             
             { "Oculus",     (stateTracker: _inputHandler.XRConnectionStatus, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.vr) },
-            { "Cedrus",     (stateTracker: _cedrus.stateTracker, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.cedrus) },
+            { "Cedrus_old",     (stateTracker: _cedrus.stateTracker, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.cedrus) },
             { "Gamepad",    (stateTracker: _inputHandler.GamepadConnectionStatus, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.gamepad) },
             { "Audio",      (stateTracker: _audioHandler.stateTracker, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.audio) },
 

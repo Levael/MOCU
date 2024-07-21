@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using UnityEngine.XR;
+using UnityEngine.InputSystem.Layouts;
 
 public class InputHandler : MonoBehaviour
 {
     public InputActionAsset inputActions;
     private InputLogic      _inputLogic;
-    private Cedrus          _cedrus;
+    //private Cedrus_old          _cedrus;
     private UiHandler       _uiHandler;
     
 
@@ -24,7 +25,7 @@ public class InputHandler : MonoBehaviour
     private float _checkCedrusPortConnectionTimeInterval    = 0.1f; // sec
     private float _checkXRConnectionTimeInterval            = 0.1f; // sec
 
-
+    //private UnityEngine.InputSystem.InputDevice virtualGamepad;
 
 
     void Awake()
@@ -33,7 +34,7 @@ public class InputHandler : MonoBehaviour
         XRConnectionStatus = new StateTracker(typeof(VrHeadset_Statuses));
 
         _inputLogic     = GetComponent<InputLogic>();
-        _cedrus         = GetComponent<Cedrus>();
+        //_cedrus         = GetComponent<Cedrus_old>();
         _uiHandler      = GetComponent<UiHandler>();
         
 
@@ -62,7 +63,7 @@ public class InputHandler : MonoBehaviour
             { "Center", AnswerFromParticipant.Center }
         };
 
-        // Cedrus ASCII codes are stored in "Cedrus class"
+        // Cedrus_old ASCII codes are stored in "Cedrus_old class"
         //private Dictionary<AnswerFromParticipant, Action<string>> _cedrusSignalHandlers; (from header)
         /*_codes_ProtocolASCII = new() {
             { "a", AnswerFromParticipant.Up    },
@@ -89,20 +90,35 @@ public class InputHandler : MonoBehaviour
 
 
         // CEDRUS PART
-        // Due to the fact that Unity does not see Cedrus as a HID device, I had to write a separate class for it with its own event handler
-        _cedrus.gotData += GotSignalFromCedrus;
+        // Due to the fact that Unity does not see Cedrus_old as a HID device, I had to write a separate class for it with its own event handler
+        //_cedrus.gotData += GotSignalFromCedrus;
     }
 
 
     void Start()
     {
-        _cedrus.TryConnect(doRequestPortName: true);
-        StartCoroutine(_cedrus.CheckPortConnection(_checkCedrusPortConnectionTimeInterval));
+        //_cedrus.TryConnect(doRequestPortName: true);
+        //StartCoroutine(_cedrus.CheckPortConnection(_checkCedrusPortConnectionTimeInterval));
         StartCoroutine(CheckGamepadConnection(_checkGamepadConnectionTimeInterval));
         StartCoroutine(CheckXRConnection(_checkXRConnectionTimeInterval));
+
+        //virtualGamepad = InputSystem.AddDevice<Gamepad>("Cedrus");
+
+        var devices = InputSystem.devices;
+        foreach (var device in devices)
+        {
+            Debug.Log($"Device: {device.displayName}, Type: {device.GetType().Name}, Name: {device.name}");
+        }
     }
 
     void Update() { }
+
+    void OnDestroy()
+    {
+        // Удаляем виртуальные устройства при уничтожении объекта
+        /*if (virtualGamepad != null)
+            InputSystem.RemoveDevice(virtualGamepad);*/
+    }
 
 
 
@@ -115,7 +131,7 @@ public class InputHandler : MonoBehaviour
     }
     private void CudrusButtonWasReleased(InputAction.CallbackContext context)
     {
-        // In ASCII mode Cedrus can't detect if button was released, it sends only "pressEvent"
+        // In ASCII mode Cedrus_old can't detect if button was released, it sends only "pressEvent"
     }
 
     private void GotSignalFromInputSystem(InputAction.CallbackContext context)
