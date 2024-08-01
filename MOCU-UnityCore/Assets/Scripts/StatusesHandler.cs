@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class StatusesHandler : MonoBehaviour
 {
-    private Cedrus_old _cedrus;
+    private CedrusHandler _cedrus;
     private UiHandler _uiHandler;
     private InputHandler _inputHandler;
     private AudioHandler _audioHandler;
@@ -20,7 +20,7 @@ public class StatusesHandler : MonoBehaviour
 
     void Awake()
     {
-        _cedrus = GetComponent<Cedrus_old>();
+        _cedrus = GetComponent<CedrusHandler>();
         _uiHandler = GetComponent<UiHandler>();
         _inputHandler = GetComponent<InputHandler>();
         _audioHandler = GetComponent<AudioHandler>();
