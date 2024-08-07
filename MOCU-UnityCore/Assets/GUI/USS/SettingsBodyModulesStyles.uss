@@ -63,8 +63,6 @@
 	min-width: 90px;
 	background-color: var(--main-window-color);
 	justify-content: center;
-
-	/* display: none; */	/* temp */
 }
 .settings-device-box:hover .device-volume-slider {
 	display: flex;
@@ -91,81 +89,82 @@
 	width: 100%;
 	height: 100%;
 	padding-right: 7px;
-	/* background-color: lime; */
 
-	display: none;	/* temp */
+	/* will be shown only after click on device-box */
+	display: none;
 }
 .device-option-row {
-	/* background-color: pink; */
 	width: 100%;
-	height: 30px;
+	height: 28px;
 	flex-direction: row;
 	margin-bottom: 5px;
-}
-.device-option-left-part, .device-option-right-part {
-	height: 100%;
-	align-items: center;
 	justify-content: space-between;
-	padding: 0px 5px;
-	flex-direction: row;
+	align-items: center;
 }
-.device-option-left-part {
-	/* background-color: green; */
-	width: 15%;
+
+.device-option-status,
+.device-option-bell-btn,
+.device-option-full-name,
+.device-option-disconnect-btn {
+	margin-right: 7px;
 }
-.device-option-left-part-text {}
-.device-option-left-part-status {
+
+.device-option-status {
 	width: 13px;
 	height: 13px;
 	border-radius: 50%;
-	background-color: transparent;	/* "ready to go" status */
 	justify-content: space-between;
 }
-.device-option-right-part {
-	background-color: var(--main-buttons-color);
-	width: 85%;
-}
-.device-option-right-part-btns {
-	flex-direction: row;
-	height: 100%;
-	width: auto;
-	justify-content: space-between;
-	align-items: center;
-}
-.device-option-full-name {
-	-unity-font-style: normal;
-}
-.device-option-right-part .icon-shape.close-btn {
-	width: 22px;
-	height: 22px;
-
-	visibility: hidden;
-	border-width: 5px;
-	border-color: var(--main-buttons-color);
-}
-.device-option-right-part .icon-shape.bell-btn {
-	width: 26px;
-	height: 26px;
-	margin-right: 15px;
-
-	visibility: hidden;
-}
-.device-option-right-part .icon-shape.close-btn .icon-color,
-.device-option-right-part .icon-shape.bell-btn .icon-color {
-	background-color: var(--secondary-images-color);
-}
-
-.current-device .device-option-row .device-option-left-part-status {
+.current-device .device-option-status {
 	background-color: var(--main-accent-color);
 }
-.already-chosen-device .device-option-row .device-option-left-part-status {
+.already-chosen-device .device-option-status {
+	background-color: var(--secondary-images-color);
+}
+.ready-to-use-device .device-option-status {
+	background-color: transparent;
+}
+
+.device-option-full-name {
+	background-color: var(--secondary-images-color);
+	padding: 0 5px;
+	flex-grow: 1;
+	height: 100%;
+	-unity-text-align: middle-left;
+}
+.already-chosen-device .device-option-full-name,
+.ready-to-use-device .device-option-full-name {
+	-unity-font-style: normal;
+}
+.current-device .device-option-full-name {
+	-unity-font-style: bold;
+}
+
+.icon-shape.device-option-bell-btn {
+	width: 26px;
+	height: 26px;
+
+	/* switch via code */
+	visibility: hidden;
+}
+
+.icon-shape.device-option-bell-btn .icon-color,
+.icon-shape.device-option-disconnect-btn .icon-color {
+	/* 'bell' and 'disconnect' button color */
 	background-color: var(--secondary-images-color);
 }
 
-.already-chosen-device .device-option-right-part .icon-shape.close-btn,
-.current-device .device-option-right-part .icon-shape.close-btn,
-.settings-device-box-speaker-type, .settings-device-box-mic-type {	/* .audio-output .device-option-right-part .icon-shape.bell-btn,*/
+.icon-shape.device-option-disconnect-btn {
+	width: 12px;
+	height: 12px;
+}
+/* 'disconnect' button is only visible for devices that are it use right now */
+.already-chosen-device .icon-shape.device-option-disconnect-btn,
+.current-device .icon-shape.device-option-disconnect-btn {
 	visibility: visible;
+}
+.ready-to-use-device .icon-shape.device-option-disconnect-btn {
+	visibility: hidden;
 }
 
 

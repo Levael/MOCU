@@ -171,7 +171,7 @@ TextField * {
 
 
 #modal-windows, #modal-windows > *,
-#experiment-body, #data-body, #info-body, #cameras-body,      #settings-body,	/* , #settings-body -- for dev it's open in redactor #debug-body*/
+#experiment-body, #data-body, #info-body, #cameras-body, #debug-body     ,	/* , #settings-body -- for dev it's open in redactor #debug-body*/
 #experiment-body-right-part-monitors-eeg, #eeg-status-block {
 	display: none;
 }

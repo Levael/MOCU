@@ -26,7 +26,7 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
     private DaemonsHandler _daemonsHandler;
 
     private Dictionary<string, UnifiedCommandFrom_Client> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
-    private Dictionary<string, (AudioHandler_Statuses? subState, Action<UnifiedResponseFrom_Server> action)> CommandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
+    private Dictionary<string, (AudioHandler_Statuses? subState, Action<UnifiedResponseFrom_Server> action)> commandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
     #endregion PRIVATE FIELDS
 
 
@@ -60,7 +60,7 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
         /// 1) sends configs (audio files path)
         /// 2) sends desired data (which devices to use)
         /// 3) 
-        CommandsToExecuteAccordingToServerResponse = new()
+        commandsToExecuteAccordingToServerResponse = new()
         {
             { "SetConfigurations_Response",       (subState: AudioHandler_Statuses.SetConfigs,        action: SendClientAudioDataDesire) },
             { "AudioDataHasBeenUpdated_Response", (subState: AudioHandler_Statuses.GetAudioDevices,   action: GotServerAudioDataDecision) }
@@ -111,7 +111,7 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
     {
         try
         {
-            var receivedCommand = CommandsToExecuteAccordingToServerResponse[response.name];
+            var receivedCommand = commandsToExecuteAccordingToServerResponse[response.name];
             var subStateName = receivedCommand.subState;
             var funcToBeExecuted = receivedCommand.action;
 

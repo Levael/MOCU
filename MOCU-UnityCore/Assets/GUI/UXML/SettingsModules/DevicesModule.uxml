@@ -113,14 +113,13 @@
 
         <VisualElement name="settings-devices-choose-device-window">
             <ScrollView>
-                <Instance template="DeviceOptionModule-template" class="current-device"/>
-                <Instance template="DeviceOptionModule-template" class="already-chosen-device"/>
-                <Instance template="DeviceOptionModule-template" class=""/>
-                <!-- <Instance template="DeviceOptionModule-template" class=""/>
-                <Instance template="DeviceOptionModule-template" class=""/> -->
-            </ScrollView>
+                <!-- classes: "current-device", "already-chosen-device", "ready-to-use-device" -->
 
-            <!-- classes: "current-device", "already-chosen-device" -->
+                <!-- Examples: -->
+                <!-- <Instance template="DeviceOptionModule-template" class="current-device"/>
+                <Instance template="DeviceOptionModule-template" class="already-chosen-device"/>
+                <Instance template="DeviceOptionModule-template" class="ready-to-use-device"/> -->
+            </ScrollView>
         </VisualElement>
     </VisualElement>
 
