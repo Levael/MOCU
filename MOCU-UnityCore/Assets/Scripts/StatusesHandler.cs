@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class StatusesHandler : MonoBehaviour
+public class StatusesHandler : MonoBehaviour, IControllableComponent
 {
     private CedrusHandler _cedrus;
     private UiHandler _uiHandler;
@@ -16,9 +16,10 @@ public class StatusesHandler : MonoBehaviour
     private Dictionary<string, (StateTracker stateTracker, VisualElement visualElement)> _deviceNameToUxmlBlockMap;
     private Dictionary<DeviceConnection_Statuses, string> _deviceConnectionStatusToColorMap;
 
+    public bool IsComponentReady { get; private set; }
 
 
-    void Awake()
+    public void ControllableAwake()
     {
         _cedrus = GetComponent<CedrusHandler>();
         _uiHandler = GetComponent<UiHandler>();
@@ -27,7 +28,7 @@ public class StatusesHandler : MonoBehaviour
         _experimentTabHandler = GetComponent<ExperimentTabHandler>();
     }
 
-    void Start()
+    public void ControllableStart()
     {
         // don't move it to "Awake", otherwise ".mainUiScreen.GetElement("moog-status-block")" can be inaccessible
 
@@ -36,7 +37,7 @@ public class StatusesHandler : MonoBehaviour
             //{ "Moog",       (stateTracker: _inputHandler.XRConnectionStatus, visualElement: _uiHandler.mainUiScreen.GetElement("gamepad-status-block"))_uiHandler.mainUiScreen.GetElement("moog-status-block") },
             
             { "Oculus",     (stateTracker: _inputHandler.XRConnectionStatus, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.vr) },
-            { "Cedrus_old",     (stateTracker: _cedrus.stateTracker, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.cedrus) },
+            { "Cedrus_old", (stateTracker: _cedrus.stateTracker, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.cedrus) },
             { "Gamepad",    (stateTracker: _inputHandler.GamepadConnectionStatus, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.gamepad) },
             { "Audio",      (stateTracker: _audioHandler.stateTracker, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.audio) },
 
@@ -52,10 +53,16 @@ public class StatusesHandler : MonoBehaviour
             { DeviceConnection_Statuses.InProgress,    "#FCBA58" },   // yellow
             { DeviceConnection_Statuses.NotRelevant,   "#9A9B9B" }    // gray
         };
+
+        IsComponentReady = true;
     }
+
 
     void Update()
     {
+        if (!IsComponentReady) return;
+
+
         // change later to: "update when changed" or "update with a lower frequency"
 
         foreach (var device in _deviceNameToUxmlBlockMap)

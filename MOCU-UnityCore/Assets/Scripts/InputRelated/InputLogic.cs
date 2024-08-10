@@ -3,10 +3,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class InputLogic : MonoBehaviour
+public class InputLogic : MonoBehaviour, IControllableComponent
 {
     private UiHandler _uiHandler;
     private ExperimentTabHandler _experimentTabHandler;
+
+    public bool IsComponentReady { get; private set; }
 
     private AnswerHandler _answerHandler;
     private AudioHandler _audioHandler;
@@ -16,7 +18,7 @@ public class InputLogic : MonoBehaviour
     public event Action stopIncomingIntercomStream;
     public event Action stopOutgoingIntercomStream;
 
-    private void Awake()
+    public void ControllableAwake()
     {
         _uiHandler = GetComponent<UiHandler>(); // todo: shouldn't be here, change all to "_experimentTabHandler"
         _experimentTabHandler = GetComponent<ExperimentTabHandler>();
@@ -24,6 +26,8 @@ public class InputLogic : MonoBehaviour
         _answerHandler = GetComponent<AnswerHandler>();
         _audioHandler = GetComponent<AudioHandler>();
     }
+
+    public void ControllableStart() { }
 
     public void TestMethod(string text)
     {

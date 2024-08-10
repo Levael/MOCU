@@ -86,6 +86,7 @@
     <Compile Include="Assets\Scripts\AudioRelated\AudioHandler_Statuses.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputHandler.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\ObservableConcurrentQueue.cs" />
+    <Compile Include="Assets\Scripts\IControllableComponent.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonsHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\IBusinessLogic_Client.cs" />
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />

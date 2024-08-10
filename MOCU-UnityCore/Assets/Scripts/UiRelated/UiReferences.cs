@@ -14,6 +14,8 @@ public class UiReferences : MonoBehaviour
     public VisualElement root;
     public Dictionary<string, string> _tab_body_relations;
 
+    public bool IsComponentReady { get; private set; }
+
 
     void Awake ()
     {

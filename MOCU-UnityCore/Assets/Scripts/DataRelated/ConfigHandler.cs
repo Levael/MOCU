@@ -7,25 +7,21 @@ using System.Reflection;
 using UnityDaemonsCommon;
 
 
-public class ConfigHandler : MonoBehaviour
+public class ConfigHandler : MonoBehaviour, IControllableComponent
 {
     public ProtocolConfig defaultConfig;
+    public bool IsComponentReady {  get; private set; }
 
     private string _defaultConfigFilePath;
 
-    void Awake()
+    public void ControllableAwake()
     {
         _defaultConfigFilePath = Path.Combine(Application.streamingAssetsPath, "Config/config.json");
         defaultConfig = ReadConfig(filePath: _defaultConfigFilePath);
     }
 
-    void Start()
-    {
-    }
+    public void ControllableStart() { }
 
-    void Update()
-    {
-    }
 
     void OnApplicationQuit()
     {
@@ -38,7 +34,6 @@ public class ConfigHandler : MonoBehaviour
     {
         try
         {
-
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
                 DefaultValueHandling = DefaultValueHandling.Populate,   // 'Populate' ensures missing JSON properties are initialized to default values

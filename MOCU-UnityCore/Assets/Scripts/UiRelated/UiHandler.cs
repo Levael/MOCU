@@ -2,10 +2,10 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-public class UiHandler : MonoBehaviour
+public class UiHandler : MonoBehaviour, IControllableComponent
 {
-    public GameObject mainDisplayGameObject;
-    public GameObject secondDisplayGameObject;
+    private GameObject mainDisplayGameObject;
+    private GameObject secondDisplayGameObject;
 
     private UiReferences _mainDisplayUiReferences;
     private UiReferences _secondDisplayUiReferences;
@@ -16,21 +16,26 @@ public class UiHandler : MonoBehaviour
     public UiReferences mainUiScreen;          // use this (instead of _mainDisplayUiReferences)
     public UiReferences secondaryUiScreen;     // use this (instead of _secondDisplayUiReferences)
 
+    public bool IsComponentReady { get; private set; }
+
     
 
     private bool _openTabInSecondDisplay;
 
 
 
-    void Awake()
+    public void ControllableAwake()
     {
+        mainDisplayGameObject = GameObject.Find("GUI_main_monitor");
+        secondDisplayGameObject = GameObject.Find("GUI_second_monitor");
+
         _mainDisplayUiReferences = mainDisplayGameObject.GetComponent<UiReferences>();
         _secondDisplayUiReferences = secondDisplayGameObject.GetComponent<UiReferences>();
 
         ApplyDefaultSettings();
     }
 
-    void Start()
+    public void ControllableStart()
     {
         AddEventListeners();
 
@@ -38,11 +43,6 @@ public class UiHandler : MonoBehaviour
         TabHasBeenClicked(secondaryUiScreen.elements.debugTab.tabBtn);
         TabHasBeenClicked(mainUiScreen.elements.experimentTab.tabBtn);
     }
-
-    private void Update()
-    { 
-    }
-
 
 
 

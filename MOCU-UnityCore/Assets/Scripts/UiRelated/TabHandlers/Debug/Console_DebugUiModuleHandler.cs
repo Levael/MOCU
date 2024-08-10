@@ -29,6 +29,6 @@ public class Console_DebugUiModuleHandler : MonoBehaviour
     public void PrintToConsole(string message, bool clearTextElement = false)
     {
         if (clearTextElement) _console.text = "";
-        _console.text += message;
+        _console.text += $"{message}\n";
     }
 }

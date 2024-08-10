@@ -29,6 +29,7 @@ public class InputHandler : MonoBehaviour
 
     void Awake()
     {
+        inputActions = Resources.Load<InputActionAsset>("InputActions");    // name of file
         GamepadConnectionStatus = new StateTracker(typeof(AnswerDevice_Statuses));
         XRConnectionStatus = new StateTracker(typeof(VrHeadset_Statuses));
 

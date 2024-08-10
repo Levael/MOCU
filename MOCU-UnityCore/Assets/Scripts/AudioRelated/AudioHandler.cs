@@ -9,7 +9,7 @@ using InterprocessCommunication;
 // todo: not allow intercom (on the client side) if any device is missing (null)
 
 
-public partial class AudioHandler : MonoBehaviour, IDaemonUser
+public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableComponent
 {
     #region PRIVATE FIELDS
     private DaemonHandler_Client _daemon;
@@ -29,12 +29,12 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
     private Dictionary<string, (AudioHandler_Statuses? subState, Action<UnifiedResponseFrom_Server> action)> commandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
     #endregion PRIVATE FIELDS
 
-
+    public bool IsComponentReady {  get; private set; }
 
 
     #region MANDATORY STANDARD FUNCTIONALITY
 
-    void Awake()
+    public void ControllableAwake()
     {
         _uiHandler = GetComponent<UiHandler>();
         _configHandler = GetComponent<ConfigHandler>();
@@ -89,7 +89,7 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser
         };
     }
 
-    async void Start()
+    public async void ControllableStart()
     {
         _daemon = await _daemonsHandler.CreateDaemon(DaemonsHandler.Daemons.Audio);
 

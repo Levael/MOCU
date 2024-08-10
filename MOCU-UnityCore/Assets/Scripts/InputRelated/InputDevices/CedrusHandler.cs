@@ -64,10 +64,14 @@ public class CedrusHandler : MonoBehaviour
     private int _checkPortConnectionReadTimeout = 0;        // ms. If there will be any issue -- change to 1
     private Dictionary<int, Key> _cedrus2keyboardCodesMap;
 
+    private DebugTabHandler _debugTabHandler;
+
 
 
     private void Awake()
     {
+        _debugTabHandler = GetComponent<DebugTabHandler>();
+
         stateTracker = new StateTracker(typeof(AnswerDevice_Statuses));
 
         _XID_ProtocolHelper = new();
@@ -108,6 +112,8 @@ public class CedrusHandler : MonoBehaviour
         // first attempt (fast; assuming that the port name already exists and it is correct)
         var isConnectedSuccessfully = _serialPortHelper.Connect();
 
+        _debugTabHandler.PrintToConsole($"first try: {isConnectedSuccessfully}");
+
         if (isConnectedSuccessfully)
         {
             stateTracker.UpdateSubState(AnswerDevice_Statuses.isConnected, true);
@@ -115,8 +121,11 @@ public class CedrusHandler : MonoBehaviour
         }
 
         // seccond attempt (slow; request to WinAPI for the port name)
-        _serialPortHelper.SetParameters(portName: await GetCedrusPortName(_targetDeviceId), baudRate: _baudRate, readTimeout: _checkPortConnectionReadTimeout);
+        var portName = await GetCedrusPortName(_targetDeviceId);
+        _serialPortHelper.SetParameters(portName: portName, baudRate: _baudRate, readTimeout: _checkPortConnectionReadTimeout);
         isConnectedSuccessfully = _serialPortHelper.Connect();
+
+        _debugTabHandler.PrintToConsole($"second try: {isConnectedSuccessfully}. port name: {portName}");
 
         if (isConnectedSuccessfully)
             stateTracker.UpdateSubState(AnswerDevice_Statuses.isConnected, true);

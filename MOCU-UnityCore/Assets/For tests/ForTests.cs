@@ -1,8 +1,5 @@
-using System;
-using System.Linq;
-using System.Text;
-using Unity.Profiling;
 using UnityEngine;
+
 
 public class ForTests : MonoBehaviour
 {
@@ -24,7 +21,11 @@ public class ForTests : MonoBehaviour
         _debugTabHandler.testBtn1Clicked += (eventObj) =>
         {
             if (_cerusHandler.stateTracker.Status != DeviceConnection_Statuses.Connected)
+            {
+                _debugTabHandler.PrintToConsole("before Cedrus restart");
                 _cerusHandler.TryConnect();
+                _debugTabHandler.PrintToConsole("after Cedrus restart");
+            }
         };
 
         // sending lots of commands simultaneously together (stresstest)
