@@ -3,8 +3,10 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-public class DebugTabHandler : MonoBehaviour
+public class DebugTabHandler : MonoBehaviour, IControllableInitiation
 {
+    public bool IsComponentReady {  get; private set; }
+
     public event Action<ClickEvent> testBtn1Clicked;
     public event Action<ClickEvent> testBtn2Clicked;
 
@@ -17,14 +19,14 @@ public class DebugTabHandler : MonoBehaviour
     private VisualElement _testBtn2;
 
 
-    void Awake()
+    public void ControllableAwake()
     {
         _uiHandler = GetComponent<UiHandler>();
         _daemonsUiModuleHandler = GetComponent<Daemons_DebugUiModuleHandler>();
         _consoleUiModuleHandler = GetComponent<Console_DebugUiModuleHandler>();
     }
 
-    void Start()
+    public void ControllableStart()
     {
         _uiReference = _uiHandler.secondaryUiScreen;
 
@@ -33,10 +35,9 @@ public class DebugTabHandler : MonoBehaviour
 
         _testBtn1.RegisterCallback<ClickEvent>(eventObj => { testBtn1Clicked?.Invoke(eventObj); });
         _testBtn2.RegisterCallback<ClickEvent>(eventObj => { testBtn2Clicked?.Invoke(eventObj); });
+
+        IsComponentReady = true;
     }
-
-    private void Update() { }
-
 
 
 

@@ -6,17 +6,18 @@ using UnityEngine.UIElements;
 using CustomDataStructures;
 using CustomUxmlElements;
 using AudioControl;
-using System.Security.Cryptography;
 using System.Linq;
 
 
 // add to documentation: the only update this class can get are from outside. it only sends what is wanted to be changed
 
 
-public class Devices_SettingsUiModuleHandler : MonoBehaviour
+public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableInitiation
 {
+    public bool IsComponentReady {  get; private set; }
+
     public InterlinkedCollection<DeviceParametersSet> devicesInterlinkedCollection;         // connects data objects with UI stuff
-    public VisualTreeAsset chooseDeviceRowTemplate;
+    private VisualTreeAsset _chooseDeviceRowTemplate;
 
     private AudioHandler _audioHandler;
     private UiReferences _uiReference;
@@ -30,10 +31,9 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour
 
 
 
-    void Awake()
+    public void ControllableAwake()
     {
-        _uiHandler = GetComponent<UiHandler>();
-        _audioHandler = GetComponent<AudioHandler>();
+        _chooseDeviceRowTemplate = Resources.Load<VisualTreeAsset>("GUI/UXML/SettingsModules/DeviceOptionModule");
 
         // connects UiElementName, DeviceName, DeviceStatus and DeviceOptions
         devicesInterlinkedCollection = new()
@@ -103,13 +103,17 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour
         };
     }
 
-    void Start()
+    public void ControllableStart()
     {
+        _uiHandler = GetComponent<UiHandler>();
+        _audioHandler = GetComponent<AudioHandler>();
+
         _uiReference = _uiHandler.secondaryUiScreen;
         _backToMainBtn = _uiReference.elements.settingsTab.devicesModule.backToMainBtn;
         _openChoosingWindowBtn = _uiReference.elements.settingsTab.devicesModule.choosingWindow;
 
         AddEventListeners();
+        IsComponentReady = true;
     }
 
 
@@ -279,7 +283,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour
 
         foreach (var option in deviceParametersSet.listOfOptions)
         {
-            var instance = chooseDeviceRowTemplate.CloneTree();
+            var instance = _chooseDeviceRowTemplate.CloneTree();
             instance.Q<TextElement>(className: "device-option-full-name").text = option.deviceName;
 
             // Bell btn visibility (for output audio devices only)

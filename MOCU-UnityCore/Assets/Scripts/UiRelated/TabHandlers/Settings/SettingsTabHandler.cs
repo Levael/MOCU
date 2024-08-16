@@ -3,43 +3,36 @@ using UnityEngine;
 using AudioControl;
 
 
-public class SettingsTabHandler : MonoBehaviour
+public class SettingsTabHandler : MonoBehaviour, IControllableInitiation
 {
     // FIELDS
+    public bool IsComponentReady {  get; private set; }
     private UiHandler _uiHandler;
     private AudioHandler _audioHandler;
     private UiReferences _uiReference;
     private Devices_SettingsUiModuleHandler _devicesUiModuleHandler;
-    public bool classIsReady = false;
 
     
 
     // MANDATORY STANDARD FUNCTIONALITY
 
-    void Awake()
+    public void ControllableAwake() { }
+
+    public void ControllableStart()
     {
         _uiHandler = GetComponent<UiHandler>();
         _audioHandler = GetComponent<AudioHandler>();
         _devicesUiModuleHandler = GetComponent<Devices_SettingsUiModuleHandler>();
-    }
 
-    void Start()
-    {
         _uiReference = _uiHandler.secondaryUiScreen;
         AddEventListeners();
-        classIsReady = true;
-    }
-
-    void Update()
-    {
+        IsComponentReady = true;
     }
 
     // CUSTOM FUNCTIONALITY
 
 
-    private void AddEventListeners()
-    {
-    }
+    private void AddEventListeners() { }
 
     public void UpdateAudioDevices(UnifiedAudioDataPacket parameters)
     {

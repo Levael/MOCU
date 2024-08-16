@@ -8,7 +8,7 @@
 
 
 <!-- TEMPLATES ====================================================================== -->
-<Template src="/Assets/GUI/UXML/SettingsModules/DeviceOptionModule.uxml"      name="DeviceOptionModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/SettingsModules/DeviceOptionModule.uxml"      name="DeviceOptionModule-template"/>
 <!-- ================================================================================ -->
 
 

@@ -7,7 +7,7 @@ using System.Reflection;
 using UnityDaemonsCommon;
 
 
-public class ConfigHandler : MonoBehaviour, IControllableComponent
+public class ConfigHandler : MonoBehaviour, IControllableInitiation
 {
     public ProtocolConfig defaultConfig;
     public bool IsComponentReady {  get; private set; }
@@ -23,7 +23,7 @@ public class ConfigHandler : MonoBehaviour, IControllableComponent
     public void ControllableStart() { }
 
 
-    void OnApplicationQuit()
+    private void OnApplicationQuit()
     {
         WriteConfig(filePath: _defaultConfigFilePath, config: defaultConfig);
     }

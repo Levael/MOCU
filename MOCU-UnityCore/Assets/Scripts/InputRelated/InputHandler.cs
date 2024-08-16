@@ -5,9 +5,11 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using UnityEngine.XR;
 
-public class InputHandler : MonoBehaviour
+public class InputHandler : MonoBehaviour, IControllableInitiation
 {
-    public InputActionAsset inputActions;
+    public bool IsComponentReady {  get; private set; }
+
+    private InputActionAsset _inputActions;
     private InputLogic      _inputLogic;
     private CedrusHandler   _cedrus;
     private UiHandler       _uiHandler;
@@ -27,16 +29,12 @@ public class InputHandler : MonoBehaviour
     //private UnityEngine.InputSystem.InputDevice virtualGamepad;
 
 
-    void Awake()
+    public void ControllableAwake()
     {
-        inputActions = Resources.Load<InputActionAsset>("InputActions");    // name of file
+        _inputActions = Resources.Load<InputActionAsset>("InputActions");    // name of file
         GamepadConnectionStatus = new StateTracker(typeof(AnswerDevice_Statuses));
         XRConnectionStatus = new StateTracker(typeof(VrHeadset_Statuses));
 
-        _inputLogic     = GetComponent<InputLogic>();
-        _cedrus         = GetComponent<CedrusHandler>();
-        _uiHandler      = GetComponent<UiHandler>();
-        
 
         // INPUT SYSTEM PART (gamepad, keyboard and other devices Unity support)
         // Dictionary stores ActionName (from InputActionAsset) and tuple with two handlers: on "press" event and on "release" event
@@ -64,7 +62,7 @@ public class InputHandler : MonoBehaviour
         };
 
         // activates every action from InputSystem and, if it's in dict, adds its handler
-        foreach (var actionMap in inputActions.actionMaps)
+        foreach (var actionMap in _inputActions.actionMaps)
         {
             foreach (var action in actionMap.actions)
             {
@@ -81,28 +79,24 @@ public class InputHandler : MonoBehaviour
     }
 
 
-    void Start()
+    public void ControllableStart()
     {
+        _inputLogic = GetComponent<InputLogic>();
+        _cedrus = GetComponent<CedrusHandler>();
+        _uiHandler = GetComponent<UiHandler>();
+
         StartCoroutine(_cedrus.CheckConnection(_checkCedrusPortConnectionTimeInterval));
         StartCoroutine(CheckGamepadConnection(_checkGamepadConnectionTimeInterval));
         StartCoroutine(CheckXRConnection(_checkXRConnectionTimeInterval));
-
-        //virtualGamepad = InputSystem.AddDevice<Gamepad>("Cedrus");
 
         var devices = InputSystem.devices;
         foreach (var device in devices)
         {
             Debug.Log($"Device: {device.displayName}, Type: {device.GetType().Name}, Name: {device.name}");
         }
+
+        IsComponentReady = true;
     }
-
-    void Update() { }
-
-    void OnDestroy()
-    {
-    }
-
-
 
 
     //THE NESTING IN FOLLOWING FUNCTIONS MAY SEEM REDUNDANT, BUT LET IT BE JUST IN CASE

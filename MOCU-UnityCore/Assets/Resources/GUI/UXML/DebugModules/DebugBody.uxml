@@ -7,12 +7,12 @@
 
 
 <!-- TEMPLATES ====================================================================== -->
-<Template src="/Assets/GUI/UXML/DebugModules/ExperimentTimelineModule.uxml"     name="ExperimentTimelineModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/LastTrialDataModule.uxml"          name="LastTrialDataModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/InfoPanelsModule.uxml"             name="InfoPanelsModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/ConsoleModule.uxml"                name="ConsoleModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/MovementGraphModule.uxml"          name="MovementGraphModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/MoogAccelerationGraphModule.uxml"  name="MoogAccelerationGraphModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/DebugModules/ExperimentTimelineModule.uxml"     name="ExperimentTimelineModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/DebugModules/LastTrialDataModule.uxml"          name="LastTrialDataModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/DebugModules/InfoPanelsModule.uxml"             name="InfoPanelsModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/DebugModules/ConsoleModule.uxml"                name="ConsoleModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/DebugModules/MovementGraphModule.uxml"          name="MovementGraphModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/DebugModules/MoogAccelerationGraphModule.uxml"  name="MoogAccelerationGraphModule-template"/>
 <!-- ================================================================================ -->
 
 

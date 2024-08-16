@@ -7,10 +7,10 @@
 
 
 <!-- TEMPLATES ====================================================================== -->
-<Template src="/Assets/GUI/UXML/DebugModules/FpsSubModule.uxml"             name="FpsSubModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/DevicesSubModule.uxml"         name="DevicesSubModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/DaemonsSubModule.uxml"         name="DaemonsSubModule-template"/>
-<Template src="/Assets/GUI/UXML/DebugModules/DifferentInfoSubModule.uxml"   name="DifferentInfoSubModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/DebugModules/FpsSubModule.uxml"             name="FpsSubModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/DebugModules/DevicesSubModule.uxml"         name="DevicesSubModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/DebugModules/DaemonsSubModule.uxml"         name="DaemonsSubModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/DebugModules/DifferentInfoSubModule.uxml"   name="DifferentInfoSubModule-template"/>
 <!-- ================================================================================ -->
 
 

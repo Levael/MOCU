@@ -6,8 +6,8 @@
 >
 
 
-<Style src="/Assets/GUI/USS/SecondDisplay.uss"/>
-<Template src="/Assets/GUI/UXML/MainUiDocument.uxml" name="MainUiDocument-template"/>
+<Style src="/Assets/Resources/GUI/USS/SecondDisplay.uss"/>
+<Template src="/Assets/Resources/GUI/UXML/MainUiDocument.uxml" name="MainUiDocument-template"/>
 <Instance template="MainUiDocument-template" name="second-monitor-version"/>
 
     

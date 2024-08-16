@@ -8,11 +8,11 @@
 
 
 <!-- TEMPLATES ====================================================================== -->
-<Template src="/Assets/GUI/UXML/SettingsModules/ThemesPalettesModule.uxml"      name="ThemesPalettesModule-template"/>
-<Template src="/Assets/GUI/UXML/SettingsModules/ModulesModule.uxml"             name="ModulesModule-template"/>
-<Template src="/Assets/GUI/UXML/SettingsModules/ConfigsModule.uxml"             name="ConfigsModule-template"/>
-<Template src="/Assets/GUI/UXML/SettingsModules/DirectoriesPathsModule.uxml"    name="DirectoriesPathsModule-template"/>
-<Template src="/Assets/GUI/UXML/SettingsModules/DevicesModule.uxml"             name="DevicesModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/SettingsModules/ThemesPalettesModule.uxml"      name="ThemesPalettesModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/SettingsModules/ModulesModule.uxml"             name="ModulesModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/SettingsModules/ConfigsModule.uxml"             name="ConfigsModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/SettingsModules/DirectoriesPathsModule.uxml"    name="DirectoriesPathsModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/SettingsModules/DevicesModule.uxml"             name="DevicesModule-template"/>
 <!-- ================================================================================ -->
 
 

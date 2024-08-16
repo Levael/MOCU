@@ -8,15 +8,15 @@
 
 
 <!-- TEMPLATES ====================================================================== -->
-<Template src="/Assets/GUI/UXML/ExperimentModules/UnityModule.uxml"         name="UnityModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/ControlsModule.uxml"      name="ControlsModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/EegModule.uxml"           name="EegModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/AnswersGraphModule.uxml"  name="AnswersGraphModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/InfoModule.uxml"          name="InfoModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/InputsModule.uxml"        name="InputsModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/StatusesModule.uxml"      name="StatusesModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/TableModule.uxml"         name="TableModule-template"/>
-<Template src="/Assets/GUI/UXML/ExperimentModules/WarningsModule.uxml"      name="WarningsModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/ExperimentModules/UnityModule.uxml"         name="UnityModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/ExperimentModules/ControlsModule.uxml"      name="ControlsModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/ExperimentModules/EegModule.uxml"           name="EegModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/ExperimentModules/AnswersGraphModule.uxml"  name="AnswersGraphModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/ExperimentModules/InfoModule.uxml"          name="InfoModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/ExperimentModules/InputsModule.uxml"        name="InputsModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/ExperimentModules/StatusesModule.uxml"      name="StatusesModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/ExperimentModules/TableModule.uxml"         name="TableModule-template"/>
+<Template src="/Assets/Resources/GUI/UXML/ExperimentModules/WarningsModule.uxml"      name="WarningsModule-template"/>
 <!-- ================================================================================ -->
 
 

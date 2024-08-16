@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using System;
 
 
-public class ExperimentTabHandler : MonoBehaviour
+public class ExperimentTabHandler : MonoBehaviour, IFullyControllable
 {
     private UiHandler _uiHandler;
     private UiReferences _uiReference;
@@ -13,26 +13,26 @@ public class ExperimentTabHandler : MonoBehaviour
     private TextElement _warningsField;
 
     private ConcurrentQueue<Action> _deferredActions = new ConcurrentQueue<Action>();   // todo: move to separate class and refactor
-    private bool _classIsReady = false;
+    public bool IsComponentReady { get; private set; }
 
 
 
 
-    void Awake()
+    public void ControllableAwake()
     {
         _uiHandler = GetComponent<UiHandler>();
     }
 
-    void Start()
+    public void ControllableStart()
     {
         _uiReference = _uiHandler.mainUiScreen;
         _infoField = _uiReference.elements.experimentTab.outputsModule.info;
         _warningsField = _uiReference.elements.experimentTab.outputsModule.warnings;
 
-        _classIsReady = true;
+        IsComponentReady = true;
     }
 
-    void Update()
+    public void ControllableUpdate()
     {
         while (_deferredActions.TryDequeue(out Action action))
         {
@@ -42,10 +42,10 @@ public class ExperimentTabHandler : MonoBehaviour
 
 
 
-
+    // todo: rethink, make more abstract (_deferredActions)
     public void PrintToInfo(string message, bool clearTextElement = false)
     {
-        if (!_classIsReady)
+        if (!IsComponentReady)
         {
             _deferredActions.Enqueue(() => PrintToInfo(message, clearTextElement));
             return;
@@ -57,7 +57,7 @@ public class ExperimentTabHandler : MonoBehaviour
 
     public void PrintToWarnings(string message, bool clearTextElement = false)
     {
-        if (!_classIsReady)
+        if (!IsComponentReady)
         {
             _deferredActions.Enqueue(() => PrintToWarnings(message, clearTextElement));
             return;

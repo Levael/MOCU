@@ -5,8 +5,10 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-public class Fps_DebugUiModuleHandler : MonoBehaviour
+public class Fps_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
 {
+    public bool IsComponentReady { get; private set; }
+
     private UiHandler _uiHandler;
     private UiReferences _uiReference;
 
@@ -22,24 +24,25 @@ public class Fps_DebugUiModuleHandler : MonoBehaviour
 
     // BASIC FUNCTIONALITY
 
-    private void Awake()
+    public void ControllableAwake() { }
+
+    public void ControllableStart()
     {
         _uiHandler = GetComponent<UiHandler>();
 
         _mainThreadTimeRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Internal, "Main Thread", 1);
         // 1 is recorder.Capacity (no need in more than 1 because I take only the last one)
-    }
 
-    private void Start()
-    {
         _uiReference = _uiHandler.secondaryUiScreen;
 
         _currentFpsValueCell = _uiReference.elements.debugTab.fpsModule.fps;
         _lastFrameTimeValueCell = _uiReference.elements.debugTab.fpsModule.lastFrameTime;
         _averageFrameTimeValueCell = _uiReference.elements.debugTab.fpsModule.averageFrameTime;
+
+        IsComponentReady = true;
     }
 
-    private void Update()
+    public void ControllableUpdate()
     {
         UpdateFpsModule();
     }

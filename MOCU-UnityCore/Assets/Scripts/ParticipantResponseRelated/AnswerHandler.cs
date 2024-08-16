@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using UnityEngine;
 
-public class AnswerHandler : MonoBehaviour, IControllableComponent
+public class AnswerHandler : MonoBehaviour, IControllableInitiation
 {
     public ConcurrentStack<ParticipantAnswerStruct> answers;    // make later IEnumerable for public use
     public bool IsComponentReady { get; private set; }

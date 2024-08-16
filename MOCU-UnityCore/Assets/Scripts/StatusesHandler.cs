@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class StatusesHandler : MonoBehaviour, IControllableComponent
+public class StatusesHandler : MonoBehaviour, IFullyControllable
 {
     private CedrusHandler _cedrus;
     private UiHandler _uiHandler;
@@ -58,17 +58,12 @@ public class StatusesHandler : MonoBehaviour, IControllableComponent
     }
 
 
-    void Update()
+    public void ControllableUpdate()
     {
-        if (!IsComponentReady) return;
-
-
-        // change later to: "update when changed" or "update with a lower frequency"
+        // todo: change later to "update when changed" or "update with a lower frequency"
 
         foreach (var device in _deviceNameToUxmlBlockMap)
-        {
             UpdateStatusBox(device.Key);
-        }
     }
 
 

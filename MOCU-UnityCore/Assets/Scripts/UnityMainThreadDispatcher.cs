@@ -4,16 +4,23 @@ using UnityEngine;
 
 
 [DisallowMultipleComponent]
-public class UnityMainThreadDispatcher : MonoBehaviour
+public class UnityMainThreadDispatcher : MonoBehaviour, IFullyControllable
 {
     private static readonly ConcurrentQueue<Action> _executionQueue = new ConcurrentQueue<Action>();
+    public bool IsComponentReady {  get; private set; }
 
-    private void Update()
+
+    public void ControllableAwake() { }
+
+    public void ControllableStart()
+    {
+        IsComponentReady = true;
+    }
+
+    public void ControllableUpdate()
     {
         while (_executionQueue.TryDequeue(out var action))
-        {
             action.Invoke();
-        }
     }
 
     public static void Enqueue(Action action)

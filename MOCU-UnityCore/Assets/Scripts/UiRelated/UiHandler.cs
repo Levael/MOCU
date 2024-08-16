@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-
-public class UiHandler : MonoBehaviour, IControllableComponent
+// TODO: make all Handlers public and get access o them like "ui.experimentTab.ConsoleInfo()"
+public class UiHandler : MonoBehaviour, IControllableInitiation
 {
     private GameObject mainDisplayGameObject;
     private GameObject secondDisplayGameObject;
@@ -94,7 +94,7 @@ public class UiHandler : MonoBehaviour, IControllableComponent
 
     private void TabHasBeenClicked(VisualElement clickedTab)
     {
-        if (_openTabInSecondDisplay) WinAPI.RestoreWindow("Unity Secondary Display");
+        if (_openTabInSecondDisplay) WinAPI.RestoreWindow("Unity Secondary Display");   // todo: maybe first of all minimize and then restore (if minimized not via code it doesn't count and woun't be restored)
         if (clickedTab == _activeTabOnMainUiScreen || clickedTab == _activeTabOnSecondaryUiScreen) return;
 
 

@@ -9,7 +9,7 @@ using InterprocessCommunication;
 // todo: not allow intercom (on the client side) if any device is missing (null)
 
 
-public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableComponent
+public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableInitiation
 {
     #region PRIVATE FIELDS
     private DaemonHandler_Client _daemon;
@@ -36,14 +36,6 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableCom
 
     public void ControllableAwake()
     {
-        _uiHandler = GetComponent<UiHandler>();
-        _configHandler = GetComponent<ConfigHandler>();
-        _experimentTabHandler = GetComponent<ExperimentTabHandler>();
-        _settingsTabHandler = GetComponent<SettingsTabHandler>();
-        _inputLogic = GetComponent<InputLogic>();
-
-        _daemonsHandler = GetComponent<DaemonsHandler>();
-
         stateTracker = new StateTracker(typeof(AudioHandler_Statuses));
 
         inputAudioDevices = new();
@@ -65,11 +57,38 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableCom
             { "SetConfigurations_Response",       (subState: AudioHandler_Statuses.SetConfigs,        action: SendClientAudioDataDesire) },
             { "AudioDataHasBeenUpdated_Response", (subState: AudioHandler_Statuses.GetAudioDevices,   action: GotServerAudioDataDecision) }
         };
+    }
+
+    public async void ControllableStart()
+    {
+        _uiHandler = GetComponent<UiHandler>();
+        _configHandler = GetComponent<ConfigHandler>();
+        _experimentTabHandler = GetComponent<ExperimentTabHandler>();
+        _settingsTabHandler = GetComponent<SettingsTabHandler>();
+        _inputLogic = GetComponent<InputLogic>();
+        _daemonsHandler = GetComponent<DaemonsHandler>();
 
         // Reading from config Audio Devices Data
         audioDevicesInfo = _configHandler.defaultConfig.AudioConfig;
 
+        _daemon = await _daemonsHandler.CreateDaemon(DaemonsHandler.Daemons.Audio);
 
+        stateTracker.UpdateSubState(AudioHandler_Statuses.StartAudioProcess, _daemon.isProcessOk);
+        stateTracker.UpdateSubState(AudioHandler_Statuses.StartNamedPipeConnection, _daemon.isConnectionOk);
+
+        if (_daemon.isProcessOk && _daemon.isConnectionOk)
+            SendConfigurationDetails();
+        else
+            CloseConnectionWithDaemon("AudioHandler / Start : daemon error");
+
+        AddEventListeners();
+    }
+
+
+    #endregion MANDATORY STANDARD FUNCTIONALITY
+
+    private void AddEventListeners ()
+    {
         // Event listeners for intercom
         // todo: is there any check of status?
         _inputLogic.startOutgoingIntercomStream += () => {
@@ -88,24 +107,6 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableCom
             _daemon.SendCommand(partlyOptimizedJsonCommands["StopIntercomStream_ParticipantToResearcher_Command"]);
         };
     }
-
-    public async void ControllableStart()
-    {
-        _daemon = await _daemonsHandler.CreateDaemon(DaemonsHandler.Daemons.Audio);
-
-        stateTracker.UpdateSubState(AudioHandler_Statuses.StartAudioProcess, _daemon.isProcessOk);
-        stateTracker.UpdateSubState(AudioHandler_Statuses.StartNamedPipeConnection, _daemon.isConnectionOk);
-
-        if (_daemon.isProcessOk && _daemon.isConnectionOk)
-            SendConfigurationDetails();
-        else
-            CloseConnectionWithDaemon("AudioHandler / Start : daemon error");
-    }
-
-
-    #endregion MANDATORY STANDARD FUNCTIONALITY
-
-
 
     public void ProcessResponse(UnifiedResponseFrom_Server response)
     {

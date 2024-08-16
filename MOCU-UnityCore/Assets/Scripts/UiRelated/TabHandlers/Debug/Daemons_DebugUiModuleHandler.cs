@@ -2,13 +2,14 @@
 using UnityEngine.UIElements;
 
 
-public class Daemons_DebugUiModuleHandler : MonoBehaviour
+public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
 {
+    public bool IsComponentReady {  get; private set; }
+
     private UiHandler _uiHandler;
     private UiReferences _uiReference;
     private DaemonsHandler _daemonsHandler;
     
-    [SerializeField]
     private VisualTreeAsset _daemonActivitieTemplate;
     private TextElement _numberOfDaemonsCell;
     private ScrollView _daemonsActivities;
@@ -17,22 +18,26 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour
 
     // BASIC FUNCTIONALITY
 
-    private void Awake()
+    public void ControllableAwake()
+    {
+        _daemonActivitieTemplate = Resources.Load<VisualTreeAsset>("GUI/UXML/DebugModules/DaemonsSubModule_ActivityTemplate");
+    }
+
+    public void ControllableStart()
     {
         _uiHandler = GetComponent<UiHandler>();
         _daemonsHandler = GetComponent<DaemonsHandler>();
-    }
 
-    private void Start()
-    {
         _uiReference = _uiHandler.secondaryUiScreen;
 
         _daemonsActivities = _uiReference.elements.debugTab.daemonsModule.activities;
         _daemonsActivities.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
         _numberOfDaemonsCell = _uiReference.elements.debugTab.daemonsModule.totalNumber;
+
+        IsComponentReady = true;
     }
 
-    private void Update()
+    public void ControllableUpdate()
     {
         UpdateDaemonsModule();
     }

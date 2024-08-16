@@ -10,7 +10,7 @@ using InterprocessCommunication;
 #pragma warning disable CS8618
 
 
-class DaemonsHandler : MonoBehaviour, IControllableComponent
+class DaemonsHandler : MonoBehaviour, IControllableInitiation
 {
     public enum Daemons
     {
@@ -43,7 +43,10 @@ class DaemonsHandler : MonoBehaviour, IControllableComponent
         };
     }
 
-    public void ControllableStart() { }
+    public void ControllableStart()
+    {
+        IsComponentReady = true;
+    }
 
     void OnDestroy()
     {

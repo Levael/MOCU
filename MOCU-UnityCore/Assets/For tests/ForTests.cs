@@ -1,22 +1,24 @@
 using UnityEngine;
 
 
-public class ForTests : MonoBehaviour
+public class ForTests : MonoBehaviour, IFullyControllable
 {
+    public bool IsComponentReady {  get; private set; }
+
     private DebugTabHandler _debugTabHandler;
     private AudioHandler _audioHandler;
     private CedrusHandler _cerusHandler;
 
     //private int temp_counter = 0;
 
-    private void Awake()
+    public void ControllableAwake()
     {
         _debugTabHandler = GetComponent<DebugTabHandler>();
         _audioHandler = GetComponent<AudioHandler>();
         _cerusHandler = GetComponent<CedrusHandler>();
     }
 
-    private void Start()
+    public void ControllableStart()
     {
         _debugTabHandler.testBtn1Clicked += (eventObj) =>
         {
@@ -35,10 +37,10 @@ public class ForTests : MonoBehaviour
             _audioHandler.
             //_audioHandler.SendTestAudioSignalToDevice("Speakers (Realtek High Definition Audio)");
         };*/
-
+        IsComponentReady = true;
     }
 
-    private void Update()
+    public void ControllableUpdate()
     {
         /*if (_audioHandler.stateTracker.Status == DeviceConnection_Statuses.Connected && temp_counter++ < 300)
             _audioHandler.SendTestAudioSignalToDevice("Speakers (Realtek High Definition Audio)");*/

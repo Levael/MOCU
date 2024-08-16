@@ -50,8 +50,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public class CedrusHandler : MonoBehaviour
+public class CedrusHandler : MonoBehaviour, IFullyControllable
 {
+    public bool IsComponentReady {  get; private set; }
     public StateTracker stateTracker;
 
     private KeyboardSimulator _keyboardSimulator;
@@ -68,10 +69,8 @@ public class CedrusHandler : MonoBehaviour
 
 
 
-    private void Awake()
+    public void ControllableAwake()
     {
-        _debugTabHandler = GetComponent<DebugTabHandler>();
-
         stateTracker = new StateTracker(typeof(AnswerDevice_Statuses));
 
         _XID_ProtocolHelper = new();
@@ -88,13 +87,18 @@ public class CedrusHandler : MonoBehaviour
         };
     }
 
-    private void Start()
+    public void ControllableStart()
     {
+        _debugTabHandler = GetComponent<DebugTabHandler>();
+
         _keyboardSimulator.Init("Cedrus");
         TryConnect();
+
+        IsComponentReady = true;
     }
 
-    private void Update()
+    // todo: rethink "IsComponentReady" and "stateTracker" relationship
+    public void ControllableUpdate()
     {
         if (stateTracker.Status != DeviceConnection_Statuses.Connected)
             return;

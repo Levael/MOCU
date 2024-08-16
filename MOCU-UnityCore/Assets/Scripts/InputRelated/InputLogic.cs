@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
-public class InputLogic : MonoBehaviour, IControllableComponent
+
+public class InputLogic : MonoBehaviour, IFullyControllable
 {
     private UiHandler _uiHandler;
     private ExperimentTabHandler _experimentTabHandler;
@@ -28,6 +27,7 @@ public class InputLogic : MonoBehaviour, IControllableComponent
     }
 
     public void ControllableStart() { }
+    public void ControllableUpdate() { }
 
     public void TestMethod(string text)
     {
