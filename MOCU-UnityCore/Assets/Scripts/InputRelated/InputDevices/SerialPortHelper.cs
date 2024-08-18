@@ -1,6 +1,7 @@
 ﻿using System.IO.Ports;
 using System;
 
+
 public class SerialPortHelper
 {
     private SerialPort _serialPort;

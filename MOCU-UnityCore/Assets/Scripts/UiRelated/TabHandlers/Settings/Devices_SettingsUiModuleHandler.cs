@@ -8,6 +8,8 @@ using CustomUxmlElements;
 using AudioControl;
 using System.Linq;
 
+using Debug = UnityEngine.Debug;
+
 
 // add to documentation: the only update this class can get are from outside. it only sends what is wanted to be changed
 
@@ -46,7 +48,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
 
                 GetDeviceName       = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioInputDeviceName_Researcher,
                 GetDeviceVolume     = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioInputDeviceVolume_Researcher,
-                GetDevicesList      = (data) => ((UnifiedAudioDataPacket)data).inputAudioDevices.Select(deviceName => (deviceName, DeviceOptionStatus.FreeToChoose)).ToList(),
+                GetDevicesList      = (data) => ((UnifiedAudioDataPacket)data).inputAudioDevices,
 
                 chosenDeviceName    = null,
                 chosenDeviceVolume  = null,
@@ -61,7 +63,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
 
                 GetDeviceName       = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioInputDeviceName_Participant,
                 GetDeviceVolume     = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioInputDeviceVolume_Participant,
-                GetDevicesList      = (data) => ((UnifiedAudioDataPacket)data).inputAudioDevices.Select(deviceName => (deviceName, DeviceOptionStatus.FreeToChoose)).ToList(),
+                GetDevicesList      = (data) => ((UnifiedAudioDataPacket)data).inputAudioDevices,
 
                 chosenDeviceName    = null,
                 chosenDeviceVolume  = null,
@@ -76,7 +78,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
 
                 GetDeviceName       = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioOutputDeviceName_Researcher,
                 GetDeviceVolume     = (data) => ((UnifiedAudioDataPacket)data).audioDevicesInfo.audioOutputDeviceVolume_Researcher,
-                GetDevicesList      = (data) => ((UnifiedAudioDataPacket)data).outputAudioDevices.Select(deviceName => (deviceName, DeviceOptionStatus.FreeToChoose)).ToList(),
+                GetDevicesList      = (data) => ((UnifiedAudioDataPacket)data).outputAudioDevices,
 
                 chosenDeviceName    = null,
                 chosenDeviceVolume  = null,
@@ -147,6 +149,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
     // Locally
     private void UpdateAudioDevicesData(UnifiedAudioDataPacket parameters)
     {
+        // first of all everything except 'listOfOptions', that it (because it depends on previous data)
         try
         {
             foreach (var device in devicesInterlinkedCollection)
@@ -154,18 +157,23 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
                 // get data from 'UnifiedAudioDataPacket'
                 var chosenDeviceName    = device.GetDeviceName(parameters);
                 var chosenDeviceVolume  = device.GetDeviceVolume(parameters) ?? 0f;
-                var listOfOptions       = device.GetDevicesList(parameters);
                 var deviceStatus        = (!String.IsNullOrEmpty(chosenDeviceName)) ? DeviceCardStatus.Ready : DeviceCardStatus.NotChosen;
 
                 //update data in 'devicesInterlinkedCollection'
                 devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "chosenDeviceName", chosenDeviceName);
                 devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "chosenDeviceVolume", chosenDeviceVolume);
                 devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "deviceStatus", deviceStatus);
+            }
 
-                // todo: update default values of status with calculated ones   <-- HERE
-                devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "listOfOptions", listOfOptions);
+            foreach (var device in devicesInterlinkedCollection)
+            {
+                var listOfOptions = device.GetDevicesList(parameters);
+                var updListOfOptions = AssignStatusesToListOfOptions(list: listOfOptions, currentDevice: device);
+                devicesInterlinkedCollection.UpdateSingleValue(device.uiElementName, "listOfOptions", updListOfOptions);
 
-                //print($"device.uiElementName: {device.uiElementName} == {devicesInterlinkedCollection[device.uiElementName].deviceStatus}");
+                // debug
+                /*foreach (var option in updListOfOptions)
+                    print($"deviceName: {device.uiElementName}, option: {option}");*/
             }
         }
         catch (Exception ex)
@@ -195,7 +203,40 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
             Debug.LogError($"Error in UpdateAudioDevicesUi: {ex}");
         }*/
     }
-    
+
+    private IReadOnlyList<(string deviceName, DeviceOptionStatus status)> AssignStatusesToListOfOptions (IReadOnlyList<string> list, DeviceParametersSet currentDevice)
+    {
+        var result = new List<(string deviceName, DeviceOptionStatus status)>();
+
+        foreach (var option in list)
+        {
+            var currentOption = (deviceName: option, status: DeviceOptionStatus.FreeToChoose);
+
+            if (option == currentDevice.chosenDeviceName)
+            {
+                currentOption.status = DeviceOptionStatus.CurrentlyChosen;
+                result.Add(currentOption);
+                continue;
+            }
+
+            foreach (var device in devicesInterlinkedCollection)
+            {
+                if (device == currentDevice)
+                    continue;
+
+                if (option == device.chosenDeviceName)
+                {
+                    currentOption.status = DeviceOptionStatus.AlreadyChosen;
+                    break;
+                }
+            }
+
+            result.Add(currentOption);
+        }
+
+        return result;
+    }
+
 
     // clear and refill with options (and set their statuses)
     private void RemakeDeviceOptionsModule(DeviceParametersSet deviceParametersSet)
@@ -224,7 +265,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
 
     private void DeviceBoxClicked(ClickEvent eventObj)
     {
-        UnityEngine.Debug.Log("Device box clicked");
+        Debug.Log("Device box clicked");
 
         // if clicked on Slider -- ignore "OpenDeviceBoxParameters" action
         var currentElement = eventObj.target as VisualElement;
@@ -255,7 +296,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
         eventObj.StopPropagation();
 
         var currentElement = eventObj.target as VisualElement;
-        UnityEngine.Debug.Log("Slider clicked");
+        Debug.Log("Slider clicked");
         // todo: continue working on it
     }
 
@@ -383,7 +424,7 @@ public class DeviceParametersSet
     public Func<object, float?> GetDeviceVolume { get; set; }
     
     [CanBeKey(false)]
-    public Func<object, List<(string deviceName, DeviceOptionStatus status)>> GetDevicesList { get; set; }
+    public Func<object, IReadOnlyList<string>> GetDevicesList { get; set; }
 
 
 
@@ -392,7 +433,7 @@ public class DeviceParametersSet
     public float? chosenDeviceVolume { get; set; }
 
     [CanBeKey(false)]
-    public List<(string deviceName, DeviceOptionStatus status)>? listOfOptions { get; set; }
+    public IReadOnlyList<(string deviceName, DeviceOptionStatus status)>? listOfOptions { get; set; }
 
     [CanBeKey(false)]
     public DeviceCardStatus deviceStatus { get; set; }

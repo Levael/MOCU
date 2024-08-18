@@ -6,6 +6,8 @@ using System.Reflection;
 
 using UnityDaemonsCommon;
 
+using Debug = UnityEngine.Debug;
+
 
 public class ConfigHandler : MonoBehaviour, IControllableInitiation
 {
@@ -45,7 +47,7 @@ public class ConfigHandler : MonoBehaviour, IControllableInitiation
         }
         catch (Exception ex)
         {
-            UnityEngine.Debug.LogError($"Error reading or deserializing the file: {ex.Message}");
+            Debug.LogError($"Error reading or deserializing the file: {ex.Message}");
             return null;
         }
     }
@@ -68,7 +70,7 @@ public class ConfigHandler : MonoBehaviour, IControllableInitiation
         }
         catch (Exception ex)
         {
-            UnityEngine.Debug.LogError($"Error writing or serializing the file: {ex.Message}");
+            Debug.LogError($"Error writing or serializing the file: {ex.Message}");
         }
     }
 
@@ -88,7 +90,7 @@ public class ConfigHandler : MonoBehaviour, IControllableInitiation
         if (fieldToUpdate != null)
             fieldToUpdate.SetValue(defaultConfig, newValue);
         else
-            UnityEngine.Debug.LogError("No matching field found for type " + typeof(T).Name);
+            Debug.LogError("No matching field found for type " + typeof(T).Name);
     }
 
 }

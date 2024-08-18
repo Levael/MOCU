@@ -59,6 +59,7 @@ public class CedrusHandler : MonoBehaviour, IFullyControllable
     private XID_ProtocolParser _XID_ProtocolHelper;
     private SerialPortHelper _serialPortHelper;
 
+    private string _portName = null;
     private int _baudRate = 9600;
     private string _targetDeviceId = @"FTDIBUS\VID_0403+PID_6001";
     private string _portFinderAppPath = "Daemons/PortFinder.exe";
@@ -116,7 +117,7 @@ public class CedrusHandler : MonoBehaviour, IFullyControllable
         // first attempt (fast; assuming that the port name already exists and it is correct)
         var isConnectedSuccessfully = _serialPortHelper.Connect();
 
-        _debugTabHandler.PrintToConsole($"first try: {isConnectedSuccessfully}");
+        _debugTabHandler.PrintToConsole($"Cedrus: first try to connect. Is connected - {isConnectedSuccessfully}. Port name: {_portName}");
 
         if (isConnectedSuccessfully)
         {
@@ -125,11 +126,11 @@ public class CedrusHandler : MonoBehaviour, IFullyControllable
         }
 
         // seccond attempt (slow; request to WinAPI for the port name)
-        var portName = await GetCedrusPortName(_targetDeviceId);
-        _serialPortHelper.SetParameters(portName: portName, baudRate: _baudRate, readTimeout: _checkPortConnectionReadTimeout);
+        _portName = await GetCedrusPortName(_targetDeviceId);
+        _serialPortHelper.SetParameters(portName: _portName, baudRate: _baudRate, readTimeout: _checkPortConnectionReadTimeout);
         isConnectedSuccessfully = _serialPortHelper.Connect();
 
-        _debugTabHandler.PrintToConsole($"second try: {isConnectedSuccessfully}. port name: {portName}");
+        _debugTabHandler.PrintToConsole($"Cedrus: second try to connect. Is connected - {isConnectedSuccessfully}. Port name: {_portName}\n");
 
         if (isConnectedSuccessfully)
             stateTracker.UpdateSubState(AnswerDevice_Statuses.isConnected, true);
@@ -191,7 +192,7 @@ public class CedrusHandler : MonoBehaviour, IFullyControllable
         }
         catch (Exception ex)
         {
-            print("Error in 'GetCedrusPortName'");
+            print($"Error in 'GetCedrusPortName': {ex}");
             return null;
         }
     }

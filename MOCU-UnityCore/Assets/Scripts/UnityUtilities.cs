@@ -2,22 +2,24 @@
 using System;
 using System.Collections.Concurrent;
 
+using Debug = UnityEngine.Debug;
+
 
 public class UnityUtilities
 {
     public static void ConsoleError(string message)
     {
-        UnityEngine.Debug.LogError(message);
+        Debug.LogError(message);
     }
 
     public static void ConsoleWarning(string message)
     {
-        UnityEngine.Debug.LogWarning(message);
+        Debug.LogWarning(message);
     }
 
     public static void ConsoleInfo(string message)
     {
-        UnityEngine.Debug.Log(message);
+        Debug.Log(message);
     }
 }
 

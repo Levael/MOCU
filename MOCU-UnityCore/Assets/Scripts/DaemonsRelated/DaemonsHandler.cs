@@ -6,6 +6,8 @@ using UnityEngine;
 
 using InterprocessCommunication;
 
+using Debug = UnityEngine.Debug;
+
 #nullable enable
 #pragma warning disable CS8618
 
@@ -74,7 +76,7 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
         }
         catch (Exception ex)
         {
-            UnityEngine.Debug.LogError($"couldn't execute 'CreateDaemon' properly for {daemonControlsEnum} daemon. Exception: {ex}");
+            Debug.LogError($"couldn't execute 'CreateDaemon' properly for {daemonControlsEnum} daemon. Exception: {ex}");
         }
 
         return daemon;

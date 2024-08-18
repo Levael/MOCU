@@ -6,6 +6,8 @@ using UnityEngine;
 using AudioControl;
 using InterprocessCommunication;
 
+using Debug = UnityEngine.Debug;
+
 // todo: not allow intercom (on the client side) if any device is missing (null)
 
 
@@ -153,7 +155,7 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
     {
         if (!IsDaemonOk())
         {
-            UnityEngine.Debug.LogError("Custom: 'SendConfigurationDetails' is unavailable right now. 'IsDaemonOk' returned 'false'");
+            Debug.LogError("Custom: 'SendConfigurationDetails' is unavailable right now. 'IsDaemonOk' returned 'false'");
             return;
         }
 
@@ -197,7 +199,7 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
         //print("before 'SendClientAudioDataDesire'");
         if (!IsDaemonOk())
         {
-            UnityEngine.Debug.LogError("Custom: 'SendClientAudioDataDesire' is unavailable right now. 'IsDaemonOk' returned 'false'");
+            Debug.LogError("Custom: 'SendClientAudioDataDesire' is unavailable right now. 'IsDaemonOk' returned 'false'");
             return;
         }
 

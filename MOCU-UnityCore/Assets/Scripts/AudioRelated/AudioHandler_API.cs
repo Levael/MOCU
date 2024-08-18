@@ -6,6 +6,8 @@ using AudioControl;
 using UnityDaemonsCommon;
 using InterprocessCommunication;
 
+using Debug = UnityEngine.Debug;
+
 
 public partial class AudioHandler : MonoBehaviour
 {
@@ -36,7 +38,7 @@ public partial class AudioHandler : MonoBehaviour
     {
         if (_daemon == null || !_daemon.isConnectionOk || !_daemon.isProcessOk)
         {
-            UnityEngine.Debug.LogError("Custom: 'SendTestAudioSignalToDevice' is unavailable right now");
+            Debug.LogError("Custom: 'SendTestAudioSignalToDevice' is unavailable right now");
             return;
         }
         _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "PlayAudioFile_Command", extraData: new PlayAudioFile_CommandDetails(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));

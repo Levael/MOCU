@@ -89,11 +89,11 @@ public class InputHandler : MonoBehaviour, IControllableInitiation
         StartCoroutine(CheckGamepadConnection(_checkGamepadConnectionTimeInterval));
         StartCoroutine(CheckXRConnection(_checkXRConnectionTimeInterval));
 
-        var devices = InputSystem.devices;
+        /*var devices = InputSystem.devices;
         foreach (var device in devices)
         {
             Debug.Log($"Device: {device.displayName}, Type: {device.GetType().Name}, Name: {device.name}");
-        }
+        }*/
 
         IsComponentReady = true;
     }

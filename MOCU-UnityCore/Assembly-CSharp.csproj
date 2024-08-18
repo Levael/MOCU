@@ -89,7 +89,6 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonsHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\IBusinessLogic_Client.cs" />
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
-    <Compile Include="Assets\Scripts\InputRelated\ProtocolHandler_XID.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DTOs\UnifiedDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputDevices\CedrusHandler.cs" />
     <Compile Include="Assets\Resources\GUI\CustomSlider.cs" />
@@ -109,7 +108,6 @@
     <Compile Include="Assets\Scripts\AudioRelated\AudioHandler.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputDevices\SerialPortHelper.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
-    <Compile Include="Assets\Scripts\InputRelated\ICustomInputDevice.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigClassTemplates.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\Devices_SettingsUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\UiHandler.cs" />

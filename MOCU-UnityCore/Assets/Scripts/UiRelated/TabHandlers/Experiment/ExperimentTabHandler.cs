@@ -12,7 +12,7 @@ public class ExperimentTabHandler : MonoBehaviour, IFullyControllable
     private TextElement _infoField;
     private TextElement _warningsField;
 
-    private ConcurrentQueue<Action> _deferredActions = new ConcurrentQueue<Action>();   // todo: move to separate class and refactor
+    //private ConcurrentQueue<Action> _deferredActions;   // todo: move to separate class and refactor
     public bool IsComponentReady { get; private set; }
 
 
@@ -20,11 +20,13 @@ public class ExperimentTabHandler : MonoBehaviour, IFullyControllable
 
     public void ControllableAwake()
     {
-        _uiHandler = GetComponent<UiHandler>();
+        //_deferredActions = new ConcurrentQueue<Action>();
     }
 
     public void ControllableStart()
     {
+        _uiHandler = GetComponent<UiHandler>();
+
         _uiReference = _uiHandler.mainUiScreen;
         _infoField = _uiReference.elements.experimentTab.outputsModule.info;
         _warningsField = _uiReference.elements.experimentTab.outputsModule.warnings;
@@ -34,10 +36,10 @@ public class ExperimentTabHandler : MonoBehaviour, IFullyControllable
 
     public void ControllableUpdate()
     {
-        while (_deferredActions.TryDequeue(out Action action))
+        /*while (_deferredActions.TryDequeue(out Action action))
         {
             action.Invoke();
-        }
+        }*/
     }
 
 
@@ -45,11 +47,11 @@ public class ExperimentTabHandler : MonoBehaviour, IFullyControllable
     // todo: rethink, make more abstract (_deferredActions)
     public void PrintToInfo(string message, bool clearTextElement = false)
     {
-        if (!IsComponentReady)
+        /*if (!IsComponentReady)
         {
             _deferredActions.Enqueue(() => PrintToInfo(message, clearTextElement));
             return;
-        }
+        }*/
 
         if (clearTextElement) _infoField.text = "";
         _infoField.text += message;
@@ -57,11 +59,11 @@ public class ExperimentTabHandler : MonoBehaviour, IFullyControllable
 
     public void PrintToWarnings(string message, bool clearTextElement = false)
     {
-        if (!IsComponentReady)
+        /*if (!IsComponentReady)
         {
             _deferredActions.Enqueue(() => PrintToWarnings(message, clearTextElement));
             return;
-        }
+        }*/
 
         if (clearTextElement) _warningsField.text = "";
         _warningsField.text += message;

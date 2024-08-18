@@ -5,6 +5,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+using Debug = UnityEngine.Debug;
+
+
 public class StatusesHandler : MonoBehaviour, IFullyControllable
 {
     private CedrusHandler _cedrus;
@@ -121,7 +124,7 @@ public class StateTracker
     {
         if (!_subStates.ContainsKey(subStateName))
         {
-            UnityEngine.Debug.LogError("error in 'SetParameterState'");
+            Debug.LogError("error in 'SetParameterState'");
             return;
         }
 
