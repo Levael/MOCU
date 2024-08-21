@@ -14,9 +14,9 @@
     <TextElement class="device-option-full-name" text="device-option-full-name"/>
 
     <!-- the button to turn off the device -->
-    <VisualElement class="icon-shape device-option-disconnect-btn" style="background-image: url('/Assets/Images/SVG/CloseIcon.svg');">
+    <!-- <VisualElement class="icon-shape device-option-disconnect-btn" style="background-image: url('/Assets/Images/SVG/CloseIcon.svg');">
         <VisualElement class="icon-color"></VisualElement>
-    </VisualElement>
+    </VisualElement> -->
 
     <!-- the button for ringing the device -->
     <VisualElement class="icon-shape device-option-bell-btn" style="background-image: url('/Assets/Images/SVG/BellIcon.svg');">

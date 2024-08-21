@@ -13,10 +13,17 @@ using UnityEngine;
 public class Bootstrap : MonoBehaviour
 {
     private MonoBehaviour[] _components;
+    private GameObject _gameObject_scripts;
+    private GameObject _gameObject_guiMainMonitor;
+    private GameObject _gameObject_guiSecondaryMonitor;
 
 
     private void Awake()
     {
+        _gameObject_scripts = GameObject.Find("Scripts");
+        _gameObject_guiMainMonitor = GameObject.Find("GUI_main_monitor");
+        _gameObject_guiSecondaryMonitor = GameObject.Find("GUI_second_monitor");
+
         _components = new MonoBehaviour[]
         {
             // MAIN
@@ -24,6 +31,8 @@ public class Bootstrap : MonoBehaviour
             EnsureComponent<UnityMainThreadDispatcher>(),
 
             // UI
+            EnsureComponent<UiReferences>(_gameObject_guiMainMonitor),
+            EnsureComponent<UiReferences>(_gameObject_guiSecondaryMonitor),
             EnsureComponent<UiHandler>(),
             EnsureComponent<ExperimentTabHandler>(),
             EnsureComponent<DebugTabHandler>(),
@@ -70,12 +79,13 @@ public class Bootstrap : MonoBehaviour
 
 
 
-    private T EnsureComponent<T>() where T : MonoBehaviour
+    private T EnsureComponent<T>(GameObject GO = null) where T : MonoBehaviour
     {
+        GO ??= _gameObject_scripts;
         T component = GetComponent<T>();
 
         if (component == null)
-            component = gameObject.AddComponent<T>();
+            component = GO.AddComponent<T>();
 
         return component;
     }

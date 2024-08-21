@@ -40,8 +40,8 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
     {
         stateTracker = new StateTracker(typeof(AudioHandler_Statuses));
 
-        inputAudioDevices = new();
-        outputAudioDevices = new();
+        inputAudioDevices = new();  // todo: maybe delete
+        outputAudioDevices = new(); // todo: maybe delete
 
         partlyOptimizedJsonCommands = new() {
             { "StartIntercomStream_ResearcherToParticipant_Command", new UnifiedCommandFrom_Client(name: "StartOutgoingIntercomStream_Command") },
@@ -165,38 +165,9 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
 
         _daemon.SendCommand(fullCommand);
     }
-    
-    /*private void RequestAudioDevices(ResponseFromServer response)
-    {
-        _daemon.namedPipeClient.SendCommandAsync(CommonUtilities.SerializeJson(new GetAudioDevices_Command(doUpdate: false)));
-    }*/
-
-    /*private void ValidateAndUpdateDevicesInfo(ResponseFromServer response)
-    {
-        // need this (JObject) convertion because of json lib. It doesn't know what 'object' is, so translates it to 'JObject'
-        var devicesData = CommonUtilities.ConvertJObjectToType<AudioDevicesLists>((JObject)response.ExtraData);
-
-        inputAudioDevices = devicesData.InputDevices;
-        outputAudioDevices = devicesData.OutputDevices;
-
-        var op = audioDevicesInfo.audioOutputDeviceName_Participant;
-        var or = audioDevicesInfo.audioOutputDeviceName_Researcher;
-        var ip = audioDevicesInfo.audioInputDeviceName_Participant;
-        var ir = audioDevicesInfo.audioInputDeviceName_Researcher;
-
-        // HERE: I guess bug is somewhere here: check if it returns NULL and why
-
-        // if in reality there is no such device (but in config is), update it (in 'audioDevicesInfo') to 'null'
-        op = outputAudioDevices.Contains(op) ? op : null;
-        or = outputAudioDevices.Contains(or) ? or : null;
-        ip = inputAudioDevices.Contains(ip) ? ip : null;
-        ir = inputAudioDevices.Contains(ir) ? ir : null;
-    }*/
 
     private void SendClientAudioDataDesire(UnifiedResponseFrom_Server response)
     {
-        //ValidateAndUpdateDevicesInfo(response);
-        //print("before 'SendClientAudioDataDesire'");
         if (!IsDaemonOk())
         {
             Debug.LogError("Custom: 'SendClientAudioDataDesire' is unavailable right now. 'IsDaemonOk' returned 'false'");
@@ -204,7 +175,18 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
         }
 
         _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "SetUpdatedAudioDevicesInfo_Command", extraData: audioDevicesInfo));
-        //print("after 'SendClientAudioDataDesire'");
+    }
+
+    // todo
+    private void SendClientAudioDataDesire(AudioDevicesInfo audioDevicesInfo)
+    {
+        if (!IsDaemonOk())
+        {
+            Debug.LogError("Custom: 'SendClientAudioDataDesire' is unavailable right now. 'IsDaemonOk' returned 'false'");
+            return;
+        }
+
+        _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "SetUpdatedAudioDevicesInfo_Command", extraData: audioDevicesInfo));
     }
 
     /// <summary>

@@ -46,7 +46,9 @@
 #settings-devices-back-btn .icon-shape .icon-color {
 	background-color: var(--main-images-color);
 }
-#settings-devices-back-btn {}
+#settings-devices-back-btn {
+	visibility: hidden;
+}
 #settings-devices-back-btn .icon-shape {
 	width: 14px;
 	height: 14px;

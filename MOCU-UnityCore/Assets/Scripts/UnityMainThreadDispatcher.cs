@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using UnityEngine;
 
 
-[DisallowMultipleComponent]
 public class UnityMainThreadDispatcher : MonoBehaviour, IFullyControllable
 {
     private static readonly ConcurrentQueue<Action> _executionQueue = new ConcurrentQueue<Action>();

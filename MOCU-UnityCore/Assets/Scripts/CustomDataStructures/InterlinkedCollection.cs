@@ -95,7 +95,7 @@ namespace CustomDataStructures
             if (attribute == null)
                 throw new Exception($"Property '{propertyName}' must have 'CanBeKey' attribute");    // although this check has already been performed in the Add method
 
-            if (oldValue == newValue)
+            if (object.Equals(oldValue, newValue))
                 return;
 
             if (newValue != null && elementToIdMap.ContainsKey(newValue))
@@ -113,6 +113,10 @@ namespace CustomDataStructures
 
         private bool IsValidDictionaryKey(Type type)
         {
+            // Automatically pass reference types as valid dictionary keys
+            if (!type.IsValueType)
+                return true;
+
             // Check if type overrides Equals
             MethodInfo equalsMethod = type.GetMethod("Equals", new Type[] { typeof(object) });
             if (equalsMethod == null || equalsMethod.DeclaringType == typeof(object))

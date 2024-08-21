@@ -62,14 +62,17 @@ TextElement {
 	/* white-space: pre-wrap;	 if there is '\n' in text -- execute it as new line  --- doesn't work in Unity*/
 }
 
-TextElement .has-error {
+TextElement.has-error {
 	color: var(--error-color);
 }
-TextElement .has-warning {
+TextElement.has-warning {
 	color: var(--warning-color);
 }
-TextElement .is-inactive {
+TextElement.is-inactive {
 	color: var(--waiting-color);
+}
+TextElement.normal {
+	color: var(--main-font-color);
 }
 
 .button {

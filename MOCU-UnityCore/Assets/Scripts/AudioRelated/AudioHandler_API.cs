@@ -32,7 +32,10 @@ public partial class AudioHandler : MonoBehaviour
     /// <summary>
     /// Instead of single changes, it sends the entire 'AudioDevicesInfo' updated object at once
     /// </summary>
-    public void SetAudioData(AudioDevicesInfo audioDevicesInfo) {}
+    public void SetAudioData(AudioDevicesInfo audioDevicesInfo)
+    {
+        SendClientAudioDataDesire(audioDevicesInfo);
+    }
 
     public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")    // todo: move 'audioFileName' to config
     {
