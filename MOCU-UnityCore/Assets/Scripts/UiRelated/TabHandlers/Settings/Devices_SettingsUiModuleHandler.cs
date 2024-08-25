@@ -1,4 +1,7 @@
-﻿using System;
+﻿// TODO: refactor everything //
+// ========================= //
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -37,16 +40,6 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
     public void ControllableAwake()
     {
         _chooseDeviceRowTemplate = Resources.Load<VisualTreeAsset>("GUI/UXML/SettingsModules/DeviceOptionModule");
-
-
-        _deviceCardStatusToUssClassNameMap = new()
-        {
-            {DeviceCardStatus.Ready,        "normal"},
-            {DeviceCardStatus.Disabled,     "is-inactive"},
-            {DeviceCardStatus.Connecting,   "has-warning"},
-            {DeviceCardStatus.NotChosen,    "has-error"},
-            {DeviceCardStatus.Error,        "has-error"},
-        };
 
 
         _deviceOptionStatusToUssClassNameMap = new()
@@ -194,12 +187,12 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
             audioDevice_OutputParticipant,
         };
 
-        AddEventListeners();
+        SomeStuff_RenameLater();
         IsComponentReady = true;
     }
 
 
-    private void AddEventListeners()
+    private void SomeStuff_RenameLater()
     {
         foreach (var device in devicesInterlinkedCollection)
         {
@@ -256,13 +249,9 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
         {
             foreach (var device in devicesInterlinkedCollection)
             {
-                SetDeviceCardStatus(device);
-
-                var slider = device.uiElement.Q<CustomUxmlElements.CustomSlider>();
-                if (slider != null)
-                    slider.value = (float)device.chosenDeviceVolume;
+                device.uiElement.SetStatus(device.deviceStatus);
+                device.uiElement.SliderValue = (float)device.chosenDeviceVolume;
             }
-                
         }
         catch (Exception ex)
         {
@@ -303,16 +292,6 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
         return result;
     }
 
-
-    private void SetDeviceCardStatus(DeviceParametersSet device)
-    {
-        var cardTextLabel = device.uiElement.Q<TextElement>(className: "settings-device-box-text");
-
-        foreach (var style in _deviceCardStatusToUssClassNameMap.Values)
-            cardTextLabel.RemoveFromClassList(style);
-
-        cardTextLabel.AddToClassList(_deviceCardStatusToUssClassNameMap[device.deviceStatus]);
-    }
 
     private void WeelSoundChange(WheelEvent evt)
     {
@@ -371,8 +350,8 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
         _openChoosingWindowBtn.style.display = DisplayStyle.Flex;   // show device parameters window
         _backToMainBtn.style.visibility = Visibility.Visible;       // show close btn
 
-        var slider = clickedDeviceBox.Q<CustomUxmlElements.CustomSlider>();
-        if (slider != null) slider.style.display = DisplayStyle.Flex;
+        var slider = clickedDeviceBox.Q<CustomSlider>();
+        if (!slider.ClassListContains("hidden-slider")) slider.style.visibility = Visibility.Visible;
 
         FillDeviceOptions(devicesInterlinkedCollection[clickedDeviceBox]);
     }
@@ -413,8 +392,9 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
             deviceBox.style.display = DisplayStyle.Flex;
 
             // if it's a speaker -- show its volume slider
-            var slider = deviceBox.Q<CustomUxmlElements.CustomSlider>();
-            if (slider != null) slider.style.display = StyleKeyword.Null;
+            var slider = deviceBox.Q<CustomSlider>();
+            if (slider != null) slider.style.visibility = StyleKeyword.Null;    // resets to what it was before
+
             // can't use "DisplayStyle.None;" because it makes style inline (and it's stronger than uss and slider will be always hidden)
         }
 
@@ -474,7 +454,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
 public class DeviceParametersSet
 {
     [CanBeKey(true)]
-    public VisualElement uiElement { get; set; }
+    public SettingsDeviceBox uiElement { get; set; }
 
     [CanBeKey(true)]
     public string? chosenDeviceName { get; set; }

@@ -50,6 +50,7 @@
             <VisualElement class="icon-shape" name="intercom-incomming-state">
                 <VisualElement class="icon-color"></VisualElement>
             </VisualElement>
+
             <VisualElement class="icon-shape" name="intercom-outcomming-state">
                 <VisualElement class="icon-color"></VisualElement>
             </VisualElement>

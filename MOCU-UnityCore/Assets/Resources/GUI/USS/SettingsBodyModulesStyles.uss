@@ -15,7 +15,7 @@
 
 .settings-module-window {
 	flex-grow: 1;
-	padding: 5px 0px;
+	padding: 5px 7px;
 }
 
 /* DEVICES */
@@ -27,7 +27,7 @@
 
 .settings-module-header {
 	justify-content: space-between;
-	padding: 0 7px;
+	padding: 0 14px;
 	flex-direction: row;
 	align-items: center;
 }
@@ -37,17 +37,9 @@
 	flex-direction: row;
 	align-items: center;
 }
-#settings-devices-update-btn {}
-#settings-devices-update-btn .icon-shape {
-	width: 18px;
-	height: 18px;
-}
-#settings-devices-update-btn .icon-shape .icon-color,
-#settings-devices-back-btn .icon-shape .icon-color {
-	background-color: var(--main-images-color);
-}
 #settings-devices-back-btn {
 	visibility: hidden;
+	/* todo: size and color */
 }
 #settings-devices-back-btn .icon-shape {
 	width: 14px;
@@ -56,41 +48,63 @@
 
 
 
-.settings-device-box {
+SettingsDeviceBox {
 	flex-direction: column;
 	align-items: center;
 	margin: 0px 7px;
 	height: 100%;
-	width: 90px;
-	min-width: 90px;
+	width: auto;
+	justify-content: space-around;
+}
+SettingsDeviceBox:hover CustomSlider,
+.settings-device-box:hover .settings-device-box-slider {
+	visibility: visible;
+}
+SettingsDeviceBox.hidden-slider CustomSlider {
+	visibility: hidden;
+}
+
+
+/* common */
+SettingsDeviceBox CustomImage,
+.settings-device-box-icon {
+	width: 70px;
+	height: 70px;
+	padding: 12px;
 	background-color: var(--main-window-color);
-	justify-content: center;
 }
-.settings-device-box:hover .device-volume-slider {
-	display: flex;
-}
-
-.settings-device-box .icon-shape {
-	width: 50px;
-	height: 50px;
-}
-
-.settings-device-box .icon-shape .icon-color {
+SettingsDeviceBox CustomImage .custom-image-color,
+.settings-device-box-icon .custom-image-color {
 	background-color: var(--secondary-images-color);
 }
+/* icon paths */
+#settings-device-box-microphone-researcher CustomImage .custom-image-shape,
+#settings-device-box-microphone-participant CustomImage .custom-image-shape {
+	background-image: var(--MicrophoneIcon);
+}
+#settings-device-box-speaker-researcher CustomImage .custom-image-shape,
+#settings-device-box-speaker-participant CustomImage .custom-image-shape {
+	background-image: var(--SpeakerIcon);
+}
+#settings-device-box-camera-1 CustomImage .custom-image-shape,
+#settings-device-box-camera-2 CustomImage .custom-image-shape {
+	background-image: var(--CameraIcon);
+}
+#settings-device-box-controller CustomImage .custom-image-shape {
+	background-image: var(--ControllerIcon);
+}
 
-.settings-device-box-text {
+
+
+SettingsDeviceBox TextElement {
 	font-size: 10px;
-	position: absolute;
-	bottom: 3px;
 	color: var(--secondary-font-color);
 }
 
 /* DEVICES CHOOSE WINDOW */
 #settings-devices-choose-device-window {
-	width: 100%;
+	flex-grow: 1;
 	height: 100%;
-	padding-right: 7px;
 
 	/* will be shown only after click on device-box */
 	display: none;
@@ -106,8 +120,7 @@
 
 .device-option-status,
 .device-option-bell-btn,
-.device-option-full-name,
-.device-option-disconnect-btn {
+.device-option-full-name {
 	margin-right: 7px;
 }
 
@@ -150,82 +163,21 @@
 	visibility: hidden;
 }
 
-.icon-shape.device-option-bell-btn .icon-color,
-.icon-shape.device-option-disconnect-btn .icon-color {
-	/* 'bell' and 'disconnect' button color */
+.icon-shape.device-option-bell-btn .icon-color {
 	background-color: var(--secondary-images-color);
 }
-
-.icon-shape.device-option-disconnect-btn {
-	width: 12px;
-	height: 12px;
-}
-/* 'disconnect' button is only visible for devices that are it use right now */
-.already-chosen-device .icon-shape.device-option-disconnect-btn,
-.current-device .icon-shape.device-option-disconnect-btn {
-	visibility: visible;
-}
-.ready-to-use-device .icon-shape.device-option-disconnect-btn {
-	visibility: hidden;
-}
-
-
-
-
 
 
 
 /* SLIDERS */
-
-.device-volume-slider {
-	display: none;
-
-	/* background-color: red; */
-
-	margin: 0;
-	padding: 0;
-	height: 12px;
+SettingsDeviceBox CustomSlider {
+	visibility: hidden;
+	height: 6px;
 	width: 100%;
-	max-height: none;
-	min-height: auto;
-	position: absolute;
-	top: 0;
-	border-width: 0;
-	padding: 2px;
-	margin-top: 2px;
 }
-.device-volume-slider:hover {
-	/*height: 15px;*/
-}
-.device-volume-slider > VisualElement {}
-.device-volume-slider #unity-drag-container {
-	/* border-radius: 5px; */
-	overflow: hidden;
-}
-.device-volume-slider #unity-tracker {
+SettingsDeviceBox CustomSlider #unity-tracker {
 	background-color: var(--secondary-images-color);
-	border-width: 0;
-	height: 4px;
-	margin: 0;
-	padding: 0;
-	margin-top: -2px;
 }
-.device-volume-slider #unity-dragger-border {}
-.device-volume-slider #unity-dragger {
+SettingsDeviceBox CustomSlider .slider-filler {
 	background-color: var(--main-accent-color);
-	width: 4px;
-	height: 8px;
-	margin: 0;
-	padding: 0;
-	margin-top: -4px;
-	border-radius: 2px;
-	justify-content: center;
-	border-width: 0;
-}
-.device-volume-slider .slider-filler {
-	background-color: var(--main-accent-color);
-	height: 50%;
-	width: 1000px;
-	align-self: flex-end;
-	margin-right: 2px;
 }

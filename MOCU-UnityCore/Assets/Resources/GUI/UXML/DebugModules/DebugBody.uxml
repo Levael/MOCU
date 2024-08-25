@@ -6,18 +6,22 @@
 >
 
 
-<!-- TEMPLATES ====================================================================== -->
+<!-- TEMPLATES -->
 <Template src="/Assets/Resources/GUI/UXML/DebugModules/ExperimentTimelineModule.uxml"     name="ExperimentTimelineModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/DebugModules/LastTrialDataModule.uxml"          name="LastTrialDataModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/DebugModules/InfoPanelsModule.uxml"             name="InfoPanelsModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/DebugModules/ConsoleModule.uxml"                name="ConsoleModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/DebugModules/MovementGraphModule.uxml"          name="MovementGraphModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/DebugModules/MoogAccelerationGraphModule.uxml"  name="MoogAccelerationGraphModule-template"/>
-<!-- ================================================================================ -->
+<!-- ==================================================================================================== -->
+
+<!-- STYLES -->
+<Style src="/Assets/Resources/GUI/USS/DebugBodyStyles.uss" />
+<Style src="/Assets/Resources/GUI/USS/DebugBodyModulesStyles.uss" />
+<!-- ==================================================================================================== -->
 
 
-
-<!-- MAIN MARKUP ==================================================================== -->
+<!-- MAIN MARKUP -->
 <VisualElement name="debug-body-template-wrapper" class="wrapper">
     
     <VisualElement name="debug-body-top-part">
@@ -46,8 +50,7 @@
     </VisualElement>
 
 </VisualElement>
-<!-- ================================================================================ -->
-
+<!-- ==================================================================================================== -->
 
 
     

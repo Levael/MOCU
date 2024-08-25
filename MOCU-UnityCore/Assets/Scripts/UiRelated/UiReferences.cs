@@ -1,3 +1,4 @@
+using CustomUxmlElements;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -363,8 +364,8 @@ public class UiReferences : MonoBehaviour
         return root.Query<VisualElement>().Class("tab").ToList();
     }
 
-    public List<VisualElement> GetDevicesBoxes()
+    public List<SettingsDeviceBox> GetDevicesBoxes()
     {
-        return root.Query<VisualElement>().Class("settings-device-box").ToList();
+        return root.Query<SettingsDeviceBox>().ToList();
     }
 }

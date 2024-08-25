@@ -4,9 +4,9 @@
     "audioOutputDeviceName_Participant": "Headphones (Rift Audio)",
     "audioInputDeviceName_Researcher": "Microphone (fifine Microphone)",
     "audioInputDeviceName_Participant": "Microphone (Rift Audio)",
-    "audioOutputDeviceVolume_Researcher": 91.0,
+    "audioOutputDeviceVolume_Researcher": 92.0,
     "audioOutputDeviceVolume_Participant": 54.0,
-    "audioInputDeviceVolume_Researcher": null,
-    "audioInputDeviceVolume_Participant": null
+    "audioInputDeviceVolume_Researcher": 4.0,
+    "audioInputDeviceVolume_Participant": 67.0
   }
 }

@@ -74,6 +74,7 @@
     <Compile Include="Assets\Scripts\InputRelated\DeviceConnection_Statuses.cs" />
     <Compile Include="Assets\Scripts\UnityMainThreadDispatcher.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigHandler.cs" />
+    <Compile Include="Assets\Resources\GUI\CustomElements\Icon\CustomImage.cs" />
     <Compile Include="Assets\Scripts\CustomBuildProcessor.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DebugTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\Communicators\InterprocessCommunicator_Client.cs" />
@@ -91,7 +92,7 @@
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DTOs\UnifiedDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputDevices\CedrusHandler.cs" />
-    <Compile Include="Assets\Resources\GUI\CustomSlider.cs" />
+    <Compile Include="Assets\Resources\GUI\CustomElements\SettingsDeviceBox\SettingsDeviceBox.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\SettingsTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\Communicators\InterprocessCommunicator_Interface.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\AudioHandler_API.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Assets\Scripts\UiRelated\UiReferences.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Daemons_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\InputRelated\VrHeadset_Statuses.cs" />
+    <Compile Include="Assets\Resources\GUI\CustomElements\Slider\CustomSlider.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DTOs\UnifiedCommandFrom_Client.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\SafeExpandoObject.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\AudioControl\AudioCommunicationModel.cs" />
@@ -141,6 +143,7 @@
     <None Include="Assets\Resources\GUI\UXML\ExperimentModules\TableModule.uxml" />
     <None Include="Assets\Resources\GUI\UXML\DebugModules\FpsSubModule.uxml" />
     <None Include="Assets\Resources\GUI\UXML\ExperimentModules\WarningsModule.uxml" />
+    <None Include="Assets\Resources\GUI\CustomElements\Icon\CustomImage.uss" />
     <None Include="Assets\Resources\GUI\UXML\DebugModules\DifferentInfoSubModule.uxml" />
     <None Include="Assets\Resources\GUI\UXML\DataBody.uxml" />
     <None Include="Assets\Resources\GUI\UXML\HeaderTab.uxml" />
@@ -161,6 +164,7 @@
     <None Include="Assets\Resources\GUI\UXML\ExperimentModules\InfoModule.uxml" />
     <None Include="Assets\Resources\GUI\UXML\SecondDisplayUiDocument.uxml" />
     <None Include="Assets\Resources\GUI\UXML\ExperimentModules\ExperimentBody.uxml" />
+    <None Include="Assets\Resources\GUI\CustomElements\Slider\CustomSlider.uss" />
     <None Include="Assets\Resources\GUI\UXML\SettingsModules\DevicesModule.uxml" />
     <None Include="Assets\Resources\GUI\USS\CommonStyles.uss" />
     <None Include="Assets\Resources\GUI\USS\DebugBodyStyles.uss" />
@@ -168,6 +172,7 @@
     <None Include="Assets\Resources\GUI\UXML\InfoBody.uxml" />
     <None Include="Assets\Resources\GUI\UXML\SettingsModules\SettingsBody.uxml" />
     <None Include="Assets\Resources\GUI\UXML\DebugModules\DaemonsSubModule_ActivityTemplate.uxml" />
+    <None Include="Assets\Resources\GUI\USS\ImageLinks.uss" />
     <None Include="Assets\Resources\GUI\UXML\ExitConfirmationModalWindow.uxml" />
     <None Include="Assets\Resources\GUI\USS\SettingsBodyModulesStyles.uss" />
     <None Include="Assets\Resources\GUI\UXML\DebugModules\DaemonsSubModule.uxml" />

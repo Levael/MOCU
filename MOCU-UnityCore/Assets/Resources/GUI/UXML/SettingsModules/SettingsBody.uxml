@@ -6,18 +6,21 @@
 >
 
 
-
-<!-- TEMPLATES ====================================================================== -->
+<!-- TEMPLATES -->
 <Template src="/Assets/Resources/GUI/UXML/SettingsModules/ThemesPalettesModule.uxml"      name="ThemesPalettesModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/SettingsModules/ModulesModule.uxml"             name="ModulesModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/SettingsModules/ConfigsModule.uxml"             name="ConfigsModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/SettingsModules/DirectoriesPathsModule.uxml"    name="DirectoriesPathsModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/SettingsModules/DevicesModule.uxml"             name="DevicesModule-template"/>
-<!-- ================================================================================ -->
+<!-- ==================================================================================================== -->
+
+<!-- STYLES -->
+<Style src="/Assets/Resources/GUI/USS/SettingsBodyStyles.uss" />
+<Style src="/Assets/Resources/GUI/USS/SettingsBodyModulesStyles.uss" />
+<!-- ==================================================================================================== -->
 
 
-
-<!-- MAIN MARKUP ==================================================================== -->
+<!-- MAIN MARKUP -->
 <VisualElement name="settings-body-template-wrapper" class="wrapper">
     <VisualElement name="settings-body-left-part" class="body-container">
         <VisualElement name="settings-body-left-part-first-row" class="body-container">
@@ -46,6 +49,6 @@
         </VisualElement>
     </VisualElement>
 </VisualElement>
-<!-- ================================================================================ -->
+<!-- ==================================================================================================== -->
     
 </UXML>

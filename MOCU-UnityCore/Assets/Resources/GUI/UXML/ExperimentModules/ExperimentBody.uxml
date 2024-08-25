@@ -6,8 +6,7 @@
 >
 
 
-
-<!-- TEMPLATES ====================================================================== -->
+<!-- TEMPLATES -->
 <Template src="/Assets/Resources/GUI/UXML/ExperimentModules/UnityModule.uxml"         name="UnityModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/ExperimentModules/ControlsModule.uxml"      name="ControlsModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/ExperimentModules/EegModule.uxml"           name="EegModule-template"/>
@@ -17,11 +16,16 @@
 <Template src="/Assets/Resources/GUI/UXML/ExperimentModules/StatusesModule.uxml"      name="StatusesModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/ExperimentModules/TableModule.uxml"         name="TableModule-template"/>
 <Template src="/Assets/Resources/GUI/UXML/ExperimentModules/WarningsModule.uxml"      name="WarningsModule-template"/>
-<!-- ================================================================================ -->
+<!-- ==================================================================================================== -->
+
+<!-- STYLES -->
+<Style src="/Assets/Resources/GUI/USS/ExperimentBodyStyles.uss" />
+<Style src="/Assets/Resources/GUI/USS/ExperimentBodyModulesStyles.uss" />
+<!-- ==================================================================================================== -->
 
 
 
-<!-- MAIN MARKUP ==================================================================== -->
+<!-- MAIN MARKUP -->
 <VisualElement name="experiment-body-template-wrapper" class="wrapper">
     <VisualElement name="experiment-body-left-part" class="body-container">
         <Instance template="InputsModule-template"      name="experiment-body-left-part-inputs"      class="body-module"/>
@@ -49,6 +53,6 @@
         </VisualElement>
     </VisualElement>
 </VisualElement>
-<!-- ================================================================================ -->
+<!-- ==================================================================================================== -->
     
 </UXML>

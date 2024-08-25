@@ -34,90 +34,23 @@
 
 
     <VisualElement name="settings-devices-module-window" class="settings-module-window">
-
-        <!-- 1) "Speaker (researcher)" and "Speaker (participant)" have additional 'sound slider' and 'ringing btn' -->
         <!-- 2) All devices names can have 3 additional classes: 'has-error', 'has-warning', 'is-inactive'  (TODO) -->
-
-
-        <!-- Mic (researcher) : IntercomActiveIcon.svg -->
-        <VisualElement name="settings-device-box-microphone-researcher" class="settings-device-box settings-device-box-mic-type">
-            <custom:CustomSlider name="device-mic-researcher-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50"/>
-
-            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/IntercomActiveIcon.svg');">
-                <VisualElement class="icon-color"></VisualElement>
-            </VisualElement>
-
-            <TextElement class="settings-device-box-text" text="Mic (here)"/>
-        </VisualElement>
-
-        <!-- Mic (participant) : IntercomActiveIcon.svg -->
-        <VisualElement name="settings-device-box-microphone-participant" class="settings-device-box settings-device-box-mic-type">
-            <custom:CustomSlider name="device-mic-participant-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50"/>
-
-            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/IntercomActiveIcon.svg');">
-                <VisualElement class="icon-color"></VisualElement>
-            </VisualElement>
-
-            <TextElement class="settings-device-box-text" text="Mic (there)"/>
-        </VisualElement>
-
-        <!-- Speaker (researcher) : SpeakerIcon.svg -->
-        <VisualElement name="settings-device-box-speaker-researcher" class="settings-device-box settings-device-box-speaker-type">
-            <custom:CustomSlider name="device-speaker-researcher-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50"/>
-
-            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/SpeakerIcon.svg');">
-                <VisualElement class="icon-color"></VisualElement>
-            </VisualElement>
-
-            <TextElement class="settings-device-box-text" text="Speaker (here)"/>
-        </VisualElement>
-
-        <!-- Speaker (participant) : SpeakerIcon.svg -->
-        <VisualElement name="settings-device-box-speaker-participant" class="settings-device-box settings-device-box-speaker-type">
-            <custom:CustomSlider name="device-speaker-participant-volume-slider" class="device-volume-slider" low-value="0" high-value="100" page-size="0" value="50" />
-
-            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/SpeakerIcon.svg');">
-                <VisualElement class="icon-color"></VisualElement>
-            </VisualElement>
-
-            <TextElement class="settings-device-box-text" text="Speaker (there)"/>
-        </VisualElement>
-
-        <!-- Camera (1) : CamerasTabIcon.svg -->
-        <VisualElement name="settings-device-box-camera-1" class="settings-device-box">
-            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/CamerasTabIcon.svg');">
-                <VisualElement class="icon-color"></VisualElement>
-            </VisualElement>
-
-            <TextElement class="settings-device-box-text" text="Camera (1)"/>
-        </VisualElement>
-
-        <!-- Camera (2) : CamerasTabIcon.svg -->
-        <VisualElement name="settings-device-box-camera-2" class="settings-device-box">
-            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/CamerasTabIcon.svg');">
-                <VisualElement class="icon-color"></VisualElement>
-            </VisualElement>
-
-            <TextElement class="settings-device-box-text" text="Camera (2)"/>
-        </VisualElement>
-
-        <!-- Controller : ControllerIcon.svg -->
-        <VisualElement name="settings-device-box-controller" class="settings-device-box">
-            <VisualElement class="icon-shape" style="background-image: url('/Assets/Images/SVG/ControllerIcon.svg');">
-                <VisualElement class="icon-color"></VisualElement>
-            </VisualElement>
-
-            <TextElement class="settings-device-box-text" text="Controller"/>
-        </VisualElement>
+        
+        <custom:SettingsDeviceBox name="settings-device-box-microphone-researcher" text="Mic (R)"/>
+        <custom:SettingsDeviceBox name="settings-device-box-microphone-participant" text="Mic (P)"/>
+        <custom:SettingsDeviceBox name="settings-device-box-speaker-researcher" text="Speaker (R)"/>
+        <custom:SettingsDeviceBox name="settings-device-box-speaker-participant" text="Speaker (P)"/>
+        <custom:SettingsDeviceBox name="settings-device-box-camera-1" text="Camera (P1)" class="hidden-slider"/>
+        <custom:SettingsDeviceBox name="settings-device-box-camera-2" text="Camera (P2)" class="hidden-slider"/>
+        <custom:SettingsDeviceBox name="settings-device-box-controller" text="Controller" class="hidden-slider"/>
 
 
         <VisualElement name="settings-devices-choose-device-window">
             <ScrollView>
-                <!-- classes: "current-device", "already-chosen-device", "ready-to-use-device" -->
+                <!-- classes: "current-device", "already-chosen-device", "ready-to-use-device"
 
-                <!-- Examples: -->
-                <!-- <Instance template="DeviceOptionModule-template" class="current-device"/>
-                <Instance template="DeviceOptionModule-template" class="already-chosen-device"/>
+                example:
+                <Instance template="DeviceOptionModule-template" class="ready-to-use-device"/>
                 <Instance template="DeviceOptionModule-template" class="ready-to-use-device"/> -->
             </ScrollView>
         </VisualElement>

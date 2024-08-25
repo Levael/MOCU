@@ -5,27 +5,20 @@
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
 >
 
-<!-- STYLES ================================ -->
+<!-- STYLES -->
 <Style src="/Assets/Resources/GUI/USS/CommonStyles.uss" />
-<Style src="/Assets/Resources/GUI/USS/DarkTheme.uss" />
-<!-- <Style src="/Assets/Resources/GUI/USS/LightTheme.uss" /> -->
+<Style src="/Assets/Resources/GUI/USS/DarkTheme.uss" /> <!-- LightTheme -->
+<Style src="/Assets/Resources/GUI/USS/ImageLinks.uss" />
+
+<Style src="/Assets/Resources/GUI/CustomElements/Icon/CustomImage.uss" />
+<Style src="/Assets/Resources/GUI/CustomElements/Slider/CustomSlider.uss" />
 
 <Style src="/Assets/Resources/GUI/USS/HeaderStyles.uss" />
 <Style src="/Assets/Resources/GUI/USS/ModalWindows.uss" />
-
-<Style src="/Assets/Resources/GUI/USS/ExperimentBodyStyles.uss" />
-<Style src="/Assets/Resources/GUI/USS/ExperimentBodyModulesStyles.uss" />
-
-<Style src="/Assets/Resources/GUI/USS/DebugBodyStyles.uss" />
-<Style src="/Assets/Resources/GUI/USS/DebugBodyModulesStyles.uss" />
-
-<Style src="/Assets/Resources/GUI/USS/SettingsBodyStyles.uss" />
-<Style src="/Assets/Resources/GUI/USS/SettingsBodyModulesStyles.uss" />
-<!-- ======================================= -->
+<!-- ==================================================================================================== -->
 
 
-
-<!-- TEMPLATES ====================================================================== -->
+<!-- TEMPLATES -->
 <Template src="/Assets/Resources/GUI/UXML/MainHeader.uxml"                        name="MainHeader-template"/>
 
 <Template src="/Assets/Resources/GUI/UXML/ExperimentModules/ExperimentBody.uxml"  name="ExperimentBody-template"/>
@@ -36,30 +29,30 @@
 <Template src="/Assets/Resources/GUI/UXML/SettingsModules/SettingsBody.uxml"      name="SettingsBody-template"/>
 
 <Template src="/Assets/Resources/GUI/UXML/ExitConfirmationModalWindow.uxml"       name="ExitConfirmationModalWindow-template"/>
-<!-- ================================================================================ -->
+<!-- ==================================================================================================== -->
 
 
 
-<!-- MAIN MARKUP ==================================================================== -->
-<VisualElement name="main-wrapper" class="wrapper">
+<!-- MAIN MARKUP -->
+<VisualElement class="wrapper"                                      name="main-wrapper">
 
-    <Instance template="MainHeader-template"            name="main-header"/>
+    <Instance template="MainHeader-template"                        name="main-header"/>
 
-    <VisualElement name="main-body">
-        <Instance template="ExperimentBody-template"    name="experiment-body"/>
-        <Instance template="DebugBody-template"         name="debug-body"/>
-        <Instance template="DataBody-template"          name="data-body"/>
-        <Instance template="InfoBody-template"          name="info-body"/>
-        <Instance template="CamerasBody-template"       name="cameras-body"/>
-        <Instance template="SettingsBody-template"      name="settings-body"/>
+    <VisualElement                                                  name="main-body">
+        <Instance template="ExperimentBody-template"                name="experiment-body"/>
+        <Instance template="DebugBody-template"                     name="debug-body"/>
+        <Instance template="DataBody-template"                      name="data-body"/>
+        <Instance template="InfoBody-template"                      name="info-body"/>
+        <Instance template="CamerasBody-template"                   name="cameras-body"/>
+        <Instance template="SettingsBody-template"                  name="settings-body"/>
     </VisualElement>
 
-    <VisualElement name="modal-windows">
-        <Instance template="ExitConfirmationModalWindow-template" name="exit-confirmation-modal-window"/>
+    <VisualElement                                                  name="modal-windows">
+        <Instance template="ExitConfirmationModalWindow-template"   name="exit-confirmation-modal-window"/>
     </VisualElement>
 
 </VisualElement>
-<!-- ================================================================================ -->
+<!-- ==================================================================================================== -->
 
 
     

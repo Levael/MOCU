@@ -194,17 +194,6 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
     /// </summary>
     private void GotServerAudioDataDecision(UnifiedResponseFrom_Server response)
     {
-        //_configHandler.UpdateSubConfig(audioDevicesInfo);                     // if all ok -- server returns null (figure out how to handle half-errors)
-        // todo: trigger event in SettingsTabHandler to update UI               <--- HERE
-        //print($"inputAudioDevices: {inputAudioDevices.Count}");
-        //print($"outputAudioDevices: {outputAudioDevices.Count}");
-
-        /*_settingsTabHandler.UpdateAudioDevices(new UnifiedAudioDataPacket(
-            audioDevicesInfo: audioDevicesInfo,
-            inputAudioDevices: inputAudioDevices,
-            outputAudioDevices: outputAudioDevices
-        ));*/
-        
         _settingsTabHandler.UpdateAudioDevices(response.GetExtraData<UnifiedAudioDataPacket>());
 
         // todo: update config too
