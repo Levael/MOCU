@@ -82,6 +82,7 @@
     <Compile Include="Assets\Scripts\CustomDataStructures\InterlinkedCollection.cs" />
     <Compile Include="Assets\Scripts\UnityUtilities.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputLogic.cs" />
+    <Compile Include="Assets\Scripts\AudioRelated\AudioDevice.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\IDaemonHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Experiment\ExperimentTabHandler.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\AudioHandler_Statuses.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Assets\Scripts\ParticipantResponseRelated\AnswerHandler.cs" />
     <Compile Include="Assets\For tests\ForTests.cs" />
     <Compile Include="Assets\Scripts\ParticipantResponseRelated\ParticipantAnswer_enum.cs" />
+    <Compile Include="Assets\Scripts\AudioRelated\AudioDevices.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\Communicators\InterprocessCommunicator_Base.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DifferentInfo_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputDevices\XID_ProtocolParser.cs" />

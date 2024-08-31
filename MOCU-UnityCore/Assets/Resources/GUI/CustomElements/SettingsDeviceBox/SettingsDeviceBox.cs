@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 
@@ -71,6 +72,27 @@ namespace CustomUxmlElements
                 _label.RemoveFromClassList(style);
 
             _label.AddToClassList(_deviceCardStatusToUssClassNameMap[status]);
+        }
+        
+        public void HardHide()
+        {
+            _container.style.display = DisplayStyle.None;
+        }
+
+        public void HardShow()
+        {
+            _container.style.display = DisplayStyle.Flex;
+        }
+
+        public void SoftHideSlider()
+        {
+            _slider.SoftHide();
+        }
+
+        public void SoftUnhideSlider()
+        {
+            if (!_slider.ClassListContains("hidden-slider"))
+                _slider.SoftShow();
         }
     }
 }

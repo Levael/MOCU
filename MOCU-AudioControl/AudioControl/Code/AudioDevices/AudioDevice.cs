@@ -37,6 +37,7 @@ namespace AudioControl
         {
             device = mmDevice;
             name = mmDevice.FriendlyName;
+            _volume = mmDevice.AudioEndpointVolume.MasterVolumeLevelScalar * 100;    // sets the value that the device already has
             waveFormat = unifiedWaveFormat;
         }
 

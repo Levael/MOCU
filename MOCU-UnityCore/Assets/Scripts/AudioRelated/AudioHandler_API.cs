@@ -21,20 +21,7 @@ public partial class AudioHandler : MonoBehaviour
     /// </summary>
     public UnifiedAudioDataPacket GetAudioData()
     {
-        return new UnifiedAudioDataPacket(
-            audioDevicesInfo : audioDevicesInfo,
-            inputAudioDevices : inputAudioDevices,
-            outputAudioDevices : outputAudioDevices
-        );
-    }
-
-
-    /// <summary>
-    /// Instead of single changes, it sends the entire 'AudioDevicesInfo' updated object at once
-    /// </summary>
-    public void SetAudioData(AudioDevicesInfo audioDevicesInfo)
-    {
-        SendClientAudioDataDesire(audioDevicesInfo);
+        return audioDevices.PackAllData();
     }
 
     public void SendTestAudioSignalToDevice(string audioOutputDeviceName, string audioFileName = "test.mp3")    // todo: move 'audioFileName' to config

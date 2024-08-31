@@ -186,8 +186,12 @@ namespace AudioControl
                 try
                 {
                     var value = UAODVR;
-                    audioOutputDevice_Researcher.volume = value == null ? 0 : (float)value;
-                    volumeChangesOccurred++;
+                    if (value != null)
+                    {
+                        audioOutputDevice_Researcher.volume = (float)value;
+                        volumeChangesOccurred++;
+                    }
+                        
                 }
                 catch
                 {
@@ -202,8 +206,11 @@ namespace AudioControl
                 try
                 {
                     var value = UAODVP;
-                    audioOutputDevice_Participant.volume = value == null ? 0 : (float)value;
-                    volumeChangesOccurred++;
+                    if (value != null)
+                    {
+                        audioOutputDevice_Participant.volume = (float)value;
+                        volumeChangesOccurred++;
+                    }
                 }
                 catch
                 {
@@ -218,8 +225,11 @@ namespace AudioControl
                 try
                 {
                     var value = UAIDVR;
-                    audioInputDevice_Researcher.volume = value == null ? 0 : (float)value;
-                    volumeChangesOccurred++;
+                    if (value != null)
+                    {
+                        audioInputDevice_Researcher.volume = (float)value;
+                        volumeChangesOccurred++;
+                    }
                 }
                 catch
                 {
@@ -234,8 +244,11 @@ namespace AudioControl
                 try
                 {
                     var value = UAIDVP;
-                    audioInputDevice_Participant.volume = value == null ? 0 : (float)value;
-                    volumeChangesOccurred++;
+                    if (value != null)
+                    {
+                        audioInputDevice_Participant.volume = (float)value;
+                        volumeChangesOccurred++;
+                    }
                 }
                 catch
                 {

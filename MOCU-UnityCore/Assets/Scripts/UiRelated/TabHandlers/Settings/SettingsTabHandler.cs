@@ -34,8 +34,8 @@ public class SettingsTabHandler : MonoBehaviour, IControllableInitiation
 
     private void AddEventListeners() { }
 
-    public void UpdateAudioDevices(UnifiedAudioDataPacket parameters)
+    public void UpdateAudioDevices()
     {
-        _devicesUiModuleHandler.ApplyAudioChanges(parameters);
+        _devicesUiModuleHandler.ApplyAudioChanges();
     }
 }

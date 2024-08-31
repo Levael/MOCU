@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System;
 using System.Collections.Generic;
 
 
@@ -36,18 +37,16 @@ namespace AudioControl {
         public float?   audioInputDeviceVolume_Participant;
     }
 
-    // todo: change later List to Enumerable
     public class UnifiedAudioDataPacket
     {
         public readonly AudioDevicesInfo? audioDevicesInfo;
-        public readonly List<string>? inputAudioDevices;
-        public readonly List<string>? outputAudioDevices;
+        public IReadOnlyList<string> inputAudioDevices;
+        public IReadOnlyList<string> outputAudioDevices;
 
-        public UnifiedAudioDataPacket(AudioDevicesInfo? audioDevicesInfo, List<string>? inputAudioDevices, List<string>? outputAudioDevices)
-        {
+        public UnifiedAudioDataPacket(AudioDevicesInfo? audioDevicesInfo, IReadOnlyList<string> inputAudioDevices, IReadOnlyList<string> outputAudioDevices) {
             this.audioDevicesInfo = audioDevicesInfo;
-            this.inputAudioDevices = inputAudioDevices;
-            this.outputAudioDevices = outputAudioDevices;
+            this.inputAudioDevices = inputAudioDevices ?? Array.Empty<string>();
+            this.outputAudioDevices = outputAudioDevices ?? Array.Empty<string>();
         }
     }
 

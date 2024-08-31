@@ -13,12 +13,10 @@ using Debug = UnityEngine.Debug;
 
 public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableInitiation
 {
+    public AudioDevices audioDevices { get; private set; }
+
     #region PRIVATE FIELDS
     private DaemonHandler_Client _daemon;
-
-    private AudioDevicesInfo audioDevicesInfo;
-    private List<string> inputAudioDevices;
-    private List<string> outputAudioDevices;
 
     private UiHandler _uiHandler;
     private ConfigHandler _configHandler;
@@ -39,9 +37,7 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
     public void ControllableAwake()
     {
         stateTracker = new StateTracker(typeof(AudioHandler_Statuses));
-
-        inputAudioDevices = new();  // todo: maybe delete
-        outputAudioDevices = new(); // todo: maybe delete
+        audioDevices = new AudioDevices();
 
         partlyOptimizedJsonCommands = new() {
             { "StartIntercomStream_ResearcherToParticipant_Command", new UnifiedCommandFrom_Client(name: "StartOutgoingIntercomStream_Command") },
@@ -71,7 +67,10 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
         _daemonsHandler = GetComponent<DaemonsHandler>();
 
         // Reading from config Audio Devices Data
-        audioDevicesInfo = _configHandler.defaultConfig.AudioConfig;
+        audioDevices.UpdateFromServerData(new UnifiedAudioDataPacket(audioDevicesInfo: _configHandler.defaultConfig.AudioConfig, null, null));
+        audioDevices.GotUpdateFromServer += () => _settingsTabHandler.UpdateAudioDevices();
+        audioDevices.GotUpdateFromServer += () => _configHandler.UpdateSubConfig(audioDevices.PackMainData());
+        audioDevices.GotUpdateFromClient += () => SendClientAudioDataDesire();
 
         _daemon = await _daemonsHandler.CreateDaemon(DaemonsHandler.Daemons.Audio);
 
@@ -166,7 +165,7 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
         _daemon.SendCommand(fullCommand);
     }
 
-    private void SendClientAudioDataDesire(UnifiedResponseFrom_Server response)
+    private void SendClientAudioDataDesire(UnifiedResponseFrom_Server response = null)
     {
         if (!IsDaemonOk())
         {
@@ -174,11 +173,12 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
             return;
         }
 
-        _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "SetUpdatedAudioDevicesInfo_Command", extraData: audioDevicesInfo));
+        var data = audioDevices.PackMainData();
+        _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "SetUpdatedAudioDevicesInfo_Command", extraData: data));
     }
 
     // todo
-    private void SendClientAudioDataDesire(AudioDevicesInfo audioDevicesInfo)
+    /*private void SendClientAudioDataDesire(AudioDevicesInfo audioDevicesInfo)
     {
         if (!IsDaemonOk())
         {
@@ -187,16 +187,15 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
         }
 
         _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "SetUpdatedAudioDevicesInfo_Command", extraData: audioDevicesInfo));
-    }
+    }*/
 
     /// <summary>
     /// Called after successful devices update on the server side
     /// </summary>
     private void GotServerAudioDataDecision(UnifiedResponseFrom_Server response)
     {
-        _settingsTabHandler.UpdateAudioDevices(response.GetExtraData<UnifiedAudioDataPacket>());
-
-        // todo: update config too
+        var data = response.GetExtraData<UnifiedAudioDataPacket>();
+        audioDevices.UpdateFromServerData(data);    // UI and Config will be updated automaticaly (via event)
     }
 
     private bool IsDaemonOk()

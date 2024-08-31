@@ -29,5 +29,19 @@ namespace CustomUxmlElements
             this.pageSize = 0;      // any int except 0 will lead to 'jump' changes
             this.value = 0;         // default value
         }
+
+        public void SoftHide()
+        {
+            // back to the style specified in the uss (hidden by default)
+            // can't use 'Visibility.Hidden' because otherwise hover effect won't work
+            // and this, in turn, is because there is no '!important' in the uss
+
+            this.style.visibility = StyleKeyword.Null;
+        }
+
+        public void SoftShow()
+        {
+            this.style.visibility = Visibility.Visible;
+        }
     }
 }
