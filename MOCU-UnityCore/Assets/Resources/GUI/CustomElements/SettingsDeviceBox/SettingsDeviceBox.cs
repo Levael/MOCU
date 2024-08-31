@@ -57,8 +57,8 @@ namespace CustomUxmlElements
 
         public float SliderValue
         {
-            get => _slider.value;
-            set => _slider.value = value;
+            get => _slider.Value;
+            set => _slider.Value = value;
         }
 
         public string UiName

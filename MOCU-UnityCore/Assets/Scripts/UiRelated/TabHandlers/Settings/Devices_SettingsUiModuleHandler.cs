@@ -247,7 +247,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
     private void DeviceVolumeSliderClicked(ClickEvent eventObj)
     {
         // If cliked on slider than there is no need to call device box event
-        eventObj.StopPropagation();
+        eventObj.StopImmediatePropagation();
 
         var slider = eventObj.currentTarget as CustomSlider;
         var device = devicesInterlinkedCollection[slider.parent];

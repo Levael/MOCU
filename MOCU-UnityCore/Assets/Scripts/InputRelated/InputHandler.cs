@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using UnityEngine.XR;
+using UnityEngine.Video;
+using UnityEngine.UIElements;
+using System.Linq;
 
 public class InputHandler : MonoBehaviour, IControllableInitiation
 {
@@ -101,8 +104,23 @@ public class InputHandler : MonoBehaviour, IControllableInitiation
 
     //THE NESTING IN FOLLOWING FUNCTIONS MAY SEEM REDUNDANT, BUT LET IT BE JUST IN CASE
 
+
+    // TODO: yes, it will be working by Ignoring
     private void GotSignalFromInputSystem(InputAction.CallbackContext context)
     {
+        var devicesList = InputSystem.devices;
+
+        // todo: work on it. Maye just ignore if it's not in the list of active devices
+        var device = context.control.device;
+        var deviceName = device.name;
+        var deviceDisplayName = device.displayName;
+        var deviceType = device.GetType();
+        var deviceDescription = device.description;
+
+        if (device == devicesList[1]) return;
+        //print($"device: {device}\ndeviceName: {deviceName}\ndeviceDisplayName: {deviceDisplayName}\ndeviceType: {deviceType}\ndeviceDescription: {deviceDescription}\n\n");
+
+
         if (_actionNameToSignalMap.TryGetValue(context.action.name, out AnswerFromParticipant signalFromParticipant))
             _inputLogic.GotPressSignalFromInputSystem(signalFromParticipant);
 

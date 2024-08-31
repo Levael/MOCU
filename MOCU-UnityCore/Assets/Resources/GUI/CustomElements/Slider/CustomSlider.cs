@@ -30,6 +30,12 @@ namespace CustomUxmlElements
             this.value = 0;         // default value
         }
 
+        public float Value
+        {
+            get => this.value;
+            set => this.value = value;
+        }
+
         public void SoftHide()
         {
             // back to the style specified in the uss (hidden by default)
