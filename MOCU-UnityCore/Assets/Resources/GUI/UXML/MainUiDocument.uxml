@@ -2,6 +2,7 @@
 <UXML
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="UnityEngine.UIElements"
+    xmlns:custom="CustomUxmlElements"
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
 >
 

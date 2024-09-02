@@ -42,6 +42,8 @@ public class UiHandler : MonoBehaviour, IControllableInitiation
         // default tabs to show (first secondary, than main (in case there is only one monitor))
         TabHasBeenClicked(secondaryUiScreen.elements.debugTab.tabBtn);
         TabHasBeenClicked(mainUiScreen.elements.experimentTab.tabBtn);
+
+        mainUiScreen.root.Focus();  // test: remove autofocus from TextField's
     }
 
 

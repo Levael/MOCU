@@ -447,7 +447,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: bbee48bf9b3ced241873361c3c4795de, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: c0a3e6a8ee4354b49926c1216b63eaca, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: bc5a70ef6a8ba4c468dff47912c8a7f6, type: 3}
   m_SortingOrder: 0
 --- !u!4 &603612051
 Transform:
@@ -599,7 +599,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: a9719fb99f51b2345859b114bc4b0745, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 0e5d4a1d88907314d9dc42b13f2b76a9, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: ae56af6ef35e2ef4e9edf9409c985347, type: 3}
   m_SortingOrder: 0
 --- !u!4 &782628377
 Transform:

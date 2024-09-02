@@ -13,23 +13,35 @@
 }
 
 
+/* ICONS */
+#experiment-tab CustomImage .custom-image-shape		{ background-image: var(--ExperimentTabIcon);	}
+#debug-tab		CustomImage .custom-image-shape		{ background-image: var(--DebugTabIcon);		}
+#data-tab		CustomImage .custom-image-shape		{ background-image: var(--DataTabIcon);			}
+#info-tab		CustomImage .custom-image-shape		{ background-image: var(--InfoTabIcon);			}
+#cameras-tab	CustomImage .custom-image-shape		{ background-image: var(--CamerasTabIcon);		}
+#settings-tab	CustomImage .custom-image-shape		{ background-image: var(--SettingsTabIcon);		}
+/* ===================================================== */
+
+
 /* REGULAR (NOT ACTIVE) TAB ---------------------------- */
 .tab {
 	width: auto;
-	margin-right: 30px;
 	height: 100%;
 	flex-direction: row;
 	justify-content: center;	/* icon and text are close to each other, positioned on the tab center */
 	align-items: center;
-	padding: 2px 7px;			/* to prevent icon and text touching the tab bottom */
+	padding: 0px 20px;			/* to prevent icon and text touching the tab bottom */ /* to leave space fro sides when active */
+
+	border-top-width: 5px;
+	border-top-color: transparent;
 }
 
-.tab-icon-shape {
-	width: 20px;
-	height: 20px;
+.tab-icon {
+	padding: 2px;
+	width: 25px;
+	height: 100%;
 }
-
-.tab-icon-color {
+.tab-icon .custom-image-color {
 	background-color: var(--secondary-images-color);
 }
 
@@ -48,17 +60,17 @@
 
 /* ACTIVE TAB ------------------------------------------ */
 .tab.isActive {
-	border-top-width: 5px !important;
+	/* border-top-width: 5px !important; */
 	border-top-color: var(--main-accent-color);
 	background-color: var(--main-window-color) !important;
 	justify-content: space-around !important;
 	/* padding: 2px 10px !important; */
-	align-items: flex-end;		/* pressed to the bottom of tab -- to leave space for top border */
+	/* align-items: flex-end; */		/* pressed to the bottom of tab -- to leave space for top border */
 }
 
 .tab.isOpened {	/* opened on second monitor */
-	border-top-width: 3px !important;
 	border-top-color: var(--secondary-images-color);
+	background-color: var(--secodary-tab-color);
 }
 
 .tab.isActive .icon-color {

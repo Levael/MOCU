@@ -1,6 +1,7 @@
 :root {
 	--main-window-color				:	#474747;
 	--main-modules-color			:	#2F2F2F;
+	--secodary-tab-color			:	#3B3B3B;
 
 	--main-font-color				:	#E3E3E3;
 	--main-disabled-font-color		:	#747474;

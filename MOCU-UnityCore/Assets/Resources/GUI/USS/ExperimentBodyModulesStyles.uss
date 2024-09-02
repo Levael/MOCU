@@ -23,6 +23,10 @@
 	flex-direction: column;
 }
 
+.inputs-names-input {
+	--unity-cursor-color: var(--main-font-color);
+}
+
 #inputs-protocol-part .button {
 	height: 50%;
 	width: 80px;

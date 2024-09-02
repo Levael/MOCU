@@ -2,6 +2,7 @@
 <UXML
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="UnityEngine.UIElements"
+    xmlns:custom="CustomUxmlElements"
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
 >
 
@@ -14,49 +15,37 @@
         
         <!-- Experiment : ExperimentTabIcon.svg -->
         <VisualElement class="tab" name="experiment-tab">
-            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/ExperimentTabIcon.svg');">
-                <VisualElement class="tab-icon-color icon-color"></VisualElement>
-            </VisualElement>
-            <TextElement class="tab-text" name="experiment-tab-text" text="Experiment"/>
+            <custom:CustomImage class="tab-icon"/>
+            <TextElement class="tab-text" text="Experiment"/>
         </VisualElement>
 
         <!-- Debug : DebugTabIcon.svg -->
         <VisualElement class="tab" name="debug-tab">
-            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/DebugTabIcon.svg');">
-                <VisualElement class="tab-icon-color icon-color"></VisualElement>
-            </VisualElement>
+            <custom:CustomImage class="tab-icon"/>
             <TextElement class="tab-text" name="debug-tab-text" text="Debug"/>
         </VisualElement>
 
         <!-- Data : DataTabIcon.svg -->
         <VisualElement class="tab" name="data-tab">
-            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/DataTabIcon.svg');">
-                <VisualElement class="tab-icon-color icon-color"></VisualElement>
-            </VisualElement>
+            <custom:CustomImage class="tab-icon"/>
             <TextElement class="tab-text" name="data-tab-text" text="Data"/>
         </VisualElement>
 
         <!-- Info : InfoTabIcon.svg -->
         <VisualElement class="tab" name="info-tab">
-            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/InfoTabIcon.svg');">
-                <VisualElement class="tab-icon-color icon-color"></VisualElement>
-            </VisualElement>
+            <custom:CustomImage class="tab-icon"/>
             <TextElement class="tab-text" name="info-tab-text" text="Info"/>
         </VisualElement>
 
         <!-- Cameras : CamerasTabIcon.svg -->
         <VisualElement class="tab" name="cameras-tab">
-            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/CamerasTabIcon.svg');">
-                <VisualElement class="tab-icon-color icon-color"></VisualElement>
-            </VisualElement>
+            <custom:CustomImage class="tab-icon"/>
             <TextElement class="tab-text" name="cameras-tab-text" text="Cameras"/>
         </VisualElement>
 
         <!-- Settings : SettingsTabIcon.svg -->
         <VisualElement class="tab" name="settings-tab">
-            <VisualElement class="tab-icon-shape icon-shape" style="background-image: url('/Assets/Images/SVG/SettingsTabIcon.svg');">
-                <VisualElement class="tab-icon-color icon-color"></VisualElement>
-            </VisualElement>
+            <custom:CustomImage class="tab-icon"/>
             <TextElement class="tab-text" name="settings-tab-text" text="Settings"/>
         </VisualElement>
 
