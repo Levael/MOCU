@@ -180,6 +180,8 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
     {
         try
         {
+            CloseDeviceBoxParameters();
+
             foreach (var device in devicesInterlinkedCollection)
             {
                 var volume = device.deviceObject.Volume;

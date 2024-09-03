@@ -64,27 +64,19 @@ namespace AudioControl
         private void CleanUpAfterDictionariesUpdate()
         {
             // Check if any device in use has been disconnected (removed from the dictionary)
-            //
-            // It looks terrible, maybe I'll change it in the future.
-            // In a nutshell: we go through all the devices and if they are disconnected, we write null.
-            // 'GetAudioData' methods is needed in order to easly go through 4 Audio_X_Devices
+            
 
-            var audioData = GetAudioData();
-            var audioDevicesInfo = audioData.audioDevicesInfo;
-            if (audioDevicesInfo == null) return;   // todo: think about this line later
+            if (audioOutputDevice_Researcher != null && !audioOutputsDictionary.ContainsKey(audioOutputDevice_Researcher.name))
+                audioOutputDevice_Researcher = null;
 
-            foreach (FieldInfo field in typeof(AudioDevicesInfo).GetFields(BindingFlags.Public | BindingFlags.Instance))
-            {
-                if (field.FieldType == typeof(string))
-                {
-                    string? value = (string?)field.GetValue(audioDevicesInfo);
-                    if (!string.IsNullOrEmpty(value) && !audioOutputsDictionary.ContainsKey(value) && !audioInputsDictionary.ContainsKey(value))
-                    {
-                        field.SetValue(audioDevicesInfo, null);
-                        AudioDeviceHasChanged?.Invoke();
-                    } 
-                }
-            }
+            if (audioOutputDevice_Participant != null && !audioOutputsDictionary.ContainsKey(audioOutputDevice_Participant.name))
+                audioOutputDevice_Participant = null;
+
+            if (audioInputDevice_Researcher != null && !audioInputsDictionary.ContainsKey(audioInputDevice_Researcher.name))
+                audioInputDevice_Researcher = null;
+
+            if (audioInputDevice_Participant != null && !audioInputsDictionary.ContainsKey(audioInputDevice_Participant.name))
+                audioInputDevice_Participant = null;
         }
 
 

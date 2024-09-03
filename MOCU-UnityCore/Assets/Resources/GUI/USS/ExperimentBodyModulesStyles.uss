@@ -16,6 +16,7 @@
 	height: 100%;
 	flex-direction: row;
 	align-items: center;
+	width: auto;
 }
 
 #inputs-names-part {
@@ -27,18 +28,12 @@
 	--unity-cursor-color: var(--main-font-color);
 }
 
-#inputs-protocol-part .button {
-	height: 50%;
-	width: 80px;
-}
+
 
 #inputs-protocol-part .button TextElement {
 	font-size: 12px;
 }
 
-#protocol-browse-btn {
-	margin: 0px 15px;
-}
 
 .inputs-names-row {
 	flex-direction: row;
@@ -64,9 +59,9 @@
 	margin-bottom: 5px;
 }
 
+/* TODO: will be custom element */
 #protocol-dropdown {
 	width: 300px;
-	height: 50%;
 	margin: 0px;
 	padding: 0px;
 
@@ -79,6 +74,20 @@
 
 #protocol-dropdown:hover {
 	background-color: var(--hover-buttons-color);
+}
+
+#protocol-update-btn,
+#protocol-saveAsNew-btn
+{
+	padding: 0 15px;
+	white-space: nowrap;
+	margin-left: 7px;
+}
+#protocol-dropdown,
+#protocol-update-btn,
+#protocol-saveAsNew-btn
+{
+	height: 50%;
 }
 
 

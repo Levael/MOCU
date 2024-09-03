@@ -34,10 +34,12 @@
 	-unity-font-style: bold;
 }
 
+
 /* Console */
 #debug-console-module-textbox {
 	-unity-text-align: upper-left;
 	padding: 5px;
+	font-size: 10px;
 	/* same as #info-module-textbox and #warnings-module-textbox in Experiment Body */
 }
 

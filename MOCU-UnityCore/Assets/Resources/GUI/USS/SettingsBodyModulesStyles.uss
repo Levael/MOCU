@@ -39,11 +39,14 @@
 }
 #settings-devices-back-btn {
 	visibility: hidden;
-	/* todo: size and color */
-}
-#settings-devices-back-btn .icon-shape {
 	width: 14px;
 	height: 14px;
+}
+#settings-devices-back-btn .custom-image-shape {
+	background-image: var(--CloseIcon);
+}
+#settings-devices-back-btn .custom-image-color {
+	background-color: var(--main-images-color);
 }
 
 
@@ -56,8 +59,7 @@ SettingsDeviceBox {
 	width: auto;
 	justify-content: space-around;
 }
-SettingsDeviceBox:hover CustomSlider,
-.settings-device-box:hover .settings-device-box-slider {
+SettingsDeviceBox:hover CustomSlider {
 	visibility: visible;
 }
 SettingsDeviceBox.hidden-slider CustomSlider {
