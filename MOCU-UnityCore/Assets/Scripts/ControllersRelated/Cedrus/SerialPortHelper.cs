@@ -77,6 +77,6 @@ public class SerialPortHelper
         catch (TimeoutException) { return true; }                           // Device is connected but didn't send anything, it's ok
         catch { return false; }                                             // if not "TimeoutException"-- device disconected
 
-        return true;    // shoudn't get to here, but ok
+        return true;
     }
 }

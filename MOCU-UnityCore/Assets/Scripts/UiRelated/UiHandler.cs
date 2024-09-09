@@ -13,14 +13,11 @@ public class UiHandler : MonoBehaviour, IControllableInitiation
     private VisualElement _activeTabOnMainUiScreen;
     private VisualElement _activeTabOnSecondaryUiScreen;
 
+
     public UiReferences mainUiScreen;          // use this (instead of _mainDisplayUiReferences)
     public UiReferences secondaryUiScreen;     // use this (instead of _secondDisplayUiReferences)
-
     public bool IsComponentReady { get; private set; }
-
-    
-
-    private bool _openTabInSecondDisplay;
+    private bool _InDualDisplayMode;
 
 
 
@@ -52,17 +49,16 @@ public class UiHandler : MonoBehaviour, IControllableInitiation
 
     private void ApplyDefaultSettings()
     {
-        _openTabInSecondDisplay = true && Display.displays.Length > 1;
+        var dualDisplayModeFlag = true; // todo: read from config
+        _InDualDisplayMode = dualDisplayModeFlag && Display.displays.Length > 1;
         Display.displays[0].Activate();         // activation of main display (without it window isn't fullscreen)
 
 
-        if (_openTabInSecondDisplay)
+        if (_InDualDisplayMode)
         {
             mainUiScreen = _mainDisplayUiReferences;
             secondaryUiScreen = _secondDisplayUiReferences;
             Display.displays[1].Activate();     // activation of second display
-
-            //ShowBody("", secondaryUiScreen);
         }
         else
         {
@@ -96,11 +92,11 @@ public class UiHandler : MonoBehaviour, IControllableInitiation
 
     private void TabHasBeenClicked(VisualElement clickedTab)
     {
-        if (_openTabInSecondDisplay) WinAPI.RestoreWindow("Unity Secondary Display");   // todo: maybe first of all minimize and then restore (if minimized not via code it doesn't count and woun't be restored)
+        if (_InDualDisplayMode) WinAPI.RestoreWindow("Unity Secondary Display");   // todo: maybe first of all minimize and then restore (if minimized not via code it doesn't count and woun't be restored)
         if (clickedTab == _activeTabOnMainUiScreen || clickedTab == _activeTabOnSecondaryUiScreen) return;
 
 
-        if (_openTabInSecondDisplay)
+        if (_InDualDisplayMode)
         {
             if (clickedTab == mainUiScreen.GetElement("experiment-tab"))
             {

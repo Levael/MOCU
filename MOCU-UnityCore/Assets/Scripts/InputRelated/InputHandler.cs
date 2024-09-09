@@ -2,11 +2,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
-using UnityEngine.XR;
-using UnityEngine.Video;
-using UnityEngine.UIElements;
-using System.Linq;
+
 
 public class InputHandler : MonoBehaviour, IControllableInitiation
 {
@@ -14,29 +10,24 @@ public class InputHandler : MonoBehaviour, IControllableInitiation
 
     private InputActionAsset _inputActions;
     private InputLogic      _inputLogic;
-    private CedrusHandler   _cedrus;
-    private UiHandler       _uiHandler;
-    
+    //private CedrusHandler   _cedrus;
+    private UiHandler       _ui;
+    private ControllersHandler _controller;
+
+    public event Action OnInputDevicesChanged;
+    public Dictionary<string, bool> inputDevices;
 
     private Dictionary<string, (Action<InputAction.CallbackContext> OnPressed, Action<InputAction.CallbackContext> OnReleased)> _inputSystem_actionHandlers;
     private Dictionary<string, AnswerFromParticipant> _actionNameToSignalMap;
 
 
-    public StateTracker GamepadConnectionStatus;
-    public StateTracker XRConnectionStatus;
-
-    private float _checkGamepadConnectionTimeInterval       = 0.1f; // sec
     private float _checkCedrusPortConnectionTimeInterval    = 0.1f; // sec
-    private float _checkXRConnectionTimeInterval            = 0.1f; // sec
-
-    //private UnityEngine.InputSystem.InputDevice virtualGamepad;
 
 
     public void ControllableAwake()
     {
         _inputActions = Resources.Load<InputActionAsset>("InputActions");    // name of file
-        GamepadConnectionStatus = new StateTracker(typeof(AnswerDevice_Statuses));
-        XRConnectionStatus = new StateTracker(typeof(VrHeadset_Statuses));
+        inputDevices = new();
 
 
         // INPUT SYSTEM PART (gamepad, keyboard and other devices Unity support)
@@ -85,22 +76,37 @@ public class InputHandler : MonoBehaviour, IControllableInitiation
     public void ControllableStart()
     {
         _inputLogic = GetComponent<InputLogic>();
-        _cedrus = GetComponent<CedrusHandler>();
-        _uiHandler = GetComponent<UiHandler>();
+        //_cedrus = GetComponent<CedrusHandler>();
+        _ui = GetComponent<UiHandler>();
 
-        StartCoroutine(_cedrus.CheckConnection(_checkCedrusPortConnectionTimeInterval));
-        StartCoroutine(CheckGamepadConnection(_checkGamepadConnectionTimeInterval));
-        StartCoroutine(CheckXRConnection(_checkXRConnectionTimeInterval));
+        //StartCoroutine(_cedrus.CheckConnection(_checkCedrusPortConnectionTimeInterval));
 
-        /*var devices = InputSystem.devices;
-        foreach (var device in devices)
-        {
-            Debug.Log($"Device: {device.displayName}, Type: {device.GetType().Name}, Name: {device.name}");
-        }*/
+        // todo later: read flags from config
+        foreach (var device in InputSystem.devices)
+            inputDevices[device.displayName] = true;
+
+        InputSystem.onDeviceChange += OnDeviceChange;
 
         IsComponentReady = true;
     }
 
+    private void OnDeviceChange(UnityEngine.InputSystem.InputDevice device, InputDeviceChange change)
+    {
+        switch (change)
+        {
+            case InputDeviceChange.Added:
+                inputDevices[device.displayName] = true;
+                print($"Устройство добавлено: {device.displayName}");
+                break;
+
+            case InputDeviceChange.Removed:
+                inputDevices.Remove(device.displayName);
+                print($"Устройство удалено: {device.displayName}");
+                break;
+        }
+
+        OnInputDevicesChanged?.Invoke();
+    }
 
     //THE NESTING IN FOLLOWING FUNCTIONS MAY SEEM REDUNDANT, BUT LET IT BE JUST IN CASE
 
@@ -108,18 +114,9 @@ public class InputHandler : MonoBehaviour, IControllableInitiation
     // TODO: yes, it will be working by Ignoring
     private void GotSignalFromInputSystem(InputAction.CallbackContext context)
     {
-        var devicesList = InputSystem.devices;
-
         // todo: work on it. Maye just ignore if it's not in the list of active devices
+        var devicesList = InputSystem.devices;
         var device = context.control.device;
-        var deviceName = device.name;
-        var deviceDisplayName = device.displayName;
-        var deviceType = device.GetType();
-        var deviceDescription = device.description;
-
-        if (device == devicesList[1]) return;
-        //print($"device: {device}\ndeviceName: {deviceName}\ndeviceDisplayName: {deviceDisplayName}\ndeviceType: {deviceType}\ndeviceDescription: {deviceDescription}\n\n");
-
 
         if (_actionNameToSignalMap.TryGetValue(context.action.name, out AnswerFromParticipant signalFromParticipant))
             _inputLogic.GotPressSignalFromInputSystem(signalFromParticipant);
@@ -154,83 +151,5 @@ public class InputHandler : MonoBehaviour, IControllableInitiation
     private void OutputIntercomButtonWasReleased(InputAction.CallbackContext context)
     {
         _inputLogic.IntercomFromResearcherStopped();
-    }
-
-
-
-
-    // CONNECTION CHECKERS
-
-    private IEnumerator CheckGamepadConnection(float checkConnectionTimeInterval)
-    {
-        while (true)
-        {
-            try
-            {
-                if (Gamepad.current?.enabled ?? false)
-                    GamepadConnectionStatus.UpdateSubState(AnswerDevice_Statuses.isConnected, true);
-                else
-                    GamepadConnectionStatus.UpdateSubState(AnswerDevice_Statuses.isConnected, false);
-            }
-            catch
-            {
-                GamepadConnectionStatus.UpdateSubState(AnswerDevice_Statuses.isConnected, false);
-            }
-
-            yield return new WaitForSeconds(checkConnectionTimeInterval);
-        }
-    }
-
-    private IEnumerator CheckXRConnection(float checkConnectionTimeInterval)
-    {
-        while (true)
-        {
-            try
-            {
-                List<XRInputSubsystem> subsystems = new List<XRInputSubsystem>();
-                SubsystemManager.GetInstances(subsystems);
-
-                if (subsystems.Count != 1)
-                {
-                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.isConnected, false);
-                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.iOnHead, false);
-                }
-                else if (subsystems[0].running && IsHeadsetWorn())
-                {
-                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.isConnected, true);
-                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.iOnHead, true);
-                }
-                else
-                {
-                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.isConnected, true);
-                    XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.iOnHead, null);     // 'null' and not 'false' because I need status to be yellow, not red (half working)
-                }
-            }
-            catch
-            {
-                XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.isConnected, false);
-                XRConnectionStatus.UpdateSubState(VrHeadset_Statuses.iOnHead, false);
-
-                Debug.LogError("Crash in 'CheckXRConnection'");
-            }
-
-            yield return new WaitForSeconds(checkConnectionTimeInterval);
-        }
-    }
-
-    private bool IsHeadsetWorn()
-    {
-        List<XRNodeState> nodeStates = new List<XRNodeState>();
-        InputTracking.GetNodeStates(nodeStates);
-
-        foreach (var nodeState in nodeStates)
-        {
-            if (nodeState.nodeType == XRNode.Head)
-            {
-                return nodeState.tracked;
-            }
-        }
-
-        return false;
     }
 }

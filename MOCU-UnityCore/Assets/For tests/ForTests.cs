@@ -15,16 +15,16 @@ public class ForTests : MonoBehaviour, IFullyControllable
     {
         _debugTabHandler = GetComponent<DebugTabHandler>();
         _audioHandler = GetComponent<AudioHandler>();
-        _cerusHandler = GetComponent<CedrusHandler>();
+        //_cerusHandler = GetComponent<CedrusHandler>();
     }
 
     public void ControllableStart()
     {
-        _debugTabHandler.testBtn1Clicked += (eventObj) =>
+        /*_debugTabHandler.testBtn1Clicked += (eventObj) =>
         {
-            if (_cerusHandler.stateTracker.Status != DeviceConnection_Statuses.Connected)
+            if (_cerusHandler.stateTracker.Status != ModuleStatus.FullyOperational)
                 _cerusHandler.TryConnect();
-        };
+        };*/
 
         // sending lots of commands simultaneously together (stresstest)
         /*_debugTabHandler.testBtn1Clicked += (eventObj) =>
@@ -38,7 +38,7 @@ public class ForTests : MonoBehaviour, IFullyControllable
 
     public void ControllableUpdate()
     {
-        /*if (_audioHandler.stateTracker.Status == DeviceConnection_Statuses.Connected && temp_counter++ < 300)
+        /*if (_audioHandler.stateTracker.Status == ModuleStatus.FullyOperational && temp_counter++ < 300)
             _audioHandler.SendTestAudioSignalToDevice("Speakers (Realtek High Definition Audio)");*/
     }
 }

@@ -15,9 +15,4 @@ public class MatchFov : MonoBehaviour
         uiCamera.fieldOfView = 80;  // vrCamera.fieldOfView looks not real. 80 is just "hand peaked"
 
     }
-
-    private void Update()
-    {
-        //uiCamera.fieldOfView = vrCamera.fieldOfView;
-    }
 }

@@ -1,6 +1,9 @@
-﻿using NAudio.CoreAudioApi;
+﻿/*
+ * TODO: I don't like how it looks like, maybe totaly remaster later
+ */
+
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
-using System.Reflection;
 
 using DaemonsNamespace.Common;
 

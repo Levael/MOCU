@@ -39,7 +39,7 @@ public class InputLogic : MonoBehaviour, IFullyControllable
 
     public void IntercomFromResearcherStarted()
     {
-        if (_audioHandler.stateTracker.Status != DeviceConnection_Statuses.Connected) return;
+        if (_audioHandler.stateTracker.Status != ModuleStatus.FullyOperational) return;
 
         startOutgoingIntercomStream?.Invoke();
         _uiHandler.mainUiScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
@@ -47,7 +47,7 @@ public class InputLogic : MonoBehaviour, IFullyControllable
     }
     public void IntercomFromResearcherStopped()
     {
-        if (_audioHandler.stateTracker.Status != DeviceConnection_Statuses.Connected) return;
+        if (_audioHandler.stateTracker.Status != ModuleStatus.FullyOperational) return;
 
         stopOutgoingIntercomStream?.Invoke();
         if (!_uiHandler.mainUiScreen.GetElement("controls-intercom-part").ClassListContains("isIncoming"))
@@ -60,7 +60,7 @@ public class InputLogic : MonoBehaviour, IFullyControllable
 
     public void IntercomFromParticipantStarted()
     {
-        if (_audioHandler.stateTracker.Status != DeviceConnection_Statuses.Connected) return;
+        if (_audioHandler.stateTracker.Status != ModuleStatus.FullyOperational) return;
 
         startIncomingIntercomStream?.Invoke();
         _uiHandler.mainUiScreen.GetElement("controls-intercom-part").AddToClassList("isActive");
@@ -68,7 +68,7 @@ public class InputLogic : MonoBehaviour, IFullyControllable
     }
     public void IntercomFromParticipantStopped()
     {
-        if (_audioHandler.stateTracker.Status != DeviceConnection_Statuses.Connected) return;
+        if (_audioHandler.stateTracker.Status != ModuleStatus.FullyOperational) return;
 
         stopIncomingIntercomStream?.Invoke();
         if (!_uiHandler.mainUiScreen.GetElement("controls-intercom-part").ClassListContains("isOutgoing"))
@@ -130,7 +130,7 @@ public class InputLogic : MonoBehaviour, IFullyControllable
         }
     }
 
-    public void GotAnswerFromCedrus(AnswerFromParticipant signalFromParticipant)
+    /*public void GotAnswerFromCedrus(AnswerFromParticipant signalFromParticipant)
     {
         // All this is temp and dirty
 
@@ -153,7 +153,7 @@ public class InputLogic : MonoBehaviour, IFullyControllable
                 break;
         }
         _answerHandler.AddAnswer(signalFromParticipant);
-    }
+    }*/
 
 
 

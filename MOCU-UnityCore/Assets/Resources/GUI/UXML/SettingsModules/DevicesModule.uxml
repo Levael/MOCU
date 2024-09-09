@@ -27,8 +27,8 @@
     <VisualElement name="settings-devices-module-window" class="settings-module-window">
         <!-- 2) All devices names can have 3 additional classes: 'has-error', 'has-warning', 'is-inactive'  (TODO) -->
         
-        <custom:SettingsDeviceBox name="settings-device-box-microphone-researcher"  text="Mic (R)"/>
-        <custom:SettingsDeviceBox name="settings-device-box-microphone-participant" text="Mic (P)"/>
+        <custom:SettingsDeviceBox name="settings-device-box-microphone-researcher"  text="Mic (R)"      class="hidden-slider"/>
+        <custom:SettingsDeviceBox name="settings-device-box-microphone-participant" text="Mic (P)"      class="hidden-slider"/>
         <custom:SettingsDeviceBox name="settings-device-box-speaker-researcher"     text="Speaker (R)"/>
         <custom:SettingsDeviceBox name="settings-device-box-speaker-participant"    text="Speaker (P)"/>
         <custom:SettingsDeviceBox name="settings-device-box-camera-1"               text="Camera (P1)"  class="hidden-slider"/>

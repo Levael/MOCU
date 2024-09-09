@@ -49,9 +49,10 @@ public class Bootstrap : MonoBehaviour
             EnsureComponent<AudioHandler>(),
             EnsureComponent<DaemonsHandler>(),
             EnsureComponent<AnswerHandler>(),
+            EnsureComponent<ControllersHandler>(),
             EnsureComponent<InputHandler>(),
-                EnsureComponent<CedrusHandler>(),
-                EnsureComponent<InputLogic>(),
+            EnsureComponent<VrHandler>(),
+            EnsureComponent<InputLogic>(),
 
             // TESTS
             EnsureComponent<ForTests>(),

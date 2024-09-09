@@ -11,7 +11,9 @@ using Debug = UnityEngine.Debug;
 
 public partial class AudioHandler : MonoBehaviour
 {
-    public StateTracker stateTracker { get; private set; }
+    public ModuleStatusHandler<Audio_ModuleSubStatuses> stateTracker { get; private set; }
+    public AudioDevices audioDevices { get; private set; }
+    public bool IsComponentReady { get; private set; }
 
 
     /// <summary>

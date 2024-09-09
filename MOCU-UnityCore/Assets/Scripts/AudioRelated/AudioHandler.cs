@@ -13,8 +13,6 @@ using Debug = UnityEngine.Debug;
 
 public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableInitiation
 {
-    public AudioDevices audioDevices { get; private set; }
-
     #region PRIVATE FIELDS
     private DaemonHandler_Client _daemon;
 
@@ -26,18 +24,17 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
     private DaemonsHandler _daemonsHandler;
 
     private Dictionary<string, UnifiedCommandFrom_Client> partlyOptimizedJsonCommands; // in theory, should reduce the delay when sending commands. todo: review later
-    private Dictionary<string, (AudioHandler_Statuses? subState, Action<UnifiedResponseFrom_Server> action)> commandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
+    private Dictionary<string, (Audio_ModuleSubStatuses? subState, Action<UnifiedResponseFrom_Server> action)> commandsToExecuteAccordingToServerResponse;  // serverResponse -> updState -> executeNextCommand
     #endregion PRIVATE FIELDS
 
-    public bool IsComponentReady {  get; private set; }
 
 
     #region MANDATORY STANDARD FUNCTIONALITY
 
     public void ControllableAwake()
     {
-        stateTracker = new StateTracker(typeof(AudioHandler_Statuses));
-        audioDevices = new AudioDevices();
+        stateTracker = new();
+        audioDevices = new();
 
         partlyOptimizedJsonCommands = new() {
             { "StartIntercomStream_ResearcherToParticipant_Command", new UnifiedCommandFrom_Client(name: "StartOutgoingIntercomStream_Command") },
@@ -52,8 +49,8 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
         /// 3) 
         commandsToExecuteAccordingToServerResponse = new()
         {
-            { "SetConfigurations_Response",       (subState: AudioHandler_Statuses.SetConfigs,        action: SendClientAudioDataDesire) },
-            { "AudioDataHasBeenUpdated_Response", (subState: AudioHandler_Statuses.GetAudioDevices,   action: GotServerAudioDataDecision) }
+            { "SetConfigurations_Response",       (subState: Audio_ModuleSubStatuses.SetConfigs,        action: SendClientAudioDataDesire) },
+            { "AudioDataHasBeenUpdated_Response", (subState: Audio_ModuleSubStatuses.GetAudioDevices,   action: GotServerAudioDataDecision) }
         };
     }
 
@@ -69,13 +66,14 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
         // Reading from config Audio Devices Data
         audioDevices.UpdateFromServerData(new UnifiedAudioDataPacket(audioDevicesInfo: _configHandler.defaultConfig.AudioConfig, null, null));
         audioDevices.GotUpdateFromServer += () => _settingsTabHandler.UpdateAudioDevices();
+        audioDevices.GotUpdateFromServer += () => RecheckStatus();
         audioDevices.GotUpdateFromServer += () => _configHandler.UpdateSubConfig(audioDevices.PackMainData());
         audioDevices.GotUpdateFromClient += () => SendClientAudioDataDesire();
 
         _daemon = await _daemonsHandler.CreateDaemon(DaemonsHandler.Daemons.Audio);
 
-        stateTracker.UpdateSubState(AudioHandler_Statuses.StartAudioProcess, _daemon.isProcessOk);
-        stateTracker.UpdateSubState(AudioHandler_Statuses.StartNamedPipeConnection, _daemon.isConnectionOk);
+        stateTracker.UpdateSubStatus(Audio_ModuleSubStatuses.StartAudioProcess, _daemon.isProcessOk ? SubStatusState.Complete : SubStatusState.Failed);
+        stateTracker.UpdateSubStatus(Audio_ModuleSubStatuses.StartNamedPipeConnection, _daemon.isConnectionOk ? SubStatusState.Complete : SubStatusState.Failed);
 
         if (_daemon.isProcessOk && _daemon.isConnectionOk)
             SendConfigurationDetails();
@@ -123,14 +121,14 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
             }
             else if (response.errorOccurred == true && response.errorIsFatal == true)
             {
-                stateTracker.UpdateSubState(subStateName, false);
+                stateTracker.UpdateSubStatus(subStateName, SubStatusState.Failed);
                 _experimentTabHandler.PrintToWarnings($"Fatal error: {response.errorMessage}");
                 return;
             }
 
             // In case everything is fine
             if (subStateName != null)
-                stateTracker.UpdateSubState(subStateName, true);
+                stateTracker.UpdateSubStatus(subStateName, SubStatusState.Complete);
 
             funcToBeExecuted.Invoke(response);
         }
@@ -177,18 +175,6 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
         _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "SetUpdatedAudioDevicesInfo_Command", extraData: data));
     }
 
-    // todo
-    /*private void SendClientAudioDataDesire(AudioDevicesInfo audioDevicesInfo)
-    {
-        if (!IsDaemonOk())
-        {
-            Debug.LogError("Custom: 'SendClientAudioDataDesire' is unavailable right now. 'IsDaemonOk' returned 'false'");
-            return;
-        }
-
-        _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "SetUpdatedAudioDevicesInfo_Command", extraData: audioDevicesInfo));
-    }*/
-
     /// <summary>
     /// Called after successful devices update on the server side
     /// </summary>
@@ -201,6 +187,27 @@ public partial class AudioHandler : MonoBehaviour, IDaemonUser, IControllableIni
     private bool IsDaemonOk()
     {
         return (_daemon != null && _daemon.isConnectionOk && _daemon.isProcessOk);
+    }
+
+    private void RecheckStatus()
+    {
+        var atLeastOneIsOff = (
+            audioDevices.OutputResearcher.Name == null ||
+            audioDevices.OutputParticipant.Name == null ||
+            audioDevices.InputResearcher.Name == null ||
+            audioDevices.InputParticipant.Name == null
+        );
+
+        var atLeastOneOutputIsWorking = (
+            (audioDevices.OutputResearcher.Name != null && audioDevices.OutputResearcher.Volume != 0) ||
+            (audioDevices.OutputParticipant.Name != null && audioDevices.OutputParticipant.Volume != 0)
+        );
+
+        var AllDevicesAreChoosen_State = atLeastOneIsOff ? SubStatusState.Failed : SubStatusState.Complete;
+        var AtLeastOneOutputIsWorking_State = atLeastOneOutputIsWorking ? SubStatusState.Complete : SubStatusState.Failed;
+
+        stateTracker.UpdateSubStatus(Audio_ModuleSubStatuses.AllDevicesAreChoosen, AllDevicesAreChoosen_State);
+        stateTracker.UpdateSubStatus(Audio_ModuleSubStatuses.AtLeastOneOutputIsWorking, AtLeastOneOutputIsWorking_State);
     }
 
     #endregion PRIVATE METHODS

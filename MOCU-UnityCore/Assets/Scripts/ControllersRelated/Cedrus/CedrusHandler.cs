@@ -50,28 +50,37 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public class CedrusHandler : MonoBehaviour, IFullyControllable
+public class CedrusHandler : IControllerDevice
 {
-    public bool IsComponentReady {  get; private set; }
-    public StateTracker stateTracker;
+    public ModuleStatus ConnectionStatus { get; private set; }
+    public bool IsInUse { get; set; }
+    public string DisplayName { get; private set; }
 
     private KeyboardSimulator _keyboardSimulator;
     private XID_ProtocolParser _XID_ProtocolHelper;
     private SerialPortHelper _serialPortHelper;
 
-    private int _baudRate = 9600;
-    private string _targetDeviceId = @"FTDIBUS\VID_0403+PID_6001";
-    private string _portFinderAppPath = "Daemons/PortFinder.exe";
-    private int _checkPortConnectionReadTimeout = 0;        // ms. If there will be any issue -- change to 1
+    private Task _readLoopTask;
+    private Task _checkConnectionTask;
+
+    private int _baudRate;
+    private string _targetDeviceId;
+    private string _portFinderAppPath;
+    private int _checkPortConnectionReadTimeout;    // ms. If there will be any issue -- change to 1
+    private TimeSpan _checkPortConnectionTimeInterval;
+    private TimeSpan _readDataFromPortTimeInterval;
     private Dictionary<int, Key> _cedrus2keyboardCodesMap;
 
-    private DebugTabHandler _debugTabHandler;
-
-
-
-    public void ControllableAwake()
+    public CedrusHandler(bool isInUse = true)
     {
-        stateTracker = new StateTracker(typeof(AnswerDevice_Statuses));
+        IsInUse = isInUse;
+        _baudRate = 9600;
+        _targetDeviceId = @"FTDIBUS\VID_0403+PID_6001";
+        _portFinderAppPath = "Daemons/PortFinder.exe";
+        _checkPortConnectionReadTimeout = 0;
+        _readDataFromPortTimeInterval = TimeSpan.FromMilliseconds(10);
+        _checkPortConnectionTimeInterval = TimeSpan.FromMilliseconds(100);
+        DisplayName = "Cedrus";
 
         _XID_ProtocolHelper = new();
         _keyboardSimulator = new();
@@ -87,67 +96,90 @@ public class CedrusHandler : MonoBehaviour, IFullyControllable
         };
     }
 
-    public void ControllableStart()
+    public async Task Init()
     {
-        _debugTabHandler = GetComponent<DebugTabHandler>();
-
-        _keyboardSimulator.Init("Cedrus");
-        TryConnect();
-
-        IsComponentReady = true;
+        _keyboardSimulator.Init(DisplayName);
+        await Run();
     }
 
-    // todo: rethink "IsComponentReady" and "stateTracker" relationship
-    public void ControllableUpdate()
+    public async void TryRepair()
     {
-        if (stateTracker.Status != DeviceConnection_Statuses.Connected)
-            return;
+        if (ConnectionStatus == ModuleStatus.FullyOperational) return;
 
-        var rawData = _serialPortHelper.ReadData(_XID_ProtocolHelper.bytesInDataPacket);
-
-        if (rawData != null)
-            HandleData(rawData);
+        ConnectionStatus = await TryConnect();
+        if (ConnectionStatus != ModuleStatus.FullyOperational) return;
+        StartReadingLoop();
     }
 
 
-
-    public async void TryConnect()
+    private async Task Run()
     {
-        var foundPortName = await GetCedrusPortName(_targetDeviceId);
+        ConnectionStatus = await TryConnect();
+        if (ConnectionStatus != ModuleStatus.FullyOperational) return;
+        StartReadingLoop();
+        StartConnectionCheckLoop();
+    }
 
-        _serialPortHelper.SetParameters(portName: foundPortName, baudRate: _baudRate, readTimeout: _checkPortConnectionReadTimeout);
+    private void StartReadingLoop()
+    {
+        _readLoopTask = Task.Run(async () =>
+        {
+            while (true)
+            {
+                if (ConnectionStatus != ModuleStatus.FullyOperational)
+                    break;
+
+                var rawData = _serialPortHelper.ReadData(_XID_ProtocolHelper.bytesInDataPacket);
+
+                if (rawData != null)
+                    HandleData(rawData);
+
+                await Task.Delay(_readDataFromPortTimeInterval);
+            }
+        });
+    }
+
+    private async Task<ModuleStatus> TryConnect()
+    {
+        var portName = await GetCedrusPortName(_targetDeviceId);
+
+        _serialPortHelper.SetParameters(portName: portName, baudRate: _baudRate, readTimeout: _checkPortConnectionReadTimeout);
         var isConnectedSuccessfully = _serialPortHelper.Connect();
-        _debugTabHandler.PrintToConsole($"Cedrus: connection attempt. Successfully - {isConnectedSuccessfully}. Port name: {foundPortName}\n");
+        //print($"Cedrus: connection attempt. Successfully - {isConnectedSuccessfully}. Port name: {portName}\n");
 
         if (isConnectedSuccessfully)
-            stateTracker.UpdateSubState(AnswerDevice_Statuses.isConnected, true);
+            return ModuleStatus.FullyOperational;
         else
         {
-            stateTracker.UpdateSubState(AnswerDevice_Statuses.isConnected, false);
             _serialPortHelper.Close();
+            return ModuleStatus.NotOperational;
         }
     }
 
-    public IEnumerator CheckConnection(float checkConnectionTimeInterval)
+    private void StartConnectionCheckLoop()
     {
-        while (true)
+        _checkConnectionTask = Task.Run(async () =>
         {
-            var isConnectedSuccessfully = _serialPortHelper.CheckPortConnection();
-            if (!isConnectedSuccessfully)
+            while (true)
             {
-                stateTracker.UpdateSubState(AnswerDevice_Statuses.isConnected, false);
-                _serialPortHelper.Close();
+                bool isConnectedSuccessfully = _serialPortHelper.CheckPortConnection();
+
+                if (!isConnectedSuccessfully)
+                {
+                    _serialPortHelper.Close();
+                    ConnectionStatus = ModuleStatus.NotOperational;
+                }
+
+                await Task.Delay(_checkPortConnectionTimeInterval);
             }
-            yield return new WaitForSeconds(checkConnectionTimeInterval);
-        }
+        });
     }
-
-
 
     private void HandleData(byte[] byteArray)
     {
         var (keyCode, flag) = _XID_ProtocolHelper.GetParsedData(byteArray);
-        _keyboardSimulator.SimulateKeyPress(key: _cedrus2keyboardCodesMap[keyCode], isPressed: flag);
+        if (_cedrus2keyboardCodesMap.ContainsKey(keyCode))
+            _keyboardSimulator.SimulateKeyPress(key: _cedrus2keyboardCodesMap[keyCode], isPressed: flag);
     }
 
     private async Task<string> GetCedrusPortName(string deviceId)
@@ -179,8 +211,31 @@ public class CedrusHandler : MonoBehaviour, IFullyControllable
         }
         catch (Exception ex)
         {
-            print($"Error in 'GetCedrusPortName': {ex}");
+            //print($"Error in 'GetCedrusPortName': {ex}");
             return null;
         }
     }
+
 }
+
+
+
+/*private IEnumerator CheckGamepadConnection(float checkConnectionTimeInterval)
+{
+    while (true)
+    {
+        try
+        {
+            if (Gamepad.current?.enabled ?? false)
+                GamepadConnectionStatus.UpdateSubState(ControllerDevice_Statuses.isConnected, true);
+            else
+                GamepadConnectionStatus.UpdateSubState(ControllerDevice_Statuses.isConnected, false);
+        }
+        catch
+        {
+            GamepadConnectionStatus.UpdateSubState(ControllerDevice_Statuses.isConnected, false);
+        }
+
+        yield return new WaitForSeconds(checkConnectionTimeInterval);
+    }
+}*/

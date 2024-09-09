@@ -17,7 +17,7 @@
 
     <VisualElement class="status-block" name="oculus-status-block">
         <VisualElement class="status-block-color"/>
-        <TextElement class="status-block-text" text="Oculus"/>
+        <TextElement class="status-block-text" text="VR"/>
     </VisualElement>
 
     
