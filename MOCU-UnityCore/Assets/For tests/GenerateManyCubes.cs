@@ -27,6 +27,7 @@ public class CubesGenerator : MonoBehaviour
             Quaternion randomRotation = Quaternion.Euler(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360));
 
             GameObject cubeInstance = Instantiate(cubePrefab, randomPosition, randomRotation, parentObject.transform);
+            cubeInstance.layer = parentObject.layer;
         }
     }
 }

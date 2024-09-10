@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class ControllersHandler : MonoBehaviour, IFullyControllable
 {
-    public ModuleStatusHandler<ControllerDevice_Statuses> ControllerConnectionStatus;
+    public ModuleStatusHandler<ControllerDevice_SubStatuses> ControllerConnectionStatus;
     public bool IsComponentReady { get; private set; }
     public IReadOnlyList<IControllerDevice> Devices { get => _devices; }
 
@@ -41,11 +41,11 @@ public class ControllersHandler : MonoBehaviour, IFullyControllable
         {
             if (device.IsInUse && device.ConnectionStatus == ModuleStatus.FullyOperational)
             {
-                ControllerConnectionStatus.UpdateSubStatus(ControllerDevice_Statuses.isConnected, SubStatusState.Complete);
+                ControllerConnectionStatus.UpdateSubStatus(ControllerDevice_SubStatuses.isConnected, SubStatusState.Complete);
                 return;
             }
 
-            ControllerConnectionStatus.UpdateSubStatus(ControllerDevice_Statuses.isConnected, SubStatusState.Failed);
+            ControllerConnectionStatus.UpdateSubStatus(ControllerDevice_SubStatuses.isConnected, SubStatusState.Failed);
             //print($"{device.DisplayName}: {device.ConnectionStatus}");
         }
     }
