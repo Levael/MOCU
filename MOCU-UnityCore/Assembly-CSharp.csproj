@@ -115,6 +115,7 @@
     <Compile Include="Assets\Scripts\AudioRelated\AudioDevices.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\Communicators\InterprocessCommunicator_Base.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DifferentInfo_DebugUiModuleHandler.cs" />
+    <Compile Include="Assets\Scripts\InputRelated\InputSystemTests.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityDaemonsCommon\CommonUtilities.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\InterprocessCommunication\DaemonHandlers\IBusinessLogic_Server.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\IDaemonUser.cs" />

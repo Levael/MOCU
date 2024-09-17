@@ -11,7 +11,7 @@ public class GeneralScript : MonoBehaviour, IControllableInitiation
     public void ControllableStart()
     {
         QualitySettings.vSyncCount = 0;                             // Disable VSync
-        Application.targetFrameRate = 60;                           // Application fps (when VR is on -- automatically switchs to VR fps)
+        Application.targetFrameRate = 60;                           // Application fps (when VR is on -- automatically switchs to VR fps (90))
         XRSettings.gameViewRenderMode = GameViewRenderMode.None;    // prevents rendering VR view on monitor (works only in Build version)
 
         IsComponentReady = true;

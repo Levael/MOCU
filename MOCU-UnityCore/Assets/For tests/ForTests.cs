@@ -1,4 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem;
 
 
 public class ForTests : MonoBehaviour, IFullyControllable
@@ -20,6 +22,8 @@ public class ForTests : MonoBehaviour, IFullyControllable
 
     public void ControllableStart()
     {
+
+
         /*_debugTabHandler.testBtn1Clicked += (eventObj) =>
         {
             if (_cerusHandler.stateTracker.Status != ModuleStatus.FullyOperational)
