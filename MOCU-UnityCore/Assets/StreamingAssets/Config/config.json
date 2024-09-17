@@ -5,7 +5,7 @@
     "audioInputDeviceName_Researcher": "Microphone (fifine Microphone)",
     "audioInputDeviceName_Participant": "Microphone (Rift Audio)",
     "audioOutputDeviceVolume_Researcher": 87.0,
-    "audioOutputDeviceVolume_Participant": 38.0,
+    "audioOutputDeviceVolume_Participant": 51.0,
     "audioInputDeviceVolume_Researcher": 49.0,
     "audioInputDeviceVolume_Participant": 49.0
   }

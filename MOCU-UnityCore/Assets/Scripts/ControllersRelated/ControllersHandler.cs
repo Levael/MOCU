@@ -5,6 +5,9 @@ using UnityEngine.InputSystem;
 
 public class ControllersHandler : MonoBehaviour, IFullyControllable
 {
+    // todo:
+    // Dictionary<InputDevice, (HashSet supportedActionMaps, HashSet activeActionMaps)>
+
     public ModuleStatusHandler<ControllerDevice_SubStatuses> ControllerConnectionStatus;
     public bool IsComponentReady { get; private set; }
     public IReadOnlyList<IControllerDevice> Devices { get => _devices; }
@@ -34,12 +37,13 @@ public class ControllersHandler : MonoBehaviour, IFullyControllable
 
         IsComponentReady = true;
     }
+    
 
     public void ControllableUpdate()
     {
         foreach (var device in _devices)
         {
-            if (device.IsInUse && device.ConnectionStatus == ModuleStatus.FullyOperational)
+            if (device.ConnectionStatus == ModuleStatus.FullyOperational)
             {
                 ControllerConnectionStatus.UpdateSubStatus(ControllerDevice_SubStatuses.isConnected, SubStatusState.Complete);
                 return;
@@ -50,6 +54,11 @@ public class ControllersHandler : MonoBehaviour, IFullyControllable
         }
     }
 
+    public bool CanDeviceTriggerActionMap(InputDevice device, ActionMapName actionMap)
+    {
+        // todo
+        return true;
+    }
 
     /*private IEnumerator CheckGamepadConnection(float checkConnectionTimeInterval)
     {
