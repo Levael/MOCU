@@ -5,57 +5,32 @@ using System.Collections.Generic;
 
 
 namespace AudioControl {
-    public enum ClientCommands
+    public enum CommandForDaemon
     {
         SetConfigurations,
-        SetNewAudioData,
-        PlayAudioFile,
-
-        StartOutgoingIntercomStream,
-        StartIncomingIntercomStream,
-        StopOutgoingIntercomStream,
-        StopIncomingIntercomStream
+        PlayAudioClip,
+        StartIntercomStream,
+        StopIntercomStream,
+        Disconnect
     }
 
-    public enum ServerResponses
+    public enum ResponseFromDaemon
     {
         ConfigurationsHaveBeenSet,
-        AudioDataHasBeenUpdated
+        AudioDataHasBeenUpdated,
+        ErrorHasOccurred
     }
 
-
-    public class AudioDevicesInfo
+    /*public class UnifiedAudioDataPacket
     {
-        public string?  audioOutputDeviceName_Researcher;
-        public string?  audioOutputDeviceName_Participant;
-        public string?  audioInputDeviceName_Researcher;
-        public string?  audioInputDeviceName_Participant;
+    }*/
 
-        public float?   audioOutputDeviceVolume_Researcher;
-        public float?   audioOutputDeviceVolume_Participant;
-        public float?   audioInputDeviceVolume_Researcher;
-        public float?   audioInputDeviceVolume_Participant;
-    }
-
-    public class UnifiedAudioDataPacket
-    {
-        public readonly AudioDevicesInfo? audioDevicesInfo;
-        public IReadOnlyList<string> inputAudioDevices;
-        public IReadOnlyList<string> outputAudioDevices;
-
-        public UnifiedAudioDataPacket(AudioDevicesInfo? audioDevicesInfo, IReadOnlyList<string> inputAudioDevices, IReadOnlyList<string> outputAudioDevices) {
-            this.audioDevicesInfo = audioDevicesInfo;
-            this.inputAudioDevices = inputAudioDevices ?? Array.Empty<string>();
-            this.outputAudioDevices = outputAudioDevices ?? Array.Empty<string>();
-        }
-    }
-
-    public class PlayAudioFile_CommandDetails
+    public class PlayAudioClip_CommandDetails
     {
         public string audioFileName;
         public string audioOutputDeviceName;
 
-        public PlayAudioFile_CommandDetails(string audioFileName, string audioOutputDeviceName)
+        public PlayAudioClip_CommandDetails(string audioFileName, string audioOutputDeviceName)
         {
             this.audioFileName = audioFileName;
             this.audioOutputDeviceName = audioOutputDeviceName;

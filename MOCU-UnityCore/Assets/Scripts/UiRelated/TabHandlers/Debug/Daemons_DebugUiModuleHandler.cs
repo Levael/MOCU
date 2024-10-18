@@ -47,7 +47,7 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
 
     private void UpdateDaemonsModule()
     {
-        _numberOfDaemonsCell.text = $"({_daemonsHandler.GetDaemonsNumber()})";
+        //_numberOfDaemonsCell.text = $"({_daemonsHandler.GetDaemonsNumber()})";
     }
 
     public void AddDaemonActivity(string daemonName, string messageName, MessageDirection direction)

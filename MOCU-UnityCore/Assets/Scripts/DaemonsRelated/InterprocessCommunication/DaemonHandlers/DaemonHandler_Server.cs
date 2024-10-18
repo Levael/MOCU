@@ -115,8 +115,8 @@ namespace InterprocessCommunication
             _parentProcessId = parentProcessId;
             _isProcessHidden = isProcessHidden;
 
-            DaemonsUtilities.ConsoleInfo($"Program name: {_pipeName}");
-            DaemonsUtilities.ConsoleInfo($"Parent process id: {parentProcessId}\n");
+            DaemonUtilities.ConsoleInfo($"Program name: {_pipeName}");
+            DaemonUtilities.ConsoleInfo($"Parent process id: {parentProcessId}\n");
         }
 
         private void HandleInputMessage(string message)
@@ -128,7 +128,7 @@ namespace InterprocessCommunication
             }
             catch (Exception ex)
             {
-                DaemonsUtilities.ConsoleError($"Error deserializing command: {ex.Message}");
+                DaemonUtilities.ConsoleError($"Error deserializing command: {ex.Message}");
             }
         }
 
@@ -141,7 +141,7 @@ namespace InterprocessCommunication
             }
             catch (Exception ex)
             {
-                DaemonsUtilities.ConsoleError($"Error serializing response: {ex.Message}");
+                DaemonUtilities.ConsoleError($"Error serializing response: {ex.Message}");
             }
         }
 
@@ -168,7 +168,7 @@ namespace InterprocessCommunication
 
         private void CloseProgram(string reason)
         {
-            DaemonsUtilities.ConsoleError(reason);
+            DaemonUtilities.ConsoleError(reason);
             StopDaemon();
 
             if (_isProcessHidden)

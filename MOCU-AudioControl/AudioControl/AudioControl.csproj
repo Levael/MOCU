@@ -50,7 +50,7 @@
     <Compile Include="$(DTOs)\UnifiedResponseFrom_Server.cs"                  Link="Linked code\DTOs\UnifiedResponseFrom_Server.cs" />
     
     <Compile Include="$(UnityDaemonsCommon)\CommonUtilities.cs"               Link="Linked code\CommonUtilities.cs" />
-    <Compile Include="$(DaemonsOnlyCommon)\DaemonsUtilities.cs"               Link="Linked code\DaemonsUtilities.cs" />
+    <Compile Include="$(DaemonsOnlyCommon)\DaemonsUtilities.cs"               Link="Linked code\DaemonUtilities.cs" />
   </ItemGroup>
 
   <!-- Libraries -->

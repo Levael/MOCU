@@ -44,7 +44,7 @@ public class StatusesHandler : MonoBehaviour, IFullyControllable
             { "VR",     (stateTracker: (IModuleStatusHandler)_vrHandler.XRConnectionStatus, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.vr) },
             //{ "Cedrus_old", (stateTracker: _cedrus.stateTracker, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.cedrus) },
             //{ "Gamepad",    (stateTracker: _inputHandler.GamepadConnectionStatus, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.gamepad) },
-            { "Audio",      (stateTracker: (IModuleStatusHandler) _audioHandler.stateTracker, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.audio) },
+            //{ "Audio",      (stateTracker: (IModuleStatusHandler) _audioHandler.stateTracker, visualElement: (VisualElement)_uiHandler.mainUiScreen.elements.experimentTab.statusesModule.audio) },
 
             //{ "EEG",        _uiHandler.mainUiScreen.GetElement("eeg-status-block") },
             //{ "Trials",     _uiHandler.mainUiScreen.GetElement("trials-status-block") },

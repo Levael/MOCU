@@ -67,7 +67,7 @@ namespace AudioControl
         {
             try
             {
-                outgoingStream.StartStream();
+                //outgoingStream.StartStream();
             }
             catch (Exception ex)
             {
@@ -80,7 +80,7 @@ namespace AudioControl
         {
             try
             {
-                incomingStream.StartStream();
+                //incomingStream.StartStream();
             }
             catch (Exception ex)
             {
@@ -93,7 +93,7 @@ namespace AudioControl
         {
             try
             {
-                outgoingStream.StopStream();
+                //outgoingStream.StopStream();
             }
             catch (Exception ex)
             {
@@ -106,7 +106,7 @@ namespace AudioControl
         {
             try
             {
-                incomingStream.StopStream();
+                //incomingStream.StopStream();
             }
             catch (Exception ex)
             {

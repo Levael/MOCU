@@ -2,6 +2,8 @@
 
 using AudioControl;
 using InterprocessCommunication;
+using NAudio.Wave.SampleProviders;
+using NAudio.Wave;
 
 class Program
 {

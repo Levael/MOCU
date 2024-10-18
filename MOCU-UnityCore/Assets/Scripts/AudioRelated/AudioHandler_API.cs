@@ -33,8 +33,9 @@ public partial class AudioHandler : MonoBehaviour
             Debug.LogError("Custom: 'SendTestAudioSignalToDevice' is unavailable right now");
             return;
         }
-        _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "PlayAudioFile_Command", extraData: new PlayAudioFile_CommandDetails(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
+        _daemon.SendCommand(new UnifiedCommandFrom_Client(name: "PlayAudioFile_Command", extraData: new PlayAudioClip_CommandDetails(audioFileName: audioFileName, audioOutputDeviceName: audioOutputDeviceName)));
     }
+
     public void PlayAudioClip(string clipName, string deviceName) { }
 }
 

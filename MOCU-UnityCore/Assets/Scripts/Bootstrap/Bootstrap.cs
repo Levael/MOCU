@@ -41,13 +41,13 @@ public class Bootstrap : MonoBehaviour
                 EnsureComponent<Console_DebugUiModuleHandler>(),
                 EnsureComponent<Fps_DebugUiModuleHandler>(),
             EnsureComponent<SettingsTabHandler>(),
-                EnsureComponent<Devices_SettingsUiModuleHandler>(),
+                /*EnsureComponent<Devices_SettingsUiModuleHandler>(),*/
 
             // MODULES
             EnsureComponent<ConfigHandler>(),       // important to be as high as possible
             EnsureComponent<StatusesHandler>(),
-            EnsureComponent<AudioHandler>(),
-            EnsureComponent<DaemonsHandler>(),
+            /*EnsureComponent<AudioHandler>(),*/    // TODO: working on it
+            /*EnsureComponent<DaemonsHandler>(),*/
             EnsureComponent<AnswerHandler>(),
             EnsureComponent<ControllersHandler>(),
             EnsureComponent<InputHandler>(),

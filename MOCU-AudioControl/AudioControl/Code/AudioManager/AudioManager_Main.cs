@@ -6,29 +6,22 @@ namespace AudioControl
 {
     public partial class AudioManager : IBusinessLogic_Server
     {
-        public event Action<UnifiedResponseFrom_Server> SendResponse;
-
         private AudioDevicesParameters audioDevicesParameters;
         private Dictionary<string, Action<UnifiedCommandFrom_Client>> commandsHandlers;
 
-        private IntercomStream incomingStream;
-        private IntercomStream outgoingStream;
-
         private string? pathToAudioFiles;
-        private Dictionary<string, byte[]>? preLoadedAudioFiles;
+        private Dictionary<string, float[]>? preLoadedAudioFiles;
         private List<string>? audioFileNames;
 
+        public event Action<UnifiedResponseFrom_Server> SendResponse;
 
         public AudioManager()
         {
             audioFileNames = new() { "test.mp3", "test2.mp3" }; // todo: maybe read it from config or unity, idk
 
-            audioDevicesParameters = new AudioDevicesParameters();
+            /*audioDevicesParameters = new AudioDevicesParameters();
             audioDevicesParameters.AudioDeviceHasChanged += UpdateIntercom;
-            audioDevicesParameters.SendLatestData += SendDataToClient;
-
-            incomingStream = new IntercomStream(direction: IntercomStreamDirection.Incoming);
-            outgoingStream = new IntercomStream(direction: IntercomStreamDirection.Outgoing);
+            audioDevicesParameters.SendLatestData += SendDataToClient;*/
 
             commandsHandlers = new()
             {

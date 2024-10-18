@@ -22,7 +22,7 @@ namespace AudioControl
 
         public AudioOutputDevice(MMDevice mmDevice, WaveFormat unifiedWaveFormat) : base(mmDevice, unifiedWaveFormat)
         {
-            player = new WasapiOut(device, AudioClientShareMode.Shared, false, latencyMs);
+            player = new WasapiOut(device, AudioClientShareMode.Shared, true, latencyMs);
 
             mixer = new MixingSampleProvider(waveFormat);
             bufferForIntercom = new BufferedWaveProvider(waveFormat);

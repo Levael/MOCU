@@ -12,30 +12,37 @@ namespace AudioControl
             preLoadedAudioFiles = new();
 
             foreach (var audioFileName in audioFileNames)
+                preLoadedAudioFiles.Add(audioFileName, LoadAudioFile(audioFileName));
+        }
+
+        private float[] LoadAudioFile(string audioFileName)
+        {
+            using var reader = new AudioFileReader(Path.Combine(pathToAudioFiles, audioFileName));
+            var resampler = new WdlResamplingSampleProvider(reader, audioDevicesParameters.unifiedWaveFormat.SampleRate);
+            var sampleProvider = resampler.ToStereo();
+
+            int totalSamples = (int)(reader.Length / sizeof(float));
+            var wholeFile = new float[totalSamples];
+            int totalSamplesRead = 0;
+
+            float[] readBuffer = new float[reader.WaveFormat.SampleRate * reader.WaveFormat.Channels];
+            int samplesRead;
+
+            while ((samplesRead = sampleProvider.Read(readBuffer, 0, readBuffer.Length)) > 0)
             {
-                using var reader = new AudioFileReader(Path.Combine(pathToAudioFiles, audioFileName));
-                var resampler = new WdlResamplingSampleProvider(reader, audioDevicesParameters.unifiedWaveFormat.SampleRate);
-                var sampleProvider = resampler.ToStereo();
-
-                var wholeFile = new List<byte>();
-
-                float[] readBuffer = new float[reader.WaveFormat.SampleRate * reader.WaveFormat.Channels];
-                byte[] byteBuffer = new byte[readBuffer.Length * 4];
-                int samplesRead;
-
-                while ((samplesRead = sampleProvider.Read(readBuffer, 0, readBuffer.Length)) > 0)
-                {
-                    Buffer.BlockCopy(readBuffer, 0, byteBuffer, 0, samplesRead * 4);
-                    wholeFile.AddRange(byteBuffer.Take(samplesRead * 4));
-                }
-
-                preLoadedAudioFiles.Add(audioFileName, wholeFile.ToArray());
+                Array.Copy(readBuffer, 0, wholeFile, totalSamplesRead, samplesRead);
+                totalSamplesRead += samplesRead;
             }
+
+            if (totalSamplesRead < totalSamples)
+                Array.Resize(ref wholeFile, totalSamplesRead);
+
+            return wholeFile;
         }
 
         private void UpdateIntercom()
         {
-            incomingStream.UpdateDevices(
+            /*incomingStream.UpdateDevices(
                 audioInputDevice: audioDevicesParameters.audioInputDevice_Participant,
                 audioOutputDevice: audioDevicesParameters.audioOutputDevice_Researcher
             );
@@ -43,7 +50,7 @@ namespace AudioControl
             outgoingStream.UpdateDevices(
                 audioInputDevice: audioDevicesParameters.audioInputDevice_Researcher,
                 audioOutputDevice: audioDevicesParameters.audioOutputDevice_Participant
-            );
+            );*/
         }
 
         /// <summary>
@@ -52,12 +59,17 @@ namespace AudioControl
         /// </summary>
         private void PlayAudioFile(PlayAudioFile_CommandDetails commandData)
         {
-            var audioData = preLoadedAudioFiles[commandData.audioFileName];
+            /*var audioData = preLoadedAudioFiles[commandData.audioFileName];
             var buffer = audioDevicesParameters.audioOutputsDictionary[commandData.audioOutputDeviceName].bufferForSingleAudioPlay;
 
             buffer.ClearBuffer();
-            buffer.AddSamples(audioData, 0, audioData.Length);
+            buffer.AddSamples(audioData, 0, audioData.Length);*/
         }
 
     }
 }
+
+
+/*
+ Да, конечно! Можно сделать так, чтобы сам ClipSampleProvider отслеживал окончание воспроизведения и генерировал событие. В таком случае вам не нужно создавать отдельный класс для микширования — вся логика удаления будет происходить в одном месте, при добавлении провайдера в MixingSampleProvider. Это позволит вам сохранять основную структуру кода и просто добавлять обработчик событий в провайдеры при их создании
+ */

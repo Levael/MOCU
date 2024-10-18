@@ -1,0 +1,93 @@
+﻿{
+  "GeneralConfigs": {
+    "OpenSecondTabInSecondMonitor": true,
+    "AccompanyTheErrorMessageWithSound": false,
+    "SaveLogs": true,
+    "ShowConfigDataInProtocolTable": false,
+    "NamesAreRequired": false,
+    "AddDebugCoordinatesToDataFile": false,
+    "MicrophonesVolumeIsChangeable": false
+  },
+
+  "ThemePalettes":  "dark",
+
+
+  "DevicesData": {
+    "Audio": {
+      "ResearcherOutput": {
+        "name": "Speakers (Realtek High Definition Audio)",
+        "volume": 77.0
+      },
+      "ResearcherInput": {
+        "name": "Microphone (fifine Microphone)",
+        "volume": null
+      },
+      "ParticipantOutput": {
+        "name": "Headphones (Rift Audio)",
+        "volume": 42.0
+      },
+      "ParticipantInput": {
+        "name": "Microphone (Rift Audio)",
+        "volume": null
+      }
+    },
+
+
+    "Controllers": [
+      {
+        "vendorId": "045e",
+        "productId": "028e",
+        "serialNumber": "123456789",
+        "deviceName": "Xbox Controller",
+        "usedBy": "Participant",
+        "choosedActionMaps": [ "Digital", "Analog", "Intercom" ]
+      },
+      {
+        "vendorId": "xxxx",
+        "productId": "yyyy",
+        "serialNumber": "987654321",
+        "deviceName": "PlayStation Controller",
+        "usedBy": "Researcher",
+        "choosedActionMaps": [ "Digital", "Intercom" ]
+      }
+    ]
+  },
+
+
+  "DirectoryPaths": {
+    "Protocols": "...",
+    "ExportData": "...",
+    "Logs": "...",
+    "Questionnaires": "..."
+  },
+
+
+  "ReseacherName": "Name",
+
+
+  "ProtocolData": {
+    "ProtocolType": "HeadingDiscrimination",
+    "Parameters": {
+      "AdaptationAngle": {
+        "value": 0,
+        "units": "angle",
+        "minValue": -5,
+        "maxValue": 5,
+        "increment": 5,
+        "multiplier": null,
+        "algorithm": "static",
+        "stepType": "linear"
+      },
+      "HeadingDirection": {
+        "value": 0,
+        "units": "angle",
+        "minValue": -5,
+        "maxValue": 5,
+        "increment": 5,
+        "multiplier": null,
+        "algorithm": "static",
+        "stepType": "linear"
+      }
+    }
+  }
+}

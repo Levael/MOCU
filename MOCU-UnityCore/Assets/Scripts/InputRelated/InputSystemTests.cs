@@ -64,6 +64,24 @@ public class InputSystemTests : MonoBehaviour, IControllableInitiation
 
     public void ControllableStart() { }
 
+    public void Bind(ActionMapName actionMapName, Enum actionEnum, InputControl control)
+    {
+        try
+        {
+            string actionMapString = actionMapName.ToString();
+            string actionString = actionEnum.ToString();
+
+            var mapping = ActualMapping[(actionMapString, actionString)];
+
+            var inputAction = mapping.personalHandler?.Target as InputAction;
+            inputAction.AddBinding(control.path);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"InputSystemTests.Bind - exception: {ex}");
+        }
+    }
+
 
 
 

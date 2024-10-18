@@ -21,7 +21,7 @@ namespace AudioControl
         {
             buffer = null;
 
-            receiver = new WasapiCapture(device);
+            receiver = new WasapiCapture(device, true, 10); // 10 is same latency as in WasapiOut
             receiver.DataAvailable += OnDataAvailable;
             receiver.WaveFormat = waveFormat;
         }

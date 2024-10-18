@@ -37,11 +37,11 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
 
         _daemonControlPaths = new()
         {
-            { Daemons.Audio, (
+            /*{ Daemons.Audio, (
                 fullPath: Path.Combine(Application.streamingAssetsPath, "Daemons/AudioControl.exe"),
                 isHidden: false,
                 businessLogic: GetComponent<AudioHandler>()
-            )},
+            )},*/
         };
     }
 
