@@ -64,10 +64,9 @@ namespace InterprocessCommunication
                 try
                 {
                     string message = await reader.ReadLineAsync();
+
                     if (message != null)
-                    {
                         MessageReceived?.Invoke(message);
-                    }
                 }
                 catch (OperationCanceledException)
                 {

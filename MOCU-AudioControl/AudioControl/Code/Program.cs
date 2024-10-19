@@ -1,19 +1,29 @@
 ﻿// dotnet publish -c Release
 
-using AudioControl;
 using InterprocessCommunication;
+using DaemonsRelated;
+using DaemonsRelated.Audio;
 
 class Program
 {
-    public async static Task Main(string[] args)
+    public void Main(string[] args)
     {
         try
         {
-            await new DaemonHandler_Server(
-                businessLogic: new AudioManager(),
-                argsFromCaller: args
-            //argsFromCaller: new string[] { "69", "AudioControl", "False" }    // for debug with manual start
-            ).StartDaemon();
+            var daemonSupervisor = new DaemonSupervisor(args);
+
+            if (!daemonSupervisor.IsValid())
+                daemonSupervisor.CloseProgram();
+
+            daemonSupervisor.SubscribeForParentProcessTermination();
+
+
+
+            var communicator    = new InterprocessCommunicator_Client(daemonSupervisor.DaemonName);
+            var hostAPI         = new AudioHostAPI(communicator);
+            var daemonLogic     = new AudioDaemon(hostAPI);
+
+            daemonLogic.Run();
         }
         catch (Exception ex)
         {

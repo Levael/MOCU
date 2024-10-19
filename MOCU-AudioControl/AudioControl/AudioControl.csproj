@@ -38,19 +38,20 @@
   
   <!-- Linked files -->
   <ItemGroup>
-    <Compile Include="$(Communicators)\InterprocessCommunicator_Base.cs"      Link="Linked code\Communicators\InterprocessCommunicator_Base.cs" />
-    <Compile Include="$(Communicators)\InterprocessCommunicator_Server.cs"    Link="Linked code\Communicators\InterprocessCommunicator_Server.cs" />
-    <Compile Include="$(Communicators)\InterprocessCommunicator_Interface.cs" Link="Linked code\Communicators\InterprocessCommunicator_Interface.cs" />
+    <Compile Include="$(DaemonHandlers)\DaemonHandler_Server.cs" Link="Linked code\DaemonHandlers\DaemonHandler_Server.cs" />
+    <Compile Include="$(DaemonHandlers)\IBusinessLogic_Server.cs" Link="Linked code\DaemonHandlers\IBusinessLogic_Server.cs" />
     
-    <Compile Include="$(DaemonHandlers)\DaemonHandler_Server.cs"              Link="Linked code\DaemonHandlers\DaemonHandler_Server.cs" />
-    <Compile Include="$(DaemonHandlers)\IBusinessLogic_Server.cs"             Link="Linked code\DaemonHandlers\IBusinessLogic_Server.cs" />
+    <Compile Include="$(DTOs)\UnifiedDataTransferObject.cs" Link="Linked code\DTOs\UnifiedDataTransferObject.cs" />
+    <Compile Include="$(DTOs)\UnifiedCommandFrom_Client.cs" Link="Linked code\DTOs\UnifiedCommandFrom_Client.cs" />
+    <Compile Include="$(DTOs)\UnifiedResponseFrom_Server.cs" Link="Linked code\DTOs\UnifiedResponseFrom_Server.cs" />
     
-    <Compile Include="$(DTOs)\UnifiedDataTransferObject.cs"                   Link="Linked code\DTOs\UnifiedDataTransferObject.cs" />
-    <Compile Include="$(DTOs)\UnifiedCommandFrom_Client.cs"                   Link="Linked code\DTOs\UnifiedCommandFrom_Client.cs" />
-    <Compile Include="$(DTOs)\UnifiedResponseFrom_Server.cs"                  Link="Linked code\DTOs\UnifiedResponseFrom_Server.cs" />
-    
-    <Compile Include="$(UnityDaemonsCommon)\CommonUtilities.cs"               Link="Linked code\CommonUtilities.cs" />
-    <Compile Include="$(DaemonsOnlyCommon)\DaemonsUtilities.cs"               Link="Linked code\DaemonsUtilities.cs" />
+    <Compile Include="$(UnityDaemonsCommon)\CommonUtilities.cs" Link="Linked code\CommonUtilities.cs" />
+    <Compile Include="$(DaemonsOnlyCommon)\DaemonsUtilities.cs" Link="Linked code\DaemonsUtilities.cs" />
+
+
+
+    <Compile Include="$(DaemonsRelated)\DaemonSide\**\*.cs" Link="Linked code\DaemonSide\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="$(Communicators)\**\*.cs" Link="Linked code\Communicators\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- Libraries -->
@@ -78,6 +79,7 @@
   <!-- Libraries -->
   <ItemGroup>
     <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
   </ItemGroup>
 
 </Project>
