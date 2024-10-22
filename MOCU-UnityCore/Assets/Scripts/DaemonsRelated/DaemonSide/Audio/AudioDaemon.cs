@@ -4,15 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace DaemonsRelated.Audio
 {
     public class AudioDaemon : IDaemonLogic
     {
-        public AudioDaemon(AudioHostAPI hostAPI)
-        {
+        private AudioHostBridge _hostAPI;
 
+        public AudioDaemon(AudioHostBridge hostAPI)
+        {
+            _hostAPI = hostAPI;
         }
 
-        public void Run() { }
+        public void Run()
+        {
+            _hostAPI.StartCommunication();
+        }
     }
 }

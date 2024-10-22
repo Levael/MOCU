@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PortFinder")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cdc7bd59b095dc6edc1d54a3a94ed857b2285778")]
 [assembly: System.Reflection.AssemblyProductAttribute("PortFinder")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PortFinder")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

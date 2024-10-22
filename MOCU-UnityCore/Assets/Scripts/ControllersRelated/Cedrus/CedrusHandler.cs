@@ -76,7 +76,7 @@ public class CedrusHandler : IControllerDevice
         IsInUse = isInUse;
         _baudRate = 9600;
         _targetDeviceId = @"FTDIBUS\VID_0403+PID_6001";
-        _portFinderAppPath = "Daemons/PortFinder.exe";
+        _portFinderAppPath = "DaemonType/PortFinder.exe";
         _checkPortConnectionReadTimeout = 0;
         _readDataFromPortTimeInterval = TimeSpan.FromMilliseconds(10);
         _checkPortConnectionTimeInterval = TimeSpan.FromMilliseconds(100);

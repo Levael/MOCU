@@ -68,7 +68,7 @@ namespace DaemonsRelated
             };
         }
 
-        public void SubscribeForParentProcessTermination_alternative()
+        /*public void SubscribeForParentProcessTermination_alternative()
         {
             string query = $"SELECT * FROM Win32_ProcessStopTrace WHERE ProcessID = {_parentProcessId}";
             var watcher = new ManagementEventWatcher(new WqlEventQuery(query));
@@ -78,7 +78,7 @@ namespace DaemonsRelated
                 CloseProgram();
             });
             watcher.Start();
-        }
+        }*/
 
         public void CloseProgram()
         {
@@ -99,7 +99,7 @@ namespace DaemonsRelated
         }
 
         // temp here
-        private static void PrintDebugInfo(string info)
+        /*private static void PrintDebugInfo(string info)
         {
             StackTrace stackTrace = new StackTrace();
 
@@ -110,6 +110,6 @@ namespace DaemonsRelated
 
                 Console.WriteLine($"{new string(' ', i * 2)}{method.DeclaringType}.{method.Name}: '{info}'");
             }
-        }
+        }*/
     }
 }

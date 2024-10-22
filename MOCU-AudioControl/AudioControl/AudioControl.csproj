@@ -25,33 +25,15 @@
   <!-- Paths for external files -->
   <PropertyGroup>
     <MocuScriptsPath>..\..\MOCU-UnityCore\Assets\Scripts</MocuScriptsPath>
-    
     <DaemonsRelated>$(MocuScriptsPath)\DaemonsRelated</DaemonsRelated>
-    <UnityDaemonsCommon>$(DaemonsRelated)\UnityDaemonsCommon</UnityDaemonsCommon>
-    <DaemonsOnlyCommon>$(DaemonsRelated)\DaemonsOnlyCommon</DaemonsOnlyCommon>
-    <InterprocessCommunication>$(DaemonsRelated)\InterprocessCommunication</InterprocessCommunication>
-    <Communicators>$(InterprocessCommunication)\Communicators</Communicators>
-    <DaemonHandlers>$(InterprocessCommunication)\DaemonHandlers</DaemonHandlers>
-    <DTOs>$(InterprocessCommunication)\DTOs</DTOs>
   </PropertyGroup>
-
   
   <!-- Linked files -->
   <ItemGroup>
-    <Compile Include="$(DaemonHandlers)\DaemonHandler_Server.cs" Link="Linked code\DaemonHandlers\DaemonHandler_Server.cs" />
-    <Compile Include="$(DaemonHandlers)\IBusinessLogic_Server.cs" Link="Linked code\DaemonHandlers\IBusinessLogic_Server.cs" />
-    
-    <Compile Include="$(DTOs)\UnifiedDataTransferObject.cs" Link="Linked code\DTOs\UnifiedDataTransferObject.cs" />
-    <Compile Include="$(DTOs)\UnifiedCommandFrom_Client.cs" Link="Linked code\DTOs\UnifiedCommandFrom_Client.cs" />
-    <Compile Include="$(DTOs)\UnifiedResponseFrom_Server.cs" Link="Linked code\DTOs\UnifiedResponseFrom_Server.cs" />
-    
-    <Compile Include="$(UnityDaemonsCommon)\CommonUtilities.cs" Link="Linked code\CommonUtilities.cs" />
-    <Compile Include="$(DaemonsOnlyCommon)\DaemonsUtilities.cs" Link="Linked code\DaemonsUtilities.cs" />
-
-
-
-    <Compile Include="$(DaemonsRelated)\DaemonSide\**\*.cs" Link="Linked code\DaemonSide\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="$(Communicators)\**\*.cs" Link="Linked code\Communicators\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="$(DaemonsRelated)\Common\**\*.cs" Link="Linked code\DaemonsRelated\Common\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="$(DaemonsRelated)\DaemonSide\DaemonSupervisor.cs" Link="Linked code\DaemonsRelated\DaemonSupervisor.cs" />
+    <Compile Include="$(DaemonsRelated)\DaemonSide\IDaemonLogic.cs" Link="Linked code\DaemonsRelated\IDaemonLogic.cs" />
+    <Compile Include="$(DaemonsRelated)\DaemonSide\IHostAPI.cs" Link="Linked code\DaemonsRelated\IHostAPI.cs" />
   </ItemGroup>
 
   <!-- Libraries -->
@@ -66,7 +48,8 @@
   
   <!-- Linked files -->
   <ItemGroup>
-    <Compile Include="$(DaemonsRelated)\AudioControl\AudioCommunicationModel.cs" Link="Linked code\AudioCommunicationModel.cs" />
+    <Compile Include="$(DaemonsRelated)\DaemonSide\Audio\**\*.cs" Link="Linked code\DaemonsRelated\Audio\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="$(MocuScriptsPath)AudioRelated\**\*.cs" Link="Linked code\AudioRelated\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   
 
