@@ -44,6 +44,7 @@ public class Bootstrap : MonoBehaviour
                 EnsureComponent<Devices_SettingsUiModuleHandler>(),
 
             // MODULES
+            EnsureComponent<AudioHandler_new>(),    // in test mode
             EnsureComponent<ConfigHandler>(),       // important to be as high as possible
             EnsureComponent<StatusesHandler>(),
             EnsureComponent<AudioHandler>(),

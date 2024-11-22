@@ -10,11 +10,12 @@ Cedrus GIT: https://github.com/cedrus-opensource
 
 Notes:
 - ABOUT GENERAL:
-	- Edit/ProjectSettings/ScriptExecutionOrder for managing scipts execution order
+	- Edit/ProjectSettings/ScriptExecutionOrder for managing scripts execution order
 	(important, for example, to run config manager earlier than dependent on him scripts)
 	- About FPS: VR platforms ignore both QualitySettings.vSyncCount and Application.targetFrameRate. Instead, the VR SDK controls the frame rate
 	(which means you can control app fps but not while VR is active)
 	- sometimes Unity just F*CKING IGNORS EXCEPTIONS and continues its execution without any console notification (try catch DO help)
+	- interposes communication is now done via NamedPipes. If higher speed will be needed - switch to SharedMemory (faster but more complicated).
 - ABOUT EXTERNAL APPLICATIONS (audio and port finder):
 	- do not specify that the project is for Windows, otherwise the file size will increase from 64mb to 150mb
 	- project settings should be something like:
@@ -42,9 +43,9 @@ Notes:
 		- intercom participant to researcher -- 165ms
 		- play single Console.Beep() 	     -- 110ms
 - ABOUT CEDRUS:
-	- needs System.IO.Ports, which needs .Net Framework (not .net Standart 2.1)
+	- needs System.IO.Ports, which needs .Net Framework (not .net Standard 2.1)
 - ABOUT DISPLAYS:
 	- in Unity Editor there is always only 1 display. Real number can be get only in build version
 - ABOUT FIFINE MICROPHONE:
 	- better sound with "B" symbol -- bidirectional
-	- a;so make sure it is not muted (touch button on itself on the top. green - works, red - muted)
+	- also make sure it is not muted (touch button on itself on the top. green - works, red - muted)

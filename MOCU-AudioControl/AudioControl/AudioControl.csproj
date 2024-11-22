@@ -13,7 +13,8 @@
     <Nullable>enable</Nullable>
     <Optimize>true</Optimize>
 
-    <DebugType>none</DebugType>     <!-- To prevent the generation of a debug file in the publish folder -->
+    <StartupObject>Program</StartupObject>
+    <DebugType>none</DebugType>
     <PublishDir>$(MSBuildProjectDirectory)\</PublishDir>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>
@@ -30,10 +31,10 @@
   
   <!-- Linked files -->
   <ItemGroup>
-    <Compile Include="$(DaemonsRelated)\Common\**\*.cs" Link="Linked code\DaemonsRelated\Common\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="$(DaemonsRelated)\DaemonSide\DaemonSupervisor.cs" Link="Linked code\DaemonsRelated\DaemonSupervisor.cs" />
-    <Compile Include="$(DaemonsRelated)\DaemonSide\IDaemonLogic.cs" Link="Linked code\DaemonsRelated\IDaemonLogic.cs" />
-    <Compile Include="$(DaemonsRelated)\DaemonSide\IHostAPI.cs" Link="Linked code\DaemonsRelated\IHostAPI.cs" />
+    <Compile Include="$(DaemonsRelated)\CommonPart\**\*.cs" Link="Linked code\DaemonsRelated\CommonPart\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="$(DaemonsRelated)\DaemonPart\**\*.cs" Link="Linked code\DaemonsRelated\DaemonPart\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <Compile Remove="$(DaemonsRelated)\CommonPart\InterprocessCommunicator\InterprocessCommunicator_UnityServer.cs" />
   </ItemGroup>
 
   <!-- Libraries -->
@@ -48,21 +49,24 @@
   
   <!-- Linked files -->
   <ItemGroup>
-    <Compile Include="$(DaemonsRelated)\DaemonSide\Audio\**\*.cs" Link="Linked code\DaemonsRelated\Audio\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="$(MocuScriptsPath)AudioRelated\**\*.cs" Link="Linked code\AudioRelated\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="$(MocuScriptsPath)\AudioRelated\CommonPart\**\*.cs" Link="Linked code\AudioRelated\CommonPart\%(RecursiveDir)%(Filename)%(Extension)" />
+    <!-- temp -->    <Compile Remove="Code\AudioDevices\**" />
+    <!-- temp -->    <Compile Remove="Code\AudioManager\**" />
+    <!-- temp -->    <Compile Remove="Code\Intercom\**" />
   </ItemGroup>
-  
-
-  <!-- NAudio uses some stuff that are incompatible with "PublishSingleFile SelfContained" compilation. Therefore this setting solves the problem -->
-  <ItemGroup>
-    <RuntimeHostConfigurationOption Include="System.Runtime.InteropServices.BuiltInComInterop.IsSupported" Value="true" />
-  </ItemGroup>
-
   
   <!-- Libraries -->
   <ItemGroup>
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="System.Management" Version="8.0.0" />
+  </ItemGroup>
+  
+  <!-- NAudio uses some stuff that are incompatible with "PublishSingleFile SelfContained" compilation. Therefore this setting solves the problem -->
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Runtime.InteropServices.BuiltInComInterop.IsSupported" Value="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

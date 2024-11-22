@@ -75,7 +75,7 @@ namespace InterprocessCommunication
         
         public async Task StartDaemon()
         {
-            await _communicator.StartAsync();
+            /*await _communicator.Start();*/
 
             _commandExecutionTask = Task.Run(() => ExecuteCommands(_cancellationTokenSource.Token));
             _responseSendingTask = Task.Run(() => SendResponses(_cancellationTokenSource.Token));
