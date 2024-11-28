@@ -10,6 +10,8 @@ namespace InterprocessCommunication
 {
     public abstract class InterprocessCommunicator_Base : IInterprocessCommunicator
     {
+        public bool IsOperational { get; private set; }
+
         protected StreamWriter writer;
         protected StreamReader reader;
         protected CancellationTokenSource cancellationTokenSource;
@@ -39,6 +41,7 @@ namespace InterprocessCommunication
             pipeName_serverWritesClientReads = $"{pipeName}S2C";
 
             _connectionEstablished = new TaskCompletionSource<bool>();
+            IsOperational = false;
         }
 
         public virtual void Start()
@@ -50,6 +53,7 @@ namespace InterprocessCommunication
 
             ConnectionEstablished?.Invoke();
             _connectionEstablished.TrySetResult(true);
+            IsOperational = true;
         }
 
         public async Task<string?> WaitForFirstError()
@@ -66,6 +70,7 @@ namespace InterprocessCommunication
             }
             catch (Exception ex)
             {
+                Dispose();
                 return $"Unhandled exception: {ex.Message}";
             }
         }
@@ -95,20 +100,23 @@ namespace InterprocessCommunication
         public void OnConnectionBroked(string reason)
         {
             ConnectionBroked?.Invoke(reason);
-            cancellationTokenSource.Cancel();
+            Dispose();
         }
 
         public void SendMessage(string message)
         {
             try
             {
+                if (!IsOperational)
+                    return;
+
                 outputMessagesQueue.Add(message);
                 MessageSent?.Invoke(message);   // Happens in the calling method's thread
             }
             catch (Exception ex)
             {
                 ConnectionBroked?.Invoke($"Error occurred while trying to send (API) a message: {ex}");
-                cancellationTokenSource.Cancel();
+                Dispose();
             }
             
         }
@@ -132,7 +140,7 @@ namespace InterprocessCommunication
             catch (Exception ex)
             {
                 ConnectionBroked?.Invoke($"Error occurred while trying to read a message: {ex}");
-                cancellationTokenSource.Cancel();
+                Dispose();
             }
         }
 
@@ -149,7 +157,7 @@ namespace InterprocessCommunication
             catch (Exception ex)
             {
                 ConnectionBroked?.Invoke($"Error occurred while trying to send (write) a message: {ex}");
-                cancellationTokenSource.Cancel();
+                Dispose();
             }
         }
 
@@ -170,6 +178,10 @@ namespace InterprocessCommunication
 
         public virtual void Dispose()
         {
+            if (IsOperational)
+                ConnectionBroked?.Invoke($"Called from 'InterprocessCommunicator_Base.Dispose'");
+
+            IsOperational = false;
             cancellationTokenSource.Cancel();
 
             reader?.Dispose();

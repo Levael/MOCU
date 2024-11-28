@@ -17,12 +17,11 @@ namespace DaemonsRelated
         private bool _isInDebugMode;
 
         private List<string> _terminationReasons;
-        private ManualResetEvent _terminationEvent;
 
         public DaemonSupervisor(string[] arguments)
         {
             _arguments = arguments;
-            _terminationEvent = new ManualResetEvent(false);
+            _terminationReasons = new List<string>();
         }
 
         public string DaemonName => _daemonName;
@@ -56,7 +55,7 @@ namespace DaemonsRelated
             _daemonName = _arguments[1];
             _isInDebugMode = !isHidden;
 
-            Console.WriteLine($"_isInDebugMode; {_isInDebugMode}");
+            Console.WriteLine($"Is in debug mode: {_isInDebugMode}");
 
             return true;
         }
@@ -71,11 +70,6 @@ namespace DaemonsRelated
                 _terminationReasons.Add("Parent process terminated");
                 CloseProgram();
             };
-        }
-
-        public void WaitForProgramFinish()
-        {
-            _terminationEvent.WaitOne();
         }
 
         /*public void SubscribeForParentProcessTermination_alternative()
@@ -106,7 +100,7 @@ namespace DaemonsRelated
                 Console.ReadKey();
             }
 
-            //Environment.Exit(1);
+            Environment.Exit(1);
         }
 
         // temp here

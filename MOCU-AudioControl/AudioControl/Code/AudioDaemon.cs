@@ -18,16 +18,12 @@ namespace AudioModule.Daemon
 
         public AudioDaemon(IInterprocessCommunicator communicator)
         {
-            Console.WriteLine("start of AudioDaemon constructor");
             _hostAPI = new AudioDaemonSideBridge(communicator);
-            Console.WriteLine("end of AudioDaemon constructor");
         }
 
         public void Run()
         {
-            Console.WriteLine("start of AudioDaemon Run");
             _hostAPI.StartCommunication();
-            Console.WriteLine("end of AudioDaemon Run");
         }
 
         private void Terminate(string reason)

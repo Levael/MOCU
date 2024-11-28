@@ -31,27 +31,14 @@ class Program
 
             communicator.ConnectionBroked += daemonSupervisor.CloseProgram;
             daemonLogic.TerminateDaemon += daemonSupervisor.CloseProgram;
+
             daemonLogic.Run();
-
-            Console.Beep(1000, 500);
-
-            Console.WriteLine("Daemon started");
             var terminationReason = await communicator.WaitForFirstError();
-            Console.WriteLine($"Daemon ended: {terminationReason}");
-
-            Console.Beep(2000, 500);
-            //Thread.Sleep(Timeout.Infinite);
-            /*Thread.Sleep(Timeout.Infinite);
-            Console.WriteLine("Daemon ended");*/
-            /*await communicator.WaitForFirstError();
-            Thread.Sleep(5000);
-            Console.WriteLine("Daemon ended?");*/
-            //daemonSupervisor.WaitForProgramFinish();
+            daemonSupervisor.CloseProgram(terminationReason);
         }
         catch (Exception ex)
         {
-            // not 'daemonSupervisor.CloseProgram()' because it can be a problem itself
-            Console.WriteLine("error: " + ex.ToString());
+            Console.WriteLine("Unhandled error: " + ex.ToString());
             Console.ReadKey();
         }
     }

@@ -5,6 +5,7 @@ namespace InterprocessCommunication
 {
     public interface IInterprocessCommunicator : IDisposable
     {
+        bool IsOperational { get; }
         void Start();
         void SendMessage(string message);
 

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class UnityMainThreadDispatcher : MonoBehaviour, IFullyControllable
 {
-    private static readonly ConcurrentQueue<Action> _executionQueue = new ConcurrentQueue<Action>();
+    private static readonly ConcurrentQueue<Action> _executionQueue = new();
     public bool IsComponentReady {  get; private set; }
 
 
@@ -19,7 +19,7 @@ public class UnityMainThreadDispatcher : MonoBehaviour, IFullyControllable
     public void ControllableUpdate()
     {
         while (_executionQueue.TryDequeue(out var action))
-            action.Invoke();
+            action?.Invoke();
     }
 
     public static void Enqueue(Action action)

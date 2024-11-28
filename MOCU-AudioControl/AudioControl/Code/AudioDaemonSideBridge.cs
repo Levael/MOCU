@@ -17,16 +17,16 @@ namespace AudioModule.Daemon
         public AudioDaemonSideBridge(IInterprocessCommunicator communicator)
         {
             _communicator = communicator;
-            _communicator.MessageReceived += message => Console.WriteLine($"Got message from host: {message}");
+
+            _communicator.MessageReceived += message => { Console.WriteLine($"Got message from host: {message}"); _communicator.SendMessage($"got from u: {message}"); };
+            _communicator.MessageSent += message => Console.WriteLine($"Sent message to host: {message}");
             _communicator.ConnectionEstablished += () => Console.WriteLine($"Connection established");
             _communicator.ConnectionBroked += reason => Console.WriteLine($"Connection broked: {reason}");
         }
 
         public void StartCommunication()
         {
-            Console.WriteLine("start of AudioDaemonSideBridge StartCommunication");
             _communicator.Start();
-            Console.WriteLine("end of AudioDaemonSideBridge StartCommunication");
         }
 
         public void AudioClipsHaveChanged(IEnumerable<AudioClipData> clipsData)

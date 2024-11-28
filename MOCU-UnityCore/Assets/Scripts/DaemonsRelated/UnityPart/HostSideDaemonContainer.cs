@@ -43,49 +43,41 @@ namespace DaemonsRelated
             };
 
             _process = new Process() { StartInfo = processInfo };
-
             _communicator = new InterprocessCommunicator_UnityServer(name);
-            _communicator.MessageReceived += message => this.MessageReceived?.Invoke(message);
-            _communicator.MessageSent += message => this.MessageSent?.Invoke(message);
 
-            // not sure if it will work
-            //_communicator.MessageReceived += this.MessageReceived;
-            //_communicator.MessageSent += this.MessageSent;
+            // for debug purposes
+            _communicator.MessageReceived += this.MessageReceived;
+            _communicator.MessageSent += this.MessageSent;
         }
 
-        public void Start()
+        public async void Start()
         {
             // 'communicator' must be before 'process' (because it's on the sever side. On the client, it's the opposite)
 
-            Task.Run(() => _communicator.Start());
-            Thread.Sleep(2000);
-            Task.Run(() => _process.Start());
+            try
+            {
+                var communicator = _communicator as InterprocessCommunicator_Server;
+                _ = Task.Run(() => communicator.Start());
+                await communicator.WaitForServerReadyForClientConnectionAsync();
+                _ = Task.Run(() => _process.Start());
+            }
+            catch (Exception ex)
+            {
+                Stop();
+            }
         }
 
         public void Stop()
         {
             _communicator.Dispose();
-            _process.Kill();
-            _process.Close();
+            // todo: in "release" uncomment
+            /*_process.Kill();
+            _process.Close();*/
         }
 
         public IInterprocessCommunicator GetCommunicator()
         {
             return _communicator;
         }
-
-        private void OnMessageReceived() { }
-        private void OnMessageSent() { }
     }
 }
-
-/*
- 
-public Process GetDaemonProcess(DaemonType daemonType)
-    {
-        
-
-        return process;
-    }
-
- */

@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace InterprocessCommunication
 {
-    public class InterprocessCommunicator_UnityServer : InterprocessCommunicator_Server
+    public class InterprocessCommunicator_UnityServer : InterprocessCommunicator_Server, IInterprocessCommunicator
     {
         public InterprocessCommunicator_UnityServer(string pipeName) : base(pipeName) { }
 
@@ -31,7 +31,7 @@ namespace InterprocessCommunication
             {
                 base.MessageReceived += (message) =>
                 {
-                    UnityMainThreadDispatcher.Enqueue(() => value.Invoke(message));
+                    UnityMainThreadDispatcher.Enqueue(() => value?.Invoke(message));
                 };
             }
             remove

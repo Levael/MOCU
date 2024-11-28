@@ -14,6 +14,11 @@ namespace AudioModule
         public AudioHostSideBridge(IInterprocessCommunicator communicator)
         {
             _communicator = communicator;
+
+            _communicator.MessageReceived += message => UnityEngine.Debug.Log($"Got message from daemon: {message}");
+            _communicator.MessageSent += message => UnityEngine.Debug.Log($"Sent message to daemon: {message}");
+            _communicator.ConnectionEstablished += () => UnityEngine.Debug.Log($"Connection established");
+            _communicator.ConnectionBroked += reason => UnityEngine.Debug.Log($"Connection broked: {reason}");
         }
 
         public event Action<IEnumerable<AudioDeviceData>> AudioDevicesHaveChanged;

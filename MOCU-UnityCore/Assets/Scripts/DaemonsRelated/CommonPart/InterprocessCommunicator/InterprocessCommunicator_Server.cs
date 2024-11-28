@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Pipes;
 using System.Threading.Tasks;
 
@@ -7,6 +8,9 @@ namespace InterprocessCommunication
 {
     public class InterprocessCommunicator_Server : InterprocessCommunicator_Base
     {
+        private readonly TaskCompletionSource<bool> _serverIsReadyForClientConnection = new();
+        public Task WaitForServerReadyForClientConnectionAsync() => _serverIsReadyForClientConnection.Task;
+
         private NamedPipeServerStream readPipe;
         private NamedPipeServerStream writePipe;
 
@@ -21,11 +25,24 @@ namespace InterprocessCommunication
 
         public override async void Start()
         {
-            var readConnectionTask = readPipe.WaitForConnectionAsync();
-            var writeConnectionTask = writePipe.WaitForConnectionAsync();
+            try
+            {
+                if (IsOperational)
+                    throw new InvalidOperationException("The communicator is already running.");
 
-            await Task.WhenAll(readConnectionTask, writeConnectionTask);
-            base.Start();
+                var readConnectionTask = readPipe.WaitForConnectionAsync();
+                var writeConnectionTask = writePipe.WaitForConnectionAsync();
+
+                // Now client side may try to connect
+                _serverIsReadyForClientConnection.SetResult(true);
+
+                await Task.WhenAll(readConnectionTask, writeConnectionTask);
+                base.Start();
+            }
+            catch
+            {
+                Dispose();
+            }
         }
 
         public override void Dispose()
