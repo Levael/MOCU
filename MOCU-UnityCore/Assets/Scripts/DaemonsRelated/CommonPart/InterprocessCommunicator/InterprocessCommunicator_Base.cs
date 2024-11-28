@@ -10,7 +10,12 @@ namespace InterprocessCommunication
 {
     public abstract class InterprocessCommunicator_Base : IInterprocessCommunicator
     {
-        public bool IsOperational { get; private set; }
+        private volatile bool _isOperational;
+        public bool IsOperational
+        {
+            get => _isOperational;
+            private set => _isOperational = value;
+        }
 
         protected StreamWriter writer;
         protected StreamReader reader;
@@ -99,7 +104,12 @@ namespace InterprocessCommunication
 
         public void OnConnectionBroked(string reason)
         {
-            ConnectionBroked?.Invoke(reason);
+            if (IsOperational)
+            {
+                IsOperational = false;
+                ConnectionBroked?.Invoke(reason);
+            }
+                
             Dispose();
         }
 
@@ -115,8 +125,7 @@ namespace InterprocessCommunication
             }
             catch (Exception ex)
             {
-                ConnectionBroked?.Invoke($"Error occurred while trying to send (API) a message: {ex}");
-                Dispose();
+                OnConnectionBroked($"Error occurred while trying to send (API) a message: {ex}");
             }
             
         }
@@ -139,8 +148,7 @@ namespace InterprocessCommunication
             }
             catch (Exception ex)
             {
-                ConnectionBroked?.Invoke($"Error occurred while trying to read a message: {ex}");
-                Dispose();
+                OnConnectionBroked($"Error occurred while trying to read a message: {ex}");
             }
         }
 
@@ -156,8 +164,7 @@ namespace InterprocessCommunication
             }
             catch (Exception ex)
             {
-                ConnectionBroked?.Invoke($"Error occurred while trying to send (write) a message: {ex}");
-                Dispose();
+                OnConnectionBroked($"Error occurred while trying to send (write) a message: {ex}");
             }
         }
 

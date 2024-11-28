@@ -70,9 +70,14 @@ namespace DaemonsRelated
         public void Stop()
         {
             _communicator.Dispose();
-            // todo: in "release" uncomment
-            /*_process.Kill();
-            _process.Close();*/
+
+            if (_isHidden)
+            {
+                _process.Kill();
+                _process.Close();
+            }
+
+            // If not -- the console does not close itself and you can read the error message(s)
         }
 
         public IInterprocessCommunicator GetCommunicator()

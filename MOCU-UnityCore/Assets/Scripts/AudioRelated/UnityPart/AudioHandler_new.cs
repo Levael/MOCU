@@ -24,7 +24,7 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
     private Dictionary<AudioClipName, AudioClipData> _clips;
     private Dictionary<(Guid fromDevice, Guid toDevice), AudioIntercomData> _intercoms;
 
-    // utiny components
+    // unity components
     private DaemonsHandler _daemonsHandler;
     private DebugTabHandler _debugTabHandler;
 
