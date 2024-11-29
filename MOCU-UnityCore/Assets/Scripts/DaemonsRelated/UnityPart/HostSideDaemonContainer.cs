@@ -13,7 +13,7 @@ namespace DaemonsRelated
 {
     public class HostSideDaemonContainer
     {
-        public bool isRunning => _process?.HasExited == false;
+        public bool isRunning => _process?.HasExited == false && _communicator?.IsOperational == true;
         public DaemonType type;
         public string name;
 
@@ -46,8 +46,8 @@ namespace DaemonsRelated
             _communicator = new InterprocessCommunicator_UnityServer(name);
 
             // for debug purposes
-            _communicator.MessageReceived += this.MessageReceived;
-            _communicator.MessageSent += this.MessageSent;
+            _communicator.MessageReceived += message => this.MessageReceived?.Invoke(message);
+            _communicator.MessageSent += message => this.MessageSent?.Invoke(message);
         }
 
         public async void Start()
@@ -61,7 +61,7 @@ namespace DaemonsRelated
                 await communicator.WaitForServerReadyForClientConnectionAsync();
                 _ = Task.Run(() => _process.Start());
             }
-            catch (Exception ex)
+            catch
             {
                 Stop();
             }

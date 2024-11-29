@@ -45,9 +45,9 @@ namespace InterprocessCommunication
 
         public override void Dispose()
         {
-            base.Dispose();
-            readPipe.Dispose();
-            writePipe.Dispose();
+            try { base.Dispose(); } catch { }
+            try { readPipe.Dispose(); } catch { }
+            try { writePipe.Dispose(); } catch { }
         }
     }
 }

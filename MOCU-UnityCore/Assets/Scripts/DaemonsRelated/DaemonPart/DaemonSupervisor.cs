@@ -5,6 +5,9 @@ using System.Management;
 using System.Reflection;
 using System.Threading;
 
+using InterprocessCommunication;
+using DaemonsRelated.DaemonPart;
+
 
 namespace DaemonsRelated
 {
@@ -72,17 +75,27 @@ namespace DaemonsRelated
             };
         }
 
-        /*public void SubscribeForParentProcessTermination_alternative()
+        public void RunProgram(IInterprocessCommunicator communicator, IHostAPI hostAPI, IDaemonLogic daemonLogic)
         {
-            string query = $"SELECT * FROM Win32_ProcessStopTrace WHERE ProcessID = {_parentProcessId}";
-            var watcher = new ManagementEventWatcher(new WqlEventQuery(query));
-            watcher.EventArrived += new EventArrivedEventHandler((s, e) =>
+            communicator.ConnectionBroked += CloseProgram;
+            hostAPI.TerminateDaemon += CloseProgram;
+            daemonLogic.TerminateDaemon += CloseProgram;
+
+            AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
             {
-                _terminationReasons.Add("Parent process terminated");
-                CloseProgram();
-            });
-            watcher.Start();
-        }*/
+                Console.WriteLine("Application is exiting...");
+
+                communicator.ConnectionBroked -= CloseProgram;
+                hostAPI.TerminateDaemon -= CloseProgram;
+                daemonLogic.TerminateDaemon -= CloseProgram;
+
+                daemonLogic?.DoBeforeExit();
+                communicator?.Dispose();
+            };
+
+            daemonLogic.Run();
+            Thread.Sleep(Timeout.Infinite);
+        }
 
         public void CloseProgram(string? reason = null)
         {
@@ -102,19 +115,5 @@ namespace DaemonsRelated
 
             Environment.Exit(1);
         }
-
-        // temp here
-        /*private static void PrintDebugInfo(string info)
-        {
-            StackTrace stackTrace = new StackTrace();
-
-            for (int i = 0; i < stackTrace.FrameCount; i++)
-            {
-                StackFrame frame = stackTrace.GetFrame(i);
-                MethodBase method = frame.GetMethod();
-
-                Console.WriteLine($"{new string(' ', i * 2)}{method.DeclaringType}.{method.Name}: '{info}'");
-            }
-        }*/
     }
 }

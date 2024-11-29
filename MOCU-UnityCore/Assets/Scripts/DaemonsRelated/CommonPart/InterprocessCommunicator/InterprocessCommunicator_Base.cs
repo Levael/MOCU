@@ -23,12 +23,13 @@ namespace InterprocessCommunication
         protected BlockingCollection<string> inputMessagesQueue;
         protected BlockingCollection<string> outputMessagesQueue;
 
+        private string _pipeName;
         protected string pipeName_clientWritesServerReads;
         protected string pipeName_serverWritesClientReads;
 
         public event Action<string> MessageReceived;
         public event Action<string> MessageSent;
-        public event Action ConnectionEstablished;
+        public event Action<string> ConnectionEstablished;
         public event Action<string> ConnectionBroked;
 
         private Task _readLoop;
@@ -38,12 +39,14 @@ namespace InterprocessCommunication
 
         public InterprocessCommunicator_Base(string pipeName)
         {
+            _pipeName = pipeName;
+
             cancellationTokenSource = new CancellationTokenSource();
             inputMessagesQueue = new BlockingCollection<string>();
             outputMessagesQueue = new BlockingCollection<string>();
 
-            pipeName_clientWritesServerReads = $"{pipeName}C2S";
-            pipeName_serverWritesClientReads = $"{pipeName}S2C";
+            pipeName_clientWritesServerReads = $"{_pipeName}C2S";
+            pipeName_serverWritesClientReads = $"{_pipeName}S2C";
 
             _connectionEstablished = new TaskCompletionSource<bool>();
             IsOperational = false;
@@ -56,7 +59,7 @@ namespace InterprocessCommunication
             _executionLoop = Task.Run(() => ExecutionLoop());
             //Task.Run(() => MonitorConnection(cancellationTokenSource.Token));
 
-            ConnectionEstablished?.Invoke();
+            ConnectionEstablished?.Invoke($"Pipe name: {_pipeName}");
             _connectionEstablished.TrySetResult(true);
             IsOperational = true;
         }
@@ -96,11 +99,6 @@ namespace InterprocessCommunication
             }
         }*/
 
-
-        public void OnConnectionEstablished()
-        {
-            ConnectionEstablished?.Invoke();
-        }
 
         public void OnConnectionBroked(string reason)
         {
@@ -189,15 +187,15 @@ namespace InterprocessCommunication
                 ConnectionBroked?.Invoke($"Called from 'InterprocessCommunicator_Base.Dispose'");
 
             IsOperational = false;
-            cancellationTokenSource.Cancel();
+            cancellationTokenSource?.Cancel();
 
             reader?.Dispose();
             writer?.Dispose();
 
-            inputMessagesQueue.Dispose();
-            outputMessagesQueue.Dispose();
+            inputMessagesQueue?.Dispose();
+            outputMessagesQueue?.Dispose();
 
-            cancellationTokenSource.Dispose();
+            cancellationTokenSource?.Dispose();
         }
     }
 }

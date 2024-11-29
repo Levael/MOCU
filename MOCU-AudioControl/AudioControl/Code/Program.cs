@@ -7,39 +7,27 @@ using AudioModule.Daemon;
 
 class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         try
         {
-            // ============================================================================================
-            // Common for every daemon part
-            // ============================================================================================
-
             var daemonSupervisor = new DaemonSupervisor(args);
 
             if (!daemonSupervisor.IsValid())
                 daemonSupervisor.CloseProgram("Init parameters are not valid");
 
-            //daemonSupervisor.SubscribeForParentProcessTermination();
-
-            // ============================================================================================
-            // Exclusive part for this particular daemon
-            // ============================================================================================
-
+            // Exclusive part for this particular daemon ==================================================
             var communicator    = new InterprocessCommunicator_Client(daemonSupervisor.DaemonName);
-            var daemonLogic     = new AudioDaemon(communicator);
+            var hostAPI         = new AudioDaemonSideBridge(communicator);
+            var daemonLogic     = new AudioDaemon(hostAPI);
+            // ============================================================================================
 
-            communicator.ConnectionBroked += daemonSupervisor.CloseProgram;
-            daemonLogic.TerminateDaemon += daemonSupervisor.CloseProgram;
-
-            daemonLogic.Run();
-            var terminationReason = await communicator.WaitForFirstError();
-            daemonSupervisor.CloseProgram(terminationReason);
+            daemonSupervisor.RunProgram(communicator: communicator, hostAPI: hostAPI, daemonLogic: daemonLogic);
         }
         catch (Exception ex)
         {
             Console.WriteLine("Unhandled error: " + ex.ToString());
-            Console.ReadKey();
+            Environment.Exit(2);
         }
     }
 }

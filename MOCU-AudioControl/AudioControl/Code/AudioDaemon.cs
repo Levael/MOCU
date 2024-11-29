@@ -5,20 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 
 using DaemonsRelated;
-using InterprocessCommunication;
+using DaemonsRelated.DaemonPart;
 
 
 namespace AudioModule.Daemon
 {
-    public class AudioDaemon
+    public class AudioDaemon : IDaemonLogic
     {
         public event Action<string> TerminateDaemon;
 
         private AudioDaemonSideBridge _hostAPI;
 
-        public AudioDaemon(IInterprocessCommunicator communicator)
+        public AudioDaemon(AudioDaemonSideBridge hostAPI)
         {
-            _hostAPI = new AudioDaemonSideBridge(communicator);
+            _hostAPI = hostAPI;
+
+            _hostAPI.PlayAudioClips     += (input) => { Console.WriteLine("PlayAudioClips logic"); };
+            _hostAPI.UpdateAudioDevices += (input) => { Console.WriteLine("UpdateAudioDevices logic"); };
+            _hostAPI.UpdateAudioClips   += (input) => { Console.WriteLine("UpdateAudioClips logic"); };
+            _hostAPI.StartIntercoms     += (input) => { Console.WriteLine("StartIntercoms logic"); };
+            _hostAPI.StopIntercoms      += (input) => { Console.WriteLine("StopIntercoms logic"); };
         }
 
         public void Run()
@@ -26,9 +32,9 @@ namespace AudioModule.Daemon
             _hostAPI.StartCommunication();
         }
 
-        private void Terminate(string reason)
+        public void DoBeforeExit()
         {
-            TerminateDaemon?.Invoke(reason);
+
         }
     }
 }

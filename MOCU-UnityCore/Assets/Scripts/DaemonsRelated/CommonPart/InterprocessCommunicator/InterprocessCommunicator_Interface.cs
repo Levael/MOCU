@@ -11,7 +11,7 @@ namespace InterprocessCommunication
 
         event Action<string> MessageReceived;
         event Action<string> MessageSent;
-        event Action ConnectionEstablished;
+        event Action<string> ConnectionEstablished;
         event Action<string> ConnectionBroked;
     }
 }

@@ -3,6 +3,7 @@ using DaemonsRelated;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Collections;
 
 
 namespace AudioModule
@@ -15,10 +16,10 @@ namespace AudioModule
         {
             _communicator = communicator;
 
-            _communicator.MessageReceived += message => UnityEngine.Debug.Log($"Got message from daemon: {message}");
-            _communicator.MessageSent += message => UnityEngine.Debug.Log($"Sent message to daemon: {message}");
-            _communicator.ConnectionEstablished += () => UnityEngine.Debug.Log($"Connection established");
-            _communicator.ConnectionBroked += reason => UnityEngine.Debug.Log($"Connection broked: {reason}");
+            _communicator.MessageReceived       += message => UnityEngine.Debug.Log($"Got message from daemon: {message}");
+            _communicator.MessageSent           += message => UnityEngine.Debug.Log($"Sent message to daemon: {message}");
+            _communicator.ConnectionEstablished += message => UnityEngine.Debug.Log($"Connection established: {message}");
+            _communicator.ConnectionBroked      += message => UnityEngine.Debug.Log($"Connection broked: {message}");
         }
 
         public event Action<IEnumerable<AudioDeviceData>> AudioDevicesHaveChanged;
@@ -53,7 +54,21 @@ namespace AudioModule
 
         public void TestMethod()
         {
-            _communicator.SendMessage("Hello, Daemon");
+            try
+            {
+                var testObj = new AudioDataTransferObject()
+                {
+                    CustomMessage = "testMessage",
+                    DaemonErrorReports = new List<DaemonErrorReport>() { new DaemonErrorReport() { message = "test inner message"} },
+                    DoTerminateTheDaemon = false,
+                };
+
+                _communicator.SendMessage(JsonHelper.SerializeJson(testObj));
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogError($"Error in 'AudioHostSideBridge.TestMethod': {ex}");
+            }
         }
 
         public void UpdateAudioClips(IEnumerable<AudioClipData> clipsData)
