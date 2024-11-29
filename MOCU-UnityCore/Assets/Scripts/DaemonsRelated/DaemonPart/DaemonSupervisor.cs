@@ -7,6 +7,7 @@ using System.Threading;
 
 using InterprocessCommunication;
 using DaemonsRelated.DaemonPart;
+using System.IO;
 
 
 namespace DaemonsRelated
