@@ -3,6 +3,7 @@ using DaemonsRelated.DaemonPart;
 using InterprocessCommunication;
 using System.Linq;
 using System;
+using NAudio.CoreAudioApi;
 
 
 namespace AudioModule.Daemon
@@ -34,24 +35,34 @@ namespace AudioModule.Daemon
             _communicator.Start();
         }
 
+        // ########################################################################################
+
         public void AudioClipsHaveChanged(IEnumerable<AudioClipData> clipsData)
         {
-            throw new NotImplementedException();
+            var audioDataTransferObject = new AudioDataTransferObject() { ClipChanges = clipsData };
+            var json = JsonHelper.SerializeJson(audioDataTransferObject);
+            _communicator.SendMessage(json);
         }
 
         public void AudioDevicesHaveChanged(IEnumerable<AudioDeviceData> devicesData)
         {
-            throw new NotImplementedException();
+            var audioDataTransferObject = new AudioDataTransferObject() { DeviceChanges = devicesData };
+            var json = JsonHelper.SerializeJson(audioDataTransferObject);
+            _communicator.SendMessage(json);
         }
 
         public void ErrorsOccurred(IEnumerable<DaemonErrorReport> errors)
         {
-            throw new NotImplementedException();
+            var audioDataTransferObject = new AudioDataTransferObject() { DaemonErrorReports = errors };
+            var json = JsonHelper.SerializeJson(audioDataTransferObject);
+            _communicator.SendMessage(json);
         }
 
         public void IntercomsHaveChanged(IEnumerable<AudioIntercomData> intercomsData)
         {
-            throw new NotImplementedException();
+            var audioDataTransferObject = new AudioDataTransferObject() { IntercomCommands = intercomsData };
+            var json = JsonHelper.SerializeJson(audioDataTransferObject);
+            _communicator.SendMessage(json);
         }
 
         // ########################################################################################
@@ -70,7 +81,6 @@ namespace AudioModule.Daemon
                     Console.WriteLine($"Custom message in 'HandleIncomingMessage': {dataTransferObject.CustomMessage}");
                     _communicator.SendMessage($"got message from u: {dataTransferObject.CustomMessage}");   // temp
                 }
-                    
 
                 // TERMINATION COMMAND
                 if (dataTransferObject.DoTerminateTheDaemon)
@@ -78,7 +88,6 @@ namespace AudioModule.Daemon
                     TerminateDaemon?.Invoke("Got command from host to terminate the daemon");
                     Console.WriteLine("shouldn't see that");
                 }
-                    
 
                 // CLIP CHANGES
                 if (dataTransferObject.ClipChanges.Any())

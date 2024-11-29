@@ -58,6 +58,9 @@ namespace DaemonsRelated
             _daemonName = _arguments[1];
             _isInDebugMode = !isHidden;
 
+            if (!_isInDebugMode)
+                Console.SetOut(TextWriter.Null);    // disables console writing // todo: move to better place
+
             Console.WriteLine($"Is in debug mode: {_isInDebugMode}");
 
             return true;
