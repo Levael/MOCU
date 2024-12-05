@@ -50,7 +50,9 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
         _numberOfDaemonsCell.text = $"({_daemonsHandler.GetDaemonsNumber()})";
     }
 
-    public void AddDaemonActivity(string daemonName, string messageName, MessageDirection direction)
+    // todo: add color to message according to its type
+    // todo: do max capacity for logs. it's VisualElements, they 'eat' a lot
+    public void AddDaemonActivity(string daemonName, string messageName, MessageDirection direction, DebugMessageType messageType)
     {
         var instance = _daemonActivitieTemplate.CloneTree();
 

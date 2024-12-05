@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\WinAPI.cs" />
     <Compile Include="Assets\Scripts\Bootstrap\Bootstrap.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Client.cs" />
+    <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\MinimalDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDaemonsOnlyCommon (depricated)\DaemonsUtilities.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\_Depricated\AudioDevice.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DTOs\UnifiedDataTransferObject.cs" />

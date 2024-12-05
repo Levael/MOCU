@@ -9,6 +9,7 @@ using InterprocessCommunication;
 using Debug = UnityEngine.Debug;
 using System.Diagnostics;
 using DaemonsRelated;
+using System.Linq;
 
 #nullable enable
 #pragma warning disable CS8618
@@ -59,37 +60,11 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
     public IInterprocessCommunicator GetDaemonCommunicator(DaemonType daemonType)
     {
         var daemon = _daemons[daemonType];
-        daemon.MessageReceived += message => LogDaemonIncomingActivity(daemonType);
-        daemon.MessageSent += message => LogDaemonOutgoingActivity(daemonType);
+        daemon.MessageReceived += message => LogDaemonIncomingActivity(daemonName: daemonType, message: message);
+        daemon.MessageSent += message => LogDaemonOutgoingActivity(daemonName: daemonType, message: message);
         daemon.Start();
         return daemon.GetCommunicator();
     }
-
-
-
-    /*public async Task<DaemonHandler_Client> GenerateDaemon(DaemonType daemonControlsEnum)
-    {
-        var daemon = new DaemonHandler_Client(
-            exeFullFilePath: _daemonControlPaths[daemonControlsEnum].fullPath,
-            isDaemonHidden: _daemonControlPaths[daemonControlsEnum].isHidden,
-            businessLogic: _daemonControlPaths[daemonControlsEnum].businessLogic
-        );
-
-        try
-        {
-            await daemon.StartDaemon();
-            _daemonHandlers.Add(daemon);
-
-            daemon.MessageSended += LogDaemonOutgoingActivity;
-            daemon.MessageReceived += LogDaemonIncomingActivity;
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"couldn't execute 'GenerateDaemon' properly for {daemonControlsEnum} daemon. Exception: {ex}");
-        }
-
-        return daemon;
-    }*/
 
     public int GetDaemonsNumber()
     {
@@ -99,19 +74,29 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
 
     // todo: refactor later, not important for now
 
-    private void LogDaemonIncomingActivity(DaemonType daemonName, string messageName = "todo")
+    private void LogDaemonIncomingActivity(DaemonType daemonName, string message, string messageName = "todo")
     {
-        LogDaemonActivity(daemonName: daemonName, messageName: messageName, direction: MessageDirection.Incoming);
+        var errorReports = JsonHelper.DeserializeJson<MinimalDataTransferObject>(message).DaemonErrorReports;
+
+        var messageType = DebugMessageType.Info;
+
+        if (errorReports.Any())
+            messageType = DebugMessageType.Warning;
+
+        if (errorReports.Any(report => report.isFatal))
+            messageType = DebugMessageType.Error;
+
+        LogDaemonActivity(daemonName: daemonName, messageName: messageName, direction: MessageDirection.Incoming, messageType: messageType);
     }
 
-    private void LogDaemonOutgoingActivity(DaemonType daemonName, string messageName = "todo")
+    private void LogDaemonOutgoingActivity(DaemonType daemonName, string message, string messageName = "todo")
     {
         LogDaemonActivity(daemonName: daemonName, messageName: messageName, direction: MessageDirection.Outgoing);
     }
 
-    private void LogDaemonActivity(DaemonType daemonName, string messageName, MessageDirection direction)
+    private void LogDaemonActivity(DaemonType daemonName, string messageName, MessageDirection direction, DebugMessageType messageType = DebugMessageType.Info, string message = null)
     {
-        _debugTabHandler.AddDaemonActivity(daemonName: $"{daemonName}", messageName: messageName, direction: direction);
+        _debugTabHandler.AddDaemonActivity(daemonName: $"{daemonName}", messageName: messageName, direction: direction, messageType: messageType);
     }
 }
 

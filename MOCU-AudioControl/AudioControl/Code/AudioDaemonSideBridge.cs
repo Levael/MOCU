@@ -1,20 +1,16 @@
 ﻿using DaemonsRelated;
 using DaemonsRelated.DaemonPart;
 using InterprocessCommunication;
-using System.Linq;
-using System;
-using NAudio.CoreAudioApi;
 
 
 namespace AudioModule.Daemon
 {
     public class AudioDaemonSideBridge : AudioHost_API, IHostAPI
     {
-        public event Action<IEnumerable<PlayAudioClipCommand>> PlayAudioClips;
-        public event Action<IEnumerable<AudioDeviceData>> UpdateAudioDevices;
-        public event Action<IEnumerable<AudioClipData>> UpdateAudioClips;
-        public event Action<IEnumerable<AudioIntercomData>> StartIntercoms;
-        public event Action<IEnumerable<AudioIntercomData>> StopIntercoms;
+        public event Action<IEnumerable<PlayAudioClipCommand>>  PlayClips;
+        public event Action<IEnumerable<AudioDeviceData>>       UpdateDevicesData;
+        public event Action<IEnumerable<AudioClipData>>         UpdateClipsData;
+        public event Action<IEnumerable<AudioIntercomData>>     UpdateIntercomStates;
 
         public event Action<string> TerminateDaemon;
 
@@ -37,14 +33,14 @@ namespace AudioModule.Daemon
 
         // ########################################################################################
 
-        public void AudioClipsHaveChanged(IEnumerable<AudioClipData> clipsData)
+        public void ClipsDataChanged(IEnumerable<AudioClipData> clipsData)
         {
             var audioDataTransferObject = new AudioDataTransferObject() { ClipChanges = clipsData };
             var json = JsonHelper.SerializeJson(audioDataTransferObject);
             _communicator.SendMessage(json);
         }
 
-        public void AudioDevicesHaveChanged(IEnumerable<AudioDeviceData> devicesData)
+        public void DevicesDataChanged(IEnumerable<AudioDeviceData> devicesData)
         {
             var audioDataTransferObject = new AudioDataTransferObject() { DeviceChanges = devicesData };
             var json = JsonHelper.SerializeJson(audioDataTransferObject);
@@ -58,7 +54,7 @@ namespace AudioModule.Daemon
             _communicator.SendMessage(json);
         }
 
-        public void IntercomsHaveChanged(IEnumerable<AudioIntercomData> intercomsData)
+        public void IntercomStatesChanged(IEnumerable<AudioIntercomData> intercomsData)
         {
             var audioDataTransferObject = new AudioDataTransferObject() { IntercomCommands = intercomsData };
             var json = JsonHelper.SerializeJson(audioDataTransferObject);
@@ -79,40 +75,37 @@ namespace AudioModule.Daemon
                 if (!String.IsNullOrEmpty(dataTransferObject.CustomMessage))
                 {
                     Console.WriteLine($"Custom message in 'HandleIncomingMessage': {dataTransferObject.CustomMessage}");
-                    _communicator.SendMessage($"got message from u: {dataTransferObject.CustomMessage}");   // temp
+                    /*var testResponse = new MinimalDataTransferObject() { CustomMessage = "got you" };
+                    var hasError = new Random().Next(2) == 0;
+                    var errorIsFatal = new Random().Next(2) == 0;
+                    if (hasError)
+                        testResponse.DaemonErrorReports = new List<DaemonErrorReport>() { new DaemonErrorReport() };
+
+                    if (hasError && errorIsFatal)
+                        testResponse.DaemonErrorReports.ToList()[0].isFatal = true;
+
+                    _communicator.SendMessage(JsonHelper.SerializeJson(testResponse));   // temp*/
                 }
 
                 // TERMINATION COMMAND
                 if (dataTransferObject.DoTerminateTheDaemon)
-                {
                     TerminateDaemon?.Invoke("Got command from host to terminate the daemon");
-                    Console.WriteLine("shouldn't see that");
-                }
 
                 // CLIP CHANGES
                 if (dataTransferObject.ClipChanges.Any())
-                    UpdateAudioClips?.Invoke(dataTransferObject.ClipChanges);
+                    UpdateClipsData?.Invoke(dataTransferObject.ClipChanges);
 
                 // DEVICE CHANGES
                 if (dataTransferObject.DeviceChanges.Any())
-                    UpdateAudioDevices?.Invoke(dataTransferObject.DeviceChanges);
+                    UpdateDevicesData?.Invoke(dataTransferObject.DeviceChanges);
 
                 // PLAY CLIP COMMANDS
                 if (dataTransferObject.PlayClipCommands.Any())
-                    PlayAudioClips?.Invoke(dataTransferObject.PlayClipCommands);
+                    PlayClips?.Invoke(dataTransferObject.PlayClipCommands);
 
                 // INTERCOM COMMANDS
                 if (dataTransferObject.IntercomCommands.Any())
-                {
-                    var isOnTrue = dataTransferObject.IntercomCommands.Where(intercom => intercom.isOn);
-                    var isOnFalse = dataTransferObject.IntercomCommands.Where(intercom => !intercom.isOn);
-
-                    if (isOnTrue.Any())
-                        StartIntercoms?.Invoke(isOnTrue);
-
-                    if (isOnFalse.Any())
-                        StopIntercoms?.Invoke(isOnFalse);
-                }
+                    UpdateIntercomStates?.Invoke(dataTransferObject.IntercomCommands);
             }
             catch (Exception ex)
             {

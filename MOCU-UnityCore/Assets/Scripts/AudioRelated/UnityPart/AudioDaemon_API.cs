@@ -13,15 +13,14 @@ namespace AudioModule
 {
     public interface AudioDaemon_API
     {
-        void PlayAudioClips(IEnumerable<PlayAudioClipCommand> playCommandsData);
-        void UpdateAudioDevices(IEnumerable<AudioDeviceData> devicesData);
-        void UpdateAudioClips(IEnumerable<AudioClipData> clipsData);
-        void StartIntercoms(IEnumerable<AudioIntercomData> intercomsData);
-        void StopIntercoms(IEnumerable<AudioIntercomData> intercomsData);
+        void PlayClips(IEnumerable<PlayAudioClipCommand> playCommandsData);
+        void UpdateDevicesData(IEnumerable<AudioDeviceData> devicesData);
+        void UpdateClipsData(IEnumerable<AudioClipData> clipsData);
+        void UpdateIntercomStates(IEnumerable<AudioIntercomData> intercomsData);
 
-        event Action<IEnumerable<AudioDeviceData>> AudioDevicesHaveChanged;
-        event Action<IEnumerable<AudioClipData>> AudioClipsHaveChanged;
-        event Action<IEnumerable<AudioIntercomData>> IntercomsHaveChanged;
+        event Action<IEnumerable<AudioDeviceData>> DevicesDataChanged;
+        event Action<IEnumerable<AudioClipData>> ClipsDataChanged;
+        event Action<IEnumerable<AudioIntercomData>> IntercomStatesChanged;
         event Action<IEnumerable<DaemonErrorReport>> ErrorsOccurred;
     }
 }

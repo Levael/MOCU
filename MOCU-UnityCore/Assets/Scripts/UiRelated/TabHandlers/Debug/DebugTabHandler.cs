@@ -46,8 +46,8 @@ public class DebugTabHandler : MonoBehaviour, IControllableInitiation
         _consoleUiModuleHandler.PrintToConsole(message: message, clearTextElement: clearTextElement);
     }
 
-    public void AddDaemonActivity(string daemonName, string messageName, MessageDirection direction)
+    public void AddDaemonActivity(string daemonName, string messageName, MessageDirection direction, DebugMessageType messageType)
     {
-        _daemonsUiModuleHandler.AddDaemonActivity(daemonName: daemonName, messageName: messageName, direction: direction);
+        _daemonsUiModuleHandler.AddDaemonActivity(daemonName: daemonName, messageName: messageName, direction: direction, messageType: messageType);
     }
 }

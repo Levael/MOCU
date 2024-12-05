@@ -22,16 +22,16 @@ namespace AudioModule
             _communicator.ConnectionBroked      += message => UnityEngine.Debug.Log($"Connection broked: {message}");
         }
 
-        public event Action<IEnumerable<AudioDeviceData>> AudioDevicesHaveChanged;
-        public event Action<IEnumerable<AudioClipData>> AudioClipsHaveChanged;
-        public event Action<IEnumerable<AudioIntercomData>> IntercomsHaveChanged;
+        public event Action<IEnumerable<AudioDeviceData>> DevicesDataChanged;
+        public event Action<IEnumerable<AudioClipData>> ClipsDataChanged;
+        public event Action<IEnumerable<AudioIntercomData>> IntercomStatesChanged;
         public event Action<IEnumerable<DaemonErrorReport>> ErrorsOccurred;
 
         // for daemons debug purpose only (todo: maybe refactor later)
         public event Action<string> MessageReceived;
         public event Action<string> MessageSent;
 
-        public void PlayAudioClips(IEnumerable<PlayAudioClipCommand> playCommandsData)
+        public void PlayClips(IEnumerable<PlayAudioClipCommand> playCommandsData)
         {
             throw new NotImplementedException();
         }
@@ -42,16 +42,6 @@ namespace AudioModule
             _communicator.Start();
         }
 
-        public void StartIntercoms(IEnumerable<AudioIntercomData> intercomsData)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StopIntercoms(IEnumerable<AudioIntercomData> intercomsData)
-        {
-            throw new NotImplementedException();
-        }
-
         public void TestMethod()
         {
             try
@@ -59,7 +49,11 @@ namespace AudioModule
                 var testObj = new AudioDataTransferObject()
                 {
                     CustomMessage = "testMessage",
-                    DaemonErrorReports = new List<DaemonErrorReport>() { new DaemonErrorReport() { message = "test inner message"} },
+                    //DaemonErrorReports = new List<DaemonErrorReport>() { new DaemonErrorReport() { message = "test inner message"} },
+                    PlayClipCommands = new List<PlayAudioClipCommand>() { 
+                        new PlayAudioClipCommand() { ClipData = new AudioClipData() { name = AudioClipName.PingDevice } },
+                        new PlayAudioClipCommand() { ClipData = new AudioClipData() { name = AudioClipName.CorrectAnswer } }
+                    },
                     DoTerminateTheDaemon = false,
                 };
 
@@ -71,19 +65,19 @@ namespace AudioModule
             }
         }
 
-        public void UpdateAudioClips(IEnumerable<AudioClipData> clipsData)
+        public void UpdateClipsData(IEnumerable<AudioClipData> clipsData)
         {
             throw new NotImplementedException();
         }
 
-        public void UpdateAudioDevices(IEnumerable<AudioDeviceData> devicesData)
+        public void UpdateDevicesData(IEnumerable<AudioDeviceData> devicesData)
         {
             throw new NotImplementedException();
         }
 
-        private void SendMessage()
+        public void UpdateIntercomStates(IEnumerable<AudioIntercomData> intercomsData)
         {
-
+            throw new NotImplementedException();
         }
     }
 }
