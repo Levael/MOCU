@@ -10,8 +10,8 @@ namespace AudioModule
 {
     public class AudioDeviceData
     {
-        public Guid id { get; set; }
-        public float volume { get; set; }
+        public string id { get; set; }
+        public float volume { get; set; }   // from 0 to 100
         public AudioDeviceType type { get; set; }
         public AudioDeviceConnectionStatus connectionStatus { get; set; }
     }

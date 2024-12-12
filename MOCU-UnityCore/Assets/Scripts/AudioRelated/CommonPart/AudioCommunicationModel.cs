@@ -21,6 +21,6 @@ namespace AudioModule
     public class PlayAudioClipCommand
     {
         public AudioClipData ClipData { get; set; }
-        public Guid OutputDeviceId { get; set; }
+        public string OutputDeviceId { get; set; }
     }
 }

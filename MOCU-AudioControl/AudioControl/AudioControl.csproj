@@ -20,6 +20,10 @@
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+
+    <!-- Temp: for debug only -->
+    <!--<StartArguments>000 AudioDaemon False</StartArguments>-->
+    <!--<DebugType>full</DebugType>-->
   </PropertyGroup>
 
   

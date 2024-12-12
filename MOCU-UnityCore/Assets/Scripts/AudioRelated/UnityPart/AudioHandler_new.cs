@@ -41,8 +41,13 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
         _daemon.MessageReceived += message => print($"AudioHandler got message from its daemon: {message}");
         _debugTabHandler.testBtn1Clicked += (eventObj) =>
         {
-            print($"AudioHandler is trying to send message to its daemon");
+            print($"AudioHandler is trying to send message to its daemon: ping device");
             _daemon.TestMethod();
+        };
+        _debugTabHandler.testBtn2Clicked += (eventObj) =>
+        {
+            print($"AudioHandler is trying to send message to its daemon: update clips");
+            _daemon.TestMethod2();
         };
     }
 

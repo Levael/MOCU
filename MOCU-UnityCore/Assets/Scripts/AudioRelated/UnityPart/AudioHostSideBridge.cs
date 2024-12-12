@@ -48,13 +48,37 @@ namespace AudioModule
             {
                 var testObj = new AudioDataTransferObject()
                 {
-                    CustomMessage = "testMessage",
-                    //DaemonErrorReports = new List<DaemonErrorReport>() { new DaemonErrorReport() { message = "test inner message"} },
                     PlayClipCommands = new List<PlayAudioClipCommand>() { 
-                        new PlayAudioClipCommand() { ClipData = new AudioClipData() { name = AudioClipName.PingDevice } },
                         new PlayAudioClipCommand() { ClipData = new AudioClipData() { name = AudioClipName.CorrectAnswer } }
-                    },
-                    DoTerminateTheDaemon = false,
+                    }
+                };
+
+                _communicator.SendMessage(JsonHelper.SerializeJson(testObj));
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogError($"Error in 'AudioHostSideBridge.TestMethod': {ex}");
+            }
+        }
+
+        public void TestMethod2()
+        {
+            try
+            {
+                var testObj = new AudioDataTransferObject()
+                {
+                    ClipChanges = new List<AudioClipData>() {
+                        new AudioClipData() {
+                            name = AudioClipName.PingDevice,
+                            volume = 100,
+                            fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\test.mp3"
+                        },
+                        new AudioClipData() {
+                            name = AudioClipName.CorrectAnswer,
+                            volume = 100,
+                            fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\audioTestSample2.mp3"
+                        },
+                    }
                 };
 
                 _communicator.SendMessage(JsonHelper.SerializeJson(testObj));

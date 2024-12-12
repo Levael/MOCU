@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Numerics;
 using NAudio.Wave;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace AudioModule.Daemon
@@ -15,10 +17,10 @@ namespace AudioModule.Daemon
 
         public event EventHandler PlaybackCompleted;
 
-        public ClipSampleProvider(float[] audioData, WaveFormat waveFormat)
+        public ClipSampleProvider(float[] clipData)
         {
-            this.audioData = audioData ?? throw new ArgumentNullException(nameof(audioData));
-            this.WaveFormat = waveFormat;
+            this.audioData = clipData ?? throw new ArgumentNullException(nameof(clipData));
+            this.WaveFormat = UnifiedAudioFormat.WaveFormat;
             this.readPosition = 0;
             this.isCompleted = false;
         }
