@@ -49,7 +49,7 @@ namespace AudioModule
                 var testObj = new AudioDataTransferObject()
                 {
                     PlayClipCommands = new List<PlayAudioClipCommand>() { 
-                        new PlayAudioClipCommand() { ClipData = new AudioClipData() { name = AudioClipName.CorrectAnswer } }
+                        new PlayAudioClipCommand() { ClipData = new AudioClipData() { name = AudioClipName.PingDevice } }
                     }
                 };
 

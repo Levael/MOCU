@@ -95,10 +95,14 @@ namespace AudioModule.Daemon
 
         private void PlayAudioClip(PlayAudioClipCommand clipData)
         {
-            // temp
-            //Console.WriteLine($"Played clip '{clipData.ClipData.name}'");
-            TestMethod();
-            Console.WriteLine($"Played test clip");
+            try
+            {
+                _defaultOutputDevice.AddSampleProvider(new ClipSampleProvider(_clips[clipData.ClipData.name].preloadedData));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error occurred trying 'PlayAudioClip': {ex}");
+            }
         }
 
         private void HandleIntercom(AudioIntercomData intercom)
@@ -133,29 +137,7 @@ namespace AudioModule.Daemon
             try
             {
                 // Play 'PingDevice' clip using default output
-                _defaultOutputDevice.AddSampleProvider(new ClipSampleProvider(_clips[AudioClipName.CorrectAnswer].preloadedData));
-
-                /*var bufferedWaveProvider = new BufferedWaveProvider(UnifiedAudioFormat.WaveFormat);
-                byte[] byteData = new byte[_clips[AudioClipName.PingDevice].preloadedData.Length * 4];
-                Buffer.BlockCopy(_clips[AudioClipName.PingDevice].preloadedData, 0, byteData, 0, byteData.Length);
-                bufferedWaveProvider.AddSamples(byteData, 0, byteData.Length);*/
-
-                /*using var audioFileReader = new AudioFileReader(_clips[AudioClipName.PingDevice].clipData.fullFilePath);
-                var sampleProvider = audioFileReader.ToSampleProvider();
-                var resampler = new WdlResamplingSampleProvider(sampleProvider, UnifiedAudioFormat.WaveFormat.SampleRate);
-                var sampleProvider2 = resampler.ToStereo();
-
-                _defaultOutputDevice.AddSampleProvider(sampleProvider2);*/
-
-                /*var signalGenerator = new SignalGenerator(44100, 2) // 44100 Гц, 2 канала
-                {
-                    Gain = 0.6,                  // Громкость (0.0 - 1.0)
-                    Frequency = 440.0,           // Частота сигнала (Гц)
-                    Type = SignalGeneratorType.Sin // Тип волны (синусоида)
-                };
-
-                _defaultOutputDevice.AddSampleProvider(signalGenerator);*/
-
+                _defaultOutputDevice.AddSampleProvider(new ClipSampleProvider(_clips[AudioClipName.PingDevice].preloadedData));
             }
             catch (Exception ex)
             {
@@ -174,30 +156,16 @@ namespace AudioModule.Daemon
                 var resampler = new WdlResamplingSampleProvider(reader, UnifiedAudioFormat.WaveFormat.SampleRate);
                 var sampleProvider = resampler.ToStereo();
 
-                // Estimated array size to minimize allocations
-                /*int estimatedSize = (int)(reader.Length / reader.WaveFormat.BlockAlign);
-                var wholeFile = new float[estimatedSize];*/
-
-                int totalSamples = 0;
-                List<float> dynamicSamples = new();
-
-                float[] readBuffer = new float[reader.WaveFormat.SampleRate * reader.WaveFormat.Channels];
+                var dynamicSamples = new List<float>();
+                var readBuffer = new float[reader.WaveFormat.SampleRate * reader.WaveFormat.Channels];
                 int samplesRead;
 
                 while ((samplesRead = sampleProvider.Read(readBuffer, 0, readBuffer.Length)) > 0)
                 {
-                    // Ensure there's enough space in the array
-                    /*if (totalSamples + samplesRead > wholeFile.Length)
-                        Array.Resize(ref wholeFile, wholeFile.Length * 2);*/
-
                     for (int i = 0; i < samplesRead; i++)
                         dynamicSamples.Add(Math.Clamp(readBuffer[i] * volumeFactor, -1.0f, 1.0f));
-                        //wholeFile[totalSamples++] = Math.Clamp(readBuffer[i] * volumeFactor, -1.0f, 1.0f);
                 }
 
-                // Return a trimmed array with the exact number of elements
-                /*Array.Resize(ref wholeFile, totalSamples);
-                return wholeFile;*/
                 return dynamicSamples.ToArray();
             }
             catch (Exception ex)
