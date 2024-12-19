@@ -10,5 +10,13 @@ namespace AudioModule.Daemon
 
         // milliseconds
         public static int BufferSize { get; } = 10;    // optimum is 10 (todo: test it, not sure)
+
+
+
+
+
+
+        // For better performance (has no stereo though)
+        //public static WaveFormat WaveFormat { get; } = WaveFormat.CreateIeeeFloatWaveFormat(22050, 1);
     }
 }

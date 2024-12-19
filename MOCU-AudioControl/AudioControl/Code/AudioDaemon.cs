@@ -93,10 +93,19 @@ namespace AudioModule.Daemon
 
         // ########################################################################################
 
+        // todo: change '_defaultOutputDevice' to suitable
         private void PlayAudioClip(PlayAudioClipCommand clipData)
         {
             try
             {
+                if (clipData.InterruptPlayingClips)
+                {
+                    var interroptedBuffers = _defaultOutputDevice.GetSampleProviders().OfType<ClipSampleProvider>().ToList();
+
+                    foreach (var buffer in interroptedBuffers)
+                        _defaultOutputDevice.RemoveSampleProvider(buffer);
+                }
+
                 _defaultOutputDevice.AddSampleProvider(new ClipSampleProvider(_clips[clipData.ClipData.name].preloadedData));
             }
             catch (Exception ex)

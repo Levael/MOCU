@@ -1,7 +1,5 @@
-﻿using System;
-using System.Numerics;
+﻿using AudioControl.Daemon;
 using NAudio.Wave;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace AudioModule.Daemon
@@ -14,8 +12,7 @@ namespace AudioModule.Daemon
         private bool isCompleted;
 
         public WaveFormat WaveFormat { get; }
-
-        public event EventHandler PlaybackCompleted;
+        public event Action PlaybackCompleted;
 
         public ClipSampleProvider(float[] clipData)
         {
@@ -39,7 +36,7 @@ namespace AudioModule.Daemon
             if (samplesToCopy < count)
             {
                 isCompleted = true;
-                PlaybackCompleted?.Invoke(this, EventArgs.Empty);
+                PlaybackCompleted?.Invoke();
             }
 
             return samplesToCopy;

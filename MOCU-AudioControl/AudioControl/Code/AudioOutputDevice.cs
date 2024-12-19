@@ -3,6 +3,8 @@ using NAudio.CoreAudioApi;
 using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
 using NAudio.Mixer;
+using AudioControl.Daemon;
+using System.Diagnostics;
 
 
 namespace AudioModule.Daemon
@@ -22,32 +24,42 @@ namespace AudioModule.Daemon
             _bufferSize = UnifiedAudioFormat.BufferSize;
 
             _mixer = new MixingSampleProvider(_format);
-            _mixer.AddMixerInput(new SilenceProvider(_format));
+            _mixer.MixerInputEnded += (sender, args) => SampleProviderHasBeenRemoved();
 
             _player = new WasapiOut(device, AudioClientShareMode.Shared, true, _bufferSize);
             _player.Init(_mixer);
-            
-
-            // Does not work in vain until there is no input data (can't pause nothing, so 'play' at first, and only then 'pause')
-            // TODO: maybe delete those 2 line later (may be redundant)
-            /*_player.Play();
-            _player.Pause();*/
         }
 
+        public IEnumerable<ISampleProvider> GetSampleProviders()
+        {
+            return _mixer.MixerInputs;
+        }
 
         public void AddSampleProvider(ISampleProvider buffer)
         {
             _mixer.AddMixerInput(buffer);
-
-            if (_mixer.MixerInputs.Count() > 0 && _player.PlaybackState != PlaybackState.Playing)
-                _player.Play();
+            SampleProviderHasBeenAdded();
         }
 
         public void RemoveSampleProvider(ISampleProvider buffer)
         {
             _mixer.RemoveMixerInput(buffer);
+            SampleProviderHasBeenRemoved();
+        }
 
-            if (_mixer.MixerInputs.Count() == 0 && _player.PlaybackState == PlaybackState.Playing)
+        private void SampleProviderHasBeenAdded()
+        {
+            if (_mixer.MixerInputs.Any() && _player.PlaybackState != PlaybackState.Playing)
+                _player.Play();
+        }
+
+        private void SampleProviderHasBeenRemoved()
+        {
+            // If there are lags or smth similar, try to not 'Pause' when there is no inputs.
+            // It will run idle but without switching delays.
+            // This 'Pause' is only to save the power of the audio device and processor to play silence.
+
+            if (!_mixer.MixerInputs.Any() && _player.PlaybackState == PlaybackState.Playing)
                 _player.Pause();
         }
     }

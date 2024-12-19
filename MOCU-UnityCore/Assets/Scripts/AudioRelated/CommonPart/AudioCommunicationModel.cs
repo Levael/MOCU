@@ -22,5 +22,6 @@ namespace AudioModule
     {
         public AudioClipData ClipData { get; set; }
         public string OutputDeviceId { get; set; }
+        public bool InterruptPlayingClips { get; set; } = false;
     }
 }
