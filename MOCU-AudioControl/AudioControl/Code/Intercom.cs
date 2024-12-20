@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace AudioControl.Daemon
 {
-    public interface IAutoDisposableSampleProvider
+    public class Intercom
     {
-        event Action PlaybackCompleted;
+        public Intercom()
+        {
+
+        }
     }
 }

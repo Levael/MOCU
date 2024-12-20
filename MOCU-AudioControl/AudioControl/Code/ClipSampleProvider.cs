@@ -1,15 +1,13 @@
-﻿using AudioControl.Daemon;
-using NAudio.Wave;
+﻿using NAudio.Wave;
 
 
 namespace AudioModule.Daemon
 {
-
     public class ClipSampleProvider : ISampleProvider
     {
         private readonly float[] audioData; // link for preloaded audio data
         private int readPosition;
-        private bool isCompleted;
+        private bool isCompleted;   // the whole class behaves kinda as 'ReadFully = false'
 
         public WaveFormat WaveFormat { get; }
         public event Action PlaybackCompleted;
@@ -42,5 +40,4 @@ namespace AudioModule.Daemon
             return samplesToCopy;
         }
     }
-
 }

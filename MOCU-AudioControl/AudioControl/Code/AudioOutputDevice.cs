@@ -1,32 +1,22 @@
-﻿using System.Linq;
-using NAudio.CoreAudioApi;
+﻿using NAudio.CoreAudioApi;
 using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
-using NAudio.Mixer;
-using AudioControl.Daemon;
-using System.Diagnostics;
 
 
 namespace AudioModule.Daemon
 {
-
-    public class AudioOutputDevice
+    public class AudioOutputDevice : IDisposable
     {
         private WasapiOut _player { get; set; }
         private MixingSampleProvider _mixer { get; set; }
-        private WaveFormat _format { get; set; }
-        private int _bufferSize { get; set; }
 
 
         public AudioOutputDevice(MMDevice device)
         {
-            _format = UnifiedAudioFormat.WaveFormat;
-            _bufferSize = UnifiedAudioFormat.BufferSize;
-
-            _mixer = new MixingSampleProvider(_format);
+            _mixer = new MixingSampleProvider(UnifiedAudioFormat.WaveFormat);
             _mixer.MixerInputEnded += (sender, args) => SampleProviderHasBeenRemoved();
 
-            _player = new WasapiOut(device, AudioClientShareMode.Shared, true, _bufferSize);
+            _player = new WasapiOut(device, AudioClientShareMode.Shared, UnifiedAudioFormat.UseEventSync, UnifiedAudioFormat.BufferSize);
             _player.Init(_mixer);
         }
 
@@ -62,7 +52,11 @@ namespace AudioModule.Daemon
             if (!_mixer.MixerInputs.Any() && _player.PlaybackState == PlaybackState.Playing)
                 _player.Pause();
         }
+
+        public void Dispose()
+        {
+            _player?.Stop();
+            _player?.Dispose();
+        }
     }
-
-
 }

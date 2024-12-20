@@ -1,53 +1,87 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave;
-using System;
-using System.Linq;
+using System.Collections.Generic;
 
 
 namespace AudioModule.Daemon
 {
-
-    public class AudioInputDevice
+    public class AudioInputDevice : IDisposable
     {
-        private WasapiCapture _receiver { get; set; }
-        private EventHandler<WaveInEventArgs> _dataAvailable;
+        private readonly WasapiCapture _receiver;
+        private readonly List<BufferedWaveProvider> _buffers;
+        private readonly object _buffersLock;
 
 
         public AudioInputDevice(MMDevice device)
         {
-            _receiver = new WasapiCapture(device, true, UnifiedAudioFormat.BufferSize);
-            _receiver.WaveFormat = UnifiedAudioFormat.WaveFormat;
+            if (device == null)
+                throw new ArgumentNullException(nameof(device));
 
-            _receiver.DataAvailable += OnDataAvailableInternal;
+            _buffersLock = new();
+            _buffers = new();
+
+            _receiver = new WasapiCapture(device, UnifiedAudioFormat.UseEventSync, UnifiedAudioFormat.BufferSize);
+            _receiver.WaveFormat = UnifiedAudioFormat.WaveFormat;
+            _receiver.DataAvailable += OnDataAvailable;
         }
 
-
-        public event EventHandler<WaveInEventArgs> DataAvailable
+        public void AddBinding(BufferedWaveProvider buffer)
         {
-            add
-            {
-                if (_dataAvailable == null || !_dataAvailable.GetInvocationList().Contains(value))
-                {
-                    _dataAvailable += value;
+            lock (_buffersLock)
+                _buffers.Add(buffer);
 
-                    if (_receiver.CaptureState != CaptureState.Capturing)
-                        _receiver.StartRecording();
+            if (_receiver.CaptureState != CaptureState.Capturing)
+                _receiver.StartRecording();
+        }
+
+        public void RemoveBinding(BufferedWaveProvider buffer)
+        {
+            lock (_buffersLock)
+                _buffers.Remove(buffer);
+
+            if (_buffers.Count == 0)
+                _receiver.StopRecording();
+        }
+
+        // todo: looks a bit messy, maybe reactor later
+        private void OnDataAvailable(object? sender, WaveInEventArgs e)
+        {
+            // First 'try-catch' is for "deleting while 'foreach'" errors
+            // Second 'try-catch' is for error whith specific buffer
+
+            try
+            {
+                foreach (var buffer in _buffers)
+                {
+                    try
+                    {
+                        buffer.AddSamples(e.Buffer, 0, e.BytesRecorded);    // todo: maybe consider making it in separate thread
+                    }
+                    catch (Exception ex)
+                    {
+                        RemoveBinding(buffer);
+                        Console.WriteLine($"AudioInputDevice.OnDataAvailable - buffer removed due to an error while trying to 'AddSamples'. Error: {ex}");
+                    }
                 }
             }
-            remove
+            catch (Exception ex)
             {
-                _dataAvailable -= value;
-
-                if ((_dataAvailable == null || _dataAvailable.GetInvocationList().Length == 0) && _receiver.CaptureState != CaptureState.Stopped)
-                    _receiver.StopRecording();
-            }
+                // Will just ignore on sample of data
+                Console.WriteLine($"AudioInputDevice.OnDataAvailable - an error occurred. Most likely because of deleting while 'foreach'. Error: {ex}");
+            }  
         }
 
-
-        private void OnDataAvailableInternal(object sender, WaveInEventArgs e)
+        public void Dispose()
         {
-            _dataAvailable?.Invoke(this, e);
+            if (_receiver != null)
+            {
+                _receiver.DataAvailable -= OnDataAvailable;
+                _receiver.StopRecording();
+                _receiver.Dispose();
+            }
+
+            lock (_buffersLock)
+                _buffers.Clear();
         }
     }
-
 }
