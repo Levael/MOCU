@@ -39,6 +39,9 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
     {
         _daemon = new AudioHostSideBridge(_daemonsHandler.GetDaemonCommunicator(DaemonType.Audio));
         _daemon.MessageReceived += message => print($"AudioHandler got message from its daemon: {message}");
+
+        _daemon.TestMethod2();
+
         _debugTabHandler.testBtn1Clicked += (eventObj) =>
         {
             print($"AudioHandler is trying to send message to its daemon: ping device");

@@ -22,6 +22,7 @@ namespace InterprocessCommunication
         protected CancellationTokenSource cancellationTokenSource;
         protected BlockingCollection<string> inputMessagesQueue;
         protected BlockingCollection<string> outputMessagesQueue;
+        // todo: maybe add 2 more loops: for events 'MessageSent' and 'InternalMessage'
 
         private string _pipeName;
         protected string pipeName_clientWritesServerReads;
@@ -57,11 +58,10 @@ namespace InterprocessCommunication
             _readLoop = Task.Run(() => ReadLoop());
             _writeLoop = Task.Run(() => WriteLoop());
             _executionLoop = Task.Run(() => ExecutionLoop());
-            //Task.Run(() => MonitorConnection(cancellationTokenSource.Token));
 
+            IsOperational = true;
             ConnectionEstablished?.Invoke($"Pipe name: {_pipeName}");
             _connectionEstablished.TrySetResult(true);
-            IsOperational = true;
         }
 
         public async Task<string?> WaitForFirstError()
@@ -83,23 +83,6 @@ namespace InterprocessCommunication
             }
         }
 
-        //tepm
-        /*private async Task MonitorConnection(CancellationToken token)
-        {
-            while (!token.IsCancellationRequested)
-            {
-                if (!pipeStream.IsConnected) // Проверка состояния соединения
-                {
-                    Console.WriteLine("Connection lost.");
-                    OnConnectionBroked("Connection with server lost.");
-                    break;
-                }
-
-                await Task.Delay(1000, token); // Периодическая проверка состояния
-            }
-        }*/
-
-
         public void OnConnectionBroked(string reason)
         {
             if (IsOperational)
@@ -115,11 +98,12 @@ namespace InterprocessCommunication
         {
             try
             {
-                if (!IsOperational)
-                    return;
-
                 outputMessagesQueue.Add(message);
-                MessageSent?.Invoke(message);   // Happens in the calling method's thread
+
+                // Notes about 'MessageSent' event:
+                // 1) Happens in the calling method's thread.
+                // 2) Notifies about sending even if the message is still in standby mode.
+                MessageSent?.Invoke(message);      
             }
             catch (Exception ex)
             {
@@ -154,10 +138,15 @@ namespace InterprocessCommunication
         {
             try
             {
+                await _connectionEstablished.Task;  // to be able to add messages to queue even before the communicator is ready
+
                 foreach (var message in outputMessagesQueue.GetConsumingEnumerable(cancellationTokenSource.Token))
                 {
                     await writer.WriteLineAsync(message);
                     await writer.FlushAsync();
+
+                    // todo: Logically, this is the best place to report on sending a message,
+                    // but I don't want anything other than the communicator to be in this thread
                 }
             }
             catch (Exception ex)

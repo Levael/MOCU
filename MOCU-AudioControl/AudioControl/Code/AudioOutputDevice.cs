@@ -31,6 +31,12 @@ namespace AudioModule.Daemon
             SampleProviderHasBeenAdded();
         }
 
+        public void AddSampleProvider(IWaveProvider buffer)
+        {
+            _mixer.AddMixerInput(buffer);
+            SampleProviderHasBeenAdded();
+        }
+
         public void RemoveSampleProvider(ISampleProvider buffer)
         {
             _mixer.RemoveMixerInput(buffer);
