@@ -48,11 +48,12 @@ namespace AudioModule
             {
                 var testObj = new AudioDataTransferObject()
                 {
-                    PlayClipCommands = new List<PlayAudioClipCommand>() { 
+                    PlayClipCommands = new List<PlayAudioClipCommand>() {
                         new PlayAudioClipCommand() {
                             InterruptPlayingClips = true,
+                            OutputDeviceId = Guid.Parse("515a3dc0-ca38-4fb9-aa8b-6d268cbd94ac"),
                             ClipData = new AudioClipData() {
-                                name = AudioClipName.CorrectAnswer
+                                name = AudioClipName.PingDevice
                             }
                         }
                     }

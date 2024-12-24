@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using DaemonsRelated;
-using DaemonsRelated.DaemonPart;
-using NAudio.CoreAudioApi;
+﻿using NAudio.CoreAudioApi;
 using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
-using Microsoft.VisualBasic;
-using System.Reflection.PortableExecutable;
+
+using DaemonsRelated.DaemonPart;
 
 
 /*
@@ -25,6 +17,8 @@ namespace AudioModule.Daemon
     {
         public event Action<string> TerminateDaemon;
 
+        private DevicesManager _devicesManager;
+
         private AudioDaemonSideBridge _hostAPI;
         private Dictionary<string, (AudioDeviceData deviceData, AudioInputDevice device)> _inputDevices;
         private Dictionary<string, (AudioDeviceData deviceData, AudioOutputDevice device)> _outputDevices;
@@ -36,6 +30,9 @@ namespace AudioModule.Daemon
 
         public AudioDaemon(AudioDaemonSideBridge hostAPI)
         {
+            _devicesManager = new();
+            _devicesManager.ChangesOccurred += OnDevicesChanged;
+
             _clips = new();
             _intercoms = new();
             _inputDevices = new();
@@ -58,7 +55,7 @@ namespace AudioModule.Daemon
 
         public void DoBeforeExit()
         {
-            // todo: undo every changes made to OS (audio devices volume etc)
+            // todo: undo every changes made to OS (audio devices Volume etc)
         }
 
         // ########################################################################################
@@ -97,7 +94,7 @@ namespace AudioModule.Daemon
         {
             try
             {
-                var device = _defaultOutputDevice;  // todo: change '_defaultOutputDevice' to suitable
+                var device = _devicesManager.GetOutputDevice(clipData.OutputDeviceId);
 
                 if (clipData.InterruptPlayingClips)
                 {
@@ -123,24 +120,6 @@ namespace AudioModule.Daemon
 
         // TESTS ##################################################################################
 
-        private void AddOutputDevice(MMDevice device)
-        {
-            if (_outputDevices.ContainsKey(device.ID))
-                return;
-
-            var deviceData = new AudioDeviceData
-            {
-                id = device.ID,
-                volume = device.AudioEndpointVolume.MasterVolumeLevelScalar * 100,
-                type = AudioDeviceType.Output,
-                connectionStatus = device.State == DeviceState.Active
-                ? AudioDeviceConnectionStatus.Connected
-                : AudioDeviceConnectionStatus.Disconnected
-            };
-
-            var audioOutputDevice = new AudioOutputDevice(device);
-            _outputDevices.Add(deviceData.id, (deviceData: deviceData, device: audioOutputDevice));
-        }
 
         private void TestMethod()
         {
@@ -159,7 +138,7 @@ namespace AudioModule.Daemon
         {
             try
             {
-                // The maximum volume increase is 5 times
+                // The maximum Volume increase is 5 times
                 var volumeFactor = Math.Clamp(volume / 100, 0f, 5f);
 
                 using var reader = new AudioFileReader(Path.Combine(path));
@@ -185,6 +164,9 @@ namespace AudioModule.Daemon
             }
         }
 
-
+        private void OnDevicesChanged()
+        {
+            Console.WriteLine("Some device(s) changed");
+        }
     }
 }

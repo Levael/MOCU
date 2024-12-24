@@ -21,9 +21,9 @@ namespace AudioModule.Daemon
             _communicator = communicator;
 
             _communicator.MessageReceived       += message => HandleIncomingMessage(message);
-            _communicator.MessageSent           += message => Console.WriteLine($"Sent message to host: {message}");
-            _communicator.ConnectionEstablished += message => Console.WriteLine($"Connection established: {message}");
-            _communicator.ConnectionBroked      += message => Console.WriteLine($"Connection broked: {message}");
+            _communicator.MessageSent           += message => Console.WriteLine($"Sent message to host");
+            _communicator.ConnectionEstablished += message => Console.WriteLine($"Connection established. {message}");
+            _communicator.ConnectionBroked      += message => Console.WriteLine($"Connection broked. {message}");
         }
 
         public void StartCommunication()
@@ -67,7 +67,8 @@ namespace AudioModule.Daemon
         {
             try
             {
-                Console.WriteLine($"Got message from host: {message}"); // temp
+                Console.WriteLine($"Got message from host"); // temp
+                //Console.WriteLine($"Got message from host: {message}"); // temp
 
                 var dataTransferObject = JsonHelper.DeserializeJson<AudioDataTransferObject>(message);
 
