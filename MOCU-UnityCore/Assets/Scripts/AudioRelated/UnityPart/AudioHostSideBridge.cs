@@ -46,7 +46,7 @@ namespace AudioModule
         {
             try
             {
-                var testObj = new AudioDataTransferObject()
+                /*var testObj = new AudioDataTransferObject()
                 {
                     PlayClipCommands = new List<PlayAudioClipCommand>() {
                         new PlayAudioClipCommand() {
@@ -55,6 +55,18 @@ namespace AudioModule
                             ClipData = new AudioClipData() {
                                 name = AudioClipName.PingDevice
                             }
+                        }
+                    }
+                };*/
+
+                var testObj = new AudioDataTransferObject()
+                {
+                    IntercomCommands = new List<AudioIntercomData>() {
+                        new AudioIntercomData() {
+                            isOn = true,
+                            id = new Guid("ed3c3975-74c7-433a-b9ae-96cfd0e8a000"),
+                            fromDevices = new List<Guid> { Guid.Parse("ed3c3975-74c7-433a-b9ae-96cfd0e8a426") },
+                            toDevices = new List<Guid> { Guid.Parse("f6e626d3-fc5c-44ab-a993-81e2cbaccdeb") },
                         }
                     }
                 };
@@ -71,7 +83,7 @@ namespace AudioModule
         {
             try
             {
-                var testObj = new AudioDataTransferObject()
+                /*var testObj = new AudioDataTransferObject()
                 {
                     ClipChanges = new List<AudioClipData>() {
                         new AudioClipData() {
@@ -84,6 +96,18 @@ namespace AudioModule
                             volume = 100,
                             fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\audioTestSample2.mp3"
                         },
+                    }
+                };*/
+
+                var testObj = new AudioDataTransferObject()
+                {
+                    IntercomCommands = new List<AudioIntercomData>() {
+                        new AudioIntercomData() {
+                            isOn = false,
+                            id = new Guid("ed3c3975-74c7-433a-b9ae-96cfd0e8a000"),
+                            fromDevices = new List<Guid> { Guid.Parse("ed3c3975-74c7-433a-b9ae-96cfd0e8a426") },
+                            toDevices = new List<Guid> { Guid.Parse("f6e626d3-fc5c-44ab-a993-81e2cbaccdeb") },
+                        }
                     }
                 };
 

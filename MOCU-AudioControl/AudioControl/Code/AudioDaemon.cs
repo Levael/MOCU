@@ -18,25 +18,23 @@ namespace AudioModule.Daemon
         public event Action<string> TerminateDaemon;
 
         private DevicesManager _devicesManager;
+        private IntercomsManager _intercomsManager;
 
         private AudioDaemonSideBridge _hostAPI;
-        private Dictionary<string, (AudioDeviceData deviceData, AudioInputDevice device)> _inputDevices;
-        private Dictionary<string, (AudioDeviceData deviceData, AudioOutputDevice device)> _outputDevices;
         private Dictionary<AudioClipName, (AudioClipData clipData, float[] preloadedData)> _clips;
-        private Dictionary<(string senderDeviceId, string recieverDeviceId), AudioIntercomData> _intercoms;
 
         // test
-        private AudioOutputDevice _defaultOutputDevice;
+        //private AudioOutputDevice _defaultOutputDevice;
 
         public AudioDaemon(AudioDaemonSideBridge hostAPI)
         {
             _devicesManager = new();
             _devicesManager.ChangesOccurred += OnDevicesChanged;
 
+            _intercomsManager = new(_devicesManager);
+            _intercomsManager.ChangesOccurred += OnIntercomsChanged;
+
             _clips = new();
-            _intercoms = new();
-            _inputDevices = new();
-            _outputDevices = new();
 
             _hostAPI = hostAPI;
 
@@ -45,7 +43,7 @@ namespace AudioModule.Daemon
             _hostAPI.UpdateDevicesData      += UpdateDevicesData;
             _hostAPI.UpdateClipsData        += UpdateClipsData;
 
-            _defaultOutputDevice = new AudioOutputDevice(new MMDeviceEnumerator().GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia));
+            //_defaultOutputDevice = new AudioOutputDevice(new MMDeviceEnumerator().GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia));
         }
 
         public void Run()
@@ -69,9 +67,7 @@ namespace AudioModule.Daemon
         private void HandleIntercoms(IEnumerable<AudioIntercomData> intercoms)
         {
             foreach (var intercom in intercoms)
-                HandleIntercom(intercom);
-
-            _hostAPI.IntercomStatesChanged(_intercoms.Values);
+                _intercomsManager.HandleIntercomCommand(intercom);
         }
 
         private void UpdateDevicesData(IEnumerable<AudioDeviceData> devices)
@@ -94,6 +90,7 @@ namespace AudioModule.Daemon
         {
             try
             {
+                // todo: add null check
                 var device = _devicesManager.GetOutputDevice(clipData.OutputDeviceId);
 
                 if (clipData.InterruptPlayingClips)
@@ -112,18 +109,12 @@ namespace AudioModule.Daemon
             }
         }
 
-        private void HandleIntercom(AudioIntercomData intercom)
-        {
-            // temp
-            Console.WriteLine($"Handled intercom. It's now is ON: {intercom.isOn}");
-        }
-
         // TESTS ##################################################################################
 
 
         private void TestMethod()
         {
-            try
+            /*try
             {
                 // Play 'PingDevice' clip using default output
                 _defaultOutputDevice.AddSampleProvider(new ClipSampleProvider(_clips[AudioClipName.PingDevice].preloadedData));
@@ -131,7 +122,7 @@ namespace AudioModule.Daemon
             catch (Exception ex)
             {
                 Console.WriteLine($"Error occurred trying 'TestMethod': {ex}");
-            }
+            }*/
         }
 
         private float[] LoadAudioFile(string path, float volume)
@@ -166,7 +157,14 @@ namespace AudioModule.Daemon
 
         private void OnDevicesChanged()
         {
+            // todo: inform the server about the changes
             Console.WriteLine("Some device(s) changed");
+        }
+
+        private void OnIntercomsChanged()
+        {
+            // todo: inform the server about the changes
+            Console.WriteLine("Some intercom(s) changed");
         }
     }
 }

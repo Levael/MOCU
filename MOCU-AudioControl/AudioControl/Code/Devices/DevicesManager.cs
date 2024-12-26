@@ -36,14 +36,14 @@ namespace AudioModule.Daemon
 
         // ########################################################################################
 
-        public AudioInputDevice GetInputDevice(Guid deviceId)
+        public AudioInputDevice? GetInputDevice(Guid deviceId)
         {
-            return _inputDevices[deviceId].device;
+            return _inputDevices.TryGetValue(deviceId, out var deviceTuple) ? deviceTuple.device : null;
         }
 
-        public AudioOutputDevice GetOutputDevice(Guid deviceId)
+        public AudioOutputDevice? GetOutputDevice(Guid deviceId)
         {
-            return _outputDevices[deviceId].device;
+            return _outputDevices.TryGetValue(deviceId, out var deviceTuple) ? deviceTuple.device : null;
         }
 
         public IEnumerable<AudioDeviceData> GetInputDevicesData()
@@ -154,7 +154,8 @@ namespace AudioModule.Daemon
 
             if (result == null)
             {
-                AddNewDevice(_enumerator.GetDevice(deviceGuidStr));
+                if (newState == DeviceState.Active)
+                    AddNewDevice(_enumerator.GetDevice(deviceGuidStr));
             }
             else
             {

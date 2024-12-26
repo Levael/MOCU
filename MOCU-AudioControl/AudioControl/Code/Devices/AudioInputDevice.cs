@@ -2,6 +2,7 @@
 using NAudio.Wave;
 using System.Collections.Generic;
 
+// todo: clear all buffers if device was disconected
 
 namespace AudioModule.Daemon
 {
@@ -26,7 +27,7 @@ namespace AudioModule.Daemon
             _receiver.WaveFormat = UnifiedAudioFormat.WaveFormat;
             _receiver.DataAvailable += OnDataAvailable;
 
-            Console.WriteLine($"Created new 'AudioInputDevice' with ID: {device.ID}");
+            Console.WriteLine($"Created new 'AudioInputDevice'.\nID: {_device.ID}\nName: {_device.FriendlyName}");
         }
 
         /// <summary>

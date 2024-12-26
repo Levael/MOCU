@@ -8,12 +8,14 @@ namespace AudioModule.Daemon
         private IEnumerable<AudioInputDevice> _inputs;
         private IEnumerable<AudioOutputDevice> _outputs;
         private List<BufferedWaveProvider> _buffers;
+        private Guid _id;
 
-        public Intercom(IEnumerable<AudioInputDevice> inputs, IEnumerable<AudioOutputDevice> outputs)
+        public Intercom(IEnumerable<AudioInputDevice> inputs, IEnumerable<AudioOutputDevice> outputs, Guid id)
         {
             _inputs = inputs;
             _outputs = outputs;
             _buffers = new();
+            _id = id;
         }
 
         public void Start()

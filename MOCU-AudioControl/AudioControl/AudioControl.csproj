@@ -12,7 +12,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Optimize>true</Optimize>
-
+    <ApplicationIcon>MOCU.ico</ApplicationIcon>
     <StartupObject>Program</StartupObject>
     <DebugType>none</DebugType>
     <PublishDir>$(MSBuildProjectDirectory)\</PublishDir>

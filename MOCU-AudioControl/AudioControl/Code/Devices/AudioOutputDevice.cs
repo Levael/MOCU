@@ -2,6 +2,7 @@
 using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
 
+// todo: clear all buffers if device was disconected
 
 namespace AudioModule.Daemon
 {
@@ -22,7 +23,7 @@ namespace AudioModule.Daemon
             _player.Init(_mixer);
 
 
-            Console.WriteLine($"Created new 'AudioOutputDevice' with ID: {_device.ID}");
+            Console.WriteLine($"Created new 'AudioOutputDevice'.\nID: {_device.ID}\nName: {_device.FriendlyName}");
         }
 
         public float Volume
