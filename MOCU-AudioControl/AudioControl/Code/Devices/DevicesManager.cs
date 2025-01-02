@@ -1,5 +1,4 @@
 ﻿using NAudio.CoreAudioApi;
-using System.Text.RegularExpressions;
 using NAudio.CoreAudioApi.Interfaces;
 
 
@@ -13,10 +12,6 @@ namespace AudioModule.Daemon
         
         private readonly Dictionary<Guid, (AudioDeviceData deviceData, AudioInputDevice device)> _inputDevices;
         private readonly Dictionary<Guid, (AudioDeviceData deviceData, AudioOutputDevice device)> _outputDevices;
-
-        // todo: think about them later
-        /*private AudioInputDevice _defaultInputDevice;
-        private AudioOutputDevice _defaultOutputDevice;*/
 
         public DevicesManager()
         {
@@ -44,6 +39,26 @@ namespace AudioModule.Daemon
         public AudioOutputDevice? GetOutputDevice(Guid deviceId)
         {
             return _outputDevices.TryGetValue(deviceId, out var deviceTuple) ? deviceTuple.device : null;
+        }
+
+        public AudioInputDevice? GetDefaultInputDevice()
+        {
+            var defaultDevice = _enumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Console);
+
+            if (defaultDevice == null)
+                return null;
+            else
+                return GetInputDevice(Utils.ExtractGuid(defaultDevice.ID));
+        }
+
+        public AudioOutputDevice? GetDefaultOutputDevice()
+        {
+            var defaultDevice = _enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
+
+            if (defaultDevice == null)
+                return null;
+            else
+                return GetOutputDevice(Utils.ExtractGuid(defaultDevice.ID));
         }
 
         public IEnumerable<AudioDeviceData> GetInputDevicesData()
@@ -74,21 +89,6 @@ namespace AudioModule.Daemon
             }
         }
 
-        private Guid ExtractGuid(string deviceId)
-        {
-            var match = Regex.Match(deviceId, @"\{[0-9a-fA-F\-]{36}\}");
-
-            if (match.Success)
-            {
-                string guidString = match.Value.Trim('{', '}');
-
-                if (Guid.TryParse(guidString, out var deviceGuid))
-                    return deviceGuid;
-            }
-
-            throw new Exception($"Coudn't exctract Guid from deviceId: {deviceId}");
-        }
-
         private (AudioDeviceData deviceData, IAudioDevice device)? FindDeviceTupleById(Guid deviceId)
         {
             return _inputDevices.TryGetValue(deviceId, out var inputDevice) ? inputDevice :
@@ -111,7 +111,7 @@ namespace AudioModule.Daemon
             {
                 var deviceData = new AudioDeviceData
                 {
-                    Id = ExtractGuid(device.ID),
+                    Id = Utils.ExtractGuid(device.ID),
                     Name = device.FriendlyName,
                     Volume = device.AudioEndpointVolume.MasterVolumeLevelScalar * 100,
                     Type = device.DataFlow == DataFlow.Capture ? AudioDeviceType.Input : AudioDeviceType.Output,
@@ -149,7 +149,7 @@ namespace AudioModule.Daemon
         {
             Console.WriteLine($"Device {deviceGuidStr} state changed to {newState}");
 
-            var deviceGuid = ExtractGuid(deviceGuidStr);
+            var deviceGuid = Utils.ExtractGuid(deviceGuidStr);
             var result = FindDeviceTupleById(deviceGuid);
 
             if (result == null)
@@ -161,15 +161,20 @@ namespace AudioModule.Daemon
             {
                 var (deviceData, device) = result.Value;
                 deviceData.ConnectionStatus = (newState == DeviceState.Active) ? AudioDeviceConnectionStatus.Connected : AudioDeviceConnectionStatus.Disconnected;
+
+                // reconnected
+                if (deviceData.ConnectionStatus == AudioDeviceConnectionStatus.Connected)
+                    device.Reinitialize();
             }
             
             ChangesOccurred?.Invoke();
         }
 
-        // No actual need, but must be implemented
+        #region Unused but required for interface implementation
         public void OnDeviceAdded(string pwstrDeviceId) { }
         public void OnDeviceRemoved(string deviceId) { }
-        public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId) { }
         public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key) { }
+        public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId) { }
+        #endregion Unused but required for interface implementation
     }
 }

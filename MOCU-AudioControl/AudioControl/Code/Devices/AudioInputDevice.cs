@@ -9,9 +9,11 @@ namespace AudioModule.Daemon
     public class AudioInputDevice : IAudioDevice, IDisposable
     {
         private readonly MMDevice _device;
-        private readonly WasapiCapture _receiver;
+        private WasapiCapture _receiver;
         private readonly List<BufferedWaveProvider> _buffers;
         private readonly object _buffersLock;
+
+        public Guid Id { get; private set; }
 
 
         public AudioInputDevice(MMDevice device)
@@ -23,11 +25,30 @@ namespace AudioModule.Daemon
             _buffersLock = new();
             _buffers = new();
 
+            Id = Utils.ExtractGuid(_device.ID);
+
             _receiver = new WasapiCapture(device, UnifiedAudioFormat.UseEventSync, UnifiedAudioFormat.BufferSize);
             _receiver.WaveFormat = UnifiedAudioFormat.WaveFormat;
             _receiver.DataAvailable += OnDataAvailable;
 
-            Console.WriteLine($"Created new 'AudioInputDevice'.\nID: {_device.ID}\nName: {_device.FriendlyName}");
+            //Console.WriteLine($"Created new 'AudioInputDevice'.\nID: {_device.ID}\nName: {_device.FriendlyName}");
+        }
+
+        public void Reinitialize()
+        {
+            if (_receiver != null)
+            {
+                _receiver.DataAvailable -= OnDataAvailable;
+                _receiver.StopRecording();
+                _receiver.Dispose();
+            }
+
+            _receiver = new WasapiCapture(_device, UnifiedAudioFormat.UseEventSync, UnifiedAudioFormat.BufferSize);
+            _receiver.WaveFormat = UnifiedAudioFormat.WaveFormat;
+            _receiver.DataAvailable += OnDataAvailable;
+
+            if (_buffers.Count > 0 && _receiver.CaptureState != CaptureState.Capturing)
+                _receiver.StartRecording();
         }
 
         /// <summary>

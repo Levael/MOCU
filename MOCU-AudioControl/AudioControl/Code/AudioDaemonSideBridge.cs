@@ -67,26 +67,14 @@ namespace AudioModule.Daemon
         {
             try
             {
-                Console.WriteLine($"Got message from host"); // temp
-                //Console.WriteLine($"Got message from host: {message}"); // temp
+                // temp (todo: remove after test or log it)
+                Console.WriteLine($"Got message from host"); // Got message from host: {message}
 
                 var dataTransferObject = JsonHelper.DeserializeJson<AudioDataTransferObject>(message);
 
                 // CUSTOM MESSAGE
                 if (!String.IsNullOrEmpty(dataTransferObject.CustomMessage))
-                {
                     Console.WriteLine($"Custom message in 'HandleIncomingMessage': {dataTransferObject.CustomMessage}");
-                    /*var testResponse = new MinimalDataTransferObject() { CustomMessage = "got you" };
-                    var hasError = new Random().Next(2) == 0;
-                    var errorIsFatal = new Random().Next(2) == 0;
-                    if (hasError)
-                        testResponse.DaemonErrorReports = new List<DaemonErrorReport>() { new DaemonErrorReport() };
-
-                    if (hasError && errorIsFatal)
-                        testResponse.DaemonErrorReports.ToList()[0].isFatal = true;
-
-                    _communicator.SendMessage(JsonHelper.SerializeJson(testResponse));   // temp*/
-                }
 
                 // TERMINATION COMMAND
                 if (dataTransferObject.DoTerminateTheDaemon)

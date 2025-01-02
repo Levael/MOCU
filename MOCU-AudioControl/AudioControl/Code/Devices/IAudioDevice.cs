@@ -9,6 +9,8 @@ namespace AudioModule.Daemon
 {
     public interface IAudioDevice
     {
-        float Volume { get; set; }
+        Guid Id         { get; }
+        float Volume    { get; set; }
+        void Reinitialize();
     }
 }

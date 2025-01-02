@@ -10,7 +10,7 @@ namespace AudioModule.Daemon
     public class IntercomsManager
     {
         private Dictionary<Guid, Intercom> _intercoms;
-        private DevicesManager _devicesManager;
+        private readonly DevicesManager _devicesManager;
 
         public event Action ChangesOccurred;
 
@@ -18,6 +18,11 @@ namespace AudioModule.Daemon
         {
             _intercoms = new();
             _devicesManager = devicesManager;
+        }
+
+        public IEnumerable<AudioIntercomData> GetIntercomsData()
+        {
+            return _intercoms.Values.Select(entry => entry.GetIntercomData());
         }
 
         public void HandleIntercomCommand(AudioIntercomData data)
@@ -31,6 +36,7 @@ namespace AudioModule.Daemon
             // todo: maybe send an error response to server if request wasn't proper
         }
 
+        // todo: add checks or try-catch
         private void CreateIntercomStream(AudioIntercomData data)
         {
             var inputs = data.fromDevices

@@ -38,9 +38,8 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
     public void ControllableStart()
     {
         _daemon = new AudioHostSideBridge(_daemonsHandler.GetDaemonCommunicator(DaemonType.Audio));
-        _daemon.MessageReceived += message => print($"AudioHandler got message from its daemon: {message}");
 
-        _daemon.TestMethod2();
+        //_daemon.TestMethod2();
 
         _debugTabHandler.testBtn1Clicked += (eventObj) =>
         {

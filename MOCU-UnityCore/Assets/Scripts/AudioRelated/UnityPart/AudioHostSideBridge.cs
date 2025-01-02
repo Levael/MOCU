@@ -104,9 +104,7 @@ namespace AudioModule
                     IntercomCommands = new List<AudioIntercomData>() {
                         new AudioIntercomData() {
                             isOn = false,
-                            id = new Guid("ed3c3975-74c7-433a-b9ae-96cfd0e8a000"),
-                            fromDevices = new List<Guid> { Guid.Parse("ed3c3975-74c7-433a-b9ae-96cfd0e8a426") },
-                            toDevices = new List<Guid> { Guid.Parse("f6e626d3-fc5c-44ab-a993-81e2cbaccdeb") },
+                            id = new Guid("ed3c3975-74c7-433a-b9ae-96cfd0e8a000")
                         }
                     }
                 };
