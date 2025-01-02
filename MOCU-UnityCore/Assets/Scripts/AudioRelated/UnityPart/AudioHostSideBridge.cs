@@ -65,7 +65,7 @@ namespace AudioModule
                         new AudioIntercomData() {
                             isOn = true,
                             id = new Guid("ed3c3975-74c7-433a-b9ae-96cfd0e8a000"),
-                            fromDevices = new List<Guid> { Guid.Parse("ed3c3975-74c7-433a-b9ae-96cfd0e8a426") },
+                            fromDevices = new List<Guid> { Guid.Parse("ed3c3975-74c7-433a-b9ae-96cfd0e8a426"), Guid.Parse("41389b3f-51ea-4dce-b644-47338a8aadb5") },
                             toDevices = new List<Guid> { Guid.Parse("f6e626d3-fc5c-44ab-a993-81e2cbaccdeb") },
                         }
                     }

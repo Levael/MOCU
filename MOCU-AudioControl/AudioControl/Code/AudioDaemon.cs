@@ -5,6 +5,9 @@
  * Currently 'PlayClips' has no feedback. Maybe later add event 'ClipPlayed' or smth like that.
  * 'HandleIntercoms', 'UpdateDevicesData' and 'UpdateClipsData' always return all currently running intercoms so host side is always up to date. 
  * Even though the request may contain multiple operations of the same type, the response will always be singular for each part.
+ * 
+ * Work-critical things happen in the 'DevicesManager' constructor.
+ * Since 'AudioDaemon.Run' starts after creating the class, then everything is fine.
  */
 
 
@@ -72,6 +75,8 @@ namespace AudioModule.Daemon
             foreach (var clip in clips)
                 _clipsManager.UpdateClipData(clip);
         }
+
+        // ########################################################################################
 
         private void OnDevicesChanged()
         {

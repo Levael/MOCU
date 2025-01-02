@@ -34,15 +34,15 @@ namespace AudioModule.Daemon
 
         public void Start()
         {
-            foreach (var output  in _outputs)
+            foreach (var input in _inputs)
             {
-                var buffer = new BufferedWaveProvider(UnifiedAudioFormat.WaveFormat);
-                _buffers.Add(buffer);
-
-                output.AddSampleProvider(buffer);
-
-                foreach (var input in _inputs)
+                foreach (var output in _outputs)
+                {
+                    var buffer = new BufferedWaveProvider(UnifiedAudioFormat.WaveFormat);
+                    _buffers.Add(buffer);
+                    output.AddSampleProvider(buffer);
                     input.AddBinding(buffer);
+                }   
             }
 
             _isOn = true;
@@ -54,6 +54,7 @@ namespace AudioModule.Daemon
             {
                 buffer.ReadFully = false;   // outputDevice.mixer will delete them by itself for no data
 
+                // makes extra work, but it's easier this way ("deletes" even those buffers that the input does not have -> extra work is 'InputsNumber' times)
                 foreach (var input in _inputs)
                     input.RemoveBinding(buffer);
             }
