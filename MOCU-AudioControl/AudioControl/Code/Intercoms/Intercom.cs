@@ -1,4 +1,5 @@
 ﻿using NAudio.Wave;
+using System;
 
 
 namespace AudioModule.Daemon
@@ -52,13 +53,14 @@ namespace AudioModule.Daemon
         {
             foreach (var buffer in _buffers)
             {
-                buffer.ReadFully = false;   // outputDevice.mixer will delete them by itself for no data
+                buffer.ReadFully = false;   // 'outputDevice.mixer' will delete them by itself for no data
 
                 // makes extra work, but it's easier this way ("deletes" even those buffers that the input does not have -> extra work is 'InputsNumber' times)
                 foreach (var input in _inputs)
                     input.RemoveBinding(buffer);
             }
 
+            _buffers.Clear();
             _isOn = false;
         }
     }

@@ -39,7 +39,7 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
     {
         _daemon = new AudioHostSideBridge(_daemonsHandler.GetDaemonCommunicator(DaemonType.Audio));
 
-        //_daemon.TestMethod2();
+        InitDaemonTest();
 
         _debugTabHandler.testBtn1Clicked += (eventObj) =>
         {
@@ -108,5 +108,20 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
     public void StopIntercom(User fromUser, User toUser)
     {
         throw new NotImplementedException();
+    }
+
+    // ############################################################################################
+
+    private void InitDaemonTest()
+    {
+        _daemon.UpdateClipsData(
+            new List<AudioClipData>() {
+                new AudioClipData() {
+                    name = AudioClipName.PingDevice,
+                    volume = 100,
+                    fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\test.mp3"
+                }
+            }
+        );
     }
 }

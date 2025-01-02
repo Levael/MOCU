@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Collections;
+using System.Linq;
 
 
 namespace AudioModule
@@ -12,29 +13,21 @@ namespace AudioModule
     {
         private IInterprocessCommunicator _communicator;
 
-        public AudioHostSideBridge(IInterprocessCommunicator communicator)
-        {
-            _communicator = communicator;
-
-            _communicator.MessageReceived       += message => UnityEngine.Debug.Log($"Got message from daemon: {message}");
-            _communicator.MessageSent           += message => UnityEngine.Debug.Log($"Sent message to daemon: {message}");
-            _communicator.ConnectionEstablished += message => UnityEngine.Debug.Log($"Connection established: {message}");
-            _communicator.ConnectionBroked      += message => UnityEngine.Debug.Log($"Connection broked: {message}");
-        }
-
         public event Action<IEnumerable<AudioDeviceData>> DevicesDataChanged;
         public event Action<IEnumerable<AudioClipData>> ClipsDataChanged;
         public event Action<IEnumerable<AudioIntercomData>> IntercomStatesChanged;
         public event Action<IEnumerable<DaemonErrorReport>> ErrorsOccurred;
 
-        // for daemons debug purpose only (todo: maybe refactor later)
-        public event Action<string> MessageReceived;
-        public event Action<string> MessageSent;
-
-        public void PlayClips(IEnumerable<PlayAudioClipCommand> playCommandsData)
+        public AudioHostSideBridge(IInterprocessCommunicator communicator)
         {
-            throw new NotImplementedException();
+            _communicator = communicator;
+
+            _communicator.MessageReceived       += message => HandleIncomingMessage(message);    // UnityEngine.Debug.Log($"Got message from daemon: {message}")
+            _communicator.MessageSent           += message => UnityEngine.Debug.Log($"Sent message to daemon"); // : {message}
+            _communicator.ConnectionEstablished += message => UnityEngine.Debug.Log($"Connection established: {message}");
+            _communicator.ConnectionBroked      += message => UnityEngine.Debug.Log($"Connection broked: {message}");
         }
+        
 
         public void StartCommunication()
         {
@@ -46,7 +39,36 @@ namespace AudioModule
         {
             try
             {
-                /*var testObj = new AudioDataTransferObject()
+                var testObj = new AudioDataTransferObject()
+                {
+                    PlayClipCommands = new List<PlayAudioClipCommand>() {
+                        new PlayAudioClipCommand() {
+                            InterruptPlayingClips = true,
+                            OutputDeviceId = Guid.Parse("515a3dc0-ca38-4fb9-aa8b-6d268cbd94ac"),
+                            ClipData = new AudioClipData() {
+                                name = AudioClipName.PingDevice
+                            }
+                        }
+                    },
+
+                    DeviceChanges = new List<AudioDeviceData>()
+                    {
+                        new AudioDeviceData()
+                        {
+                            Id = Guid.Parse("515a3dc0-ca38-4fb9-aa8b-6d268cbd94ac"),
+                            Volume = 40
+                        }
+                    }
+                };
+
+                _communicator.SendMessage(JsonHelper.SerializeJson(testObj));
+            }
+            catch { }
+            
+
+            /*try
+            {
+                *//*var testObj = new AudioDataTransferObject()
                 {
                     PlayClipCommands = new List<PlayAudioClipCommand>() {
                         new PlayAudioClipCommand() {
@@ -57,7 +79,7 @@ namespace AudioModule
                             }
                         }
                     }
-                };*/
+                };*//*
 
                 var testObj = new AudioDataTransferObject()
                 {
@@ -76,29 +98,41 @@ namespace AudioModule
             catch (Exception ex)
             {
                 UnityEngine.Debug.LogError($"Error in 'AudioHostSideBridge.TestMethod': {ex}");
-            }
+            }*/
         }
 
         public void TestMethod2()
         {
             try
             {
-                /*var testObj = new AudioDataTransferObject()
+                var testObj = new AudioDataTransferObject()
                 {
-                    ClipChanges = new List<AudioClipData>() {
-                        new AudioClipData() {
-                            name = AudioClipName.PingDevice,
-                            volume = 100,
-                            fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\test.mp3"
-                        },
-                        new AudioClipData() {
-                            name = AudioClipName.CorrectAnswer,
-                            volume = 100,
-                            fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\audioTestSample2.mp3"
-                        },
-                    }
-                };*/
+                    PlayClipCommands = new List<PlayAudioClipCommand>() {
+                        new PlayAudioClipCommand() {
+                            InterruptPlayingClips = true,
+                            OutputDeviceId = Guid.Parse("515a3dc0-ca38-4fb9-aa8b-6d268cbd94ac"),
+                            ClipData = new AudioClipData() {
+                                name = AudioClipName.PingDevice
+                            }
+                        }
+                    },
 
+                    DeviceChanges = new List<AudioDeviceData>()
+                    {
+                        new AudioDeviceData()
+                        {
+                            Id = Guid.Parse("515a3dc0-ca38-4fb9-aa8b-6d268cbd94ac"),
+                            Volume = 60
+                        }
+                    }
+                };
+
+                _communicator.SendMessage(JsonHelper.SerializeJson(testObj));
+            }
+            catch { }
+            
+            /*try
+            {
                 var testObj = new AudioDataTransferObject()
                 {
                     IntercomCommands = new List<AudioIntercomData>() {
@@ -114,22 +148,78 @@ namespace AudioModule
             catch (Exception ex)
             {
                 UnityEngine.Debug.LogError($"Error in 'AudioHostSideBridge.TestMethod': {ex}");
-            }
+            }*/
+        }
+
+        // ########################################################################################
+
+        public void PlayClips(IEnumerable<PlayAudioClipCommand> playCommandsData)
+        {
+            var audioDataTransferObject = new AudioDataTransferObject() { PlayClipCommands = playCommandsData };
+            var json = JsonHelper.SerializeJson(audioDataTransferObject);
+            _communicator.SendMessage(json);
         }
 
         public void UpdateClipsData(IEnumerable<AudioClipData> clipsData)
         {
-            throw new NotImplementedException();
+            var audioDataTransferObject = new AudioDataTransferObject() { ClipChanges = clipsData };
+            var json = JsonHelper.SerializeJson(audioDataTransferObject);
+            _communicator.SendMessage(json);
         }
 
         public void UpdateDevicesData(IEnumerable<AudioDeviceData> devicesData)
         {
-            throw new NotImplementedException();
+            var audioDataTransferObject = new AudioDataTransferObject() { DeviceChanges = devicesData };
+            var json = JsonHelper.SerializeJson(audioDataTransferObject);
+            _communicator.SendMessage(json);
         }
 
         public void UpdateIntercomStates(IEnumerable<AudioIntercomData> intercomsData)
         {
-            throw new NotImplementedException();
+            var audioDataTransferObject = new AudioDataTransferObject() { IntercomCommands = intercomsData };
+            var json = JsonHelper.SerializeJson(audioDataTransferObject);
+            _communicator.SendMessage(json);
+        }
+
+        // ########################################################################################
+
+        private void HandleIncomingMessage(string message)
+        {
+            try
+            {
+                // temp (todo: remove after test or log it)
+                Console.WriteLine($"Got message from daemon"); // Got message from daemon: {message}
+
+                var dataTransferObject = JsonHelper.DeserializeJson<AudioDataTransferObject>(message);
+
+                // CUSTOM MESSAGE
+                if (!String.IsNullOrEmpty(dataTransferObject.CustomMessage))
+                    Console.WriteLine($"Custom message in 'HandleIncomingMessage': {dataTransferObject.CustomMessage}");
+
+                // CLIP CHANGES
+                if (dataTransferObject.ClipChanges.Any())
+                    ClipsDataChanged?.Invoke(dataTransferObject.ClipChanges);
+
+                // DEVICE CHANGES
+                if (dataTransferObject.DeviceChanges.Any())
+                    DevicesDataChanged?.Invoke(dataTransferObject.DeviceChanges);
+
+                // INTERCOM COMMANDS
+                if (dataTransferObject.IntercomCommands.Any())
+                    IntercomStatesChanged?.Invoke(dataTransferObject.IntercomCommands);
+
+                /*// PLAY CLIP COMMANDS
+                if (dataTransferObject.PlayClipCommands.Any())
+                    PlayClips?.Invoke(dataTransferObject.PlayClipCommands);*/
+
+                /*// TERMINATION COMMAND
+                if (dataTransferObject.DoTerminateTheDaemon)
+                    TerminateDaemon?.Invoke("Got command from host to terminate the daemon");*/
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in 'HandleIncomingMessage': {ex.Message}");
+            }
         }
     }
 }

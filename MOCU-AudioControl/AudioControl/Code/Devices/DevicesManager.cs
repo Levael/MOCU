@@ -85,6 +85,7 @@ namespace AudioModule.Daemon
             if (device.Volume != volume)
             {
                 device.Volume = volume;
+                deviceData.Volume = volume;
                 ChangesOccurred?.Invoke();
             }
         }

@@ -64,10 +64,11 @@ namespace AudioModule.Daemon
                 _intercomsManager.HandleIntercomCommand(intercom);
         }
 
+        // May only change the volume
         private void UpdateDevicesData(IEnumerable<AudioDeviceData> devices)
         {
-            // todo (request from Unity)
-            Console.WriteLine("UpdateDevicesData logic");
+            foreach (var device in devices)
+                _devicesManager.ChangeDeviceVolume(deviceId: device.Id, device.Volume);
         }
 
         private void UpdateClipsData(IEnumerable<AudioClipData> clips)
