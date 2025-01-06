@@ -37,8 +37,9 @@ namespace DaemonsRelated
             {
                 FileName = _fullPath,
                 Arguments = $"{Process.GetCurrentProcess().Id} {name} {_isHidden}",
-                UseShellExecute = !_isHidden,
+                UseShellExecute = !_isHidden,   // run as independent process (release == dependent (can't see console), debug == independed (can see console))
                 RedirectStandardOutput = false,
+                RedirectStandardError = false,
                 CreateNoWindow = _isHidden
             };
 

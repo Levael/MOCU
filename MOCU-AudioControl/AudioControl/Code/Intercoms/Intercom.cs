@@ -14,6 +14,8 @@ namespace AudioModule.Daemon
 
         public Intercom(IEnumerable<AudioInputDevice> inputs, IEnumerable<AudioOutputDevice> outputs, Guid id)
         {
+            Console.WriteLine($"inputs: {inputs.Count()}, outputs: {outputs.Count()}");
+
             _inputs = inputs;
             _outputs = outputs;
             _buffers = new();

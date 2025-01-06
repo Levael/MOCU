@@ -27,11 +27,15 @@ namespace AudioModule.Daemon
 
         public void HandleIntercomCommand(AudioIntercomData data)
         {
+            Console.WriteLine($"intercoms total before: {_intercoms.Count}");
+
             if (_intercoms.ContainsKey(data.id) && data.isOn == false)
                 DestroyIntercomStream(data);
 
             if (!_intercoms.ContainsKey(data.id) && data.isOn == true)
                 CreateIntercomStream(data);
+
+            Console.WriteLine($"intercoms total after: {_intercoms.Count}");
 
             // todo: maybe send an error response to server if request wasn't proper
         }
@@ -39,26 +43,41 @@ namespace AudioModule.Daemon
         // todo: add checks or try-catch
         private void CreateIntercomStream(AudioIntercomData data)
         {
-            var inputs = data.fromDevices
+            try
+            {
+                var inputs = data.fromDevices
                 .Select(id => _devicesManager.GetInputDevice(id))
                 .Where(device => device != null);
 
-            var outputs = data.toDevices
-                .Select(id => _devicesManager.GetOutputDevice(id))
-                .Where(device => device != null);
+                var outputs = data.toDevices
+                    .Select(id => _devicesManager.GetOutputDevice(id))
+                    .Where(device => device != null);
 
-            var intercom = new Intercom(inputs: inputs, outputs: outputs, id: data.id);
-            intercom.Start();
+                var intercom = new Intercom(inputs: inputs, outputs: outputs, id: data.id);
+                intercom.Start();
 
-            _intercoms.Add(data.id, intercom);
-            ChangesOccurred?.Invoke();
+                _intercoms.Add(data.id, intercom);
+                ChangesOccurred?.Invoke();
+            }
+            catch
+            {
+                Console.WriteLine("Error occurred in 'CreateIntercomStream'.");
+                DestroyIntercomStream(data);
+            }
         }
 
         private void DestroyIntercomStream(AudioIntercomData data)
         {
-            _intercoms[data.id].Stop();
-            _intercoms.Remove(data.id);
-            ChangesOccurred?.Invoke();
+            try
+            {
+                _intercoms[data.id].Stop();
+                _intercoms.Remove(data.id);
+                ChangesOccurred?.Invoke();
+            }
+            catch
+            {
+                Console.WriteLine("Error occurred in 'DestroyIntercomStream'.");
+            }
         }
     }
 }

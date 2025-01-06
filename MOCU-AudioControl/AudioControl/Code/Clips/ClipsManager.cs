@@ -62,7 +62,7 @@ namespace AudioModule.Daemon
                 // The maximum Volume increase is 5 times
                 var volumeFactor = Math.Clamp(volume / 100, 0f, 5f);
 
-                using var reader = new AudioFileReader(Path.Combine(path));
+                using var reader = new AudioFileReader(path);
                 var resampler = new WdlResamplingSampleProvider(reader, UnifiedAudioFormat.WaveFormat.SampleRate);
                 var sampleProvider = resampler.ToStereo();
 

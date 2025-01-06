@@ -47,8 +47,8 @@ namespace AudioModule.Daemon
             _receiver.WaveFormat = UnifiedAudioFormat.WaveFormat;
             _receiver.DataAvailable += OnDataAvailable;
 
-            if (_buffers.Count > 0 && _receiver.CaptureState != CaptureState.Capturing)
-                _receiver.StartRecording();
+            if (_buffers.Count > 0)
+                TryStartRecording();
         }
 
         /// <summary>
@@ -65,8 +65,7 @@ namespace AudioModule.Daemon
             lock (_buffersLock)
                 _buffers.Add(buffer);
 
-            if (_receiver.CaptureState != CaptureState.Capturing)
-                _receiver.StartRecording();
+            TryStartRecording();
         }
 
         public void RemoveBinding(BufferedWaveProvider buffer)
@@ -104,6 +103,26 @@ namespace AudioModule.Daemon
                 // Will just ignore on sample of data
                 Console.WriteLine($"AudioInputDevice.OnDataAvailable - an error occurred. Most likely because of deleting while 'foreach'. Error: {ex}");
             }  
+        }
+
+        private bool TryStartRecording()
+        {
+            try
+            {
+                if (_receiver.CaptureState == CaptureState.Capturing)
+                    return true;
+
+                if (_receiver.CaptureState == CaptureState.Starting)
+                    return true;
+
+                _receiver.StartRecording();
+                return true;
+            }
+            catch
+            {
+                _receiver.StopRecording();
+                return false;
+            }
         }
 
         public void Dispose()
