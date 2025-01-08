@@ -47,7 +47,7 @@ namespace AudioModule.Daemon
 
         public void DoBeforeExit()
         {
-            // todo: undo every changes made to OS (audio devices Volume etc)
+            _devicesManager.RestoreOriginalSettings();
         }
 
         // ########################################################################################

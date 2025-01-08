@@ -120,6 +120,12 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
                     name = AudioClipName.PingDevice,
                     volume = 100,
                     fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\test.mp3"
+                },
+
+                new AudioClipData() {
+                    name = AudioClipName.CorrectAnswer,
+                    volume = 85,
+                    fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\audioTestSample.mp3"
                 }
             }
         );

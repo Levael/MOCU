@@ -12,14 +12,17 @@ namespace AudioModule.Daemon
         
         private readonly Dictionary<Guid, (AudioDeviceData deviceData, AudioInputDevice device)> _inputDevices;
         private readonly Dictionary<Guid, (AudioDeviceData deviceData, AudioOutputDevice device)> _outputDevices;
+        private readonly Dictionary<Guid, (IAudioDevice device, float volume)> _originalSettings;
 
         public DevicesManager()
         {
             _enumerator = new();
             _inputDevices = new();
             _outputDevices = new();
+            _originalSettings = new();
 
             InitDevices();
+            SaveOriginalSettings();
 
             _enumerator.RegisterEndpointNotificationCallback(this);
         }
@@ -88,6 +91,21 @@ namespace AudioModule.Daemon
                 deviceData.Volume = volume;
                 ChangesOccurred?.Invoke();
             }
+        }
+
+        public void RestoreOriginalSettings()
+        {
+            foreach (var deviceTuple in _originalSettings.Values)
+                try { deviceTuple.device.Volume = deviceTuple.volume; } catch { }
+        }
+
+        private void SaveOriginalSettings()
+        {
+            foreach (var deviceKeyValue in _inputDevices)
+                _originalSettings[deviceKeyValue.Key] = (device: deviceKeyValue.Value.device, volume: deviceKeyValue.Value.device.Volume);
+
+            foreach (var deviceKeyValue in _outputDevices)
+                _originalSettings[deviceKeyValue.Key] = (device: deviceKeyValue.Value.device, volume: deviceKeyValue.Value.device.Volume);
         }
 
         private (AudioDeviceData deviceData, IAudioDevice device)? FindDeviceTupleById(Guid deviceId)

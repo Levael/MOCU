@@ -93,8 +93,34 @@ namespace AudioModule
                             ClipData = new AudioClipData() {
                                 name = AudioClipName.PingDevice
                             }
+                        },
+
+                        /*new PlayAudioClipCommand() {
+                            InterruptPlayingClips = false,
+                            OutputDeviceId = Guid.Parse("f6e626d3-fc5c-44ab-a993-81e2cbaccdeb"),
+                            ClipData = new AudioClipData() {
+                                name = AudioClipName.CorrectAnswer
+                            }
+                        }*/
+                    },
+
+                    IntercomCommands = new List<AudioIntercomData>() {
+                        new AudioIntercomData() {
+                            isOn = true,
+                            id = new Guid("ed3c3975-74c7-433a-b9ae-96cfd0e8a000"),
+                            fromDevices = new List<Guid> { Guid.Parse("ed3c3975-74c7-433a-b9ae-96cfd0e8a426") },
+                            toDevices = new List<Guid> { Guid.Parse("f6e626d3-fc5c-44ab-a993-81e2cbaccdeb") },
                         }
                     }
+
+                    /*DeviceChanges = new List<AudioDeviceData>()
+                    {
+                        new AudioDeviceData()
+                        {
+                            Id = Guid.Parse("515a3dc0-ca38-4fb9-aa8b-6d268cbd94ac"),
+                            Volume = 30
+                        }
+                    }*/
                 };
 
                 /*var testObj = new AudioDataTransferObject()

@@ -8,3 +8,9 @@
 
     AllDevicesAreChoosen        = SubStatusImportance.NonCritical
 }
+
+/*
+BackendIsReady (c)
+InitParamsSet (c)
+AllDevicesAreChoosen (n)
+*/
