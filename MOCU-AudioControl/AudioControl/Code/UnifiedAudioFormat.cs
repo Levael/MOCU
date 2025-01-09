@@ -13,7 +13,7 @@ namespace AudioModule.Daemon
 
         /// <summary>
         /// Buffer size in milliseconds. Optimal value is 10 ms for low latency.
-        /// Increase this value if you experience audio artifacts.
+        /// Increase this value if you experience audio artifacts (at the cost of greater delay).
         /// </summary>
         public static int BufferSize { get; } = 10;
 
@@ -26,7 +26,7 @@ namespace AudioModule.Daemon
 
 
         // Alternative format for better performance (mono, 22050 Hz).
-        // Uncomment if mono and lower quality are acceptable for your application.
+        // Replace if mono and lower quality are acceptable for your application.
         // public static WaveFormat WaveFormat { get; } = WaveFormat.CreateIeeeFloatWaveFormat(22050, 1);
     }
 }

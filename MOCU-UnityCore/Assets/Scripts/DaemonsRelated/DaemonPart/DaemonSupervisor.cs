@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Management;
 using System.Reflection;
 using System.Threading;
 
@@ -20,7 +19,7 @@ namespace DaemonsRelated
         private string _daemonName;
         private bool _isInDebugMode;
 
-        private List<string> _terminationReasons;
+        private readonly List<string> _terminationReasons;
 
         public DaemonSupervisor(string[] arguments)
         {
@@ -89,9 +88,9 @@ namespace DaemonsRelated
             {
                 Console.WriteLine("Application is exiting...");
 
-                communicator.ConnectionBroked -= CloseProgram;
-                hostAPI.TerminateDaemon -= CloseProgram;
-                daemonLogic.TerminateDaemon -= CloseProgram;
+                communicator.ConnectionBroked   -= CloseProgram;
+                hostAPI.TerminateDaemon         -= CloseProgram;
+                daemonLogic.TerminateDaemon     -= CloseProgram;
 
                 daemonLogic?.DoBeforeExit();
                 communicator?.Dispose();

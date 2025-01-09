@@ -1,6 +1,4 @@
-﻿// dotnet publish -c Release
-
-using InterprocessCommunication;
+﻿using InterprocessCommunication;
 using DaemonsRelated;
 using AudioModule.Daemon;
 

@@ -117,9 +117,6 @@ namespace AudioModule.Daemon
 
         private void InitDevices()
         {
-            /*var defaultCaptureDeviceId = ExtractGuid(_enumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Console)?.ID);
-            var defaultRenderDeviceId = _enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console)?.ID;*/
-
             foreach (var device in _enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active))
                 AddNewDevice(device);
         }
@@ -141,15 +138,11 @@ namespace AudioModule.Daemon
                 {
                     case AudioDeviceType.Input:
                         var audioInputDevice = new AudioInputDevice(device);
-                        /*if (device.ID == defaultCaptureDeviceId)
-                            _defaultInputDevice = audioInputDevice;*/
                         _inputDevices[deviceData.Id] = (deviceData: deviceData, device: audioInputDevice);
                         break;
 
                     case AudioDeviceType.Output:
                         var audioOutputDevice = new AudioOutputDevice(device);
-                        /*if (device.ID == defaultRenderDeviceId)
-                            _defaultOutputDevice = audioOutputDevice;*/
                         _outputDevices[deviceData.Id] = (deviceData: deviceData, device: audioOutputDevice);
                         break;
                 }

@@ -1,10 +1,12 @@
-﻿using NAudio.Wave.SampleProviders;
+﻿/*
+ * I don't like the use of the 'DevicesManager' dependency,
+ * as well as the deep interference of this class in the structure of 'AudioOutputDevice',
+ * but due to the smallness of the entire daemon and the already large connectivity between classes,
+ * I won't do anything about it.
+*/
+
+using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace AudioModule.Daemon
@@ -27,11 +29,15 @@ namespace AudioModule.Daemon
             return _clips.Values.Select(entry => entry.clipData);
         }
 
+
         public void PlayAudioClip(PlayAudioClipCommand clipData)
         {
             try
             {
                 var device = _devicesManager.GetOutputDevice(clipData.OutputDeviceId);
+
+                if (device == null)
+                    throw new Exception("'PlayAudioClip' got 'null' intead of 'AudioOutputDevice'.");
 
                 if (clipData.InterruptPlayingClips)
                 {
@@ -81,7 +87,7 @@ namespace AudioModule.Daemon
             catch (Exception ex)
             {
                 Console.WriteLine($"This time error is inside 'LoadAudioFile': {ex.StackTrace}, {ex.Message}");
-                return new float[0];
+                return Array.Empty<float>();
             }
         }
     }

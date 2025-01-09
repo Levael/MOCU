@@ -1,5 +1,4 @@
 ﻿using NAudio.Wave;
-using System;
 
 
 namespace AudioModule.Daemon
@@ -14,8 +13,6 @@ namespace AudioModule.Daemon
 
         public Intercom(IEnumerable<AudioInputDevice> inputs, IEnumerable<AudioOutputDevice> outputs, Guid id)
         {
-            Console.WriteLine($"inputs: {inputs.Count()}, outputs: {outputs.Count()}");
-
             _inputs = inputs;
             _outputs = outputs;
             _buffers = new();
@@ -42,6 +39,7 @@ namespace AudioModule.Daemon
                 foreach (var output in _outputs)
                 {
                     var buffer = new BufferedWaveProvider(UnifiedAudioFormat.WaveFormat);
+                    buffer.BufferDuration = TimeSpan.FromSeconds(1);
                     _buffers.Add(buffer);
                     output.AddSampleProvider(buffer);
                     input.AddBinding(buffer);
@@ -57,7 +55,8 @@ namespace AudioModule.Daemon
             {
                 buffer.ReadFully = false;   // 'outputDevice.mixer' will delete them by itself for no data
 
-                // makes extra work, but it's easier this way ("deletes" even those buffers that the input does not have -> extra work is 'InputsNumber' times)
+                // makes extra work, but it's easier this way
+                // ("deletes" even those buffers that the input does not have -> extra work is 'InputsNumber' times)
                 foreach (var input in _inputs)
                     input.RemoveBinding(buffer);
             }

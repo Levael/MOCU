@@ -1,8 +1,6 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave.SampleProviders;
 using NAudio.Wave;
-using System;
-using System.Numerics;
 
 // todo: clear all buffers if device was disconected
 
@@ -11,14 +9,14 @@ namespace AudioModule.Daemon
     public class AudioOutputDevice : IAudioDevice, IDisposable
     {
         private readonly MMDevice _device;
-        private WasapiOut _player { get; set; }
-        private MixingSampleProvider _mixer { get; set; }
+        private WasapiOut _player;
+        private MixingSampleProvider _mixer;
 
         public Guid Id { get; private set; }
 
         public AudioOutputDevice(MMDevice device)
         {
-            _device = device;
+            _device = device ?? throw new ArgumentNullException(nameof(device));
 
             Id = Utils.ExtractGuid(_device.ID);
 
@@ -27,9 +25,6 @@ namespace AudioModule.Daemon
 
             _player = new WasapiOut(_device, AudioClientShareMode.Shared, UnifiedAudioFormat.UseEventSync, UnifiedAudioFormat.BufferSize);
             _player.Init(_mixer);
-
-
-            //Console.WriteLine($"Created new 'AudioOutputDevice'.\nID: {_device.ID}\nName: {_device.FriendlyName}");
         }
 
         public void Reinitialize()

@@ -1,16 +1,11 @@
-﻿/*
-    Is a mirror of 'AudioDaemon_API'
-*/
-
-
-using DaemonsRelated;
+﻿using DaemonsRelated;
 using System;
 using System.Collections.Generic;
 
 
 namespace AudioModule
 {
-    public interface AudioHost_API
+    public interface AudioHost_API  // Is a mirror of 'AudioDaemon_API'
     {
         // commands from Host
         event Action<IEnumerable<PlayAudioClipCommand>> PlayClips;

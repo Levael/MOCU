@@ -3,11 +3,11 @@
 
 /*
  * Currently 'PlayClips' has no feedback. Maybe later add event 'ClipPlayed' or smth like that.
- * 'HandleIntercoms', 'UpdateDevicesData' and 'UpdateClipsData' always return all currently running intercoms so host side is always up to date. 
+ * 'HandleIntercoms', 'UpdateDevicesData' and 'UpdateClipsData' always return all current data so host side is always up to date. 
  * Even though the request may contain multiple operations of the same type, the response will always be singular for each part.
  * 
  * Work-critical things happen in the 'DevicesManager' constructor.
- * Since 'AudioDaemon.Run' starts after creating the class, then everything is fine.
+ * Since 'AudioDaemon.Run' starts after creating the class, then everything is fine (from the perspective of timings).
  */
 
 

@@ -1,8 +1,6 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave;
-using System.Collections.Generic;
 
-// todo: clear all buffers if device was disconected
 
 namespace AudioModule.Daemon
 {
@@ -18,10 +16,7 @@ namespace AudioModule.Daemon
 
         public AudioInputDevice(MMDevice device)
         {
-            if (device == null)
-                throw new ArgumentNullException(nameof(device));
-
-            _device = device;
+            _device = device ?? throw new ArgumentNullException(nameof(device));
             _buffersLock = new();
             _buffers = new();
 
@@ -30,8 +25,6 @@ namespace AudioModule.Daemon
             _receiver = new WasapiCapture(device, UnifiedAudioFormat.UseEventSync, UnifiedAudioFormat.BufferSize);
             _receiver.WaveFormat = UnifiedAudioFormat.WaveFormat;
             _receiver.DataAvailable += OnDataAvailable;
-
-            //Console.WriteLine($"Created new 'AudioInputDevice'.\nID: {_device.ID}\nName: {_device.FriendlyName}");
         }
 
         public void Reinitialize()
@@ -52,7 +45,7 @@ namespace AudioModule.Daemon
         }
 
         /// <summary>
-        /// It is recommended to keep it within 70. +-10
+        /// Value range is (0, 100). It is recommended to keep it within 70, +-10.
         /// </summary>
         public float Volume
         {
@@ -93,7 +86,7 @@ namespace AudioModule.Daemon
                     }
                     catch (Exception ex)
                     {
-                        RemoveBinding(buffer);
+                        RemoveBinding(buffer);  // for example, if OutputDevice was disconnected
                         Console.WriteLine($"AudioInputDevice.OnDataAvailable - buffer removed due to an error while trying to 'AddSamples'. Error: {ex}");
                     }
                 }

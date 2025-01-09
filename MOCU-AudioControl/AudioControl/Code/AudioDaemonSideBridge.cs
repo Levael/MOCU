@@ -11,8 +11,7 @@ namespace AudioModule.Daemon
         public event Action<IEnumerable<AudioDeviceData>>       UpdateDevicesData;
         public event Action<IEnumerable<AudioClipData>>         UpdateClipsData;
         public event Action<IEnumerable<AudioIntercomData>>     UpdateIntercomStates;
-
-        public event Action<string> TerminateDaemon;
+        public event Action<string>                             TerminateDaemon;
 
         private IInterprocessCommunicator _communicator;
 
@@ -21,7 +20,7 @@ namespace AudioModule.Daemon
             _communicator = communicator;
 
             _communicator.MessageReceived       += message => HandleIncomingMessage(message);
-            _communicator.MessageSent           += message => Console.WriteLine($"Sent message to host");
+            //_communicator.MessageSent           += message => Console.WriteLine($"Sent message to host");
             _communicator.ConnectionEstablished += message => Console.WriteLine($"Connection established. {message}");
             _communicator.ConnectionBroked      += message => Console.WriteLine($"Connection broked. {message}");
         }
@@ -67,9 +66,6 @@ namespace AudioModule.Daemon
         {
             try
             {
-                // temp (todo: remove after test or log it)
-                Console.WriteLine($"Got message from host"); // Got message from host: {message}
-
                 var dataTransferObject = JsonHelper.DeserializeJson<AudioDataTransferObject>(message);
 
                 // CUSTOM MESSAGE

@@ -27,15 +27,11 @@ namespace AudioModule.Daemon
 
         public void HandleIntercomCommand(AudioIntercomData data)
         {
-            Console.WriteLine($"intercoms total before: {_intercoms.Count}");
-
             if (_intercoms.ContainsKey(data.id) && data.isOn == false)
                 DestroyIntercomStream(data);
 
             if (!_intercoms.ContainsKey(data.id) && data.isOn == true)
                 CreateIntercomStream(data);
-
-            Console.WriteLine($"intercoms total after: {_intercoms.Count}");
 
             // todo: maybe send an error response to server if request wasn't proper
         }

@@ -12,7 +12,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Optimize>true</Optimize>
-    <ApplicationIcon>MOCU.ico</ApplicationIcon>
+    <ApplicationIcon>Media/logo.ico</ApplicationIcon>
     <StartupObject>Program</StartupObject>
     <DebugType>none</DebugType>
     <PublishDir>$(MSBuildProjectDirectory)\</PublishDir>
@@ -54,15 +54,11 @@
   <!-- Linked files -->
   <ItemGroup>
     <Compile Include="$(MocuScriptsPath)\AudioRelated\CommonPart\**\*.cs" Link="Linked code\AudioRelated\CommonPart\%(RecursiveDir)%(Filename)%(Extension)" />
-    <!-- temp -->    <Compile Remove="Code\AudioDevices\**" />
-    <!-- temp -->    <Compile Remove="Code\AudioManager\**" />
-    <!-- temp -->    <Compile Remove="Code\Intercom\**" />
   </ItemGroup>
   
   <!-- Libraries -->
   <ItemGroup>
     <PackageReference Include="NAudio" Version="2.2.1" />
-    <PackageReference Include="System.Management" Version="8.0.0" />
   </ItemGroup>
   
   <!-- NAudio uses some stuff that are incompatible with "PublishSingleFile SelfContained" compilation. Therefore this setting solves the problem -->
