@@ -39,13 +39,13 @@ namespace InterprocessCommunication
             }
             catch
             {
-                Dispose();
+                Stop();
             }
         }
 
-        public override void Dispose()
+        public override void Stop(string reason = "unknown")
         {
-            try { base.Dispose(); } catch { }
+            try { base.Stop(reason); } catch { }
             try { readPipe.Dispose(); } catch { }
             try { writePipe.Dispose(); } catch { }
         }

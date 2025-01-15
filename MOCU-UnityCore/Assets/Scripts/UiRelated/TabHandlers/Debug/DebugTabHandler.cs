@@ -1,3 +1,4 @@
+using DaemonsRelated;
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -46,8 +47,8 @@ public class DebugTabHandler : MonoBehaviour, IControllableInitiation
         _consoleUiModuleHandler.PrintToConsole(message: message, clearTextElement: clearTextElement);
     }
 
-    public void AddDaemonActivity(string daemonName, string messageName, MessageDirection direction, DebugMessageType messageType)
+    public void AddDaemonActivity(InterprocessCommunicationMessageLog messageLog)
     {
-        _daemonsUiModuleHandler.AddDaemonActivity(daemonName: daemonName, messageName: messageName, direction: direction, messageType: messageType);
+        _daemonsUiModuleHandler.AddDaemonActivity(messageLog);
     }
 }

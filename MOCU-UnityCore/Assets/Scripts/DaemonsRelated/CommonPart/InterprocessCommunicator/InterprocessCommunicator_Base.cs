@@ -20,9 +20,12 @@ namespace InterprocessCommunication
         protected StreamWriter writer;
         protected StreamReader reader;
         protected CancellationTokenSource cancellationTokenSource;
-        protected BlockingCollection<string> inputMessagesQueue;
-        protected BlockingCollection<string> outputMessagesQueue;
-        // todo: maybe add 2 more loops: for events 'MessageSent' and 'InternalMessage'
+        private TaskCompletionSource<bool> _connectionEstablished;
+
+        protected BlockingCollection<string> receivedMessagesQueue;
+        protected BlockingCollection<string> toBeSentMessagesQueue;
+        protected BlockingCollection<string> sentMessagesQueue;
+        protected BlockingCollection<string> debugMessagesQueue;
 
         private string _pipeName;
         protected string pipeName_clientWritesServerReads;
@@ -32,82 +35,72 @@ namespace InterprocessCommunication
         public event Action<string> MessageSent;
         public event Action<string> ConnectionEstablished;
         public event Action<string> ConnectionBroked;
+        public event Action<string> ErrorOccurred;
 
         private Task _readLoop;
         private Task _writeLoop;
-        private Task _executionLoop;
-        private TaskCompletionSource<bool> _connectionEstablished;
+        private Task _processReceivedMessagesLoop;
+        private Task _processSentMessagesLoop;
+        private Task _processDebugMessagesLoop;
 
         public InterprocessCommunicator_Base(string pipeName)
         {
             _pipeName = pipeName;
 
-            cancellationTokenSource = new CancellationTokenSource();
-            inputMessagesQueue = new BlockingCollection<string>();
-            outputMessagesQueue = new BlockingCollection<string>();
+            receivedMessagesQueue   = new BlockingCollection<string>();
+            toBeSentMessagesQueue   = new BlockingCollection<string>();
+            sentMessagesQueue       = new BlockingCollection<string>();
+            debugMessagesQueue      = new BlockingCollection<string>();
 
             pipeName_clientWritesServerReads = $"{_pipeName}C2S";
             pipeName_serverWritesClientReads = $"{_pipeName}S2C";
 
-            _connectionEstablished = new TaskCompletionSource<bool>();
+            cancellationTokenSource = new CancellationTokenSource();
+            _connectionEstablished  = new TaskCompletionSource<bool>();
             IsOperational = false;
         }
 
         public virtual void Start()
         {
-            _readLoop = Task.Run(() => ReadLoop());
-            _writeLoop = Task.Run(() => WriteLoop());
-            _executionLoop = Task.Run(() => ExecutionLoop());
+            _readLoop                       = Task.Run(() => ReadLoop());
+            _writeLoop                      = Task.Run(() => WriteLoop());
+            _processReceivedMessagesLoop    = Task.Run(() => ProcessReceivedMessagesLoop());
+            _processSentMessagesLoop        = Task.Run(() => ProcessSentMessagesLoop());
+            _processDebugMessagesLoop       = Task.Run(() => ProcessDebugMessagesLoop());
 
             IsOperational = true;
             ConnectionEstablished?.Invoke($"Pipe name: {_pipeName}");
             _connectionEstablished.TrySetResult(true);
         }
 
-        public async Task<string?> WaitForFirstError()
+        public virtual void Stop(string reason = "unknown")
         {
-            try
-            {
-                await _connectionEstablished.Task;
-                var completedTask = await Task.WhenAny(_readLoop, _writeLoop, _executionLoop);
+            if (!IsOperational)
+                return;
 
-                if (completedTask.IsFaulted)
-                    return completedTask.Exception?.Flatten().InnerException?.Message;
+            IsOperational = false;
+            cancellationTokenSource?.Cancel();
 
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Dispose();
-                return $"Unhandled exception: {ex.Message}";
-            }
-        }
+            reader?.Dispose();
+            writer?.Dispose();
 
-        public void OnConnectionBroked(string reason)
-        {
-            if (IsOperational)
-            {
-                IsOperational = false;
-                ConnectionBroked?.Invoke(reason);
-            }
-                
-            Dispose();
+            receivedMessagesQueue?.Dispose();
+            toBeSentMessagesQueue?.Dispose();
+
+            cancellationTokenSource?.Dispose();
+
+            ConnectionBroked?.Invoke($"Communicator stopped. Reason: {reason}");
         }
 
         public void SendMessage(string message)
         {
             try
             {
-                outputMessagesQueue.Add(message);
-
-                // Notes about 'MessageSent' event:
-                // 1) Happens in the calling method's thread.
-                // 2) Notifies about sending even if the message is still in standby mode.
-                MessageSent?.Invoke(message);      
+                toBeSentMessagesQueue.Add(message);   
             }
             catch (Exception ex)
             {
-                OnConnectionBroked($"Error occurred while trying to send (API) a message: {ex}");
+                debugMessagesQueue.Add($"Error occurred while trying to execute 'SendMessage(message)', handled without termination: {ex}");
             }
             
         }
@@ -123,14 +116,14 @@ namespace InterprocessCommunication
                     var message = await reader.ReadLineAsync();
 
                     if (message != null)
-                        inputMessagesQueue.Add(message, token);
+                        receivedMessagesQueue.Add(message, token);
                     else
                         throw new IOException("Got 'null' in 'ReadLoop'");
                 }
             }
             catch (Exception ex)
             {
-                OnConnectionBroked($"Error occurred while trying to read a message: {ex}");
+                Stop($"Error occurred while trying to read a message: {ex}");
             }
         }
 
@@ -140,24 +133,23 @@ namespace InterprocessCommunication
             {
                 await _connectionEstablished.Task;  // to be able to add messages to queue even before the communicator is ready
 
-                foreach (var message in outputMessagesQueue.GetConsumingEnumerable(cancellationTokenSource.Token))
+                foreach (var message in toBeSentMessagesQueue.GetConsumingEnumerable(cancellationTokenSource.Token))
                 {
                     await writer.WriteLineAsync(message);
                     await writer.FlushAsync();
 
-                    // todo: Logically, this is the best place to report on sending a message,
-                    // but I don't want anything other than the communicator to be in this thread
+                    sentMessagesQueue.Add(message);
                 }
             }
             catch (Exception ex)
             {
-                OnConnectionBroked($"Error occurred while trying to send (write) a message: {ex}");
+                Stop($"Error occurred while trying to write a message: {ex}");
             }
         }
 
-        private void ExecutionLoop()
+        private void ProcessReceivedMessagesLoop()
         {
-            foreach (var message in inputMessagesQueue.GetConsumingEnumerable(cancellationTokenSource.Token))
+            foreach (var message in receivedMessagesQueue.GetConsumingEnumerable(cancellationTokenSource.Token))
             {
                 try
                 {
@@ -165,26 +157,39 @@ namespace InterprocessCommunication
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error occurred while trying to execute a message, but thread is not terminated: {ex}");
+                    debugMessagesQueue.Add($"Error occurred while trying to execute 'MessageReceived?.Invoke(message)', handled without termination: {ex}");
                 }
-            }            
+            }
         }
 
-        public virtual void Dispose()
+        private void ProcessSentMessagesLoop()
         {
-            if (IsOperational)
-                ConnectionBroked?.Invoke($"Called from 'InterprocessCommunicator_Base.Dispose'");
+            foreach (var message in sentMessagesQueue.GetConsumingEnumerable(cancellationTokenSource.Token))
+            {
+                try
+                {
+                    MessageSent?.Invoke(message);
+                }
+                catch (Exception ex)
+                {
+                    debugMessagesQueue.Add($"Error occurred while trying to execute 'MessageSent?.Invoke(message)', handled without termination: {ex}");
+                }
+            }
+        }
 
-            IsOperational = false;
-            cancellationTokenSource?.Cancel();
-
-            reader?.Dispose();
-            writer?.Dispose();
-
-            inputMessagesQueue?.Dispose();
-            outputMessagesQueue?.Dispose();
-
-            cancellationTokenSource?.Dispose();
+        private void ProcessDebugMessagesLoop()
+        {
+            foreach (var message in debugMessagesQueue.GetConsumingEnumerable(cancellationTokenSource.Token))
+            {
+                try
+                {
+                    ErrorOccurred?.Invoke(message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error occurred while trying to execute 'ProcessDebugMessagesLoop', handled without termination: {ex}");
+                }
+            }
         }
     }
 }

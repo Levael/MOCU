@@ -21,11 +21,7 @@ namespace AudioModule
         public AudioHostSideBridge(IInterprocessCommunicator communicator)
         {
             _communicator = communicator;
-
-            _communicator.MessageReceived       += message => HandleIncomingMessage(message);    // UnityEngine.Debug.Log($"Got message from daemon: {message}")
-            _communicator.MessageSent           += message => UnityEngine.Debug.Log($"Sent message to daemon"); // : {message}
-            _communicator.ConnectionEstablished += message => UnityEngine.Debug.Log($"Connection established: {message}");
-            _communicator.ConnectionBroked      += message => UnityEngine.Debug.Log($"Connection broked: {message}");
+            _communicator.MessageReceived += message => HandleIncomingMessage(message);
         }
         
 
@@ -35,7 +31,7 @@ namespace AudioModule
             _communicator.Start();
         }
 
-        public void TestMethod()
+        public void TestMethod1()
         {
             /*try
             {
@@ -139,7 +135,7 @@ namespace AudioModule
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogError($"Error in 'AudioHostSideBridge.TestMethod': {ex}");
+                UnityEngine.Debug.LogError($"Error in 'AudioHostSideBridge.TestMethod1': {ex}");
             }
         }
 
@@ -189,7 +185,7 @@ namespace AudioModule
             }
             catch (Exception ex)
             {
-                UnityEngine.Debug.LogError($"Error in 'AudioHostSideBridge.TestMethod': {ex}");
+                UnityEngine.Debug.LogError($"Error in 'AudioHostSideBridge.TestMethod1': {ex}");
             }
         }
 
@@ -229,9 +225,6 @@ namespace AudioModule
         {
             try
             {
-                // temp (todo: remove after test or log it)
-                UnityEngine.Debug.Log($"Got message from daemon"); // Got message from daemon: {message}
-
                 var dataTransferObject = JsonHelper.DeserializeJson<AudioDataTransferObject>(message);
 
                 // CUSTOM MESSAGE

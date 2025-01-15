@@ -88,7 +88,7 @@ namespace InterprocessCommunication
         {
             _cancellationTokenSource.Cancel();
 
-            try { _communicator.Dispose(); }                catch { }
+            try { _communicator.Stop(); }                catch { }
             try { _commandQueue.CompleteAdding(); }         catch { }
             try { _outputMessageQueue.CompleteAdding(); }   catch { }
             try { _commandExecutionTask.Wait(); }           catch { }

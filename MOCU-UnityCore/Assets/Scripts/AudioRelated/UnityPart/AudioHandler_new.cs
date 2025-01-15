@@ -44,7 +44,7 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
         _debugTabHandler.testBtn1Clicked += (eventObj) =>
         {
             print($"AudioHandler is trying to send message to its daemon: ping device");
-            _daemon.TestMethod();
+            _daemon.TestMethod1();
         };
         _debugTabHandler.testBtn2Clicked += (eventObj) =>
         {

@@ -23,6 +23,7 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
     private Dictionary<DaemonType, (string fullPath, bool isHidden, IDaemonUser businessLogic)> _daemonControlPaths;
     private Dictionary<DaemonType, HostSideDaemonContainer> _daemons;
     private List<DaemonHandler_Client> _daemonHandlers;
+    private Dictionary<Guid, InterprocessCommunicationMessageLog> _messages;
 
     private DebugTabHandler _debugTabHandler;
 
@@ -30,6 +31,7 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
     {
         _debugTabHandler = GetComponent<DebugTabHandler>();
 
+        _messages = new();
         _daemonHandlers = new();
         _daemonsFolderPath = Path.Combine(Application.streamingAssetsPath, "Daemons");
 
@@ -60,10 +62,16 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
     public IInterprocessCommunicator GetDaemonCommunicator(DaemonType daemonType)
     {
         var daemon = _daemons[daemonType];
-        daemon.MessageReceived += message => LogDaemonIncomingActivity(daemonName: daemonType, message: message);
-        daemon.MessageSent += message => LogDaemonOutgoingActivity(daemonName: daemonType, message: message);
+        var communicator = daemon.GetCommunicator();
+
+        communicator.MessageReceived        += message => HandleMessageLogging(daemonType, InterprocessCommunicator_EventType.MessageReceived, message);
+        communicator.MessageSent            += message => HandleMessageLogging(daemonType, InterprocessCommunicator_EventType.MessageSent, message);
+        communicator.ConnectionEstablished  += message => HandleMessageLogging(daemonType, InterprocessCommunicator_EventType.ConnectionEstablished, message);
+        communicator.ConnectionBroked       += message => HandleMessageLogging(daemonType, InterprocessCommunicator_EventType.ConnectionBroked, message);
+        communicator.ErrorOccurred          += message => HandleMessageLogging(daemonType, InterprocessCommunicator_EventType.ErrorOccurred, message);
+
         daemon.Start();
-        return daemon.GetCommunicator();
+        return communicator;
     }
 
     public int GetDaemonsNumber()
@@ -71,32 +79,59 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
         return _daemons.Count;
     }
 
+    
 
-    // todo: refactor later, not important for now
-
-    private void LogDaemonIncomingActivity(DaemonType daemonName, string message, string messageName = "todo")
+    private void HandleMessageLogging(DaemonType daemonName, InterprocessCommunicator_EventType messageSourceType, string messageContent)
     {
-        var errorReports = JsonHelper.DeserializeJson<MinimalDataTransferObject>(message).DaemonErrorReports;
+        var messageSemanticType = DebugMessageType.Info;
 
-        var messageType = DebugMessageType.Info;
+        if (messageSourceType == InterprocessCommunicator_EventType.MessageReceived)
+            messageSemanticType = GetMessageSemanticType(messageContent);
 
-        if (errorReports.Any())
-            messageType = DebugMessageType.Warning;
+        if (messageSourceType == InterprocessCommunicator_EventType.ConnectionBroked)
+            messageSemanticType = DebugMessageType.Error;
 
-        if (errorReports.Any(report => report.isFatal))
-            messageType = DebugMessageType.Error;
+        if (messageSourceType == InterprocessCommunicator_EventType.ErrorOccurred)
+            messageSemanticType = DebugMessageType.Error;
 
-        LogDaemonActivity(daemonName: daemonName, messageName: messageName, direction: MessageDirection.Incoming, messageType: messageType);
+        // ========================================================================================
+
+        var messageLog = new InterprocessCommunicationMessageLog()
+        {
+            daemonName = daemonName,
+            messageSourceType = messageSourceType,
+            messageContent = messageContent,
+            messageSemanticType = messageSemanticType,
+            messageLabel = DateTime.Now.ToString("HH:mm")
+        };
+
+        _messages[Guid.NewGuid()] = messageLog;
+        _debugTabHandler.AddDaemonActivity(messageLog);
+
+
+        // temp
+        Debug.Log($"{messageSemanticType}, {messageSourceType}, {messageContent}");
     }
 
-    private void LogDaemonOutgoingActivity(DaemonType daemonName, string message, string messageName = "todo")
+    private DebugMessageType GetMessageSemanticType(string message)
     {
-        LogDaemonActivity(daemonName: daemonName, messageName: messageName, direction: MessageDirection.Outgoing);
-    }
+        try
+        {
+            var errorReports = JsonHelper.DeserializeJson<MinimalDataTransferObject>(message).DaemonErrorReports;
+            var messageType = DebugMessageType.Info;
 
-    private void LogDaemonActivity(DaemonType daemonName, string messageName, MessageDirection direction, DebugMessageType messageType = DebugMessageType.Info, string message = null)
-    {
-        _debugTabHandler.AddDaemonActivity(daemonName: $"{daemonName}", messageName: messageName, direction: direction, messageType: messageType);
+            if (errorReports.Any())
+                messageType = DebugMessageType.Warning;
+
+            if (errorReports.Any(report => report.isFatal))
+                messageType = DebugMessageType.Error;
+
+            return messageType;
+        }
+        catch
+        {
+            return DebugMessageType.Error;
+        }
     }
 }
 

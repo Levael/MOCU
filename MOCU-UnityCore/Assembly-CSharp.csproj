@@ -58,6 +58,7 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.9f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\InterprocessCommunicationMessageLog.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_DPadAction.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\IControllerDevice.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_JoystickAction.cs" />
@@ -121,11 +122,11 @@
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\SettingsDeviceBox\SettingsDeviceBox.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\SettingsTabHandler.cs" />
+    <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_EventType.cs" />
     <Compile Include="Assets\Scripts\ParticipantResponseRelated\AnswerHandler.cs" />
     <Compile Include="Assets\For tests\ForTests.cs" />
     <Compile Include="Assets\Scripts\ParticipantResponseRelated\ParticipantAnswer_enum.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\IDataTransferObject.cs" />
-    <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\MessageDirection.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\XID_ProtocolParser.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\SerialPortHelper.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\StatusesHandler.cs" />

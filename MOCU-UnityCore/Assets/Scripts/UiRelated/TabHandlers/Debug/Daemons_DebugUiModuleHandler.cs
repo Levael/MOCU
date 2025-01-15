@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DaemonsRelated;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 
@@ -52,18 +53,18 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
 
     // todo: add color to message according to its type
     // todo: do max capacity for logs. it's VisualElements, they 'eat' a lot
-    public void AddDaemonActivity(string daemonName, string messageName, MessageDirection direction, DebugMessageType messageType)
+    public void AddDaemonActivity(InterprocessCommunicationMessageLog messageLog)
     {
-        var instance = _daemonActivitieTemplate.CloneTree();
+        /*var instance = _daemonActivitieTemplate.CloneTree();
 
-        var iconClass = $"is{direction}";   // "isIncoming" or "isOutgoing"
+        var iconClass = $"is{messageLog.messageSourceType}";   // "isIncoming" or "isOutgoing"
         var icon = instance.Q<VisualElement>(className: "debug-daemons-activity-icon");
         var name = (TextElement)instance.Q<VisualElement>(className: "debug-daemons-activity-daemon");
         var description = (TextElement)instance.Q<VisualElement>(className: "debug-daemons-activity-message");
 
         icon.AddToClassList(iconClass);
-        name.text = daemonName;
-        description.text = $" - {messageName}";
+        name.text = messageLog.daemonName.ToString();
+        description.text = $" - {messageLog.messageLabel}";
 
         _daemonsActivities.Add(instance);
 
@@ -76,6 +77,6 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
             {
                 _daemonsActivities.verticalScroller.value = _daemonsActivities.verticalScroller.highValue > 0 ? _daemonsActivities.verticalScroller.highValue : 0;
             }).ExecuteLater(0); // Execute on the next frame to ensure layout is updated
-        }).ExecuteLater(0); // Execute on the next frame
+        }).ExecuteLater(0); // Execute on the next frame*/
     }
 }

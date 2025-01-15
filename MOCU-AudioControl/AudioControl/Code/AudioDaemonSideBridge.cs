@@ -20,9 +20,10 @@ namespace AudioModule.Daemon
             _communicator = communicator;
 
             _communicator.MessageReceived       += message => HandleIncomingMessage(message);
-            //_communicator.MessageSent           += message => Console.WriteLine($"Sent message to host");
+            //_communicator.MessageSent           += message => Console.WriteLine($"Sent message to host: {message}");
             _communicator.ConnectionEstablished += message => Console.WriteLine($"Connection established. {message}");
             _communicator.ConnectionBroked      += message => Console.WriteLine($"Connection broked. {message}");
+            _communicator.ErrorOccurred         += message => Console.WriteLine($"Occurred an error in communicator. {message}");
         }
 
         public void StartCommunication()

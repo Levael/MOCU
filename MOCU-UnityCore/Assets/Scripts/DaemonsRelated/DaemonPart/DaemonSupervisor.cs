@@ -93,7 +93,7 @@ namespace DaemonsRelated
                 daemonLogic.TerminateDaemon     -= CloseProgram;
 
                 daemonLogic?.DoBeforeExit();
-                communicator?.Dispose();
+                communicator?.Stop();
             };
 
             daemonLogic.Run();

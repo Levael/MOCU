@@ -1,14 +1,14 @@
 ﻿/// <summary>
-/// Overrides the base `MessageReceived` event for the Unity environment.
-/// This event wraps all subscribers in the `UnityMainThreadDispatcher` to ensure 
+/// Overrides the base events for the Unity environment.
+/// Those events wrap all subscribers in the `UnityMainThreadDispatcher` to ensure 
 /// they are invoked on Unity's main thread. 
 /// 
-/// The `new` keyword is used to hide the `MessageReceived` event from the base class 
+/// The `new` keyword is used to hide the events from the base class 
 /// `InterprocessCommunicator_Base`, allowing custom handling specific to Unity.
 /// 
 /// Note:
 /// - This approach allows Unity-specific behavior without altering the base class.
-/// - Existing classes that use the base class event `MessageReceived` directly are unaffected
+/// - Existing classes that use the base class events directly are unaffected
 ///   by this implementation.
 /// </summary>
 
@@ -37,6 +37,36 @@ namespace InterprocessCommunication
             remove
             {
                 base.MessageReceived -= value;
+            }
+        }
+
+        public new event Action<string> MessageSent
+        {
+            add
+            {
+                base.MessageSent += (message) =>
+                {
+                    UnityMainThreadDispatcher.Enqueue(() => value?.Invoke(message));
+                };
+            }
+            remove
+            {
+                base.MessageSent -= value;
+            }
+        }
+
+        public new event Action<string> ErrorOccurred
+        {
+            add
+            {
+                base.ErrorOccurred += (message) =>
+                {
+                    UnityMainThreadDispatcher.Enqueue(() => value?.Invoke(message));
+                };
+            }
+            remove
+            {
+                base.ErrorOccurred -= value;
             }
         }
     }

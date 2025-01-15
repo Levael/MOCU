@@ -163,13 +163,20 @@
 .debug-daemons-activity-icon .icon-color {
 	background-color: var(--main-images-color);
 }
-.debug-daemons-activity-icon.isIncoming {
+.debug-daemons-activity-icon.MessageReceived {
 	background-image: url('/Assets/Images/SVG/IncomingMessageIcon.svg');
 }
-.debug-daemons-activity-icon.isOutgoing {
+.debug-daemons-activity-icon.MessageSent {
 	background-image: url('/Assets/Images/SVG/OutgoingMessageIcon.svg');
 	rotate: 45deg;
 }
+.debug-daemons-activity-icon.ConnectionEstablished {
+	/* todo */
+}
+.debug-daemons-activity-icon.ConnectionBroked {
+	/* todo */
+}
+
 .debug-daemons-activity-daemon {
 	font-size: 12px;
 	-unity-font-style: bold;

@@ -1,5 +1,4 @@
-﻿using InterprocessCommunication;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,6 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
+
+using InterprocessCommunication;
 
 
 namespace DaemonsRelated
@@ -16,9 +17,6 @@ namespace DaemonsRelated
         public bool isRunning => _process?.HasExited == false && _communicator?.IsOperational == true;
         public DaemonType type;
         public string name;
-
-        public event Action<string> MessageReceived;
-        public event Action<string> MessageSent;
 
         private string _fullPath;
         private bool _isHidden;
@@ -45,20 +43,18 @@ namespace DaemonsRelated
 
             _process = new Process() { StartInfo = processInfo };
             _communicator = new InterprocessCommunicator_UnityServer(name);
-
-            // for debug purposes
-            _communicator.MessageReceived += message => this.MessageReceived?.Invoke(message);
-            _communicator.MessageSent += message => this.MessageSent?.Invoke(message);
         }
 
         public async void Start()
         {
-            // 'communicator' must be before 'process' (because it's on the sever side. On the client, it's the opposite)
-
             try
             {
+                // 'communicator' must be before 'process'
+                // (because it's on the sever side. On the client, it's the opposite)
+
                 var communicator = _communicator as InterprocessCommunicator_Server;
                 _ = Task.Run(() => communicator.Start());
+
                 await communicator.WaitForServerReadyForClientConnectionAsync();
                 _ = Task.Run(() => _process.Start());
             }
@@ -70,7 +66,7 @@ namespace DaemonsRelated
 
         public void Stop()
         {
-            _communicator.Dispose();
+            _communicator.Stop();
 
             if (_isHidden)
             {

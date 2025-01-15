@@ -102,7 +102,7 @@ public class AudioHandler : MonoBehaviour, IDaemonUser, IControllableInitiation
         _debugTabHandler.testBtn1Clicked += (eventObj) =>
         {
             print($"AudioHandler is trying to send message to its daemon");
-            _newDaemon.TestMethod();
+            _newDaemon.TestMethod1();
         };*/
 
         /*_daemon = await _daemonsHandler.GenerateDaemon(DaemonType.Audio);
