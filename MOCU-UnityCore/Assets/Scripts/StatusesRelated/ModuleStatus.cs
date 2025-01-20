@@ -1,8 +1,8 @@
 ﻿public enum ModuleStatus
 {
+    Inactive,
+    InSetup,
     FullyOperational,
     PartiallyOperational,
-    NotOperational,
-    InSetup,
-    Inactive
+    NotOperational
 }

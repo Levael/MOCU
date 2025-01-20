@@ -19,6 +19,9 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
 {
     public bool IsComponentReady { get; private set; }
 
+    public event Action<InterprocessCommunicationMessageLog> NewMessageLogged;
+    public event Action DaemonStatusChanged;    // notification that 'GetDaemonsInfo' needs to be called
+
     private string _daemonsFolderPath;
     private Dictionary<DaemonType, (string fullPath, bool isHidden, IDaemonUser businessLogic)> _daemonControlPaths;
     private Dictionary<DaemonType, HostSideDaemonContainer> _daemons;
@@ -52,7 +55,7 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
         IsComponentReady = true;
     }
 
-    void OnApplicationQuit()
+    private void OnApplicationQuit()
     {
         foreach (var daemon in _daemons.Values)
             try { daemon.Stop(); } catch { }
@@ -74,12 +77,10 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
         return communicator;
     }
 
-    public int GetDaemonsNumber()
+    public IEnumerable<(DaemonType type, ModuleStatus status)> GetDaemonsInfo()
     {
-        return _daemons.Count;
+        return _daemons.Select(item => (type: item.Key, status: item.Value.status));
     }
-
-    
 
     private void HandleMessageLogging(DaemonType daemonName, InterprocessCommunicator_EventType messageSourceType, string messageContent)
     {
@@ -102,15 +103,11 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
             messageSourceType = messageSourceType,
             messageContent = messageContent,
             messageSemanticType = messageSemanticType,
-            messageLabel = DateTime.Now.ToString("HH:mm")
+            messageLabel = TimeSpan.FromSeconds(Time.realtimeSinceStartup).ToString(@"hh\:mm\:ss")
         };
 
         _messages[Guid.NewGuid()] = messageLog;
-        _debugTabHandler.AddDaemonActivity(messageLog);
-
-
-        // temp
-        Debug.Log($"{messageSemanticType}, {messageSourceType}, {messageContent}");
+        NewMessageLogged?.Invoke(messageLog);
     }
 
     private DebugMessageType GetMessageSemanticType(string message)

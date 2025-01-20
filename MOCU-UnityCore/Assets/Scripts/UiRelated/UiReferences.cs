@@ -6,6 +6,8 @@ using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+// Refactor later, looks strange
+
 public class UiReferences : MonoBehaviour
 {
     public dynamic elements { get => _elements; }
@@ -193,6 +195,7 @@ public class UiReferences : MonoBehaviour
         // daemons
         _elements.debugTab.daemonsModule.totalNumber = root.Q<TextElement>("number_of_running_daemons_label");
         _elements.debugTab.daemonsModule.activities = root.Q<ScrollView>("debug-daemons-activities");
+        _elements.debugTab.daemonsModule.activitiesText = root.Q<TextElement>("debug-daemons-activities-text");
 
         // WINDOW BODY - SETTINGS TAB RELATED -----------------------------------------------------
 

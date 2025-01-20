@@ -1,14 +1,16 @@
-﻿using AudioModule;
-using InterprocessCommunication;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+using AudioModule;
+using InterprocessCommunication;
+using DaemonsRelated;
 
-public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableInitiation, DaemonsRelated.IDaemonUser
+
+public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableInitiation
 {
     public bool IsComponentReady { get; private set; }
 
@@ -16,8 +18,6 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
     public event Action ClipHasChanged;
     public event Action IntercomHasStarted;
     public event Action IntercomHasStoped;
-    public event Action<string> ReceivedMessageFromDaemon;  // for DaemonsHandler only (for debug purposes)
-    public event Action<string> SentMessageToDaemon;        // for DaemonsHandler only (for debug purposes)
 
     private AudioHostSideBridge _daemon;
     private Dictionary<Guid, (AudioDeviceData, User)> _devices;
@@ -41,16 +41,8 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
 
         InitDaemonTest();
 
-        _debugTabHandler.testBtn1Clicked += (eventObj) =>
-        {
-            print($"AudioHandler is trying to send message to its daemon: ping device");
-            _daemon.TestMethod1();
-        };
-        _debugTabHandler.testBtn2Clicked += (eventObj) =>
-        {
-            print($"AudioHandler is trying to send message to its daemon: update clips");
-            _daemon.TestMethod2();
-        };
+        _debugTabHandler.testBtn1Clicked += (eventObj) => _daemon.TestMethod1();
+        _debugTabHandler.testBtn2Clicked += (eventObj) => _daemon.TestMethod2();
     }
 
     // ############################################################################################

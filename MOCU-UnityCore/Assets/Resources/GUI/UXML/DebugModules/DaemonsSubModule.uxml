@@ -9,13 +9,12 @@
 <VisualElement name="debug-daemons-submodule-template-wrapper" class="wrapper">
     <VisualElement class="module-title">
         <TextElement text="Daemons"/>
-        <TextElement name="number_of_running_daemons_label" text="5"/>
+        <TextElement name="number_of_running_daemons_label" text=""/>
     </VisualElement>
 
-    <ScrollView name="debug-daemons-activities"></ScrollView>
-    
-
-    <!-- row with daemon name and command/response name + icon -->
+    <ScrollView name="debug-daemons-activities">
+        <TextElement name="debug-daemons-activities-text"/>
+    </ScrollView>
 </VisualElement>
 
     

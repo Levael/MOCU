@@ -145,6 +145,11 @@
 	flex-direction: column;
 	padding: 3px;
 }
+#debug-daemons-activities-text {
+	-unity-font-style: normal;
+	-unity-text-align: middle-left;
+	text-overflow: ellipsis;
+}
 .debug-daemons-activitie {
 	flex-direction: row;
 	width: 100%;

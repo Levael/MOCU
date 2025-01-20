@@ -69,7 +69,16 @@ namespace InterprocessCommunication
             _processDebugMessagesLoop       = Task.Run(() => ProcessDebugMessagesLoop());
 
             IsOperational = true;
-            ConnectionEstablished?.Invoke($"Pipe name: {_pipeName}");
+
+            try
+            {
+                ConnectionEstablished?.Invoke($"Pipe name: {_pipeName}");
+            }
+            catch (Exception ex)
+            {
+                debugMessagesQueue.Add($"Error occurred while trying to execute 'Start', handled without termination: {ex}");
+            }
+            
             _connectionEstablished.TrySetResult(true);
         }
 
@@ -89,7 +98,16 @@ namespace InterprocessCommunication
 
             cancellationTokenSource?.Dispose();
 
-            ConnectionBroked?.Invoke($"Communicator stopped. Reason: {reason}");
+            try
+            {
+                ConnectionBroked?.Invoke($"Communicator stopped. Reason: {reason}");
+            }
+            catch (Exception ex)
+            {
+                // todo: rethink that
+                debugMessagesQueue.Add($"Error occurred while trying to execute 'Stop', handled without termination: {ex}");
+                Console.WriteLine($"Error occurred while trying to execute 'Stop', handled without termination: {ex}");
+            }
         }
 
         public void SendMessage(string message)
@@ -102,7 +120,6 @@ namespace InterprocessCommunication
             {
                 debugMessagesQueue.Add($"Error occurred while trying to execute 'SendMessage(message)', handled without termination: {ex}");
             }
-            
         }
 
         private async Task ReadLoop()

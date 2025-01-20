@@ -38,6 +38,8 @@ public class DifferentInfo_DebugUiModuleHandler : MonoBehaviour, IFullyControlla
         _timeWorkingValueCell = _uiReference.elements.debugTab.diffInfoModule.totalTimeWorking;
 
         IsComponentReady = true;
+
+        // todo: consider changing 'ControllableUpdate' to 'GetComponent<UIDocument>().rootVisualElement.schedule.Execute(UpdateTimer).Every(1000);'
     }
 
     public void ControllableUpdate()

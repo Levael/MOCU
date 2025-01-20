@@ -1,4 +1,5 @@
 ﻿using DaemonsRelated;
+using InterprocessCommunication;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,10 +15,9 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
     private VisualTreeAsset _daemonActivitieTemplate;
     private TextElement _numberOfDaemonsCell;
     private ScrollView _daemonsActivities;
+    private TextElement _daemonsActivitiesText;
 
 
-
-    // BASIC FUNCTIONALITY
 
     public void ControllableAwake()
     {
@@ -32,23 +32,43 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
         _uiReference = _uiHandler.secondaryUiScreen;
 
         _daemonsActivities = _uiReference.elements.debugTab.daemonsModule.activities;
+        _daemonsActivitiesText = _uiReference.elements.debugTab.daemonsModule.activitiesText;
         _daemonsActivities.horizontalScrollerVisibility = ScrollerVisibility.Hidden;
         _numberOfDaemonsCell = _uiReference.elements.debugTab.daemonsModule.totalNumber;
+
+        _daemonsHandler.NewMessageLogged += NewMessageLogged;
+        _daemonsHandler.DaemonStatusChanged += DaemonStatusChanged;
 
         IsComponentReady = true;
     }
 
     public void ControllableUpdate()
     {
-        UpdateDaemonsModule();
+
     }
 
 
-    // CUSTOM FUNCTIONALITY
 
-    private void UpdateDaemonsModule()
+    private void NewMessageLogged(InterprocessCommunicationMessageLog message)
     {
-        _numberOfDaemonsCell.text = $"({_daemonsHandler.GetDaemonsNumber()})";
+        if (_daemonsActivitiesText.text.Length != 0)
+            _daemonsActivitiesText.text += "\n";    // new line for every message except the first one
+
+        _daemonsActivitiesText.text += $"{message.messageLabel} - {message.daemonName} - {message.messageSemanticType} - {message.messageSourceType}";
+        Debug.Log($"message: {message.messageContent}");
+    }
+
+    private void DaemonStatusChanged()
+    {
+        var daemons = _daemonsHandler.GetDaemonsInfo();
+
+        Debug.Log($"Updated info (daemons):");
+
+        foreach (var daemon in daemons)
+            Debug.Log($"{daemon.type} - {daemon.status}");
+
+        Debug.Log($"...\n");
+
     }
 
     // todo: add color to message according to its type
@@ -57,7 +77,7 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
     {
         /*var instance = _daemonActivitieTemplate.CloneTree();
 
-        var iconClass = $"is{messageLog.messageSourceType}";   // "isIncoming" or "isOutgoing"
+        var iconClass = $"is{messageLog.messageSourceType}";   // 
         var icon = instance.Q<VisualElement>(className: "debug-daemons-activity-icon");
         var name = (TextElement)instance.Q<VisualElement>(className: "debug-daemons-activity-daemon");
         var description = (TextElement)instance.Q<VisualElement>(className: "debug-daemons-activity-message");

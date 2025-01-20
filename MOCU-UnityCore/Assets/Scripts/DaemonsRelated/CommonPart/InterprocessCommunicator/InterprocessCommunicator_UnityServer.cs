@@ -69,5 +69,35 @@ namespace InterprocessCommunication
                 base.ErrorOccurred -= value;
             }
         }
+
+        public new event Action<string> ConnectionEstablished
+        {
+            add
+            {
+                base.ConnectionEstablished += (message) =>
+                {
+                    UnityMainThreadDispatcher.Enqueue(() => value?.Invoke(message));
+                };
+            }
+            remove
+            {
+                base.ConnectionEstablished -= value;
+            }
+        }
+
+        public new event Action<string> ConnectionBroked
+        {
+            add
+            {
+                base.ConnectionBroked += (message) =>
+                {
+                    UnityMainThreadDispatcher.Enqueue(() => value?.Invoke(message));
+                };
+            }
+            remove
+            {
+                base.ConnectionBroked -= value;
+            }
+        }
     }
 }
