@@ -1,9 +1,23 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
+
+// Since 'reader.ReadLine' reads the message line by line,
+// formatted JSON may be split into multiple messages and misinterpreted.
+//
+// To prevent this issue, the message is converted into a single-line format before being sent.
+// After receiving it, the reverse transformation restores the original format, ensuring
+// that the external user receives an unmodified message while maintaining correct internal processing.
+//
+// 'ProtectString' and 'UnprotectString' are executed in 'WriteLoop' and 'ReadLoop' respectively.
+// Their performance impact should be minimal and should not significantly block the thread.
 
 
 namespace InterprocessCommunication
@@ -122,18 +136,27 @@ namespace InterprocessCommunication
             }
         }
 
+        private string ProtectString(string input)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(input));
+        }
+
+        private string UnprotectString(string encoded)
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(encoded));
+        }
+
         private async Task ReadLoop()
         {
             try
             {
                 var token = cancellationTokenSource.Token;
-
                 while (!token.IsCancellationRequested)
                 {
                     var message = await reader.ReadLineAsync();
 
                     if (message != null)
-                        receivedMessagesQueue.Add(message, token);
+                        receivedMessagesQueue.Add(UnprotectString(message), token);
                     else
                         throw new IOException("Got 'null' in 'ReadLoop'");
                 }
@@ -152,7 +175,7 @@ namespace InterprocessCommunication
 
                 foreach (var message in toBeSentMessagesQueue.GetConsumingEnumerable(cancellationTokenSource.Token))
                 {
-                    await writer.WriteLineAsync(message);
+                    await writer.WriteLineAsync(ProtectString(message));
                     await writer.FlushAsync();
 
                     sentMessagesQueue.Add(message);
