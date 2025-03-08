@@ -28,13 +28,13 @@ namespace CustomUxmlElements
         private CustomImage _image;
         private TextElement _label;
 
-        private Dictionary<DeviceCardStatus, string> _deviceCardStatusToUssClassNameMap = new ()
+        private Dictionary<DevicePanelStatus, string> _deviceCardStatusToUssClassNameMap = new ()
         {
-            { DeviceCardStatus.Ready,       "normal"},
-            { DeviceCardStatus.Disabled,    "is-inactive"},
-            { DeviceCardStatus.Connecting,  "has-warning"},
-            { DeviceCardStatus.NotChosen,   "has-error"},
-            { DeviceCardStatus.Error,       "has-error"},
+            { DevicePanelStatus.Ready,       "normal"},
+            { DevicePanelStatus.Disabled,    "is-inactive"},
+            { DevicePanelStatus.Connecting,  "has-warning"},
+            { DevicePanelStatus.NotChosen,   "has-error"},
+            { DevicePanelStatus.Error,       "has-error"},
         };
 
         public SettingsDeviceBox()
@@ -66,7 +66,7 @@ namespace CustomUxmlElements
             get => _container.name;
         }
 
-        public void SetStatus(DeviceCardStatus status)
+        public void SetStatus(DevicePanelStatus status)
         {
             foreach (var style in _deviceCardStatusToUssClassNameMap.Values)
                 _label.RemoveFromClassList(style);

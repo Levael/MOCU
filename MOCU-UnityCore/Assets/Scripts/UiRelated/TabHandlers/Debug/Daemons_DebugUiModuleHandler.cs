@@ -1,5 +1,6 @@
 ﻿using DaemonsRelated;
 using InterprocessCommunication;
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -16,6 +17,8 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
     private TextElement _numberOfDaemonsCell;
     private ScrollView _daemonsActivities;
     private TextElement _daemonsActivitiesText;
+
+    private System.Diagnostics.Stopwatch _testStopwatch;
 
 
 
@@ -40,6 +43,9 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
         _daemonsHandler.DaemonStatusChanged += DaemonStatusChanged;
 
         IsComponentReady = true;
+
+        _testStopwatch = new();
+        _testStopwatch.Start();
     }
 
     public void ControllableUpdate()
@@ -55,7 +61,8 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
             _daemonsActivitiesText.text += "\n";    // new line for every message except the first one
 
         _daemonsActivitiesText.text += $"{message.messageLabel} - {message.daemonName} - {message.messageSemanticType} - {message.messageSourceType}";
-        Debug.Log($"message: {message.messageContent}");
+        Debug.Log($"messageLabel: {message.messageLabel}. MS: {_testStopwatch.Elapsed.TotalMilliseconds}");
+        Debug.Log($"messageContent: {message.messageContent}");
     }
 
     private void DaemonStatusChanged()

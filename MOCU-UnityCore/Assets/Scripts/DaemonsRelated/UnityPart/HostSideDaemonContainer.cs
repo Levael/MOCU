@@ -20,15 +20,17 @@ namespace DaemonsRelated
 
         private string _fullPath;
         private bool _isHidden;
+        private ProcessPriorityClass _priority;
 
         private Process _process;
         private IInterprocessCommunicator _communicator;
 
-        public HostSideDaemonContainer(DaemonType type, string fullPath, bool isHidden)
+        public HostSideDaemonContainer(DaemonType type, string fullPath, bool isHidden, ProcessPriorityClass priority = ProcessPriorityClass.Normal)
         {
             this.type = type;
             _fullPath = fullPath;
             _isHidden = isHidden;
+            _priority = priority;
             name = $"{type}Daemon";
             status = ModuleStatus.Inactive;
 
@@ -62,7 +64,16 @@ namespace DaemonsRelated
                 _ = Task.Run(() => communicator.Start());
 
                 await communicator.WaitForServerReadyForClientConnectionAsync();
-                _ = Task.Run(() => _process.Start());
+                _ = Task.Run(() =>
+                {
+                    _process.Start();
+                    if (_priority == ProcessPriorityClass.High)
+                    {
+                        _process.PriorityClass = ProcessPriorityClass.High; // RealTime is dangerous
+                        _process.ProcessorAffinity = (IntPtr)1; // only first core will be used (system doesn't waste time switching between processes)
+                        // todo: consider also banning all other processors from using this core
+                    }
+                });
             }
             catch
             {

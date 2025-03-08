@@ -15,6 +15,11 @@ MOCU-AudioControl/AudioControl/bin/
 MOCU-AudioControl/AudioControl/obj/
 MOCU-AudioControl/AudioControl/AudioControl.exe
 
+# MOCU-MoogControl
+MOCU-MoogControl/MoogControl/bin/
+MOCU-MoogControl/MoogControl/obj/
+MOCU-MoogControl/MoogControl/MoogControl.exe
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 **/[Mm]emoryCaptures/

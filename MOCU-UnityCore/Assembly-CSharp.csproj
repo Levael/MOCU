@@ -63,11 +63,13 @@
     <Compile Include="Assets\Scripts\ControllersRelated\IControllerDevice.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_JoystickAction.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Fps_DebugUiModuleHandler.cs" />
+    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesModule\DeviceBoxPanel_Microphones.cs" />
     <Compile Include="Assets\Scripts\WinAPI.cs" />
     <Compile Include="Assets\Scripts\Bootstrap\Bootstrap.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Client.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\MinimalDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDaemonsOnlyCommon (depricated)\DaemonsUtilities.cs" />
+    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesModule\DeviceBoxPanel.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\_Depricated\AudioDevice.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DTOs\UnifiedDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\UnityPart\AudioHostSideBridge.cs" />
@@ -169,6 +171,7 @@
     <None Include="Assets\Resources\GUI\UXML\SettingsModules\ThemesPalettesModule.uxml" />
     <None Include="Assets\For tests\FixationPointShader.shader" />
     <None Include="Assets\Resources\GUI\USS\DarkTheme.uss" />
+    <None Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesModule\DeviceBoxPanel.uss" />
     <None Include="Assets\Resources\GUI\UXML\ExperimentModules\StatusesModule.uxml" />
     <None Include="Assets\Resources\GUI\UXML\DebugModules\ConsoleModule.uxml" />
     <None Include="Assets\Resources\GUI\USS\HeaderStyles.uss" />

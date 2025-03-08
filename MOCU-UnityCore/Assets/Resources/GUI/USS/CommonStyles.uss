@@ -1,5 +1,5 @@
 /* DISPLAYS */
-#the-main-display,
+#the-primary-display,
 #the-secondary-display
 {
 	width: 100%;
@@ -192,7 +192,7 @@ TextField * {
 
 
 #modal-windows, #modal-windows > *,
-#settings-body, #data-body, #info-body, #cameras-body, #debug-body     ,	/* , #experiment-body  -- for dev it's open in redactor #debug-body*/
+#data-body, #info-body, #cameras-body, #debug-body, #experiment-body,	/* , #settings-body,  -- for dev it's open in redactor #debug-body*/
 #experiment-body-right-part-monitors-eeg, #eeg-status-block {
 	display: none;
 }
@@ -213,3 +213,15 @@ TextField * {
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-color: red; */
+
+DeviceBoxPanel {
+	flex-direction: column;
+	display: flex;
+	justify-content: space-between;
+}
+
+DeviceBoxPanel .device-box-panel-info-section {
+	width: 50px;
+	height: 50px;
+	background-color: red;
+}

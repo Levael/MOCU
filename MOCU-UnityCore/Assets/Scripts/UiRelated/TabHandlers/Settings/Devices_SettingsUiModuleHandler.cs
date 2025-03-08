@@ -13,6 +13,7 @@ using System.Linq;
 
 using Debug = UnityEngine.Debug;
 using System.Xml.Linq;
+using System.Collections;
 
 
 // add to documentation: the only update this class can get are from outside. it only sends what is wanted to be changed
@@ -29,12 +30,14 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
     private UiReferences _uiReference;
     private UiHandler _uiHandler;
 
-    private Dictionary<DeviceCardStatus, string> _deviceCardStatusToUssClassNameMap;        // classes for card labels
+    private Dictionary<DevicePanelStatus, string> _deviceCardStatusToUssClassNameMap;        // classes for card labels
     private Dictionary<DeviceOptionStatus, string> _deviceOptionStatusToUssClassNameMap;    // classes for options
 
     private VisualElement _backToMainBtn;
     private VisualElement _openChoosingWindowBtn;
     private VisualElement _currentlyOpenedDeviceBox;
+
+    private DeviceBoxPanel_Microphones temp;
 
 
 
@@ -49,6 +52,8 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
             {DeviceOptionStatus.CurrentlyChosen,    "current-device"},
             {DeviceOptionStatus.AlreadyChosen,      "already-chosen-device"},
         };
+
+        temp = new DeviceBoxPanel_Microphones();
     }
 
     public void ControllableStart()
@@ -57,7 +62,13 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
         _audioHandler = GetComponent<AudioHandler>();
 
         _uiReference = _uiHandler.secondaryUiScreen;
-        _backToMainBtn = _uiReference.elements.settingsTab.devicesModule.backToMainBtn;
+
+        var devicesModule = _uiReference.root.Q<VisualElement>("settings-devices-module-window");
+        //var box = new DeviceBoxPanel_Microphones();
+        devicesModule.Add(temp);
+
+
+        /*_backToMainBtn = _uiReference.elements.settingsTab.devicesModule.backToMainBtn;
         _openChoosingWindowBtn = _uiReference.elements.settingsTab.devicesModule.choosingWindow;
         _currentlyOpenedDeviceBox = null;
 
@@ -70,7 +81,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
         audioDevice_InputResearcher = new DeviceParametersSet {
             uiElement               = _uiReference.elements.settingsTab.devicesModule.microphoneResearcher,
             deviceObject            = _audioHandler.audioDevices.InputResearcher,
-            deviceStatus            = DeviceCardStatus.NotChosen,
+            deviceStatus            = DevicePanelStatus.NotChosen,
             deviceType              = DeviceType.AudioInput,
             allowMultipleDevices    = false,
 
@@ -80,7 +91,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
         audioDevice_InputParticipant = new DeviceParametersSet {
             uiElement               = _uiReference.elements.settingsTab.devicesModule.microphoneParticipant,
             deviceObject            = _audioHandler.audioDevices.InputParticipant,
-            deviceStatus            = DeviceCardStatus.NotChosen,
+            deviceStatus            = DevicePanelStatus.NotChosen,
             deviceType              = DeviceType.AudioInput,
             allowMultipleDevices    = false,
 
@@ -90,7 +101,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
         audioDevice_OutputResearcher = new DeviceParametersSet {
             uiElement               = _uiReference.elements.settingsTab.devicesModule.speakerResearcher,
             deviceObject            = _audioHandler.audioDevices.OutputResearcher,
-            deviceStatus            = DeviceCardStatus.NotChosen,
+            deviceStatus            = DevicePanelStatus.NotChosen,
             deviceType              = DeviceType.AudioOutput,
             allowMultipleDevices    = false,
 
@@ -101,7 +112,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
         {
             uiElement               = _uiReference.elements.settingsTab.devicesModule.speakerParticipant,
             deviceObject            = _audioHandler.audioDevices.OutputParticipant,
-            deviceStatus            = DeviceCardStatus.NotChosen,
+            deviceStatus            = DevicePanelStatus.NotChosen,
             deviceType              = DeviceType.AudioOutput,
             allowMultipleDevices    = false,
 
@@ -117,7 +128,7 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
             audioDevice_OutputParticipant,
         };
 
-        SomeStuff_RenameLater();
+        SomeStuff_RenameLater();*/
         IsComponentReady = true;
     }
 
@@ -154,12 +165,12 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
             {
                 /*var chosenDeviceName    = device.GetDeviceName(parameters);
                 var chosenDeviceVolume  = device.GetDeviceVolume(parameters) ?? 0f;
-                var deviceStatus        = (!String.IsNullOrEmpty(chosenDeviceName)) ? DeviceCardStatus.Ready : DeviceCardStatus.NotChosen;
+                var deviceStatus        = (!String.IsNullOrEmpty(chosenDeviceName)) ? DevicePanelStatus.Ready : DevicePanelStatus.NotChosen;
 
                 devicesInterlinkedCollection.UpdateSingleValue(device.uiElement, "chosenDeviceName", chosenDeviceName);
                 devicesInterlinkedCollection.UpdateSingleValue(device.uiElement, "chosenDeviceVolume", chosenDeviceVolume);*/
 
-                var deviceStatus = (!String.IsNullOrEmpty(device.deviceObject.Name)) ? DeviceCardStatus.Ready : DeviceCardStatus.NotChosen;
+                var deviceStatus = (!String.IsNullOrEmpty(device.deviceObject.Name)) ? DevicePanelStatus.Ready : DevicePanelStatus.NotChosen;
                 devicesInterlinkedCollection.UpdateSingleValue(device.uiElement, "deviceStatus", deviceStatus);
             }
 
@@ -382,7 +393,7 @@ public class DeviceParametersSet
     public IReadOnlyList<(string deviceName, DeviceOptionStatus status)>? listOfOptions { get; set; }
 
     [CanBeKey(false)]
-    public DeviceCardStatus deviceStatus { get; set; }
+    public DevicePanelStatus deviceStatus { get; set; }
     
     [CanBeKey(false)]
     public DeviceType deviceType { get; set; }
@@ -391,7 +402,7 @@ public class DeviceParametersSet
     public bool allowMultipleDevices { get; set; }
 }
 
-public enum DeviceCardStatus
+public enum DevicePanelStatus
 {
     Ready,              // is ok and can be used
     Disabled,           // can't be chosen

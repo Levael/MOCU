@@ -10,6 +10,7 @@ using Debug = UnityEngine.Debug;
 using System.Diagnostics;
 using DaemonsRelated;
 using System.Linq;
+using Unity.IO.LowLevel.Unsafe;
 
 #nullable enable
 #pragma warning disable CS8618
@@ -44,7 +45,8 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
                 DaemonType.Audio, new HostSideDaemonContainer(
                     type: DaemonType.Audio,
                     fullPath: Path.Combine(_daemonsFolderPath, "AudioControl.exe"),
-                    isHidden: false
+                    isHidden: false,
+                    priority: ProcessPriorityClass.BelowNormal
                 )
             }
         };

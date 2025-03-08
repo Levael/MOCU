@@ -1,19 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns="UnityEngine.UIElements"
-      xmlns:custom="CustomUxmlElements"
-      xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd">
- 
+<UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd"
+>
     
-    <!-- USS -->
-    <Style src="/Assets/Resources/GUI/USS/CommonStyles.uss" />
-    <Style src="/Assets/Resources/GUI/USS/DarkTheme.uss" /> <!-- LightTheme -->
-    <Style src="/Assets/Resources/GUI/USS/ImageLinks.uss" />
-
-    <Style src="/Assets/Resources/GUI/CustomElements/Icon/CustomImage.uss" />
-    <Style src="/Assets/Resources/GUI/CustomElements/Slider/CustomSlider.uss" />
-
-    <!-- UXML -->
     <Template src="/Assets/Resources/GUI/UXML/MainUiDocument.uxml" name="MainUiDocument-template"/>
     <Instance template="MainUiDocument-template" name="the-secondary-display"/>
 
