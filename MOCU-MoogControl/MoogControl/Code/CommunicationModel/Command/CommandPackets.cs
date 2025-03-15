@@ -1,5 +1,29 @@
 ﻿/*
  * COMMANDS (SCC to MBC) (for DOF mode only)
+ * (part of the documentation, taken from the file 'CDS7330 INTERFACE DEFINITION MANUAL.pdf')
+ * 
+ * 
+ */
+
+
+namespace MoogModule.Daemon
+{
+    public static class CommandPackets
+    {
+        public static CommandPacket Engage(DofParameters dof)       => new (motionCommandWord: MotionCommandWord.Engage, dofParameters: dof);
+        public static CommandPacket Disengage()                     => new (motionCommandWord: MotionCommandWord.Disengage);
+        public static CommandPacket Reset()                         => new (motionCommandWord: MotionCommandWord.Reset);
+        public static CommandPacket NewPosition(DofParameters dof)  => new (motionCommandWord: MotionCommandWord.Null, dofParameters: dof);
+    }
+}
+
+
+
+
+// WRONG !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+/*
+ * COMMANDS (SCC to MBC) (for DOF mode only)
  * (part of the documentation, taken from the file '6DOF2000E Real Time Ethernet Interface Definition - CDS7237.pdf')
  * 
  * 
@@ -44,27 +68,3 @@
  * Provides position command data to the MB.
  * The MB in the ENGAGED state will update its position loops with the data provided in the command frame.
  */
-
-
-namespace MoogModule.Daemon
-{
-    public static class CommandPackets
-    {
-        public static readonly CommandPacket Disable     = new() { MCW = MotionCommandWord.Disable };
-        public static readonly CommandPacket Park        = new() { MCW = MotionCommandWord.Park };
-        public static readonly CommandPacket Engage      = new() { MCW = MotionCommandWord.Engage };
-        public static readonly CommandPacket Start       = new() { MCW = MotionCommandWord.Start };
-        public static readonly CommandPacket DofMode     = new() { MCW = MotionCommandWord.DofMode };
-        public static readonly CommandPacket Reset       = new() { MCW = MotionCommandWord.Reset };
-        public static readonly CommandPacket Inhibit     = new() { MCW = MotionCommandWord.Inhibit };
-
-        public static CommandPacket NewPosition(DofParameters dof)
-        {
-            return new CommandPacket
-            {
-                MCW = MotionCommandWord.NewPosition,
-                Parameters = dof
-            };
-        }
-    }
-}

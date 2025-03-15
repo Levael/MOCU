@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Fps_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesModule\DeviceBoxPanel_Microphones.cs" />
     <Compile Include="Assets\Scripts\WinAPI.cs" />
+    <Compile Include="Assets\For tests\FixedUpdateMonitor.cs" />
     <Compile Include="Assets\Scripts\Bootstrap\Bootstrap.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Client.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\MinimalDataTransferObject.cs" />

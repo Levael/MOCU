@@ -4,28 +4,39 @@
 namespace MoogModule.Daemon
 {
     [Flags]
-    public enum FaultData : uint
+    public enum LatchedFaultWord1 : uint
     {
-        None                = 0b0000_0000_0000_0000,
+        None                        = 0,
+        HostCommunicationTimeout    = 1u << 0,      // Alarm ID: 401
+        HomeConflictFault           = 1u << 9,      // Alarm ID: 612
+        DriveSettlingActive         = 1u << 31      // Alarm ID: 501
+    }
 
-        // High byte (bits d15-d8)
-        EStop               = 0b1000_0000_0000_0000, // d15
-        SnubberFault        = 0b0100_0000_0000_0000, // d14
-        ActuatorRunaway     = 0b0010_0000_0000_0000, // d13
-        BatteryFault        = 0b0001_0000_0000_0000, // d12
-        LowIdleRate         = 0b0000_1000_0000_0000, // d11
-        MotorThermalFault   = 0b0000_0100_0000_0000, // d10
-        CommandRangeError   = 0b0000_0010_0000_0000, // d9
-        InvalidFrame        = 0b0000_0001_0000_0000, // d8
+    [Flags]
+    public enum LatchedFaultWord2 : uint
+    {
+        None                        = 0,
+        LostACPower                 = 1u << 0,      // Alarm ID: 146
+        FollowingError              = 1u << 4,      // Alarm ID: 809
+        HitHomeWhileMoving          = 1u << 5,      // Alarm ID: 154-159
+        HostCommandRangeExceeded    = 1u << 6,      // Alarm ID: 400
+        EmergencyShutOffActive      = 1u << 15,     // Alarm ID: 164
+        ESTOP                       = 1u << 16,     // Alarm ID: 147
+        SafetyRelayOpen             = 1u << 20,     // Alarm ID: 160
+        SafetyRelayResponse         = 1u << 21,     // Alarm ID: 161
+        Interlock                   = 1u << 22,     // Alarm ID: 122
+        DriveInitializationFailure  = 1u << 23,     // Alarm ID: 700
+        DriveCommunication          = 1u << 24,     // Alarm ID: 702
+        PLCSystemFault              = 1u << 25      // Alarm ID: 150
+    }
 
-        // Low byte (bits d7-d0)
-        WatchdogFault       = 0b0000_0000_1000_0000, // d7
-        LimitSwitchFault    = 0b0000_0000_0100_0000, // d6
-        DriveBusFault       = 0b0000_0000_0010_0000, // d5
-        AmplifierFault      = 0b0000_0000_0001_0000, // d4
-        CommFault           = 0b0000_0000_0000_1000, // d3
-        HomingFault         = 0b0000_0000_0000_0100, // d2
-        EnvelopeFault       = 0b0000_0000_0000_0010, // d1
-        TorqueMonFault      = 0b0000_0000_0000_0001, // d0
+    [Flags]
+    public enum LatchedFaultWord3 : uint
+    {
+        None                        = 0,
+        AccelerationFault           = 1u << 0,      // Alarm ID: 800
+        VelocityFault               = 1u << 1,      // Alarm ID: 801
+        EnvelopeExtendLimit         = 1u << 3,      // Alarm ID: 813
+        EnvelopeRetractLimit        = 1u << 4       // Alarm ID: 812
     }
 }

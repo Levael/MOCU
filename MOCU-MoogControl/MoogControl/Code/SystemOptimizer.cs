@@ -52,7 +52,7 @@ namespace MoogModule.Daemon
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Couldn't 'AnnexCores' cores");
+                //Console.WriteLine($"Couldn't 'AnnexCores' cores");
             }
         }
 
@@ -66,7 +66,7 @@ namespace MoogModule.Daemon
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Couldn't 'ExpelOthersFromAnnexedCores' cores: {process.ProcessName}");
+                    //Console.WriteLine($"Couldn't 'ExpelOthersFromAnnexedCores' cores: {process.ProcessName}");
                 }
             }
         }
@@ -80,11 +80,11 @@ namespace MoogModule.Daemon
                 IntPtr affinity = process.ProcessorAffinity;
                 originalAffinity[process.Id] = affinity;
                 process.ProcessorAffinity = (IntPtr)(affinity.ToInt64() & BlockedCoresMask);
-                Console.WriteLine($"Expelled successfully: {process.ProcessName}");
+                //Console.WriteLine($"Expelled successfully: {process.ProcessName}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Couldn't 'ExpelFromAnnexedCores' cores");
+                //Console.WriteLine($"Couldn't 'ExpelFromAnnexedCores' cores");
             }
         }
 
@@ -99,7 +99,7 @@ namespace MoogModule.Daemon
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Couldn't 'RestoreOriginalAffinity' {kvp.Key}. Maybe it was already terminated");
+                    //Console.WriteLine($"Couldn't 'RestoreOriginalAffinity' {kvp.Key}. Maybe it was already terminated");
                 }
             }
         }

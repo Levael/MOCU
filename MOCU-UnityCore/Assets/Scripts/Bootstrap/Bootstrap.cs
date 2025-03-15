@@ -57,6 +57,7 @@ public class Bootstrap : MonoBehaviour
 
             // TESTS
             EnsureComponent<ForTests>(),
+            //EnsureComponent<FixedUpdateMonitor>(),
         };
 
 

@@ -1,22 +1,35 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 
 namespace MoogModule.Daemon
 {
-    public static class PacketSerializer<T> where T : struct
+    public static class PacketSerializer
     {
-        // todo: store premade array (for both command and response packets)
+        private static readonly int CommandSize     = Marshal.SizeOf<CommandPacket>();
+        private static readonly int ResponseSize    = Marshal.SizeOf<ResponsePacket>();
 
-        public static byte[] Serialize(T value)
+        public static byte[] Serialize(CommandPacket value)
         {
-            byte[] buffer = new byte[Marshal.SizeOf<T>()];
+            byte[] buffer = new byte[CommandSize];
             MemoryMarshal.Write(buffer, in value);
+            ConvertEndian(buffer);
             return buffer;
         }
 
-        public static T Deserialize(byte[] data)
+        public static ResponsePacket Deserialize(byte[] data)
         {
-            return MemoryMarshal.Read<T>(data);
+            if (data.Length != ResponseSize)
+                throw new ArgumentException($"Invalid packet size. Expected {ResponseSize} bytes, got {data.Length} bytes.");
+
+            ConvertEndian(data);
+            return MemoryMarshal.Read<ResponsePacket>(data);
+        }
+
+        public static void ConvertEndian(byte[] byteArray)
+        {
+            for (int offset = 0; offset < byteArray.Length; offset += 4)
+                Array.Reverse(byteArray, offset, 4);
         }
     }
 }
