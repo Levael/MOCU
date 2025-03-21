@@ -10,6 +10,11 @@ namespace MoogModule.Daemon
 {
     public class Program
     {
+        private static UdpClient udpClient = new UdpClient(new IPEndPoint(IPAddress.Parse("192.168.2.3"), 16386));
+        private static IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("192.168.2.1"), 16384);
+        private static IPEndPoint anyEndPoint = new IPEndPoint(IPAddress.Any, 0);
+        private static DofParameters startPosition = new DofParameters { Roll = 0f, Pitch = 0f, Heave = -0.1f, Surge = 0f, Yaw = 0f, Sway = 0f };
+
         public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.ProcessExit += (s, e) => OnExit();
@@ -27,22 +32,22 @@ namespace MoogModule.Daemon
 
             var inputInterface = new Thread(() => InputGetter(ref flag, ref queue));
 
-            var UdpReadThread = new Thread(() => StartListener(5000));
+            var UdpReadThread = new Thread(() => StartListener());
 
 
-            SystemOptimizer.Optimize();
+            //SystemOptimizer.Optimize();
             flag = true;
             UdpReadThread.Start();
             inputInterface.Start();
             intervalExecutor.Start();
-            Console.WriteLine("Got here. Is it okay?");
         }
 
 
 
         static void OnExit()
         {
-            SystemOptimizer.ResetToDefault();
+            //SystemOptimizer.ResetToDefault();
+            udpClient.Dispose();
         }
 
         static void ExecuteEveryTick(ref long index, ref ConcurrentQueue<Action> queue, ref bool flag, IntervalExecutor intervalExecutor)
@@ -58,10 +63,12 @@ namespace MoogModule.Daemon
                 Console.ReadKey(intercept: true);
             };
 
-            while (queue.TryDequeue(out Action action))
+            SendMessage(PacketSerializer.Serialize(CommandPackets.NewPosition(startPosition)));
+
+            /*while (queue.TryDequeue(out Action action))
             {
                 action.Invoke();
-            }
+            }*/
         }
 
         static void InputGetter(ref bool flag, ref ConcurrentQueue<Action> queue)
@@ -70,43 +77,58 @@ namespace MoogModule.Daemon
             {
                 ConsoleKeyInfo key = Console.ReadKey(intercept: true);
 
-                if (key.Key == ConsoleKey.I)
+                if (key.Key == ConsoleKey.D1)
                 {
-                    Console.WriteLine("You pressed 'I'!");
-                    queue.Enqueue(() => SendMessage("Hello, UDP!", "192.168.2.1", 16384));
+                    Console.WriteLine("You pressed '1': sent Engage command");
+                    SendMessage(PacketSerializer.Serialize(CommandPackets.Engage(startPosition)));
                 }
 
-                if (key.Key == ConsoleKey.O)
+                if (key.Key == ConsoleKey.D2)
                 {
-                    Console.WriteLine("You pressed 'O'!");
-                    queue.Enqueue(() => Console.WriteLine("You pressed 'O' inside!"));
+                    Console.WriteLine("You pressed '2': sent NewPosition command");
+                    SendMessage(PacketSerializer.Serialize(CommandPackets.NewPosition(startPosition)));
+                }
+
+                if (key.Key == ConsoleKey.D3)
+                {
+                    Console.WriteLine("You pressed '3': sent Disengage command");
+                    SendMessage(PacketSerializer.Serialize(CommandPackets.Disengage()));
                 }
             }
         }
 
-        static void StartListener(int port)
+        static void StartListener()
         {
-            using var udpClient = new UdpClient(port);
-            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, port);
-
-            Console.WriteLine($"Listening on port {port}...");
-
             while (true)
             {
-                byte[] receivedData = udpClient.Receive(ref remoteEndPoint);
-                string message = Encoding.UTF8.GetString(receivedData);
+                byte[] receivedData = udpClient.Receive(ref anyEndPoint);
 
-                Console.WriteLine($"Received from {remoteEndPoint}: {message}");
+                try
+                {
+                    var parsedMessage = PacketSerializer.Deserialize(receivedData);
+                    Console.WriteLine($"\nReceived message:\n" +
+                        $"PacketLength - {parsedMessage.PacketLength}. Should be - 52\n" +
+                        $"PacketSequenceCount - {parsedMessage.PacketSequenceCount}\n" +
+                        $"ReservedForFutureUse - {parsedMessage.ReservedForFutureUse}. Should be - 0\n" +
+                        $"MessageId - {parsedMessage.MessageId}. Should be - 200\n" +
+
+                        $"MachineStatusWord - {parsedMessage.MachineStatusWord}\n" +
+                        $"DiscreteIOWord - {parsedMessage.DiscreteIOWord}\n" +
+                        $"FaultPart1 - {parsedMessage.FaultPart1}\n" +
+                        $"FaultPart2 - {parsedMessage.FaultPart2}\n" +
+                        $"FaultPart3 - {parsedMessage.FaultPart3}\n" +
+                        $"OptionalStatusData - {parsedMessage.OptionalStatusData}. Should be - 1\n" +
+                        $"Parameters (heave) - {parsedMessage.Parameters.Heave}\n" +
+                        $"OptionalStatusDataAgain - {parsedMessage.OptionalStatusDataAgain}. Should be - 0\n");
+                }
+                catch { }
             }
         }
 
-        static void SendMessage(string message, string ip, int port)
+        static void SendMessage(byte[] data, string ip = "192.168.2.1", int port = 16384)
         {
-            using var udpClient = new UdpClient();
-            byte[] data = Encoding.UTF8.GetBytes(message);
-
-            udpClient.Send(data, data.Length, new IPEndPoint(IPAddress.Parse(ip), port));
-            Console.WriteLine($"Sent: {message} to {ip}:{port}");
+            udpClient.Send(data, data.Length, remoteEndPoint);
+            Console.WriteLine($"Sent: {data} to {ip}:{port}");
         }
     }
 }
