@@ -31,9 +31,9 @@ namespace MoogModule.Daemon
     {
         public float Roll;
         public float Pitch;
-        public float Heave;
-        public float Surge;
         public float Yaw;
+        public float Surge;
         public float Sway;
+        public float Heave;
     }
 }

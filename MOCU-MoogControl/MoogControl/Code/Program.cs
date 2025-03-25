@@ -13,7 +13,7 @@ namespace MoogModule.Daemon
         private static UdpClient udpClient = new UdpClient(new IPEndPoint(IPAddress.Parse("192.168.2.3"), 16386));
         private static IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("192.168.2.1"), 16384);
         private static IPEndPoint anyEndPoint = new IPEndPoint(IPAddress.Any, 0);
-        private static DofParameters startPosition = new DofParameters { Roll = 0f, Pitch = 0f, Heave = -0.1f, Surge = 0f, Yaw = 0f, Sway = 0f };
+        private static DofParameters startPosition = new DofParameters { Heave = -0.22f };
 
         public static void Main(string[] args)
         {
@@ -55,7 +55,7 @@ namespace MoogModule.Daemon
             /*if ((index % (10 * 1_000) == 0) && (index != 0)) // every 10 sec
                 Console.WriteLine($"AverageInterval = {intervalExecutor.AverageInterval.TotalMilliseconds}ms");*/
 
-            if (++index > (1 * 60 * 1_000)) // after 1 min
+            if (++index > (1 * 60 * 3_000)) // after 3 min
             {
                 intervalExecutor.Stop();
                 flag = false;
