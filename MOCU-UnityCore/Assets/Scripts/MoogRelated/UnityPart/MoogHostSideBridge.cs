@@ -1,0 +1,117 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+using AudioModule;
+using DaemonsRelated;
+using InterprocessCommunication;
+
+
+namespace MoogModule
+{
+    public class MoogHostSideBridge : MoogDaemon_API, IDaemonHostBridge
+    {
+        private IInterprocessCommunicator _communicator;
+
+        public event Action<MachineState> MachineStateChanged;
+        public event Action<DofParameters> SingleFeedback;
+        public event Action<IEnumerable<DofParameters>> FeedbackForTimeRange;
+
+        private string _premadeCommand_Engage;
+        private string _premadeCommand_Disengage;
+        private string _premadeCommand_Reset;
+        private string _premadeCommand_StartReceivingFeedback;
+        private string _premadeCommand_StopReceivingFeedback;
+
+        public MoogHostSideBridge(IInterprocessCommunicator communicator)
+        {
+            _communicator                           = communicator;
+            _communicator.MessageReceived           += message => HandleIncomingMessage(message);
+
+            _premadeCommand_Engage                  = JsonHelper.SerializeJson(new MoogDataTransferObject { EngageCommand = true });
+            _premadeCommand_Disengage               = JsonHelper.SerializeJson(new MoogDataTransferObject { DisengageCommand = true });
+            _premadeCommand_Reset                   = JsonHelper.SerializeJson(new MoogDataTransferObject { ResetCommand = true });
+            _premadeCommand_StartReceivingFeedback  = JsonHelper.SerializeJson(new MoogDataTransferObject { DoReceiveFeedback = true });
+            _premadeCommand_StopReceivingFeedback   = JsonHelper.SerializeJson(new MoogDataTransferObject { DoReceiveFeedback = false });
+        }
+
+        // ########################################################################################
+
+        public void Connect(ConnectParameters parameters)
+        {
+            var moogDataTransferObject = new MoogDataTransferObject { ConnectCommand = true, ConnectParameters = parameters };
+            var json = JsonHelper.SerializeJson(moogDataTransferObject);
+            _communicator.SendMessage(json);
+        }
+
+        public void Engage()
+        {
+            _communicator.SendMessage(_premadeCommand_Engage);
+        }
+
+        public void Disengage()
+        {
+            _communicator.SendMessage(_premadeCommand_Disengage);
+        }
+
+        public void Reset()
+        {
+            _communicator.SendMessage(_premadeCommand_Reset);
+        }
+
+        public void StartReceivingFeedback()
+        {
+            _communicator.SendMessage(_premadeCommand_StartReceivingFeedback);
+        }
+
+        public void StopReceivingFeedback()
+        {
+            _communicator.SendMessage(_premadeCommand_StopReceivingFeedback);
+        }
+
+        public void MoveToPoint(MoveToPointParameters parameters)
+        {
+            var moogDataTransferObject = new MoogDataTransferObject { MoveToPointCommand = true, MoveToPointParameters = parameters };
+            var json = JsonHelper.SerializeJson(moogDataTransferObject);
+            _communicator.SendMessage(json);
+        }
+
+        public void MoveByTrajectory(MoveByTrajectoryParameters parameters)
+        {
+            var moogDataTransferObject = new MoogDataTransferObject { MoveByTrajectoryCommand = true, MoveByTrajectoryParameters = parameters };
+            var json = JsonHelper.SerializeJson(moogDataTransferObject);
+            _communicator.SendMessage(json);
+        }
+        
+        // ########################################################################################
+
+        private void HandleIncomingMessage(string message)
+        {
+            /*try
+            {
+                var dataTransferObject = JsonHelper.DeserializeJson<MoogDataTransferObject>(message);
+
+                // CUSTOM MESSAGE
+                if (!String.IsNullOrEmpty(dataTransferObject.CustomMessage))
+                    UnityEngine.Debug.Log($"Custom message in 'HandleIncomingMessage': {dataTransferObject.CustomMessage}");
+
+                // CLIP CHANGES
+                if (dataTransferObject.ClipChanges.Any())
+                    ClipsDataChanged?.Invoke(dataTransferObject.ClipChanges);
+
+                *//*// TERMINATION COMMAND
+                if (dataTransferObject.DoTerminateTheDaemon)
+                    TerminateDaemon?.Invoke("Got command from host to terminate the daemon");*//*
+
+                UnityEngine.Debug.Log($"Moog state: {dataTransferObject.MoogState}");
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogError($"Error in 'HandleIncomingMessage': {ex.Message}");
+            }*/
+        }
+    }
+}

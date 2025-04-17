@@ -21,10 +21,8 @@ using UnityEngine.InputSystem;
 using UnityEngine;
 
 
-public class InputSystemTests : MonoBehaviour, IControllableInitiation
+public class InputSystemTests : ManagedMonoBehaviour
 {
-    public bool IsComponentReady { get; private set; }
-
     public event Action<InputAction.CallbackContext> OnIntercomAction;
     public event Action<InputAction.CallbackContext> OnDPadAction;
     public event Action<InputAction.CallbackContext> OnJoystickAction;
@@ -43,7 +41,7 @@ public class InputSystemTests : MonoBehaviour, IControllableInitiation
     private ControllersHandler _controllersHandler;
 
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         _controllersHandler = GetComponent<ControllersHandler>();
 
@@ -62,7 +60,7 @@ public class InputSystemTests : MonoBehaviour, IControllableInitiation
         IsComponentReady = true;
     }
 
-    public void ControllableStart() { }
+    public override void ManagedStart() { }
 
 
 

@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using System;
 
 
-public class ExperimentTabHandler : MonoBehaviour, IFullyControllable
+public class ExperimentTabHandler : ManagedMonoBehaviour
 {
     private UiHandler _uiHandler;
     private UiReferences _uiReference;
@@ -12,34 +12,19 @@ public class ExperimentTabHandler : MonoBehaviour, IFullyControllable
     private TextElement _infoField;
     private TextElement _warningsField;
 
-    //private ConcurrentQueue<Action> _deferredActions;   // todo: move to separate class and refactor
-    public bool IsComponentReady { get; private set; }
 
-
-
-
-    public void ControllableAwake()
-    {
-        //_deferredActions = new ConcurrentQueue<Action>();
-    }
-
-    public void ControllableStart()
+    public override void ManagedAwake()
     {
         _uiHandler = GetComponent<UiHandler>();
+    }
 
+    public override void ManagedStart()
+    {
         _uiReference = _uiHandler.mainUiScreen;
         _infoField = _uiReference.elements.experimentTab.outputsModule.info;
         _warningsField = _uiReference.elements.experimentTab.outputsModule.warnings;
 
         IsComponentReady = true;
-    }
-
-    public void ControllableUpdate()
-    {
-        /*while (_deferredActions.TryDequeue(out Action action))
-        {
-            action.Invoke();
-        }*/
     }
 
 

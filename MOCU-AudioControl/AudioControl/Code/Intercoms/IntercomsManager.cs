@@ -36,18 +36,23 @@ namespace AudioModule.Daemon
             // todo: maybe send an error response to server if request wasn't proper
         }
 
-        // todo: add checks or try-catch
         private void CreateIntercomStream(AudioIntercomData data)
         {
             try
             {
                 var inputs = data.fromDevices
-                .Select(id => _devicesManager.GetInputDevice(id))
-                .Where(device => device != null);
+                    .Select(id => _devicesManager.GetInputDevice(id))
+                    .OfType<AudioInputDevice>();
 
                 var outputs = data.toDevices
                     .Select(id => _devicesManager.GetOutputDevice(id))
-                    .Where(device => device != null);
+                    .OfType<AudioOutputDevice>();
+
+                if (inputs is null || !inputs.Any())
+                    throw new Exception("No available inputs");
+
+                if (outputs is null || !outputs.Any())
+                    throw new Exception("No available outputs");
 
                 var intercom = new Intercom(inputs: inputs, outputs: outputs, id: data.id);
                 intercom.Start();
@@ -55,9 +60,9 @@ namespace AudioModule.Daemon
                 _intercoms.Add(data.id, intercom);
                 ChangesOccurred?.Invoke();
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Error occurred in 'CreateIntercomStream'.");
+                Console.WriteLine($"Error occurred in 'CreateIntercomStream': {ex}");
                 DestroyIntercomStream(data);
             }
         }

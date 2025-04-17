@@ -1,5 +1,7 @@
 ﻿using NAudio.Wave;
 
+// todo: add check for ID presence
+
 
 namespace AudioModule.Daemon
 {

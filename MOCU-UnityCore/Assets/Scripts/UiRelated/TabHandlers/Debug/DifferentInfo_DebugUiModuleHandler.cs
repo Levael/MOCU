@@ -3,10 +3,8 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-public class DifferentInfo_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
+public class DifferentInfo_DebugUiModuleHandler : ManagedMonoBehaviour
 {
-    public bool IsComponentReady { get; private set; }
-
     private UiHandler _uiHandler;
     private UiReferences _uiReference;
 
@@ -21,7 +19,7 @@ public class DifferentInfo_DebugUiModuleHandler : MonoBehaviour, IFullyControlla
 
     // BASIC FUNCTIONALITY
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         _uiHandler = GetComponent<UiHandler>();
 
@@ -29,7 +27,7 @@ public class DifferentInfo_DebugUiModuleHandler : MonoBehaviour, IFullyControlla
         _gcMemoryRecorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Reserved Memory");
     }
 
-    public void ControllableStart()
+    public override void ManagedStart()
     {
         _uiReference = _uiHandler.secondaryUiScreen;
 
@@ -42,7 +40,7 @@ public class DifferentInfo_DebugUiModuleHandler : MonoBehaviour, IFullyControlla
         // todo: consider changing 'ControllableUpdate' to 'GetComponent<UIDocument>().rootVisualElement.schedule.Execute(UpdateTimer).Every(1000);'
     }
 
-    public void ControllableUpdate()
+    public override void ManagedUpdate()
     {
         UpdateDifferentInfoModule();
     }

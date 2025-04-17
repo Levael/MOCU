@@ -11,11 +11,13 @@ namespace AudioModule
     {
         public IEnumerable<AudioClipData> ClipChanges               { get; set; } = Enumerable.Empty<AudioClipData>();
         public IEnumerable<AudioDeviceData> DeviceChanges           { get; set; } = Enumerable.Empty<AudioDeviceData>();
-        public IEnumerable<DaemonErrorReport> DaemonErrorReports    { get; set; } = Enumerable.Empty<DaemonErrorReport>();
         public IEnumerable<AudioIntercomData> IntercomCommands      { get; set; } = Enumerable.Empty<AudioIntercomData>();
         public IEnumerable<PlayAudioClipCommand> PlayClipCommands   { get; set; } = Enumerable.Empty<PlayAudioClipCommand>();
-        public bool DoTerminateTheDaemon                            { get; set; } = false;
-        public string CustomMessage                                 { get; set; } = String.Empty;
+
+        // Common for every 'IDataTransferObject'
+        public IEnumerable<DaemonErrorReport> DaemonErrorReports { get; set; } = Enumerable.Empty<DaemonErrorReport>();
+        public bool DoTerminateTheDaemon { get; set; } = false;
+        public string CustomMessage { get; set; } = String.Empty;
     }
 
     public class PlayAudioClipCommand

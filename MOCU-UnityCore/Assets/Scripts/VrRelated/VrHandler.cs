@@ -4,21 +4,20 @@ using UnityEngine;
 using UnityEngine.XR;
 
 
-public class VrHandler : MonoBehaviour, IControllableInitiation
+public class VrHandler : ManagedMonoBehaviour
 {
     public ModuleStatusHandler<VrHeadset_Statuses> XRConnectionStatus;
-    public bool IsComponentReady { get; private set; }
 
     private float _checkXRConnectionTimeInterval;   // sec
 
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         _checkXRConnectionTimeInterval = 0.1f;
         XRConnectionStatus = new();
     }
 
-    public void ControllableStart()
+    public override void ManagedStart()
     {
         StartCoroutine(CheckConnection(_checkXRConnectionTimeInterval));
         IsComponentReady = true;

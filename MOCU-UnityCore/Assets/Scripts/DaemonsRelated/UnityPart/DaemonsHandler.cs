@@ -16,10 +16,8 @@ using Unity.IO.LowLevel.Unsafe;
 #pragma warning disable CS8618
 
 
-class DaemonsHandler : MonoBehaviour, IControllableInitiation
+class DaemonsHandler : ManagedMonoBehaviour
 {
-    public bool IsComponentReady { get; private set; }
-
     public event Action<InterprocessCommunicationMessageLog> NewMessageLogged;
     public event Action DaemonStatusChanged;    // notification that 'GetDaemonsInfo' needs to be called
 
@@ -31,7 +29,7 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
 
     private DebugTabHandler _debugTabHandler;
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         _debugTabHandler = GetComponent<DebugTabHandler>();
 
@@ -48,11 +46,20 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
                     isHidden: false,
                     priority: ProcessPriorityClass.BelowNormal
                 )
+            },
+
+            {
+                DaemonType.Moog, new HostSideDaemonContainer(
+                    type: DaemonType.Moog,
+                    fullPath: Path.Combine(_daemonsFolderPath, "MoogControl.exe"),
+                    isHidden: false,
+                    priority: ProcessPriorityClass.High
+                )
             }
         };
     }
 
-    public void ControllableStart()
+    public override void ManagedStart()
     {
         IsComponentReady = true;
     }
@@ -64,10 +71,10 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
     }
 
 
-    public IInterprocessCommunicator GetDaemonCommunicator(DaemonType daemonType)
+    public HostSideDaemonContainer GetDaemon(DaemonType daemonType)
     {
         var daemon = _daemons[daemonType];
-        var communicator = daemon.GetCommunicator();
+        var communicator = daemon.Communicator;
 
         communicator.MessageReceived        += message => HandleMessageLogging(daemonType, InterprocessCommunicator_EventType.MessageReceived, message);
         communicator.MessageSent            += message => HandleMessageLogging(daemonType, InterprocessCommunicator_EventType.MessageSent, message);
@@ -75,13 +82,12 @@ class DaemonsHandler : MonoBehaviour, IControllableInitiation
         communicator.ConnectionBroked       += message => HandleMessageLogging(daemonType, InterprocessCommunicator_EventType.ConnectionBroked, message);
         communicator.ErrorOccurred          += message => HandleMessageLogging(daemonType, InterprocessCommunicator_EventType.ErrorOccurred, message);
 
-        daemon.Start();
-        return communicator;
+        return daemon;
     }
 
     public IEnumerable<(DaemonType type, ModuleStatus status)> GetDaemonsInfo()
     {
-        return _daemons.Select(item => (type: item.Key, status: item.Value.status));
+        return _daemons.Select(item => (type: item.Key, status: item.Value.Status));
     }
 
     private void HandleMessageLogging(DaemonType daemonName, InterprocessCommunicator_EventType messageSourceType, string messageContent)

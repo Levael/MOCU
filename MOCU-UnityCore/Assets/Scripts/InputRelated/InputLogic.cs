@@ -2,12 +2,10 @@ using System;
 using UnityEngine;
 
 
-public class InputLogic : MonoBehaviour, IFullyControllable
+public class InputLogic : ManagedMonoBehaviour
 {
     private UiHandler _uiHandler;
     private ExperimentTabHandler _experimentTabHandler;
-
-    public bool IsComponentReady { get; private set; }
 
     private AnswerHandler _answerHandler;
     private AudioHandler _audioHandler;
@@ -17,7 +15,7 @@ public class InputLogic : MonoBehaviour, IFullyControllable
     public event Action stopIncomingIntercomStream;
     public event Action stopOutgoingIntercomStream;
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         _uiHandler = GetComponent<UiHandler>(); // todo: shouldn't be here, change all to "_experimentTabHandler"
         _experimentTabHandler = GetComponent<ExperimentTabHandler>();
@@ -26,14 +24,10 @@ public class InputLogic : MonoBehaviour, IFullyControllable
         _audioHandler = GetComponent<AudioHandler>();
     }
 
-    public void ControllableStart() { }
-    public void ControllableUpdate() { }
-
     public void TestMethod(string text)
     {
         //_uiHandler.PrintToWarnings(text);
     }
-
     
 
 

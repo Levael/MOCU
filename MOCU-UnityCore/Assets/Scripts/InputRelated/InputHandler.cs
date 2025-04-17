@@ -4,10 +4,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public class InputHandler : MonoBehaviour, IControllableInitiation
+public class InputHandler : ManagedMonoBehaviour
 {
-    public bool IsComponentReady {  get; private set; }
-
     private InputActionAsset _inputActions;
     private InputLogic      _inputLogic;
     //private CedrusHandler   _cedrus;
@@ -24,8 +22,12 @@ public class InputHandler : MonoBehaviour, IControllableInitiation
     private float _checkCedrusPortConnectionTimeInterval    = 0.1f; // sec
 
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
+        _inputLogic = GetComponent<InputLogic>();
+        _ui = GetComponent<UiHandler>();
+        //_cedrus = GetComponent<CedrusHandler>();
+
         _inputActions = Resources.Load<InputActionAsset>("InputActions");    // name of file
         inputDevices = new();
 
@@ -73,11 +75,8 @@ public class InputHandler : MonoBehaviour, IControllableInitiation
     }
 
 
-    public void ControllableStart()
+    public override void ManagedStart()
     {
-        _inputLogic = GetComponent<InputLogic>();
-        //_cedrus = GetComponent<CedrusHandler>();
-        _ui = GetComponent<UiHandler>();
 
         //StartCoroutine(_cedrus.CheckConnection(_checkCedrusPortConnectionTimeInterval));
 

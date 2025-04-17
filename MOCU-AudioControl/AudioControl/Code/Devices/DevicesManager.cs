@@ -1,4 +1,5 @@
-﻿using NAudio.CoreAudioApi;
+﻿using DaemonsRelated;
+using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 
 
@@ -25,6 +26,8 @@ namespace AudioModule.Daemon
             SaveOriginalSettings();
 
             _enumerator.RegisterEndpointNotificationCallback(this);
+
+            //Console.WriteLine(JsonHelper.SerializeJson(new { inputDevices = _inputDevices, outputDevices = _outputDevices }));
         }
 
         ~DevicesManager()

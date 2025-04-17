@@ -1,5 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 
+using MoogModule;
+
 
 namespace MoogModule.Daemon
 {

@@ -19,10 +19,8 @@ using System.Collections;
 // add to documentation: the only update this class can get are from outside. it only sends what is wanted to be changed
 
 
-public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableInitiation
+public class Devices_SettingsUiModuleHandler : ManagedMonoBehaviour
 {
-    public bool IsComponentReady {  get; private set; }
-
     public InterlinkedCollection<DeviceParametersSet> devicesInterlinkedCollection;         // connects data objects with UI stuff
     private VisualTreeAsset _chooseDeviceRowTemplate;
 
@@ -41,10 +39,12 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
 
 
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
-        _chooseDeviceRowTemplate = Resources.Load<VisualTreeAsset>("GUI/UXML/SettingsModules/DeviceOptionModule");
+        _uiHandler = GetComponent<UiHandler>();
+        _audioHandler = GetComponent<AudioHandler>();
 
+        _chooseDeviceRowTemplate = Resources.Load<VisualTreeAsset>("GUI/UXML/SettingsModules/DeviceOptionModule");
 
         _deviceOptionStatusToUssClassNameMap = new()
         {
@@ -56,11 +56,8 @@ public class Devices_SettingsUiModuleHandler : MonoBehaviour, IControllableIniti
         temp = new DeviceBoxPanel_Microphones();
     }
 
-    public void ControllableStart()
+    public override void ManagedStart()
     {
-        _uiHandler = GetComponent<UiHandler>();
-        _audioHandler = GetComponent<AudioHandler>();
-
         _uiReference = _uiHandler.secondaryUiScreen;
 
         var devicesModule = _uiReference.root.Q<VisualElement>("settings-devices-module-window");

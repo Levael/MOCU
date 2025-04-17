@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
+
 // TODO: make all Handlers public and get access o them like "ui.experimentTab.ConsoleInfo()"
-public class UiHandler : MonoBehaviour, IControllableInitiation
+public class UiHandler : ManagedMonoBehaviour
 {
     private GameObject mainDisplayGameObject;
     private GameObject secondDisplayGameObject;
@@ -16,12 +17,12 @@ public class UiHandler : MonoBehaviour, IControllableInitiation
 
     public UiReferences mainUiScreen;          // use this (instead of _mainDisplayUiReferences)
     public UiReferences secondaryUiScreen;     // use this (instead of _secondDisplayUiReferences)
-    public bool IsComponentReady { get; private set; }
+
     private bool _InDualDisplayMode;
 
 
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         mainDisplayGameObject = GameObject.Find("GUI_main_monitor");
         secondDisplayGameObject = GameObject.Find("GUI_second_monitor");
@@ -32,7 +33,7 @@ public class UiHandler : MonoBehaviour, IControllableInitiation
         ApplyDefaultSettings();
     }
 
-    public void ControllableStart()
+    public override void ManagedStart()
     {
         AddEventListeners();
 
@@ -197,6 +198,4 @@ public class UiHandler : MonoBehaviour, IControllableInitiation
     {
         CloseExitConfirmationModalWindow();
     }
-
-
 }

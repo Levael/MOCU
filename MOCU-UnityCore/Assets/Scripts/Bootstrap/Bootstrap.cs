@@ -1,18 +1,20 @@
 /*
  * The Bootstrap class manages the lifecycle of various components in a Unity project by controlling the invocation of initialization and update methods.
- * Specifically, it handles the ControllableAwake, ControllableStart, and ControllableUpdate
- * methods of components implementing IControllableInitiation and IFullyControllable interfaces.
- * The ControllableUpdate method is particularly useful for centralizing the check of IsComponentReady,
+ * Specifically, it handles the ManagedAwake, ManagedStart, and ManagedUpdate methods of components.
+ * The ManagedUpdate method is particularly useful for centralizing the check of IsComponentReady,
  * ensuring that each component only updates when it's ready, thereby avoiding redundant checks within individual components.
+ * 
+ * The order is important, as some components depend on others being initialized first.
  */
 
 
+using MoogModule;
 using UnityEngine;
 
 
 public class Bootstrap : MonoBehaviour
 {
-    private MonoBehaviour[] _components;
+    private ManagedMonoBehaviour[] _components;
     private GameObject _gameObject_scripts;
     private GameObject _gameObject_guiMainMonitor;
     private GameObject _gameObject_guiSecondaryMonitor;
@@ -24,7 +26,7 @@ public class Bootstrap : MonoBehaviour
         _gameObject_guiMainMonitor = GameObject.Find("GUI_main_monitor");
         _gameObject_guiSecondaryMonitor = GameObject.Find("GUI_second_monitor");
 
-        _components = new MonoBehaviour[]
+        _components = new ManagedMonoBehaviour []
         {
             // MAIN
             EnsureComponent<GeneralScript>(),
@@ -55,6 +57,11 @@ public class Bootstrap : MonoBehaviour
             EnsureComponent<VrHandler>(),
             EnsureComponent<InputLogic>(),
 
+            // MOOG
+            EnsureComponent<JoystickForMoogTest>(),
+            EnsureComponent<TrajectoryMakerForMoogTest>(),
+            EnsureComponent<MoogHandler>(),
+
             // TESTS
             EnsureComponent<ForTests>(),
             //EnsureComponent<FixedUpdateMonitor>(),
@@ -62,30 +69,28 @@ public class Bootstrap : MonoBehaviour
 
 
         foreach (var component in _components)
-            if (component is IControllableInitiation controllableComponent)
-                controllableComponent.ControllableAwake();
+            component.ManagedAwake();
     }
 
     private void Start()
     {
         foreach (var component in _components)
-            if (component is IControllableInitiation controllableComponent)
-                controllableComponent.ControllableStart();
+            component.ManagedStart();
     }
 
     private void Update()
     {
         foreach (var component in _components)
-            if (component is IFullyControllable controllableComponent && controllableComponent.IsComponentReady)
-                controllableComponent.ControllableUpdate();   
+            if (component.IsComponentReady)
+                component.ManagedUpdate();   
     }
 
 
 
-    private T EnsureComponent<T>(GameObject GO = null) where T : MonoBehaviour
+    private T EnsureComponent<T>(GameObject GO = null) where T : ManagedMonoBehaviour
     {
         GO ??= _gameObject_scripts;
-        T component = GetComponent<T>();
+        T component = GO.GetComponent<T>();
 
         if (component == null)
             component = GO.AddComponent<T>();

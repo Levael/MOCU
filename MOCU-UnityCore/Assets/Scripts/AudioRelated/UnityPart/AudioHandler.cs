@@ -12,7 +12,7 @@ using AudioModule;
 // todo: not allow intercom (on the client side) if any device is missing (null)
 
 
-public class AudioHandler : MonoBehaviour, IDaemonUser, IControllableInitiation
+public class AudioHandler : ManagedMonoBehaviour, IDaemonUser
 {
     private DaemonHandler_Client _daemon;
     private AudioHostSideBridge _newDaemon;
@@ -30,7 +30,6 @@ public class AudioHandler : MonoBehaviour, IDaemonUser, IControllableInitiation
 
     public ModuleStatusHandler<Audio_ModuleSubStatuses> stateTracker { get; private set; }
     public AudioDevices audioDevices { get; private set; }
-    public bool IsComponentReady { get; private set; }
 
 
     /// <summary>
@@ -57,7 +56,7 @@ public class AudioHandler : MonoBehaviour, IDaemonUser, IControllableInitiation
 
     #region MANDATORY STANDARD FUNCTIONALITY
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         _uiHandler = GetComponent<UiHandler>();
         _configHandler = GetComponent<ConfigHandler>();
@@ -88,7 +87,7 @@ public class AudioHandler : MonoBehaviour, IDaemonUser, IControllableInitiation
         };
     }
 
-    public void ControllableStart()
+    public override void ManagedStart()
     {
         // Reading from config Audio Devices Data
         audioDevices.UpdateFromServerData(new UnifiedAudioDataPacket(audioDevicesInfo: _configHandler.defaultConfig.AudioConfig, null, null));

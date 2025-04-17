@@ -38,6 +38,7 @@ Notes:
 - ABOUT SOUND:
 	- it is possible to do without writing a daemon, but then only one audio receiver can exist at the same time (native in unity)
 	- in Oculus App tap on device -> audio and mic should use Windows settings, not itself
+	- it turned out that the device IDs can change (and that's what the code is tied to). so if something doesn't work, double-check the ID
 	- sound delay:
 		- intercom researcher to participant -- 172ms
 		- intercom participant to researcher -- 165ms

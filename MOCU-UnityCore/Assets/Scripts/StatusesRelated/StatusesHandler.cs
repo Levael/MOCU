@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 using Debug = UnityEngine.Debug;
 
 
-public class StatusesHandler : MonoBehaviour, IFullyControllable
+public class StatusesHandler : ManagedMonoBehaviour
 {
     //private CedrusHandler _cedrus;
     private UiHandler _uiHandler;
@@ -20,10 +20,8 @@ public class StatusesHandler : MonoBehaviour, IFullyControllable
     private Dictionary<string, (IModuleStatusHandler stateTracker, VisualElement visualElement)> _deviceNameToUxmlBlockMap;
     private Dictionary<ModuleStatus, string> _deviceConnectionStatusToColorMap;
 
-    public bool IsComponentReady { get; private set; }
 
-
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         //_cedrus = GetComponent<CedrusHandler>();
         _uiHandler = GetComponent<UiHandler>();
@@ -33,7 +31,7 @@ public class StatusesHandler : MonoBehaviour, IFullyControllable
         _experimentTabHandler = GetComponent<ExperimentTabHandler>();
     }
 
-    public void ControllableStart()
+    public override void ManagedStart()
     {
         // don't move it to "Awake", otherwise ".mainUiScreen.GetElement("moog-status-block")" can be inaccessible
 
@@ -64,7 +62,7 @@ public class StatusesHandler : MonoBehaviour, IFullyControllable
     }
 
 
-    public void ControllableUpdate()
+    public override void ManagedUpdate()
     {
         // todo: change later to "update when changed" or "update with a lower frequency"
 

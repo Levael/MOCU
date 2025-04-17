@@ -3,12 +3,10 @@ using UnityEngine.XR;
 using UnityEngine.XR.Management;
 
 
-public class GeneralScript : MonoBehaviour, IControllableInitiation
+public class GeneralScript : ManagedMonoBehaviour
 {
-    public bool IsComponentReady {  get; private set; }
-
-    public void ControllableAwake() { }
-    public void ControllableStart()
+    public override void ManagedAwake() { }
+    public override void ManagedStart()
     {
         QualitySettings.vSyncCount = 0;                             // Disable VSync
         Application.targetFrameRate = 60;                           // Application fps (when VR is on -- automatically switchs to VR fps (90))

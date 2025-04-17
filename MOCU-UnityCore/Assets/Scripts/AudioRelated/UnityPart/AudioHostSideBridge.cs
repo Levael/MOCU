@@ -35,7 +35,7 @@ namespace AudioModule
         {
             /*try
             {
-                *//*var testObj = new AudioDataTransferObject()
+                *//*var testObj = new AudioDataTransferObject
                 {
                     PlayClipCommands = new List<PlayAudioClipCommand>() {
                         new PlayAudioClipCommand() {
@@ -59,7 +59,7 @@ namespace AudioModule
 
             /*for (int i = 0; i < 10; i++)
             {
-                var testObj = new AudioDataTransferObject()
+                var testObj = new AudioDataTransferObject
                 {
                     PlayClipCommands = new List<PlayAudioClipCommand>() {
                         new PlayAudioClipCommand() {
@@ -80,13 +80,13 @@ namespace AudioModule
 
             try
             {
-                var testObj = new AudioDataTransferObject()
+                var testObj = new AudioDataTransferObject
                 {
-                    PlayClipCommands = new List<PlayAudioClipCommand>() {
-                        new PlayAudioClipCommand() {
+                    PlayClipCommands = new List<PlayAudioClipCommand> {
+                        new PlayAudioClipCommand {
                             InterruptPlayingClips = true,
                             OutputDeviceId = Guid.Parse("515a3dc0-ca38-4fb9-aa8b-6d268cbd94ac"),
-                            ClipData = new AudioClipData() {
+                            ClipData = new AudioClipData {
                                 name = AudioClipName.PingDevice
                             }
                         },
@@ -101,11 +101,11 @@ namespace AudioModule
                     },
 
                     IntercomCommands = new List<AudioIntercomData>() {
-                        new AudioIntercomData() {
+                        new AudioIntercomData {
                             isOn = true,
                             id = new Guid("ed3c3975-74c7-433a-b9ae-96cfd0e8a000"),
-                            fromDevices = new List<Guid> { Guid.Parse("ed3c3975-74c7-433a-b9ae-96cfd0e8a426") },
-                            toDevices = new List<Guid> { Guid.Parse("f6e626d3-fc5c-44ab-a993-81e2cbaccdeb") },
+                            fromDevices = new List<Guid> { Guid.Parse("702dbf2f-aae4-48d1-9c6e-a227bab8d4ae") },
+                            toDevices = new List<Guid> { Guid.Parse("8892b770-5b71-49d5-b8a9-6194ee8ddfbc") },
                         }
                     }
 
@@ -119,7 +119,7 @@ namespace AudioModule
                     }*/
                 };
 
-                /*var testObj = new AudioDataTransferObject()
+                /*var testObj = new AudioDataTransferObject
                 {
                     IntercomCommands = new List<AudioIntercomData>() {
                         new AudioIntercomData() {
@@ -143,7 +143,7 @@ namespace AudioModule
         {
             /*try
             {
-                var testObj = new AudioDataTransferObject()
+                var testObj = new AudioDataTransferObject
                 {
                     PlayClipCommands = new List<PlayAudioClipCommand>() {
                         new PlayAudioClipCommand() {
@@ -171,10 +171,10 @@ namespace AudioModule
 
             try
             {
-                var testObj = new AudioDataTransferObject()
+                var testObj = new AudioDataTransferObject
                 {
-                    IntercomCommands = new List<AudioIntercomData>() {
-                        new AudioIntercomData() {
+                    IntercomCommands = new List<AudioIntercomData> {
+                        new AudioIntercomData {
                             isOn = false,
                             id = new Guid("ed3c3975-74c7-433a-b9ae-96cfd0e8a000")
                         }
@@ -193,28 +193,28 @@ namespace AudioModule
 
         public void PlayClips(IEnumerable<PlayAudioClipCommand> playCommandsData)
         {
-            var audioDataTransferObject = new AudioDataTransferObject() { PlayClipCommands = playCommandsData };
+            var audioDataTransferObject = new AudioDataTransferObject { PlayClipCommands = playCommandsData };
             var json = JsonHelper.SerializeJson(audioDataTransferObject);
             _communicator.SendMessage(json);
         }
 
         public void UpdateClipsData(IEnumerable<AudioClipData> clipsData)
         {
-            var audioDataTransferObject = new AudioDataTransferObject() { ClipChanges = clipsData };
+            var audioDataTransferObject = new AudioDataTransferObject { ClipChanges = clipsData };
             var json = JsonHelper.SerializeJson(audioDataTransferObject);
             _communicator.SendMessage(json);
         }
 
         public void UpdateDevicesData(IEnumerable<AudioDeviceData> devicesData)
         {
-            var audioDataTransferObject = new AudioDataTransferObject() { DeviceChanges = devicesData };
+            var audioDataTransferObject = new AudioDataTransferObject { DeviceChanges = devicesData };
             var json = JsonHelper.SerializeJson(audioDataTransferObject);
             _communicator.SendMessage(json);
         }
 
         public void UpdateIntercomStates(IEnumerable<AudioIntercomData> intercomsData)
         {
-            var audioDataTransferObject = new AudioDataTransferObject() { IntercomCommands = intercomsData };
+            var audioDataTransferObject = new AudioDataTransferObject { IntercomCommands = intercomsData };
             var json = JsonHelper.SerializeJson(audioDataTransferObject);
             _communicator.SendMessage(json);
         }
@@ -229,7 +229,7 @@ namespace AudioModule
 
                 // CUSTOM MESSAGE
                 if (!String.IsNullOrEmpty(dataTransferObject.CustomMessage))
-                    Console.WriteLine($"Custom message in 'HandleIncomingMessage': {dataTransferObject.CustomMessage}");
+                    UnityEngine.Debug.Log($"Custom message in 'HandleIncomingMessage': {dataTransferObject.CustomMessage}");
 
                 // CLIP CHANGES
                 if (dataTransferObject.ClipChanges.Any())

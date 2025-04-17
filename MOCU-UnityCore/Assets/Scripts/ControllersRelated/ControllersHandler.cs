@@ -3,13 +3,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public class ControllersHandler : MonoBehaviour, IFullyControllable
+public class ControllersHandler : ManagedMonoBehaviour
 {
     // todo:
     // Dictionary<InputDevice, (HashSet supportedActionMaps, HashSet activeActionMaps)>
 
     public ModuleStatusHandler<ControllerDevice_SubStatuses> ControllerConnectionStatus;
-    public bool IsComponentReady { get; private set; }
     public IReadOnlyList<IControllerDevice> Devices { get => _devices; }
 
 
@@ -17,7 +16,7 @@ public class ControllersHandler : MonoBehaviour, IFullyControllable
     private float _checkDeviceConnectionTimeInterval;   // sec
 
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         _checkDeviceConnectionTimeInterval = 0.1f;
         ControllerConnectionStatus = new();
@@ -28,18 +27,16 @@ public class ControllersHandler : MonoBehaviour, IFullyControllable
         };
     }
 
-    public async void ControllableStart()
+    public async override void ManagedStart()
     {
         foreach (var device in _devices)
-        {
             await device.Init();
-        }
 
         IsComponentReady = true;
     }
     
 
-    public void ControllableUpdate()
+    public override void ManagedUpdate()
     {
         foreach (var device in _devices)
         {

@@ -63,5 +63,10 @@
     <StartupObject>MoogModule.Daemon.Program</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+
+  <!-- Linked files -->
+  <ItemGroup>
+    <Compile Include="$(MocuScriptsPath)\MoogRelated\CommonPart\**\*.cs" Link="Linked code\MoogRelated\CommonPart\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
   
 </Project>

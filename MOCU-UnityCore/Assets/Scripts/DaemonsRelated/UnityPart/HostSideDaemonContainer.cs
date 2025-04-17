@@ -14,30 +14,30 @@ namespace DaemonsRelated
 {
     public class HostSideDaemonContainer
     {
-        public ModuleStatus status;
-        public DaemonType type;
-        public string name;
+        public IInterprocessCommunicator Communicator { get; private set; }
+        public ModuleStatus Status { get; private set; }
+        public DaemonType Type { get; private set; }
+        public string Name { get; private set; }
 
         private string _fullPath;
         private bool _isHidden;
         private ProcessPriorityClass _priority;
 
         private Process _process;
-        private IInterprocessCommunicator _communicator;
 
         public HostSideDaemonContainer(DaemonType type, string fullPath, bool isHidden, ProcessPriorityClass priority = ProcessPriorityClass.Normal)
         {
-            this.type = type;
+            Type = type;
             _fullPath = fullPath;
             _isHidden = isHidden;
             _priority = priority;
-            name = $"{type}Daemon";
-            status = ModuleStatus.Inactive;
+            Name = $"{type}Daemon";
+            Status = ModuleStatus.Inactive;
 
             var processInfo = new ProcessStartInfo()
             {
                 FileName = _fullPath,
-                Arguments = $"{Process.GetCurrentProcess().Id} {name} {_isHidden}",
+                Arguments = $"{Process.GetCurrentProcess().Id} {Name} {_isHidden}",
                 UseShellExecute = !_isHidden,   // runs as independent process (release == dependent (can't see console), debug == independed (can see console))
                 RedirectStandardOutput = false,
                 RedirectStandardError = false,
@@ -45,10 +45,10 @@ namespace DaemonsRelated
             };
 
             _process = new Process() { StartInfo = processInfo };
-            _communicator = new InterprocessCommunicator_UnityServer(name);
+            Communicator = new InterprocessCommunicator_UnityServer(Name);
 
-            _communicator.ConnectionEstablished += (message) => status = ModuleStatus.FullyOperational;
-            _communicator.ConnectionBroked += (message) => status = ModuleStatus.NotOperational;
+            Communicator.ConnectionEstablished += (message) => Status = ModuleStatus.FullyOperational;
+            Communicator.ConnectionBroked += (message) => Status = ModuleStatus.NotOperational;
         }
 
         public async void Start()
@@ -58,9 +58,9 @@ namespace DaemonsRelated
                 // 'communicator' must be before 'process'
                 // (because it's on the sever side. On the client, it's the opposite)
 
-                status = ModuleStatus.InSetup;
+                Status = ModuleStatus.InSetup;
 
-                var communicator = _communicator as InterprocessCommunicator_Server;
+                var communicator = Communicator as InterprocessCommunicator_Server;
                 _ = Task.Run(() => communicator.Start());
 
                 await communicator.WaitForServerReadyForClientConnectionAsync();
@@ -83,7 +83,7 @@ namespace DaemonsRelated
 
         public void Stop()
         {
-            _communicator.Stop();
+            Communicator.Stop();
 
             if (_isHidden)
             {
@@ -93,12 +93,7 @@ namespace DaemonsRelated
 
             // If not -- the console does not close itself and you can read the error message(s)
 
-            status = ModuleStatus.NotOperational;
-        }
-
-        public IInterprocessCommunicator GetCommunicator()
-        {
-            return _communicator;
+            Status = ModuleStatus.NotOperational;
         }
     }
 }

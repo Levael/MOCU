@@ -3,20 +3,18 @@ using System.Collections.Concurrent;
 using UnityEngine;
 
 
-public class UnityMainThreadDispatcher : MonoBehaviour, IFullyControllable
+public class UnityMainThreadDispatcher : ManagedMonoBehaviour
 {
     private static readonly ConcurrentQueue<Action> _executionQueue = new();
-    public bool IsComponentReady {  get; private set; }
 
+    public override void ManagedAwake() { }
 
-    public void ControllableAwake() { }
-
-    public void ControllableStart()
+    public override void ManagedStart()
     {
         IsComponentReady = true;
     }
 
-    public void ControllableUpdate()
+    public override void ManagedUpdate()
     {
         while (_executionQueue.TryDequeue(out var action))
             action?.Invoke();

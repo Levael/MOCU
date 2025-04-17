@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Fps_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesModule\DeviceBoxPanel_Microphones.cs" />
     <Compile Include="Assets\Scripts\WinAPI.cs" />
+    <Compile Include="Assets\Scripts\StatusesRelated\ModulesSubStatuses\Moog_ModuleSubStatuses.cs" />
     <Compile Include="Assets\For tests\FixedUpdateMonitor.cs" />
     <Compile Include="Assets\Scripts\Bootstrap\Bootstrap.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Client.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Assets\Scripts\AudioRelated\_Depricated\AudioDevice.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DTOs\UnifiedDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\UnityPart\AudioHostSideBridge.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\UnityPart\MoogHandler.cs" />
     <Compile Include="Assets\For tests\UpdUiCameraParams.cs" />
     <Compile Include="Assets\Scripts\User.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Base.cs" />
@@ -110,6 +112,7 @@
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioClipData.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Experiment\ExperimentTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonPart\IHostAPI.cs" />
+    <Compile Include="Assets\For tests\Moog Movement\TrajectoryMakerForMoogTest.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\KeyboardSimulator.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\DaemonsHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Base.cs" />
@@ -121,6 +124,7 @@
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatus.cs" />
     <Compile Include="Assets\Scripts\VrRelated\VrHeadset_Statuses.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Client.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\MachineState.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\ControllersHandler.cs" />
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\SettingsDeviceBox\SettingsDeviceBox.cs" />
@@ -134,10 +138,11 @@
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\SerialPortHelper.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\StatusesHandler.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioClipName.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\UnityPart\MoogHandler_API.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zUnityDaemonsCommon (depricated)\CommonUtilities.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DifferentInfo_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputSystemTests.cs" />
-    <Compile Include="Assets\Scripts\IFullyControllable.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\MoogCommunicationModel.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceConnectionStatus.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_UnityServer.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\JsonHelper.cs" />
@@ -145,20 +150,25 @@
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceType.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatusHandler.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\SubStatusImportance.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\DofParameters.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceData.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigClassTemplates.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\Devices_SettingsUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\UiHandler.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\UnityPart\MoogDaemon_API.cs" />
     <Compile Include="Assets\Scripts\UiRelated\UiReferences.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\IBusinessLogic_Server.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Daemons_DebugUiModuleHandler.cs" />
+    <Compile Include="Assets\For tests\Moog Movement\JoystickForMoogTest.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\Slider\CustomSlider.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioIntercomData.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Interface.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\SafeExpandoObject.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\IDaemonHostBridge.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\UnityPart\AudioDaemon_API.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\UnityPart\MoogHostSideBridge.cs" />
+    <Compile Include="Assets\Scripts\Bootstrap\ManagedMonoBehaviour.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModulesSubStatuses\Audio_ModuleSubStatuses.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Console_DebugUiModuleHandler.cs" />
   </ItemGroup>

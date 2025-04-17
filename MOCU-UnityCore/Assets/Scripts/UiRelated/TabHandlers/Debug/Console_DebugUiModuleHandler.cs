@@ -2,21 +2,21 @@
 using UnityEngine.UIElements;
 
 
-public class Console_DebugUiModuleHandler : MonoBehaviour, IControllableInitiation
+public class Console_DebugUiModuleHandler : ManagedMonoBehaviour
 {
-    public bool IsComponentReady { get; private set; }
-
     private UiHandler _uiHandler;
     private UiReferences _uiReference;
 
     private TextElement _console;
 
 
-    public void ControllableAwake() { }
-
-    public void ControllableStart()
+    public override void ManagedAwake()
     {
         _uiHandler = GetComponent<UiHandler>();
+    }
+
+    public override void ManagedStart()
+    {
         _uiReference = _uiHandler.secondaryUiScreen;
         _console = _uiReference.elements.debugTab.consoleModule.console;
         IsComponentReady = true;

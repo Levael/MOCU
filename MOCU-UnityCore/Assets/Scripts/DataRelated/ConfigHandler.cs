@@ -9,28 +9,22 @@ using UnityDaemonsCommon;
 using Debug = UnityEngine.Debug;
 
 
-public class ConfigHandler : MonoBehaviour, IControllableInitiation
+public class ConfigHandler : ManagedMonoBehaviour
 {
     public ProtocolConfig defaultConfig;
-    public bool IsComponentReady {  get; private set; }
 
     private string _defaultConfigFilePath;
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         _defaultConfigFilePath = Path.Combine(Application.streamingAssetsPath, "Config/config.json");
         defaultConfig = ReadConfig(filePath: _defaultConfigFilePath);
     }
 
-    public void ControllableStart() { }
-
-
     private void OnApplicationQuit()
     {
         WriteConfig(filePath: _defaultConfigFilePath, config: defaultConfig);
     }
-
-
 
     private ProtocolConfig? ReadConfig(string filePath)
     {

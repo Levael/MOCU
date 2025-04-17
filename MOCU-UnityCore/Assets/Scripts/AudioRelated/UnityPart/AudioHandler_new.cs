@@ -8,12 +8,11 @@ using UnityEngine;
 using AudioModule;
 using InterprocessCommunication;
 using DaemonsRelated;
+using MoogModule;
 
 
-public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableInitiation
+public class AudioHandler_new : ManagedMonoBehaviour
 {
-    public bool IsComponentReady { get; private set; }
-
     public event Action DeviceHasChanged;
     public event Action ClipHasChanged;
     public event Action IntercomHasStarted;
@@ -30,19 +29,24 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
 
     // ############################################################################################
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         _daemonsHandler = GetComponent<DaemonsHandler>();
         _debugTabHandler = GetComponent<DebugTabHandler>();
     }
-    public void ControllableStart()
+    public override void ManagedStart()
     {
-        _daemon = new AudioHostSideBridge(_daemonsHandler.GetDaemonCommunicator(DaemonType.Audio));
+        var daemonWrapper = _daemonsHandler.GetDaemon(DaemonType.Audio);
+        var communicator = daemonWrapper.Communicator;
 
-        InitDaemonTest();
+        _daemon = new AudioHostSideBridge(communicator);
 
-        _debugTabHandler.testBtn1Clicked += (eventObj) => _daemon.TestMethod1();
-        _debugTabHandler.testBtn2Clicked += (eventObj) => _daemon.TestMethod2();
+        InitDaemonTest();   // will be sent only after 'ConnectionEstablished' (automatically, it's in the queue)
+
+        _debugTabHandler.testBtn1Clicked += (eventObj) => _daemon.TestMethod1();    // test
+        _debugTabHandler.testBtn2Clicked += (eventObj) => _daemon.TestMethod2();    // test
+
+        daemonWrapper.Start();
     }
 
     // ############################################################################################
@@ -106,20 +110,27 @@ public class AudioHandler_new : MonoBehaviour, AudioHandler_API, IControllableIn
 
     private void InitDaemonTest()
     {
-        _daemon.UpdateClipsData(
-            new List<AudioClipData>() {
-                new AudioClipData() {
-                    name = AudioClipName.PingDevice,
-                    volume = 100,
-                    fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\test.mp3"
-                },
+        try
+        {
+            _daemon.UpdateClipsData(
+                new List<AudioClipData>() {
+                    new AudioClipData() {
+                        name = AudioClipName.PingDevice,
+                        volume = 100,
+                        fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\test.mp3"
+                    },
 
-                new AudioClipData() {
-                    name = AudioClipName.CorrectAnswer,
-                    volume = 85,
-                    fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\audioTestSample.mp3"
+                    new AudioClipData() {
+                        name = AudioClipName.CorrectAnswer,
+                        volume = 85,
+                        fullFilePath = @"C:\Users\Levael\GitHub\MOCU\MOCU-UnityCore\Assets\StreamingAssets\Audio\audioTestSample.mp3"
+                    }
                 }
-            }
-        );
+            );
+        }
+        catch
+        {
+            Debug.LogWarning("Failed 'InitDaemonTest'.");
+        }
     }
 }

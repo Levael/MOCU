@@ -1,12 +1,46 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Net.Sockets;
-using System.Net;
-using System.Text;
-using System.Threading;
+
+using MoogModule;
+using DaemonsRelated;
+using InterprocessCommunication;
+using System.Linq;
 
 
 namespace MoogModule.Daemon
+{
+    class Program
+    {
+        public static void Main(string[] args)
+        {
+            try
+            {
+                Console.WriteLine($"Test, {args.ToArray().ToString()}");
+
+
+                var daemonSupervisor = new DaemonSupervisor(args);
+
+                if (!daemonSupervisor.IsValid())
+                    daemonSupervisor.CloseProgram("Init parameters are not valid");
+
+                // Exclusive part for this particular daemon ==================================================
+                var communicator = new InterprocessCommunicator_Client(daemonSupervisor.DaemonName);
+                var hostAPI = new MoogDaemonSideBridge(communicator);
+                var daemonLogic = new MoogDaemon(hostAPI);
+                // ============================================================================================
+
+                daemonSupervisor.RunProgram(communicator: communicator, hostAPI: hostAPI, daemonLogic: daemonLogic);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Unhandled error: " + ex.ToString());
+                Environment.Exit(2);
+            }
+        }
+    }
+}
+
+
+/*namespace MoogModule.Daemon
 {
     public class Program
     {
@@ -31,7 +65,6 @@ namespace MoogModule.Daemon
             intervalExecutor.OnTick += () => ExecuteEveryTick(ref index, ref queue, ref flag, intervalExecutor);
 
             var inputInterface = new Thread(() => InputGetter(ref flag, ref queue));
-
             var UdpReadThread = new Thread(() => StartListener());
 
 
@@ -52,8 +85,8 @@ namespace MoogModule.Daemon
 
         static void ExecuteEveryTick(ref long index, ref ConcurrentQueue<Action> queue, ref bool flag, IntervalExecutor intervalExecutor)
         {
-            /*if ((index % (10 * 1_000) == 0) && (index != 0)) // every 10 sec
-                Console.WriteLine($"AverageInterval = {intervalExecutor.AverageInterval.TotalMilliseconds}ms");*/
+            *//*if ((index % (10 * 1_000) == 0) && (index != 0)) // every 10 sec
+                Console.WriteLine($"AverageInterval = {intervalExecutor.AverageInterval.TotalMilliseconds}ms");*//*
 
             if (++index > (1 * 60 * 3_000)) // after 3 min
             {
@@ -65,10 +98,10 @@ namespace MoogModule.Daemon
 
             SendMessage(PacketSerializer.Serialize(CommandPackets.NewPosition(startPosition)));
 
-            /*while (queue.TryDequeue(out Action action))
+            *//*while (queue.TryDequeue(out Action action))
             {
                 action.Invoke();
-            }*/
+            }*//*
         }
 
         static void InputGetter(ref bool flag, ref ConcurrentQueue<Action> queue)
@@ -131,4 +164,4 @@ namespace MoogModule.Daemon
             Console.WriteLine($"Sent: {data} to {ip}:{port}");
         }
     }
-}
+}*/

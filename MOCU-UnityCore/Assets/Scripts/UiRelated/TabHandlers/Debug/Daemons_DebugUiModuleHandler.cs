@@ -5,10 +5,8 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
+public class Daemons_DebugUiModuleHandler : ManagedMonoBehaviour
 {
-    public bool IsComponentReady {  get; private set; }
-
     private UiHandler _uiHandler;
     private UiReferences _uiReference;
     private DaemonsHandler _daemonsHandler;
@@ -22,16 +20,16 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
 
 
 
-    public void ControllableAwake()
-    {
-        _daemonActivitieTemplate = Resources.Load<VisualTreeAsset>("GUI/UXML/DebugModules/DaemonsSubModule_ActivityTemplate");
-    }
-
-    public void ControllableStart()
+    public override void ManagedAwake()
     {
         _uiHandler = GetComponent<UiHandler>();
         _daemonsHandler = GetComponent<DaemonsHandler>();
 
+        _daemonActivitieTemplate = Resources.Load<VisualTreeAsset>("GUI/UXML/DebugModules/DaemonsSubModule_ActivityTemplate");
+    }
+
+    public override void ManagedStart()
+    {
         _uiReference = _uiHandler.secondaryUiScreen;
 
         _daemonsActivities = _uiReference.elements.debugTab.daemonsModule.activities;
@@ -48,7 +46,7 @@ public class Daemons_DebugUiModuleHandler : MonoBehaviour, IFullyControllable
         _testStopwatch.Start();
     }
 
-    public void ControllableUpdate()
+    public override void ManagedUpdate()
     {
 
     }

@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 
 // Refactor later, looks strange
 
-public class UiReferences : MonoBehaviour
+public class UiReferences : ManagedMonoBehaviour
 {
     public dynamic elements { get => _elements; }
     private dynamic _elements;
@@ -17,10 +17,8 @@ public class UiReferences : MonoBehaviour
     public VisualElement root;
     public Dictionary<string, string> _tab_body_relations;
 
-    public bool IsComponentReady { get; private set; }
 
-
-    void Awake ()
+    public override void ManagedAwake ()
     {
         _elements_old = new();
         _tab_body_relations = new();

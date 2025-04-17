@@ -2,22 +2,20 @@ using System;
 using System.Collections.Concurrent;
 using UnityEngine;
 
-public class AnswerHandler : MonoBehaviour, IControllableInitiation
+
+public class AnswerHandler : ManagedMonoBehaviour
 {
     public ConcurrentStack<ParticipantAnswerStruct> answers;    // make later IEnumerable for public use
-    public bool IsComponentReady { get; private set; }
 
-
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         answers = new();
     }
 
-    public void ControllableStart()
+    public override void ManagedStart()
     {
         IsComponentReady = true;
     }
-
 
 
 
@@ -26,4 +24,3 @@ public class AnswerHandler : MonoBehaviour, IControllableInitiation
         answers.Push(new ParticipantAnswerStruct(answer: signalFromParticipant, timestamp: DateTime.UtcNow));
     }
 }
-

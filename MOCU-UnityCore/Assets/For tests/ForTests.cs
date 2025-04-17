@@ -3,24 +3,22 @@ using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem;
 
 
-public class ForTests : MonoBehaviour, IFullyControllable
+public class ForTests : ManagedMonoBehaviour
 {
-    public bool IsComponentReady {  get; private set; }
-
     private DebugTabHandler _debugTabHandler;
     private AudioHandler _audioHandler;
     private CedrusHandler _cerusHandler;
 
     //private int temp_counter = 0;
 
-    public void ControllableAwake()
+    public override void ManagedAwake()
     {
         _debugTabHandler = GetComponent<DebugTabHandler>();
         _audioHandler = GetComponent<AudioHandler>();
         //_cerusHandler = GetComponent<CedrusHandler>();
     }
 
-    public void ControllableStart()
+    public override void ManagedStart()
     {
 
 
@@ -40,7 +38,7 @@ public class ForTests : MonoBehaviour, IFullyControllable
         IsComponentReady = true;
     }
 
-    public void ControllableUpdate()
+    public override void ManagedUpdate()
     {
         /*if (_audioHandler.stateTracker.Status == ModuleStatus.FullyOperational && temp_counter++ < 300)
             _audioHandler.SendTestAudioSignalToDevice("Speakers (Realtek High Definition Audio)");*/

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DaemonsRelated
+﻿namespace DaemonsRelated
 {
     public interface IDaemonHostBridge
     {
-        void StartCommunication();
+        //void StartCommunication();
     }
 }
