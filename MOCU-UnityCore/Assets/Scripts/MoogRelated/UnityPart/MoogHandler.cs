@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 
 namespace MoogModule
@@ -19,6 +20,7 @@ namespace MoogModule
         // unity components
         private DaemonsHandler _daemonsHandler;
         private TrajectoryMakerForMoogTest _controller;
+        private DebugTabHandler _debugTabHandler;
 
         // ########################################################################################
 
@@ -26,6 +28,7 @@ namespace MoogModule
         {
             _daemonsHandler = GetComponent<DaemonsHandler>();
             _controller = GetComponent<TrajectoryMakerForMoogTest>();
+            _debugTabHandler = GetComponent<DebugTabHandler>();
 
             _connectParameters = new ConnectParameters
             {
@@ -36,6 +39,9 @@ namespace MoogModule
                 MBC_IP = "192.168.2.1",
                 MBC_PORT = "16384"
             };
+
+            _debugTabHandler.testBtn1Clicked += (eventObj) => Engage();     // test
+            _debugTabHandler.testBtn2Clicked += (eventObj) => Disengage();  // test
         }
 
         public override void ManagedStart()
@@ -63,10 +69,12 @@ namespace MoogModule
 
         public void Engage()
         {
+            _daemon.Engage();
         }
 
         public void Disengage()
         {
+            _daemon.Disengage();
         }
 
         public void Reset()
@@ -75,6 +83,7 @@ namespace MoogModule
 
         public void MoveToPoint(MoveToPointParameters parameters)
         {
+            _daemon.MoveToPoint(parameters);
             /*if (stateTracker.Status == ModuleStatus.FullyOperational)
                 _daemon.MoveToPoint(parameters);*/
         }

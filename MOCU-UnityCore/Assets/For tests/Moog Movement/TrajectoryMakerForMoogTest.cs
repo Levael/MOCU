@@ -24,13 +24,14 @@ public class TrajectoryMakerForMoogTest : ManagedMonoBehaviour
     private void OnStickPositionChanged(Vector2 stickPosition)
     {
         // 0.9 is a factor to reduce the maximum position to 90% of the maximum value
-        var restrictedY = Mathf.Clamp(stickPosition.y, -1f, 1f) * 0.9;
-        var restrictedX = Mathf.Clamp(stickPosition.x, -1f, 1f) * 0.9;
+        var restrictedY = Mathf.Clamp(stickPosition.y, -1f, 1f) * 0.5;  // 0.9
+        var restrictedX = Mathf.Clamp(stickPosition.x, -1f, 1f) * 0.5;  // 0.9
 
         var surgePos    = (float)(restrictedY * (restrictedY >= 0 ? _maxSurgePosition : _minSurgePosition));
         var swayPos     = (float)(restrictedX * (restrictedX >= 0 ? _maxSwayPosition : _minSwayPosition));
 
-        var dofParameters = new DofParameters { Surge = surgePos, Sway = swayPos };
+        var dofParameters = new DofParameters { Surge = surgePos, Sway = swayPos, Heave = -0.22f };
+        //Debug.Log($"Sway: {dofParameters.Sway}, Surge: {dofParameters.Surge}, Heave: {dofParameters.Heave}");
         OnPositionChanged?.Invoke(dofParameters);
     }
 

@@ -11,6 +11,7 @@ namespace MoogModule.Daemon
 {
     public class MoogDaemonSideBridge : MoogHost_API, IHostAPI
     {
+        public event Action<ConnectParameters> Connect;
         public event Action Engage;
         public event Action Disengage;
         public event Action Reset;
@@ -61,6 +62,8 @@ namespace MoogModule.Daemon
             {
                 var dataTransferObject = JsonHelper.DeserializeJson<MoogDataTransferObject>(message);
 
+                // ................................................................................
+
                 // CUSTOM MESSAGE
                 if (!String.IsNullOrEmpty(dataTransferObject.CustomMessage))
                     Console.WriteLine($"Custom message in 'HandleIncomingMessage': {dataTransferObject.CustomMessage}");
@@ -69,7 +72,37 @@ namespace MoogModule.Daemon
                 if (dataTransferObject.DoTerminateTheDaemon)
                     TerminateDaemon?.Invoke("Got command from host to terminate the daemon");
 
-                //if (dataTransferObject.)
+                // ................................................................................
+
+                // CONNECT
+                if (dataTransferObject.ConnectCommand)
+                    Connect?.Invoke(dataTransferObject.ConnectParameters);
+
+                // ENGAGE
+                if (dataTransferObject.EngageCommand)
+                    Engage?.Invoke();
+
+                // DISENGAGE
+                if (dataTransferObject.DisengageCommand)
+                    Disengage?.Invoke();
+
+                // RESET
+                if (dataTransferObject.ResetCommand)
+                    Reset?.Invoke();
+
+                // DO RECEIVE FEEDBACK
+                /*if (dataTransferObject.DoReceiveFeedback)
+                    StartReceivingFeedback?.Invoke();
+                else
+                    StopReceivingFeedback?.Invoke();*/
+
+                // MOVE TO POINT
+                if (dataTransferObject.MoveToPointCommand)
+                    MoveToPoint?.Invoke(dataTransferObject.MoveToPointParameters);
+
+                // MOVE BY TRAJECTORY
+                if (dataTransferObject.MoveByTrajectoryCommand)
+                    MoveByTrajectory?.Invoke(dataTransferObject.MoveByTrajectoryParameters);
             }
             catch (Exception ex)
             {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// todo: rename, it has no sense
 
 namespace DaemonsRelated.DaemonPart
 {

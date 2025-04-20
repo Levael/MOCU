@@ -3,7 +3,6 @@
 using MoogModule;
 using DaemonsRelated;
 using InterprocessCommunication;
-using System.Linq;
 
 
 namespace MoogModule.Daemon
@@ -14,18 +13,15 @@ namespace MoogModule.Daemon
         {
             try
             {
-                Console.WriteLine($"Test, {args.ToArray().ToString()}");
-
-
                 var daemonSupervisor = new DaemonSupervisor(args);
 
                 if (!daemonSupervisor.IsValid())
                     daemonSupervisor.CloseProgram("Init parameters are not valid");
 
                 // Exclusive part for this particular daemon ==================================================
-                var communicator = new InterprocessCommunicator_Client(daemonSupervisor.DaemonName);
-                var hostAPI = new MoogDaemonSideBridge(communicator);
-                var daemonLogic = new MoogDaemon(hostAPI);
+                var communicator    = new InterprocessCommunicator_Client(daemonSupervisor.DaemonName);
+                var hostAPI         = new MoogDaemonSideBridge(communicator);
+                var daemonLogic     = new MoogDaemon(hostAPI);
                 // ============================================================================================
 
                 daemonSupervisor.RunProgram(communicator: communicator, hostAPI: hostAPI, daemonLogic: daemonLogic);

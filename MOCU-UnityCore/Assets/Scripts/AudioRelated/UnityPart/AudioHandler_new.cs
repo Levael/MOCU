@@ -43,8 +43,8 @@ public class AudioHandler_new : ManagedMonoBehaviour
 
         InitDaemonTest();   // will be sent only after 'ConnectionEstablished' (automatically, it's in the queue)
 
-        _debugTabHandler.testBtn1Clicked += (eventObj) => _daemon.TestMethod1();    // test
-        _debugTabHandler.testBtn2Clicked += (eventObj) => _daemon.TestMethod2();    // test
+        /*_debugTabHandler.testBtn1Clicked += (eventObj) => _daemon.TestMethod1();    // test
+        _debugTabHandler.testBtn2Clicked += (eventObj) => _daemon.TestMethod2();    // test*/
 
         daemonWrapper.Start();
     }

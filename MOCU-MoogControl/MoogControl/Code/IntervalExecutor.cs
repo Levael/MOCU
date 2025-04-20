@@ -29,7 +29,7 @@ using System.Collections.Concurrent;
 
 namespace MoogModule.Daemon
 {
-    internal class IntervalExecutor : IIntervalExecutor
+    public class IntervalExecutor : IIntervalExecutor
     {
         [DllImport("kernel32.dll")]
         private static extern bool QueryPerformanceCounter(out long lpPerformanceCount);

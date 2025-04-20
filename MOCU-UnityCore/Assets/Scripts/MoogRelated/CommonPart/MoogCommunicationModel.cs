@@ -19,9 +19,9 @@ namespace MoogModule
         public bool MoveByTrajectoryCommand                             { get; set; } = false;
 
         // Parameters
-        public ConnectParameters ConnectParameters                      { get; set; } = null;
-        public MoveToPointParameters MoveToPointParameters              { get; set; } = null;
-        public MoveByTrajectoryParameters MoveByTrajectoryParameters    { get; set; } = null;
+        public ConnectParameters? ConnectParameters                     { get; set; } = null;
+        public MoveToPointParameters? MoveToPointParameters             { get; set; } = null;
+        public MoveByTrajectoryParameters? MoveByTrajectoryParameters   { get; set; } = null;
 
         // Info
         public MachineState MoogState                                   { get; set; } = MachineState.Disabled;
@@ -48,13 +48,13 @@ namespace MoogModule
     public class MoveToPointParameters
     {
         public DofParameters Coordinate                                 { get; set; } = default;
-        public TimeSpan ScheduledTime                                   { get; set; } = TimeSpan.Zero;
+        public DateTime ScheduledTime                                   { get; set; } = DateTime.MinValue;
     }
 
     public class MoveByTrajectoryParameters
     {
         public IEnumerable<DofParameters> Coordinates                   { get; set; } = Enumerable.Empty<DofParameters>();
         public TimeSpan MovementDuration                                { get; set; } = TimeSpan.Zero;
-        public TimeSpan ScheduledTime                                   { get; set; } = TimeSpan.Zero;
+        public DateTime ScheduledTime                                   { get; set; } = DateTime.MinValue;
     }
 }
