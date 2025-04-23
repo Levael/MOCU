@@ -1,6 +1,6 @@
 ﻿namespace MoogModule
 {
-    public enum MachineState : uint
+    public enum EncodedMachineState : uint
     {
         Initializing    = 0b0000,   // Motion control software is initializing is operational parameters and internal states.
         Ready           = 0b0001,   // System is ready to accept an Engage command.

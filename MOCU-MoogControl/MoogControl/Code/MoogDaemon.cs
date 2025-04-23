@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Concurrent;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using DaemonsRelated.DaemonPart;
 
@@ -16,16 +16,18 @@ namespace MoogModule.Daemon
         private MoogMachineCommunicator _moogMachineCommunicator;
 
         private ConcurrentQueue<CommandPacket> _commandsForMoog;
+        private MoogRealTimeState _moogRealTimeState;
 
         private DofParameters _startPosition;
-        private DofParameters _lastPosition;
         private double _maxAcceleration;
+        private bool _doSendFeedback = false;
 
         public MoogDaemon(MoogDaemonSideBridge hostAPI)
         {
             _commandsForMoog = new();
             _hostAPI = hostAPI;
             _moogMachineCommunicator = new MoogMachineCommunicator();
+            _moogRealTimeState = new MoogRealTimeState();
             _intervalExecutor = new IntervalExecutor(TimeSpan.FromMilliseconds(1));
 
             _hostAPI.TerminateDaemon += message => Console.WriteLine("Got command to terminate the daemon.");
@@ -61,15 +63,15 @@ namespace MoogModule.Daemon
         {
             try
             {
-                _startPosition      = parameters.StartPosition;
-                _lastPosition       = _startPosition;
-                _maxAcceleration    = parameters.MaxAcceleration;
+                _startPosition                          = parameters.StartPosition;
+                _moogRealTimeState.LastCommandPosition  = _startPosition;
+                _maxAcceleration                        = parameters.MaxAcceleration;
 
                 _moogMachineCommunicator.Connect(parameters);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error ucurred in 'HandleConnectCommand': {ex}");
+                Console.WriteLine($"Handled error ucurred in 'HandleConnectCommand': {ex}");
             }
         }
 
@@ -78,6 +80,7 @@ namespace MoogModule.Daemon
             throw new NotImplementedException();
         }
 
+        // todo: report an error if Queue is not empty when adding with delay (safety reason)
         private void HandleMoveToPointCommand(MoveToPointParameters parameters)
         {
             try
@@ -90,7 +93,11 @@ namespace MoogModule.Daemon
                     Task.Run(async () =>
                     {
                         await Task.Delay(delay);
-                        _commandsForMoog.Enqueue(CommandPackets.NewPosition(parameters.Coordinate));
+
+                        if (_commandsForMoog.Any())
+                            throw new Exception("Can't add new position with delay -- queue is not empty");
+                        else
+                            _commandsForMoog.Enqueue(CommandPackets.NewPosition(parameters.Coordinate));
                     });
                 }
                 else
@@ -98,18 +105,18 @@ namespace MoogModule.Daemon
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error ucurred in 'HandleMoveToPointCommand': {ex}");
+                Console.WriteLine($"Handled error ucurred in 'HandleMoveToPointCommand': {ex}");
             }
         }
 
         private void HandleStopReceivingFeedbackCommand()
         {
-            throw new NotImplementedException();
+            _doSendFeedback = false;
         }
 
         private void HandleStartReceivingFeedbackCommand()
         {
-            throw new NotImplementedException();
+            _doSendFeedback = true;
         }
 
         private void HandleResetCommand()
@@ -120,7 +127,7 @@ namespace MoogModule.Daemon
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error ucurred in 'HandleResetCommand': {ex}");
+                Console.WriteLine($"Handled error ucurred in 'HandleResetCommand': {ex}");
             }
         }
 
@@ -132,7 +139,7 @@ namespace MoogModule.Daemon
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error ucurred in 'HandleDisengageCommand': {ex}");
+                Console.WriteLine($"Handled error ucurred in 'HandleDisengageCommand': {ex}");
             }
         }
 
@@ -144,7 +151,7 @@ namespace MoogModule.Daemon
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error ucurred in 'HandleEngageCommand': {ex}");
+                Console.WriteLine($"Handled error ucurred in 'HandleEngageCommand': {ex}");
             }
         }
 
@@ -155,22 +162,38 @@ namespace MoogModule.Daemon
             try
             {
                 var parsedMessage = PacketSerializer.Deserialize(data);
-                ResponsePacketParser.Test(parsedMessage);
+
+                _moogRealTimeState.EncodedMachineState = parsedMessage.EncodedMachineState;
+                _moogRealTimeState.LastFeedbackPosition = parsedMessage.Parameters;
+                _moogRealTimeState.TimeOfLastFeedback = DateTime.Now;
+
+                // TODO:
+                // - faults
+                // - calculate velocity and acceleration
+                // - maybe add safety checks
+
+                if (_doSendFeedback)
+                    _hostAPI.SingleFeedback(_moogRealTimeState);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Handled error ucurred in 'HandleReceivedPacket': {ex}");
+            }
         }
 
         private void ExecuteEveryTick()
         {
-            while (_commandsForMoog.TryDequeue(out CommandPacket command))
+            if (_commandsForMoog.TryDequeue(out CommandPacket command))
             {
                 var packet = PacketSerializer.Serialize(command);
                 _moogMachineCommunicator.SendPacket(packet);
-                _lastPosition = command.Parameters;
+                _moogRealTimeState.LastCommandPosition = command.Parameters;
             }
-
-            var KeepAlivePacket = PacketSerializer.Serialize(CommandPackets.NewPosition(_lastPosition));
-            _moogMachineCommunicator.SendPacket(KeepAlivePacket);
+            else
+            {
+                var KeepAlivePacket = PacketSerializer.Serialize(CommandPackets.NewPosition(_moogRealTimeState.LastFeedbackPosition));
+                _moogMachineCommunicator.SendPacket(KeepAlivePacket);
+            }  
         }
     }
 }

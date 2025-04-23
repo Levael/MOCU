@@ -26,7 +26,7 @@ namespace MoogModule.Daemon
             return MemoryMarshal.Read<ResponsePacket>(data);
         }
 
-        public static void ConvertEndian(byte[] byteArray)
+        private static void ConvertEndian(byte[] byteArray)
         {
             for (int offset = 0; offset < byteArray.Length; offset += 4)
                 Array.Reverse(byteArray, offset, 4);

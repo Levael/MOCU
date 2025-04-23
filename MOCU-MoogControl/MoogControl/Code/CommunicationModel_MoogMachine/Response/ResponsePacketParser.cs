@@ -15,7 +15,7 @@ namespace MoogModule.Daemon
                     $"ReservedForFutureUse - {parsedMessage.ReservedForFutureUse}. Should be - 0\n" +
                     $"MessageId - {parsedMessage.MessageId}. Should be - 200\n" +
 
-                    $"MachineStatusWord - {parsedMessage.MachineStatusWord}\n" +
+                    $"EncodedMachineState - {parsedMessage.EncodedMachineState}\n" +
                     $"DiscreteIOWord - {parsedMessage.DiscreteIOWord}\n" +
                     $"FaultPart1 - {parsedMessage.FaultPart1}\n" +
                     $"FaultPart2 - {parsedMessage.FaultPart2}\n" +

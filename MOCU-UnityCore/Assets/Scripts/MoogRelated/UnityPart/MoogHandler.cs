@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
+using MoogModule.Daemon;
 
 
 namespace MoogModule
@@ -99,7 +100,7 @@ namespace MoogModule
 
         // ########################################################################################
 
-        private void OnMachineStateChanged(MachineState state)
+        private void OnMachineStateChanged(MoogRealTimeState state)
         {
             /*if (state == MachineState.Ready || state == MachineState.Engaged)
                 stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Machine, SubStatusState.Complete);

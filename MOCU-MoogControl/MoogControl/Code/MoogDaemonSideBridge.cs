@@ -44,12 +44,16 @@ namespace MoogModule.Daemon
 
         public void FeedbackForTimeRange(IEnumerable<DofParameters> parameters)
         {
-            throw new NotImplementedException();
+            var moogDataTransferObject = new MoogDataTransferObject() { FeedbackCoordinates = parameters };
+            var json = JsonHelper.SerializeJson(moogDataTransferObject);
+            _communicator.SendMessage(json);
         }
 
-        public void SingleFeedback(DofParameters parameters)
+        public void SingleFeedback(MoogRealTimeState state)
         {
-            throw new NotImplementedException();
+            var moogDataTransferObject = new MoogDataTransferObject() { State = state };
+            var json = JsonHelper.SerializeJson(moogDataTransferObject);
+            _communicator.SendMessage(json);
         }
 
         // ########################################################################################
@@ -91,10 +95,10 @@ namespace MoogModule.Daemon
                     Reset?.Invoke();
 
                 // DO RECEIVE FEEDBACK
-                /*if (dataTransferObject.DoReceiveFeedback)
+                if (dataTransferObject.DoReceiveFeedback)
                     StartReceivingFeedback?.Invoke();
                 else
-                    StopReceivingFeedback?.Invoke();*/
+                    StopReceivingFeedback?.Invoke();
 
                 // MOVE TO POINT
                 if (dataTransferObject.MoveToPointCommand)

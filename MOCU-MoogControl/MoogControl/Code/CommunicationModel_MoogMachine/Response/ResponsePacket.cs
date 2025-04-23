@@ -15,7 +15,7 @@ namespace MoogModule.Daemon
         public readonly uint MessageId; // should be 200
 
         // Payload
-        public readonly MachineState MachineStatusWord;
+        public readonly EncodedMachineState EncodedMachineState;
         public readonly IoInfo DiscreteIOWord;
         public readonly LatchedFaultWord1 FaultPart1;
         public readonly LatchedFaultWord2 FaultPart2;

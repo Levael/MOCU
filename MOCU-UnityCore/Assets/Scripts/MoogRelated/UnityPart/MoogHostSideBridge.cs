@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AudioModule;
 using DaemonsRelated;
 using InterprocessCommunication;
+using MoogModule.Daemon;
 
 
 namespace MoogModule
@@ -16,7 +17,7 @@ namespace MoogModule
     {
         private IInterprocessCommunicator _communicator;
 
-        public event Action<MachineState> MachineStateChanged;
+        public event Action<MoogRealTimeState> MachineStateChanged;
         public event Action<DofParameters> SingleFeedback;
         public event Action<IEnumerable<DofParameters>> FeedbackForTimeRange;
 

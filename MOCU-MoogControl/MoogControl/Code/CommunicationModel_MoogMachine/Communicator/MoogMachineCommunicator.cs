@@ -30,7 +30,11 @@ namespace MoogModule.Daemon
         public void SendPacket(byte[] data)
         {
             if (_udpCommunicator is not null)
+            {
+                // 2 times cause that's what Moog documentation says
                 _udpCommunicator.Send(data, data.Length);
+                _udpCommunicator.Send(data, data.Length);
+            }
         }
 
 

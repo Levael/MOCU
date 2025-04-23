@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using DaemonsRelated;
+using MoogModule.Daemon;
 
 
 namespace MoogModule
@@ -19,7 +20,7 @@ namespace MoogModule
         event Action<MoveByTrajectoryParameters> MoveByTrajectory;
 
         // responses from Daemon
-        void SingleFeedback(DofParameters parameters);
+        void SingleFeedback(MoogRealTimeState state);
         void FeedbackForTimeRange(IEnumerable<DofParameters> parameters);
     }
 }

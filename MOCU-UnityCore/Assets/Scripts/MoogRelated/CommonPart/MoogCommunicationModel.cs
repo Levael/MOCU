@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using DaemonsRelated;
+using MoogModule.Daemon;
 
 
 namespace MoogModule
@@ -24,8 +25,8 @@ namespace MoogModule
         public MoveByTrajectoryParameters? MoveByTrajectoryParameters   { get; set; } = null;
 
         // Info
-        public MachineState MoogState                                   { get; set; } = MachineState.Disabled;
-        public string Faults                                            { get; set; } = String.Empty;
+        public MoogRealTimeState? State                                 { get; set; } = null;
+        public IEnumerable<DofParameters> FeedbackCoordinates           { get; set; } = Enumerable.Empty<DofParameters>();
 
         // Common for every DTO
         public IEnumerable<DaemonErrorReport> DaemonErrorReports        { get; set; } = Enumerable.Empty<DaemonErrorReport>();
