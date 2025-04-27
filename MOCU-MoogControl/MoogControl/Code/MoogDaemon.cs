@@ -11,12 +11,12 @@ namespace MoogModule.Daemon
     {
         public event Action<string> TerminateDaemon;
 
-        private MoogDaemonSideBridge _hostAPI;
-        private IntervalExecutor _intervalExecutor;
-        private MoogMachineCommunicator _moogMachineCommunicator;
+        private readonly MoogDaemonSideBridge _hostAPI;
+        private readonly IntervalExecutor _intervalExecutor;
+        private readonly MoogMachineCommunicator _moogMachineCommunicator;
 
-        private ConcurrentQueue<CommandPacket> _commandsForMoog;
-        private MoogRealTimeState _moogRealTimeState;
+        private readonly ConcurrentQueue<CommandPacket> _commandsForMoog;
+        private readonly MoogRealTimeState _moogRealTimeState;
 
         private DofParameters _startPosition;
         private double _maxAcceleration;
@@ -64,7 +64,7 @@ namespace MoogModule.Daemon
             try
             {
                 _startPosition                          = parameters.StartPosition;
-                _moogRealTimeState.LastCommandPosition  = _startPosition;
+                //_moogRealTimeState.LastCommandPosition  = _startPosition;
                 _maxAcceleration                        = parameters.MaxAcceleration;
 
                 _moogMachineCommunicator.Connect(parameters);
@@ -164,8 +164,7 @@ namespace MoogModule.Daemon
                 var parsedMessage = PacketSerializer.Deserialize(data);
 
                 _moogRealTimeState.EncodedMachineState = parsedMessage.EncodedMachineState;
-                _moogRealTimeState.LastFeedbackPosition = parsedMessage.Parameters;
-                _moogRealTimeState.TimeOfLastFeedback = DateTime.Now;
+                _moogRealTimeState.Position = parsedMessage.Parameters;
 
                 // TODO:
                 // - faults
@@ -187,11 +186,11 @@ namespace MoogModule.Daemon
             {
                 var packet = PacketSerializer.Serialize(command);
                 _moogMachineCommunicator.SendPacket(packet);
-                _moogRealTimeState.LastCommandPosition = command.Parameters;
+                //_moogRealTimeState.LastCommandPosition = command.Parameters;
             }
             else
             {
-                var KeepAlivePacket = PacketSerializer.Serialize(CommandPackets.NewPosition(_moogRealTimeState.LastFeedbackPosition));
+                var KeepAlivePacket = PacketSerializer.Serialize(CommandPackets.NewPosition(_moogRealTimeState.Position));
                 _moogMachineCommunicator.SendPacket(KeepAlivePacket);
             }  
         }
