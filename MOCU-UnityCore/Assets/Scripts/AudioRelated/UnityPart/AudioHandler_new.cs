@@ -46,7 +46,7 @@ public class AudioHandler_new : ManagedMonoBehaviour
         /*_debugTabHandler.testBtn1Clicked += (eventObj) => _daemon.TestMethod1();    // test
         _debugTabHandler.testBtn2Clicked += (eventObj) => _daemon.TestMethod2();    // test*/
 
-        daemonWrapper.Start();
+        //daemonWrapper.Start();
     }
 
     // ############################################################################################

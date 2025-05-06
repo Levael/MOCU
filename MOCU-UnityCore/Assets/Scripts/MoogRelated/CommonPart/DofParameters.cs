@@ -42,10 +42,10 @@ namespace MoogModule
         public float Sway;
         public float Heave;
 
+        // ........................................................................................
 
         private const float PositionTolerance = 0.0f;   // TODO: set values
         private const float RotationTolerance = 0.0f;   // TODO: set values
-
 
         // ........................................................................................
 

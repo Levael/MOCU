@@ -63,6 +63,7 @@
     <Compile Include="Assets\Scripts\ControllersRelated\IControllerDevice.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_JoystickAction.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Fps_DebugUiModuleHandler.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\UnityPart\TrajectoryGenerator.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesModule\DeviceBoxPanel_Microphones.cs" />
     <Compile Include="Assets\Scripts\WinAPI.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModulesSubStatuses\Moog_ModuleSubStatuses.cs" />

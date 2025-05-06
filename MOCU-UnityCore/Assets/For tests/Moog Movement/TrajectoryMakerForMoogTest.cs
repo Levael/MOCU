@@ -2,26 +2,47 @@
 using UnityEngine;
 
 using MoogModule;
+using System.IO;
 
 
 public class TrajectoryMakerForMoogTest : ManagedMonoBehaviour
 {
-    private JoystickForMoogTest _inputSourse;
+    /*private JoystickForMoogTest _inputSourse;
 
     private double _maxSurgePosition = 0.259;
     private double _minSurgePosition = -0.241;
     private double _maxSwayPosition = 0.259;
     private double _minSwayPosition = -0.259;
 
-    public event Action<DofParameters> OnPositionChanged;
+    public event Action<DofParameters> OnPositionChanged;*/
 
     public override void ManagedAwake()
     {
-        _inputSourse = GetComponent<JoystickForMoogTest>();
-        _inputSourse.OnStickPositionChanged += OnStickPositionChanged;
+        /*_inputSourse = GetComponent<JoystickForMoogTest>();
+        _inputSourse.OnStickPositionChanged += OnStickPositionChanged;*/
+
+        var settings = new LinearTrajectorySettings
+        {
+            StartPoint = new DofParameters { Surge = 0f },
+            EndPoint = new DofParameters { Surge = 10f },
+            TotalTimeSeconds = 1f,
+            FramesPerSecond = 1000,
+            NormalizedProgressFunction = t => TrajectoryProfile.CDF(normalizedTime: t, numberOfSigmas: 3.0f)
+    };
+
+        var trajectory = TrajectoryGenerator.Generate(settings);
+        SaveSurgeToTxt(trajectory, @"C:\Users\Levael\Documents\MOCU-temp-docs\coords.txt");
     }
 
-    private void OnStickPositionChanged(Vector2 stickPosition)
+    private void SaveSurgeToTxt(DofParameters[] trajectory, string filePath)
+    {
+        using StreamWriter writer = new StreamWriter(filePath);
+
+        foreach (var point in trajectory)
+            writer.WriteLine(point.Surge.ToString("F6"));
+    }
+
+    /*private void OnStickPositionChanged(Vector2 stickPosition)
     {
         // 0.9 is a factor to reduce the maximum position to 90% of the maximum value
         var restrictedY = Mathf.Clamp(stickPosition.y, -1f, 1f) * 0.5;  // 0.9
@@ -39,5 +60,5 @@ public class TrajectoryMakerForMoogTest : ManagedMonoBehaviour
     {
         if (_inputSourse != null)
             _inputSourse.OnStickPositionChanged -= OnStickPositionChanged;
-    }
+    }*/
 }

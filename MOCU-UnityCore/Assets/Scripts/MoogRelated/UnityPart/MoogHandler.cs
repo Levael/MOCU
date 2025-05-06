@@ -56,10 +56,10 @@ namespace MoogModule
             //communicator.ConnectionEstablished += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Complete);
             //communicator.ConnectionBroked += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Failed);
             _daemon.MachineStateChanged += OnMachineStateChanged;
-            _controller.OnPositionChanged += (coordinate) => MoveToPoint(new MoveToPointParameters { Coordinate = coordinate });    //test
+            //_controller.OnPositionChanged += (coordinate) => MoveToPoint(new MoveToPointParameters { Coordinate = coordinate });    //test
 
             // here communicator and process start
-            daemonWrapper.Start();
+            //daemonWrapper.Start();                    // <----------
         }
 
         // ########################################################################################
