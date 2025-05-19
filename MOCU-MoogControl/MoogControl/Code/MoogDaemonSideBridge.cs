@@ -11,7 +11,7 @@ namespace MoogModule.Daemon
 {
     public class MoogDaemonSideBridge : MoogHost_API, IHostAPI
     {
-        public event Action<ConnectParameters> Connect;
+        public event Action<MachineSettings> Connect;
         public event Action Engage;
         public event Action Disengage;
         public event Action Reset;

@@ -9,7 +9,7 @@ namespace MoogModule
 {
     public interface MoogDaemon_API
     {
-        void Connect(ConnectParameters parameters);
+        void Connect(MachineSettings parameters);
         void Engage();
         void Disengage();
         void Reset();

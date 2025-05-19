@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using MoogModule.Daemon;
+using System.Collections;
+using UnityEngine;
 
 
 namespace MoogModule
@@ -16,7 +18,7 @@ namespace MoogModule
         public ModuleStatusHandler<Moog_ModuleSubStatuses> stateTracker { get; private set; }
 
         private MoogHostSideBridge _daemon;
-        private ConnectParameters _connectParameters;
+        private MachineSettings _connectParameters;
 
         // unity components
         private DaemonsHandler _daemonsHandler;
@@ -31,10 +33,10 @@ namespace MoogModule
             _controller = GetComponent<TrajectoryMakerForMoogTest>();
             _debugTabHandler = GetComponent<DebugTabHandler>();
 
-            _connectParameters = new ConnectParameters
+            _connectParameters = new MachineSettings
             {
                 StartPosition = new DofParameters { Heave = -0.22f },
-                MaxAcceleration = 0.5,
+                MaxAcceleration = 2.0,
                 HOST_IP = "192.168.2.3",
                 HOST_PORT = "16386",
                 MBC_IP = "192.168.2.1",
@@ -42,7 +44,7 @@ namespace MoogModule
             };
 
             _debugTabHandler.testBtn1Clicked += (eventObj) => Engage();     // test
-            _debugTabHandler.testBtn2Clicked += (eventObj) => Disengage();  // test
+            _debugTabHandler.testBtn2Clicked += (eventObj) => TestMethod(); // test
         }
 
         public override void ManagedStart()
@@ -64,7 +66,7 @@ namespace MoogModule
 
         // ########################################################################################
 
-        public void Connect(ConnectParameters parameters)
+        public void Connect(MachineSettings parameters)
         {
         }
 
@@ -91,6 +93,7 @@ namespace MoogModule
 
         public void MoveByTrajectory(MoveByTrajectoryParameters parameters)
         {
+
         }
 
         public void GetFeedbackForTimeRange(TimeSpan start, TimeSpan end)
@@ -108,6 +111,44 @@ namespace MoogModule
                 stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Machine, SubStatusState.StillNotSet);
             else
                 stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Machine, SubStatusState.Failed);*/
+        }
+
+        private void TestMethod()
+        {
+            var centerPoint = new DofParameters { Heave = -0.22f };
+            var destinationPoint = new DofParameters { Heave = -0.22f, Surge = 0.13f, Sway = -0.02f };
+            var trajectorySpetialSettings = new LinearTrajectorySpetialSettings
+            {
+                NormalizedProgressFunction = t => TrajectoryProfile_CDF.NormalizedDisplacement(normalizedTime: t, sigmas: 3.0f)
+            };
+
+            var firstTrajectorySettings = new MoveByTrajectoryParameters
+            {
+                StartPoint = centerPoint,
+                EndPoint = destinationPoint,
+                MovementDuration = TimeSpan.FromSeconds(1),
+                TrajectorySpetialSettings = trajectorySpetialSettings
+            };
+
+            var secondTrajectorySettings = new MoveByTrajectoryParameters
+            {
+                StartPoint = destinationPoint,
+                EndPoint = centerPoint,
+                MovementDuration = TimeSpan.FromSeconds(2),
+                TrajectorySpetialSettings = trajectorySpetialSettings
+            };
+
+            IEnumerator TestCoroutine()
+            {
+                _daemon.MoveByTrajectory(firstTrajectorySettings);
+                yield return new WaitForSeconds(1f + 3f);
+                _daemon.MoveByTrajectory(secondTrajectorySettings);
+                yield return new WaitForSeconds(2f + 3f);
+                _daemon.Disengage();
+            }
+
+
+            StartCoroutine(TestCoroutine());
         }
     }
 }

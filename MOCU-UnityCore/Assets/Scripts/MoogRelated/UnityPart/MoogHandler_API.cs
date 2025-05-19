@@ -9,7 +9,7 @@ namespace MoogModule
 {
     public interface MoogHandler_API
     {
-        void Connect(ConnectParameters parameters);
+        void Connect(MachineSettings parameters);
         void Engage();
         void Disengage();
         void Reset();

@@ -9,7 +9,7 @@ namespace MoogModule
     public interface MoogHost_API  // Is a mirror of 'MoogDaemon_API'
     {
         // commands from Host
-        event Action<ConnectParameters> Connect;
+        event Action<MachineSettings> Connect;
         event Action Engage;
         event Action Disengage;
         event Action Reset;

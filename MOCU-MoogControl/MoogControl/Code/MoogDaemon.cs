@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+
 using DaemonsRelated.DaemonPart;
 
 
@@ -13,20 +13,27 @@ namespace MoogModule.Daemon
 
         private readonly MoogDaemonSideBridge _hostAPI;
         private readonly IntervalExecutor _intervalExecutor;
-        private readonly MoogMachineCommunicator _moogMachineCommunicator;
+        private readonly MachineCommunicator _moogMachineCommunicator;
+        private readonly MoogRealTimeState _moogRealTimeState;
+        private MachineSettings _machineSettings;
 
         private readonly ConcurrentQueue<CommandPacket> _commandsForMoog;
-        private readonly MoogRealTimeState _moogRealTimeState;
+        private readonly ConcurrentQueue<CommandPacket> _atomicCommandsForMoog;
+        private readonly ConcurrentQueue<TrajectoryManager> _complexCommandsForMoog;
+        private readonly object __commandsForMoogLock;
 
         private DofParameters _startPosition;
-        private double _maxAcceleration;
         private bool _doSendFeedback = false;
 
         public MoogDaemon(MoogDaemonSideBridge hostAPI)
         {
             _commandsForMoog = new();
+            _atomicCommandsForMoog = new();
+            _complexCommandsForMoog = new();
+
+            __commandsForMoogLock = new();
             _hostAPI = hostAPI;
-            _moogMachineCommunicator = new MoogMachineCommunicator();
+            _moogMachineCommunicator = new MachineCommunicator();
             _moogRealTimeState = new MoogRealTimeState();
             _intervalExecutor = new IntervalExecutor(TimeSpan.FromMilliseconds(1));
 
@@ -48,7 +55,7 @@ namespace MoogModule.Daemon
 
         public void DoBeforeExit()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void Run()
@@ -59,15 +66,12 @@ namespace MoogModule.Daemon
 
         // ########################################################################################
 
-        private void HandleConnectCommand(ConnectParameters parameters)
+        private void HandleConnectCommand(MachineSettings parameters)
         {
             try
             {
-                _startPosition                          = parameters.StartPosition;
-                //_moogRealTimeState.LastCommandPosition  = _startPosition;
-                _maxAcceleration                        = parameters.MaxAcceleration;
-
-                _moogMachineCommunicator.Connect(parameters);
+                _machineSettings = parameters;
+                _moogMachineCommunicator.Connect(_machineSettings);
             }
             catch (Exception ex)
             {
@@ -75,17 +79,12 @@ namespace MoogModule.Daemon
             }
         }
 
+        // todo: refactor later
         private void HandleMoveByTrajectoryCommand(MoveByTrajectoryParameters parameters)
-        {
-            throw new NotImplementedException();
-        }
-
-        // todo: report an error if Queue is not empty when adding with delay (safety reason)
-        private void HandleMoveToPointCommand(MoveToPointParameters parameters)
         {
             try
             {
-                DateTime now = DateTime.UtcNow;
+                /*DateTime now = DateTime.UtcNow;
                 TimeSpan delay = parameters.ScheduledTime - now;
 
                 if (delay > TimeSpan.Zero)
@@ -94,10 +93,66 @@ namespace MoogModule.Daemon
                     {
                         await Task.Delay(delay);
 
-                        if (_commandsForMoog.Any())
-                            throw new Exception("Can't add new position with delay -- queue is not empty");
-                        else
-                            _commandsForMoog.Enqueue(CommandPackets.NewPosition(parameters.Coordinate));
+                        lock (__commandsForMoogLock)
+                        {
+                            foreach (var coordinate in parameters.Coordinates)
+                                _commandsForMoog.Enqueue(CommandPackets.NewPosition(coordinate));
+                        }
+                    });
+                }
+                else
+                {
+                    lock (__commandsForMoogLock)
+                    {
+                        foreach (var coordinate in parameters.Coordinates)
+                            _commandsForMoog.Enqueue(CommandPackets.NewPosition(coordinate));
+                    }
+                } */
+
+                try
+                {
+                    DateTime now = DateTime.UtcNow;
+                    TimeSpan delay = parameters.ScheduledStartTime - now;
+
+                    if (delay > TimeSpan.Zero)
+                    {
+                        Task.Run(async () =>
+                        {
+                            await Task.Delay(delay);
+                            // todo: maybe insert here safety checks
+                            _complexCommandsForMoog.Enqueue(new TrajectoryManager(parameters, ));
+                        });
+                    }
+                    else
+                        _complexCommandsForMoog.Enqueue(CommandPackets.NewPosition(parameters.Coordinate));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Handled error ucurred in 'HandleMoveToPointCommand': {ex}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Handled error ucurred in 'HandleMoveToPointCommand': {ex}");
+            }
+        }
+
+        // todo: refactor later
+        // todo: report an error if Queue is not empty when adding with delay (safety reason)
+        private void HandleMoveToPointCommand(MoveToPointParameters parameters)
+        {
+            try
+            {
+                DateTime now = DateTime.UtcNow;
+                TimeSpan delay = parameters.ScheduledStartTime - now;
+
+                if (delay > TimeSpan.Zero)
+                {
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(delay);
+                        // todo: maybe insert here safety checks
+                        _commandsForMoog.Enqueue(CommandPackets.NewPosition(parameters.Coordinate));
                     });
                 }
                 else
@@ -147,7 +202,7 @@ namespace MoogModule.Daemon
         {
             try
             {
-                _commandsForMoog.Enqueue(CommandPackets.Engage(_startPosition));
+                _commandsForMoog.Enqueue(CommandPackets.Engage(_machineSettings.StartPosition));
             }
             catch (Exception ex)
             {
@@ -168,8 +223,7 @@ namespace MoogModule.Daemon
 
                 // TODO:
                 // - faults
-                // - calculate velocity and acceleration
-                // - maybe add safety checks
+                // - add safety checks
 
                 if (_doSendFeedback)
                     _hostAPI.SingleFeedback(_moogRealTimeState);
@@ -182,17 +236,38 @@ namespace MoogModule.Daemon
 
         private void ExecuteEveryTick()
         {
-            if (_commandsForMoog.TryDequeue(out CommandPacket command))
+            CommandPacket command = RequestNextCommand() ?? CommandPackets.NewPosition(_moogRealTimeState.Position);
+            byte[] packet = PacketSerializer.Serialize(command);
+            _moogMachineCommunicator.SendPacket(packet);
+        }
+
+        private CommandPacket? RequestNextCommand()
+        {
+            // for every other commands
+            if (_atomicCommandsForMoog.TryDequeue(out CommandPacket command))
+                return command;
+
+            // for trajectories. Does not delete element untill it hasn't been fully read
+            else if (_complexCommandsForMoog.TryPeek(out TrajectoryManager? manager))
             {
-                var packet = PacketSerializer.Serialize(command);
-                _moogMachineCommunicator.SendPacket(packet);
-                //_moogRealTimeState.LastCommandPosition = command.Parameters;
+                if (manager is null)
+                    throw new Exception("RequestNextCommand -> TryPeek -> null");
+
+                if (manager.TooEarly())
+                    return null;
+
+                if (manager.TooLate())
+                    _complexCommandsForMoog.TryDequeue(out _);
+
+                if (manager.GetNextPosition() is DofParameters position)
+                    return CommandPackets.NewPosition(position);
+
+                return null;
             }
+
+            // to send a 'keep alive' packet
             else
-            {
-                var KeepAlivePacket = PacketSerializer.Serialize(CommandPackets.NewPosition(_moogRealTimeState.Position));
-                _moogMachineCommunicator.SendPacket(KeepAlivePacket);
-            }  
+                return null;
         }
     }
 }

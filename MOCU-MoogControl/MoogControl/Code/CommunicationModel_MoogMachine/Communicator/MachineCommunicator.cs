@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace MoogModule.Daemon
 {
-    public class MoogMachineCommunicator
+    public class MachineCommunicator
     {
         public event Action<byte[]> PacketReceived;
 
         private UdpClient _udpCommunicator;
 
 
-        public void Connect(ConnectParameters parameters)
+        public void Connect(MachineSettings parameters)
         {
             var HOST = new IPEndPoint(IPAddress.Parse(parameters.HOST_IP), Convert.ToInt32(parameters.HOST_PORT));
             var MBC = new IPEndPoint(IPAddress.Parse(parameters.MBC_IP), Convert.ToInt32(parameters.MBC_PORT));

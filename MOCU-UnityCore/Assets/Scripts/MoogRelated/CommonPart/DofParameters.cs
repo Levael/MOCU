@@ -12,14 +12,14 @@
  *
  * Typical value ranges:
  *
- * Parameter    | Displacement          | Velocity      | Acceleration      | Description
- * -------------|-----------------------|---------------|-------------------|------------------------------------------------------------------------
- * Roll         | ±21°                  | ±30°/s        | ±500°/s²          | Rotation around longitudinal axis (tilting right/left sides)
- * Pitch        | ±22°                  | ±30°/s        | ±500°/s²          | Rotation around lateral axis (tilting backward/forward, front up/down)
- * Yaw          | ±22°                  | ±40°/s        | ±400°/s²          | Rotation around vertical axis (horizontal rotation right/left)
- * Heave        | ±0.178 m              | ±0.3 m/s      | -0.5G to +0.7G    | Vertical linear movement (down/up)
- * Surge        | +0.259 m / -0.241 m   | ±0.5 m/s      | ±0.6G             | Longitudinal linear movement (forward/backward)
- * Sway         | ±0.259 m              | ±0.5 m/s      | ±0.6G             | Lateral linear movement (right/left)
+ * Parameter    | Normalized Displacement   | Velocity      | Acceleration      | Description
+ * -------------|---------------------------|---------------|-------------------|------------------------------------------------------------------------
+ * Roll         | ±21°                      | ±30°/s        | ±500°/s²          | Rotation around longitudinal axis (tilting right/left sides)
+ * Pitch        | ±22°                      | ±30°/s        | ±500°/s²          | Rotation around lateral axis (tilting backward/forward, front up/down)
+ * Yaw          | ±22°                      | ±40°/s        | ±400°/s²          | Rotation around vertical axis (horizontal rotation right/left)
+ * Heave        | ±0.178 m                  | ±0.3 m/s      | -0.5G to +0.7G    | Vertical linear movement (down/up)
+ * Surge        | +0.259 m / -0.241 m       | ±0.5 m/s      | ±0.6G             | Longitudinal linear movement (forward/backward)
+ * Sway         | ±0.259 m                  | ±0.5 m/s      | ±0.6G             | Lateral linear movement (right/left)
  *
  * Tolerances:
  * - PositionTolerance (meters) and RotationTolerance (radians) are used for approximate equality comparisons (for displacement).

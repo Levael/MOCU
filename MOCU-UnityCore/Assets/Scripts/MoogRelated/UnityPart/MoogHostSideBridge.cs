@@ -41,7 +41,7 @@ namespace MoogModule
 
         // ########################################################################################
 
-        public void Connect(ConnectParameters parameters)
+        public void Connect(MachineSettings parameters)
         {
             var moogDataTransferObject = new MoogDataTransferObject { ConnectCommand = true, ConnectParameters = parameters };
             var json = JsonHelper.SerializeJson(moogDataTransferObject);
