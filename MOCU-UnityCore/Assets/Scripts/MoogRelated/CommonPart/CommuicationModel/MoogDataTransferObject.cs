@@ -22,7 +22,7 @@ namespace MoogModule
         public bool MoveByTrajectoryCommand                             { get; set; } = false;
 
         // Parameters
-        public MachineSettings? ConnectParameters                     { get; set; } = null;
+        public MachineSettings? ConnectParameters                       { get; set; } = null;
         public MoveToPointParameters? MoveToPointParameters             { get; set; } = null;
         public MoveByTrajectoryParameters? MoveByTrajectoryParameters   { get; set; } = null;
 

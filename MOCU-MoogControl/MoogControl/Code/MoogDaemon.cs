@@ -17,21 +17,22 @@ namespace MoogModule.Daemon
         private readonly MoogRealTimeState _moogRealTimeState;
         private MachineSettings _machineSettings;
 
-        private readonly ConcurrentQueue<CommandPacket> _commandsForMoog;
         private readonly ConcurrentQueue<CommandPacket> _atomicCommandsForMoog;
         private readonly ConcurrentQueue<TrajectoryManager> _complexCommandsForMoog;
-        private readonly object __commandsForMoogLock;
 
-        private DofParameters _startPosition;
         private bool _doSendFeedback = false;
+
+        // test
+        private ConcurrentQueue<(DateTime time, DofParameters position)> _logs;
 
         public MoogDaemon(MoogDaemonSideBridge hostAPI)
         {
-            _commandsForMoog = new();
+            _logs = new();
+
+
             _atomicCommandsForMoog = new();
             _complexCommandsForMoog = new();
 
-            __commandsForMoogLock = new();
             _hostAPI = hostAPI;
             _moogMachineCommunicator = new MachineCommunicator();
             _moogRealTimeState = new MoogRealTimeState();
@@ -62,6 +63,51 @@ namespace MoogModule.Daemon
         {
             _hostAPI.StartCommunication();
             _intervalExecutor.Start();
+
+            Task.Run(() => RunChartWindow());
+        }
+
+        private void RunChartWindow()
+        {
+            var formsPlot = new ScottPlot.WinForms.FormsPlot
+            {
+                Dock = System.Windows.Forms.DockStyle.Fill,
+            };
+
+            ScottPlot.Plot plt = formsPlot.Plot;
+            ScottPlot.Plottables.DataLogger logger = plt.Add.DataLogger();
+
+            plt.Axes.Bottom.Label.Text = "Time [ms] (from start)";
+            plt.Axes.Left.Label.Text = "Surge [m]";
+
+            var form = new System.Windows.Forms.Form
+            {
+                Text = "ScottPlot Live",
+                Width = 800,
+                Height = 400
+            };
+            form.Controls.Add(formsPlot);
+
+            form.FormClosed += (s, e) =>
+            {
+                System.Windows.Forms.Application.ExitThread();
+            };
+
+            DateTime startTime = DateTime.Now;
+
+            var renderTimer = new System.Windows.Forms.Timer { Interval = 50 };
+            renderTimer.Tick += (s, e) =>
+            {
+                while (_logs.TryDequeue(out var point))
+                    logger.Add((point.time - startTime).TotalMilliseconds, point.position.Surge);
+
+                if (logger.HasNewData)
+                    formsPlot.Refresh();
+            };
+            renderTimer.Start();
+
+            form.Show();
+            System.Windows.Forms.Application.Run();
         }
 
         // ########################################################################################
@@ -84,56 +130,25 @@ namespace MoogModule.Daemon
         {
             try
             {
-                /*DateTime now = DateTime.UtcNow;
-                TimeSpan delay = parameters.ScheduledTime - now;
+                DateTime now = DateTime.UtcNow;
+                TimeSpan delay = parameters.ScheduledStartTime - now;
+                TrajectoryManager trajectoryManager = new(parameters, _machineSettings, _moogRealTimeState);
 
                 if (delay > TimeSpan.Zero)
                 {
                     Task.Run(async () =>
                     {
                         await Task.Delay(delay);
-
-                        lock (__commandsForMoogLock)
-                        {
-                            foreach (var coordinate in parameters.Coordinates)
-                                _commandsForMoog.Enqueue(CommandPackets.NewPosition(coordinate));
-                        }
+                        // todo: maybe insert here safety checks
+                        _complexCommandsForMoog.Enqueue(trajectoryManager);
                     });
                 }
                 else
-                {
-                    lock (__commandsForMoogLock)
-                    {
-                        foreach (var coordinate in parameters.Coordinates)
-                            _commandsForMoog.Enqueue(CommandPackets.NewPosition(coordinate));
-                    }
-                } */
-
-                try
-                {
-                    DateTime now = DateTime.UtcNow;
-                    TimeSpan delay = parameters.ScheduledStartTime - now;
-
-                    if (delay > TimeSpan.Zero)
-                    {
-                        Task.Run(async () =>
-                        {
-                            await Task.Delay(delay);
-                            // todo: maybe insert here safety checks
-                            _complexCommandsForMoog.Enqueue(new TrajectoryManager(parameters, ));
-                        });
-                    }
-                    else
-                        _complexCommandsForMoog.Enqueue(CommandPackets.NewPosition(parameters.Coordinate));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Handled error ucurred in 'HandleMoveToPointCommand': {ex}");
-                }
+                    _complexCommandsForMoog.Enqueue(trajectoryManager);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Handled error ucurred in 'HandleMoveToPointCommand': {ex}");
+                Console.WriteLine($"Handled error ucurred in 'HandleMoveByTrajectoryCommand': {ex}");
             }
         }
 
@@ -152,11 +167,11 @@ namespace MoogModule.Daemon
                     {
                         await Task.Delay(delay);
                         // todo: maybe insert here safety checks
-                        _commandsForMoog.Enqueue(CommandPackets.NewPosition(parameters.Coordinate));
+                        _atomicCommandsForMoog.Enqueue(CommandPackets.NewPosition(parameters.Coordinate));
                     });
                 }
                 else
-                    _commandsForMoog.Enqueue(CommandPackets.NewPosition(parameters.Coordinate));
+                    _atomicCommandsForMoog.Enqueue(CommandPackets.NewPosition(parameters.Coordinate));
             }
             catch (Exception ex)
             {
@@ -178,7 +193,7 @@ namespace MoogModule.Daemon
         {
             try
             {
-                _commandsForMoog.Enqueue(CommandPackets.Reset());
+                _atomicCommandsForMoog.Enqueue(CommandPackets.Reset());
             }
             catch (Exception ex)
             {
@@ -190,7 +205,7 @@ namespace MoogModule.Daemon
         {
             try
             {
-                _commandsForMoog.Enqueue(CommandPackets.Disengage());
+                _atomicCommandsForMoog.Enqueue(CommandPackets.Disengage());
             }
             catch (Exception ex)
             {
@@ -202,7 +217,7 @@ namespace MoogModule.Daemon
         {
             try
             {
-                _commandsForMoog.Enqueue(CommandPackets.Engage(_machineSettings.StartPosition));
+                _atomicCommandsForMoog.Enqueue(CommandPackets.Engage(_machineSettings.StartPosition));
             }
             catch (Exception ex)
             {
@@ -237,8 +252,13 @@ namespace MoogModule.Daemon
         private void ExecuteEveryTick()
         {
             CommandPacket command = RequestNextCommand() ?? CommandPackets.NewPosition(_moogRealTimeState.Position);
-            byte[] packet = PacketSerializer.Serialize(command);
-            _moogMachineCommunicator.SendPacket(packet);
+
+            /*var log = (time: DateTime.UtcNow, position: command.Parameters);
+            _logs.Enqueue(log);*/   // show position right now
+
+
+            /*byte[] packet = PacketSerializer.Serialize(command);
+            _moogMachineCommunicator.SendPacket(packet);*/
         }
 
         private CommandPacket? RequestNextCommand()
@@ -256,11 +276,19 @@ namespace MoogModule.Daemon
                 if (manager.TooEarly())
                     return null;
 
-                if (manager.TooLate())
-                    _complexCommandsForMoog.TryDequeue(out _);
+                /*if (manager.TooLate())
+                    _complexCommandsForMoog.TryDequeue(out _);*/
+
+                Console.WriteLine("just before 'manager.GetNextPosition()'");
 
                 if (manager.GetNextPosition() is DofParameters position)
+                {
+                    _logs.Enqueue((time: DateTime.UtcNow, position: command.Parameters));   // show only movements
                     return CommandPackets.NewPosition(position);
+                }
+                    
+                else
+                    _complexCommandsForMoog.TryDequeue(out _);
 
                 return null;
             }

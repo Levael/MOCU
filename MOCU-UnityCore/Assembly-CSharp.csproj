@@ -8,8 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{2B44F263-5813-1F99-CCA9-BD89A4877C12}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -60,11 +59,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\InterprocessCommunicationMessageLog.cs" />
-    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\TrajectoryType.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_DPadAction.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\IControllerDevice.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_JoystickAction.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Fps_DebugUiModuleHandler.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\ITrajectoryProfile.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesModule\DeviceBoxPanel_Microphones.cs" />
     <Compile Include="Assets\Scripts\WinAPI.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModulesSubStatuses\Moog_ModuleSubStatuses.cs" />
@@ -118,15 +117,17 @@
     <Compile Include="Assets\Scripts\AudioRelated\_Depricated\AudioDevices.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\UnityPart\AudioHandler.cs" />
     <Compile Include="Assets\Scripts\VrRelated\VrHandler.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\TrajectoryProfile.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioClipData.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Experiment\ExperimentTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonPart\IHostAPI.cs" />
     <Compile Include="Assets\For tests\Moog Movement\TrajectoryMakerForMoogTest.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\KeyboardSimulator.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\DaemonsHandler.cs" />
-    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\LinearTrajectoryGenerator.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\Linear\TrajectoryGenerator_Linear.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Base.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\IDaemonUser.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\TrajectoryType.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_IntercomAction.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zAudioControl (depricated)\AudioCommunicationModel.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputHandler.cs" />
@@ -134,9 +135,11 @@
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\TrajectoryManager.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatus.cs" />
     <Compile Include="Assets\Scripts\VrRelated\VrHeadset_Statuses.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\TrajectoryProfileSettings.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Client.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\ControllersHandler.cs" />
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\CDF\TrajectoryProfile_CDF.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\SettingsDeviceBox\SettingsDeviceBox.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\SettingsTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_EventType.cs" />
@@ -146,24 +149,25 @@
     <Compile Include="Assets\Scripts\ParticipantResponseRelated\ParticipantAnswer_enum.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\IDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\XID_ProtocolParser.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\Linear\TrajectoryTypeSettings_Linear.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\SerialPortHelper.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\StatusesHandler.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\CDF\TrajectoryProfileSettings_CDF.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioClipName.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\UnityPart\MoogHandler_API.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zUnityDaemonsCommon (depricated)\CommonUtilities.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DifferentInfo_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputSystemTests.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\CommuicationModel\MachineSettings.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceConnectionStatus.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_UnityServer.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\JsonHelper.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\IBusinessLogic_Client.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceType.cs" />
-    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\TrajectoryProfile_CDF.cs" />
-    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\CommuicationModel\MachineSettings.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\TrajectoryTypeSettings.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatusHandler.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\SubStatusImportance.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\DofParameters.cs" />
-    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\LinearTrajectorySpetialSettings.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceData.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigClassTemplates.cs" />

@@ -13,8 +13,11 @@ namespace MoogModule
         private MachineSettings _machineSettings;
 
         private ITrajectoryGenerator _trajectoryGenerator;
+        private ITrajectoryProfile _trajectoryProfile;
         private DofParameters[] _trajectory;
+
         private int _currentPositionIndex;
+        private DateTime _startTime;
         
 
         public TrajectoryManager(MoveByTrajectoryParameters trajectoryParameters, MachineSettings machineSettings, MoogRealTimeState moogRealTimeState)
@@ -23,14 +26,29 @@ namespace MoogModule
             _moogRealTimeState = moogRealTimeState;
             _machineSettings = machineSettings;
 
-            _trajectoryGenerator = trajectoryParameters.TrajectoryType switch
+            _trajectoryProfile = trajectoryParameters.TrajectoryProfile switch
             {
-                TrajectoryType.Linear => new LinearTrajectoryGenerator(_trajectoryParameters),
+                TrajectoryProfile.CDF => new TrajectoryProfile_CDF(trajectoryParameters.TrajectoryProfileSettings.CDF),
                 _ => throw new NotImplementedException()
             };
 
-            _trajectory = _trajectoryGenerator.GetWholePath(_machineSettings.DesiredFPS);
+            _trajectoryGenerator = trajectoryParameters.TrajectoryType switch
+            {
+                TrajectoryType.Linear => new TrajectoryGenerator_Linear(_trajectoryParameters, _trajectoryProfile),
+                _ => throw new NotImplementedException()
+            };
+
+            _trajectory = _trajectoryGenerator.GetWholePath(_machineSettings.DesiredFPS);   // todo: return 0   <----------------------------
             _currentPositionIndex = 0;
+            _startTime = _trajectoryParameters.ScheduledStartTime == DateTime.MinValue ? DateTime.UtcNow : _trajectoryParameters.ScheduledStartTime;
+
+
+            Console.WriteLine(@$"
+                TrajectoryManager.constructor info:
+                    _trajectory.Length = {_trajectory.Length}
+                    _currentPositionIndex = {_currentPositionIndex}
+                    _startTime = {_startTime}
+            ");
         }
 
         public DofParameters? GetNextPosition()
@@ -41,8 +59,17 @@ namespace MoogModule
             int indexesLeft = _trajectory.Length - _currentPositionIndex - 1;
             int totalIndexes = _trajectory.Length;
             TimeSpan totalTime = _trajectoryParameters.MovementDuration;
-            TimeSpan timePassed = DateTime.UtcNow - _trajectoryParameters.ScheduledStartTime;
+            TimeSpan timePassed = DateTime.UtcNow - _startTime;
             TimeSpan timeLeft = totalTime - timePassed;
+
+            Console.WriteLine(@$"
+                TrajectoryManager.GetNextPosition info:
+                    indexesLeft = {indexesLeft}
+                    totalIndexes = {totalIndexes}
+                    totalTime = {totalTime}
+                    timePassed = {timePassed}
+                    timeLeft = {timeLeft}
+            ");
 
             return _trajectoryParameters.DelayHandling switch
             {

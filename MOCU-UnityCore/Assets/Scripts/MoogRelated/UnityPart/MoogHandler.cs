@@ -61,7 +61,7 @@ namespace MoogModule
             //_controller.OnPositionChanged += (coordinate) => MoveToPoint(new MoveToPointParameters { Coordinate = coordinate });    //test
 
             // here communicator and process start
-            //daemonWrapper.Start();                    // <----------
+            daemonWrapper.Start();                    // <----------
         }
 
         // ########################################################################################
@@ -117,17 +117,23 @@ namespace MoogModule
         {
             var centerPoint = new DofParameters { Heave = -0.22f };
             var destinationPoint = new DofParameters { Heave = -0.22f, Surge = 0.13f, Sway = -0.02f };
-            var trajectorySpetialSettings = new LinearTrajectorySpetialSettings
-            {
-                NormalizedProgressFunction = t => TrajectoryProfile_CDF.NormalizedDisplacement(normalizedTime: t, sigmas: 3.0f)
-            };
+            var trajectoryTypeSettings = new TrajectoryTypeSettings { Linear = new TrajectoryTypeSettings_Linear { } };
+            var trajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } };
+            var trajectoryType = TrajectoryType.Linear;
+            var trajectoryProfile = TrajectoryProfile.CDF;
+            var delayHandling = DelayCompensationStrategy.Ignore;
+
 
             var firstTrajectorySettings = new MoveByTrajectoryParameters
             {
                 StartPoint = centerPoint,
                 EndPoint = destinationPoint,
                 MovementDuration = TimeSpan.FromSeconds(1),
-                TrajectorySpetialSettings = trajectorySpetialSettings
+                TrajectoryTypeSettings = trajectoryTypeSettings,
+                TrajectoryProfileSettings = trajectoryProfileSettings,
+                DelayHandling = delayHandling,
+                TrajectoryType = trajectoryType,
+                TrajectoryProfile = trajectoryProfile
             };
 
             var secondTrajectorySettings = new MoveByTrajectoryParameters
@@ -135,7 +141,11 @@ namespace MoogModule
                 StartPoint = destinationPoint,
                 EndPoint = centerPoint,
                 MovementDuration = TimeSpan.FromSeconds(2),
-                TrajectorySpetialSettings = trajectorySpetialSettings
+                TrajectoryTypeSettings = trajectoryTypeSettings,
+                TrajectoryProfileSettings = trajectoryProfileSettings,
+                DelayHandling = delayHandling,
+                TrajectoryType = trajectoryType,
+                TrajectoryProfile = trajectoryProfile
             };
 
             IEnumerator TestCoroutine()

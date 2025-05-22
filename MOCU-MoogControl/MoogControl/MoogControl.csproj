@@ -9,10 +9,11 @@
     <OutputType>Exe</OutputType>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>  <!-- automatic inclusion of common 'using' directives -->
     <InvariantGlobalization>true</InvariantGlobalization> <!-- ignoring system locale settings (all formats are EN) -->
     <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms> <!-- for using 'ScottPlot' lib -->
 
     <ApplicationIcon>Media/logo.ico</ApplicationIcon>
     <PublishDir>$(MSBuildProjectDirectory)\</PublishDir>
@@ -30,14 +31,12 @@
     <!--<DebugType>full</DebugType>-->
     <!--<Optimize>false</Optimize>-->
   </PropertyGroup>
-
   
   <!-- Paths for external files -->
   <PropertyGroup>
     <MocuScriptsPath>..\..\MOCU-UnityCore\Assets\Scripts</MocuScriptsPath>
     <DaemonsRelated>$(MocuScriptsPath)\DaemonsRelated</DaemonsRelated>
   </PropertyGroup>
-
   
   <!-- Linked files -->
   <ItemGroup>
@@ -46,23 +45,33 @@
 
     <Compile Remove="$(DaemonsRelated)\CommonPart\InterprocessCommunicator\InterprocessCommunicator_UnityServer.cs" />
   </ItemGroup>
-  
 
   <!-- Libraries -->
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Management" Version="9.0.2" />
   </ItemGroup>
-  
 
   <!-- ========================================= -->
   <!-- EXCLUSIVE PART FOR THIS PARTICULAR DAEMON -->
   <!-- ========================================= -->
 
   <PropertyGroup>
+    <AssemblyName>MoogControl</AssemblyName>   <!-- todo: change later -->
+    <Version>0.1.0</Version>
+    <Authors>Levael</Authors>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <StartupObject>MoogModule.Daemon.Program</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+
+  <!-- Libraries -->
+  <ItemGroup>
+    <PackageReference Include="ScottPlot" Version="5.0.55" />
+    <PackageReference Include="ScottPlot.WinForms" Version="5.0.55" />
+    <PackageReference Include="System.Management" Version="9.0.2" />
+  </ItemGroup>
 
   <!-- Linked files -->
   <ItemGroup>
