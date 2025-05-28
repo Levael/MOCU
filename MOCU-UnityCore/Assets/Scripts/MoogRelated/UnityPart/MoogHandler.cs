@@ -37,6 +37,8 @@ namespace MoogModule
             {
                 StartPosition = new DofParameters { Heave = -0.22f },
                 MaxAcceleration = 2.0,
+                MinimalFPS = 500,
+                DesiredFPS = 1000,
                 HOST_IP = "192.168.2.3",
                 HOST_PORT = "16386",
                 MBC_IP = "192.168.2.1",
@@ -140,7 +142,7 @@ namespace MoogModule
             {
                 StartPoint = destinationPoint,
                 EndPoint = centerPoint,
-                MovementDuration = TimeSpan.FromSeconds(2),
+                MovementDuration = TimeSpan.FromSeconds(2.5),
                 TrajectoryTypeSettings = trajectoryTypeSettings,
                 TrajectoryProfileSettings = trajectoryProfileSettings,
                 DelayHandling = delayHandling,
@@ -153,7 +155,7 @@ namespace MoogModule
                 _daemon.MoveByTrajectory(firstTrajectorySettings);
                 yield return new WaitForSeconds(1f + 3f);
                 _daemon.MoveByTrajectory(secondTrajectorySettings);
-                yield return new WaitForSeconds(2f + 3f);
+                yield return new WaitForSeconds(2.5f + 3f);
                 _daemon.Disengage();
             }
 

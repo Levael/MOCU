@@ -17,6 +17,20 @@ namespace MoogModule.Daemon
             return buffer;
         }
 
+        // test
+        public static CommandPacket Test(byte[] data)
+        {
+            if (data.Length != CommandSize)
+                throw new ArgumentException($"Invalid data size. Expected {CommandSize}, got {data.Length}.");
+
+            byte[] buffer = new byte[CommandSize];
+            Buffer.BlockCopy(data, 0, buffer, 0, CommandSize);
+
+            ConvertEndian(buffer);
+
+            return MemoryMarshal.Read<CommandPacket>(buffer);
+        }
+
         public static ResponsePacket Deserialize(byte[] data)
         {
             if (data.Length != ResponseSize)

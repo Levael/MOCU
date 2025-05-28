@@ -1,7 +1,9 @@
-﻿using MoogModule.Daemon;
-using System;
-using System.Collections.Concurrent;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+
+using MoogModule.Daemon;
 
 
 namespace MoogModule
@@ -43,12 +45,20 @@ namespace MoogModule
             _startTime = _trajectoryParameters.ScheduledStartTime == DateTime.MinValue ? DateTime.UtcNow : _trajectoryParameters.ScheduledStartTime;
 
 
-            Console.WriteLine(@$"
+            /*Console.WriteLine(@$"
                 TrajectoryManager.constructor info:
                     _trajectory.Length = {_trajectory.Length}
                     _currentPositionIndex = {_currentPositionIndex}
                     _startTime = {_startTime}
-            ");
+                    _machineSettings.DesiredFPS = {_machineSettings.DesiredFPS}
+
+                    _trajectory = {string.Join(", ", _trajectory.Select(p => p.Surge))}
+            ");*/
+        }
+
+        public IEnumerable<DofParameters> GetTrajectoryArray()
+        {
+            return _trajectory;
         }
 
         public DofParameters? GetNextPosition()
@@ -62,14 +72,15 @@ namespace MoogModule
             TimeSpan timePassed = DateTime.UtcNow - _startTime;
             TimeSpan timeLeft = totalTime - timePassed;
 
-            Console.WriteLine(@$"
+            /*Console.WriteLine(@$"
                 TrajectoryManager.GetNextPosition info:
                     indexesLeft = {indexesLeft}
                     totalIndexes = {totalIndexes}
                     totalTime = {totalTime}
                     timePassed = {timePassed}
                     timeLeft = {timeLeft}
-            ");
+                    surge position = {_trajectory[_currentPositionIndex].Surge}
+            ");*/
 
             return _trajectoryParameters.DelayHandling switch
             {

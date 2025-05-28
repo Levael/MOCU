@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 using DaemonsRelated.DaemonPart;
+using ScottPlot;
 
 
 namespace MoogModule.Daemon
@@ -21,13 +25,16 @@ namespace MoogModule.Daemon
         private readonly ConcurrentQueue<TrajectoryManager> _complexCommandsForMoog;
 
         private bool _doSendFeedback = false;
+        private bool _moogMachineIsConnected = false;
 
         // test
-        private ConcurrentQueue<(DateTime time, DofParameters position)> _logs;
+        private ConcurrentQueue<(DateTime time, DofParameters position)> _logsCommand;
+        private ConcurrentQueue<(DateTime time, DofParameters position)> _logsFeedback;
 
         public MoogDaemon(MoogDaemonSideBridge hostAPI)
         {
-            _logs = new();
+            _logsCommand = new();
+            _logsFeedback = new();
 
 
             _atomicCommandsForMoog = new();
@@ -39,7 +46,7 @@ namespace MoogModule.Daemon
             _intervalExecutor = new IntervalExecutor(TimeSpan.FromMilliseconds(1));
 
             _hostAPI.TerminateDaemon += message => Console.WriteLine("Got command to terminate the daemon.");
-            _moogMachineCommunicator.PacketReceived += HandleReceivedPacket;
+            _moogMachineCommunicator.PacketReceived += HandleReceivedPacket;    // todo: BlockingCollection
             _intervalExecutor.OnTick += ExecuteEveryTick;
 
             _hostAPI.Connect += HandleConnectCommand;
@@ -56,11 +63,13 @@ namespace MoogModule.Daemon
 
         public void DoBeforeExit()
         {
-            //throw new NotImplementedException();
+            SystemOptimizer.ResetToDefault();
         }
 
         public void Run()
         {
+            SystemOptimizer.Optimize();
+
             _hostAPI.StartCommunication();
             _intervalExecutor.Start();
 
@@ -75,10 +84,25 @@ namespace MoogModule.Daemon
             };
 
             ScottPlot.Plot plt = formsPlot.Plot;
-            ScottPlot.Plottables.DataLogger logger = plt.Add.DataLogger();
+            ScottPlot.Plottables.DataLogger loggerCommand = plt.Add.DataLogger();
+            ScottPlot.Plottables.DataLogger loggerFeedback = plt.Add.DataLogger();
 
+            plt.Axes.Rules.Clear();
             plt.Axes.Bottom.Label.Text = "Time [ms] (from start)";
             plt.Axes.Left.Label.Text = "Surge [m]";
+            plt.Axes.SetLimitsX(0, 10_000);
+            plt.Axes.SetLimitsY(-0.5, 0.5);
+
+            loggerCommand.MarkerSize = 3;
+            loggerCommand.MarkerShape = ScottPlot.MarkerShape.FilledCircle;
+            loggerFeedback.MarkerSize = 3;
+            loggerFeedback.MarkerShape = ScottPlot.MarkerShape.OpenSquare;
+
+            plt.Grid.XAxisStyle.MajorLineStyle.Width = 1;
+            plt.Grid.XAxisStyle.MinorLineStyle.Width = 0.01f;
+
+            loggerCommand.ManageAxisLimits = false;
+            loggerFeedback.ManageAxisLimits = false;
 
             var form = new System.Windows.Forms.Form
             {
@@ -88,20 +112,25 @@ namespace MoogModule.Daemon
             };
             form.Controls.Add(formsPlot);
 
-            form.FormClosed += (s, e) =>
-            {
-                System.Windows.Forms.Application.ExitThread();
-            };
+            form.FormClosed += (s, e) => System.Windows.Forms.Application.ExitThread();
 
-            DateTime startTime = DateTime.Now;
+            DateTime startTime = DateTime.UtcNow;
 
-            var renderTimer = new System.Windows.Forms.Timer { Interval = 50 };
+            var renderTimer = new System.Windows.Forms.Timer { Interval = 100 };
+            var maxTicks = 2000;
+
             renderTimer.Tick += (s, e) =>
             {
-                while (_logs.TryDequeue(out var point))
-                    logger.Add((point.time - startTime).TotalMilliseconds, point.position.Surge);
+                if (maxTicks-- <= 0)
+                    return;
 
-                if (logger.HasNewData)
+                while (_logsCommand.TryDequeue(out var point))
+                    loggerCommand.Add((point.time - startTime).TotalMilliseconds, point.position.Surge);
+
+                while (_logsFeedback.TryDequeue(out var point))
+                    loggerFeedback.Add((point.time - startTime).TotalMilliseconds, point.position.Surge);
+
+                if ((loggerCommand.HasNewData || loggerFeedback.HasNewData) && (maxTicks-- >= 0))
                     formsPlot.Refresh();
             };
             renderTimer.Start();
@@ -118,6 +147,10 @@ namespace MoogModule.Daemon
             {
                 _machineSettings = parameters;
                 _moogMachineCommunicator.Connect(_machineSettings);
+                _moogMachineIsConnected = true;
+
+                // test ?
+                _moogRealTimeState.Position = _machineSettings.StartPosition;
             }
             catch (Exception ex)
             {
@@ -226,7 +259,7 @@ namespace MoogModule.Daemon
         }
 
 
-
+        // I guess there is a problem here
         private void HandleReceivedPacket(byte[] data)
         {
             try
@@ -234,7 +267,9 @@ namespace MoogModule.Daemon
                 var parsedMessage = PacketSerializer.Deserialize(data);
 
                 _moogRealTimeState.EncodedMachineState = parsedMessage.EncodedMachineState;
-                _moogRealTimeState.Position = parsedMessage.Parameters;
+                //_moogRealTimeState.Position = parsedMessage.Parameters;
+
+                _logsFeedback.Enqueue((time: DateTime.UtcNow, position: parsedMessage.Parameters));
 
                 // TODO:
                 // - faults
@@ -251,14 +286,22 @@ namespace MoogModule.Daemon
 
         private void ExecuteEveryTick()
         {
+            if (!_moogMachineIsConnected) return;
+
             CommandPacket command = RequestNextCommand() ?? CommandPackets.NewPosition(_moogRealTimeState.Position);
 
             /*var log = (time: DateTime.UtcNow, position: command.Parameters);
-            _logs.Enqueue(log);*/   // show position right now
+            _logsCommand.Enqueue(log);*/   // show position right now
 
+            byte[] packet = PacketSerializer.Serialize(command);
+            // test start
+            CommandPacket antiPacket = PacketSerializer.Test(packet);
+            if (command.Parameters != antiPacket.Parameters)
+                Console.WriteLine($"command: {command.Parameters}, antiPacket: {antiPacket.Parameters}");
+            // test end
 
-            /*byte[] packet = PacketSerializer.Serialize(command);
-            _moogMachineCommunicator.SendPacket(packet);*/
+            _moogMachineCommunicator.SendPacket(packet);
+            _moogRealTimeState.Position = command.Parameters;
         }
 
         private CommandPacket? RequestNextCommand()
@@ -279,16 +322,19 @@ namespace MoogModule.Daemon
                 /*if (manager.TooLate())
                     _complexCommandsForMoog.TryDequeue(out _);*/
 
-                Console.WriteLine("just before 'manager.GetNextPosition()'");
-
                 if (manager.GetNextPosition() is DofParameters position)
                 {
-                    _logs.Enqueue((time: DateTime.UtcNow, position: command.Parameters));   // show only movements
+                    //Console.WriteLine($"time: {DateTime.UtcNow}, position: {position.Surge}");
+                    _logsCommand.Enqueue((time: DateTime.UtcNow, position: position));   // show only movements
                     return CommandPackets.NewPosition(position);
                 }
-                    
                 else
+                {
+                    var trajectory = manager.GetTrajectoryArray();
+                    var tempPathToSavePlots = @$"C:\Users\Levael\GitHub\MOCU\MOCU-MoogControl\MoogControl\Media\Plots\{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.png";
+                    Task.Run(() => PlotTrajectoryParameters(tempPathToSavePlots, trajectory));
                     _complexCommandsForMoog.TryDequeue(out _);
+                }
 
                 return null;
             }
@@ -296,6 +342,37 @@ namespace MoogModule.Daemon
             // to send a 'keep alive' packet
             else
                 return null;
+        }
+
+        private void PlotTrajectoryParameters(string outputPath, IEnumerable<DofParameters> trajectory)
+        {
+            var plt = new ScottPlot.Plot();
+
+            int count = trajectory.Count();
+            double[] xs = Enumerable.Range(0, count).Select(i => (double)i).ToArray();
+
+            var series = new Dictionary<string, double[]>
+            {
+                ["Roll"] = trajectory.Select(p => (double)p.Roll).ToArray(),
+                ["Pitch"] = trajectory.Select(p => (double)p.Pitch).ToArray(),
+                ["Yaw"] = trajectory.Select(p => (double)p.Yaw).ToArray(),
+                ["Surge"] = trajectory.Select(p => (double)p.Surge).ToArray(),
+                ["Sway"] = trajectory.Select(p => (double)p.Sway).ToArray(),
+                ["Heave"] = trajectory.Select(p => (double)p.Heave).ToArray(),
+            };
+
+            foreach (var kvp in series)
+            {
+                var line = plt.Add.Scatter(xs, kvp.Value);
+                line.LegendText = kvp.Key;
+            }
+
+            plt.Title("Trajectory Parameters");
+            plt.Axes.Bottom.Label.Text = "Index";
+            plt.Axes.Left.Label.Text = "Value";
+            plt.Legend.IsVisible = true;
+
+            plt.SavePng(outputPath, 800, 600);
         }
     }
 }
