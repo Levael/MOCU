@@ -2,13 +2,16 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <LangVersion>9.0</LangVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{2B44F263-5813-1F99-CCA9-BD89A4877C12}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -197,6 +200,7 @@
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Console_DebugUiModuleHandler.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Assets\Resources\GUI\USS\ModalWindows.uss" />
     <None Include="Assets\Resources\GUI\UXML\DebugModules\DevicesSubModule.uxml" />
     <None Include="Assets\Resources\GUI\UXML\MainUiDocument.uxml" />
@@ -251,6 +255,7 @@
     <None Include="Assets\Resources\GUI\USS\SettingsBodyModulesStyles.uss" />
     <None Include="Assets\Resources\GUI\UXML\DebugModules\DaemonsSubModule.uxml" />
     <None Include="Assets\Resources\GUI\UXML\DebugModules\MoogAccelerationGraphModule.uxml" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
