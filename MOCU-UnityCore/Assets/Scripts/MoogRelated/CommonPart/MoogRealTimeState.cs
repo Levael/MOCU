@@ -12,6 +12,7 @@ namespace MoogModule.Daemon
 
 
         public EncodedMachineState EncodedMachineState { get; set; } = EncodedMachineState.Disabled;
+        public DofParameters DesiredPosition { get; set; } = default;
         public string Faults { get; set; } = String.Empty;
 
 

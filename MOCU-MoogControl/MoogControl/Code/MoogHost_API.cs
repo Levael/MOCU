@@ -19,7 +19,7 @@ namespace MoogModule
         event Action<MoveByTrajectoryParameters> MoveByTrajectory;
 
         // responses from Daemon
-        void SingleFeedback(MoogRealTimeState state);
-        void FeedbackForTimeRange(IEnumerable<DofParameters> parameters);
+        void State(MoogRealTimeState state);
+        void Feedback(MoogFeedback feedback);
     }
 }

@@ -10,5 +10,6 @@ public enum DaemonType
     Audio,
     Moog,
     EEG,
-    Video
+    Video,
+    Charts
 }

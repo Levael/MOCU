@@ -13,7 +13,7 @@
     <ImplicitUsings>disable</ImplicitUsings>  <!-- automatic inclusion of common 'using' directives -->
     <InvariantGlobalization>true</InvariantGlobalization> <!-- ignoring system locale settings (all formats are EN) -->
     <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms> <!-- for using 'ScottPlot' lib -->
+    <!--<UseWindowsForms>true</UseWindowsForms>--> <!-- for using 'ScottPlot' lib -->
 
     <ApplicationIcon>Media/logo.ico</ApplicationIcon>
     <PublishDir>$(MSBuildProjectDirectory)\</PublishDir>
@@ -68,8 +68,6 @@
 
   <!-- Libraries -->
   <ItemGroup>
-    <PackageReference Include="ScottPlot" Version="5.0.55" />
-    <PackageReference Include="ScottPlot.WinForms" Version="5.0.55" />
     <PackageReference Include="System.Management" Version="9.0.2" />
   </ItemGroup>
 

@@ -28,7 +28,7 @@ namespace MoogModule
 
         // Info
         public MoogRealTimeState? State                                 { get; set; } = null;
-        public IEnumerable<DofParameters> FeedbackCoordinates           { get; set; } = Enumerable.Empty<DofParameters>();
+        public MoogFeedback? Feedback                                   { get; set; } = null;
 
         // Common for every DTO
         public IEnumerable<DaemonErrorReport> DaemonErrorReports        { get; set; } = Enumerable.Empty<DaemonErrorReport>();

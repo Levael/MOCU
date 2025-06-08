@@ -55,6 +55,15 @@ class DaemonsHandler : ManagedMonoBehaviour
                     isHidden: false,
                     priority: ProcessPriorityClass.High
                 )
+            },
+
+            {
+                DaemonType.Charts, new HostSideDaemonContainer(
+                    type: DaemonType.Charts,
+                    fullPath: Path.Combine(_daemonsFolderPath, "ChartViewer.exe"),
+                    isHidden: false,
+                    priority: ProcessPriorityClass.BelowNormal
+                )
             }
         };
     }

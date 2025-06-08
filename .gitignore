@@ -20,6 +20,16 @@ MOCU-MoogControl/MoogControl/bin/
 MOCU-MoogControl/MoogControl/obj/
 MOCU-MoogControl/MoogControl/MoogControl.exe
 
+# MOCU-ChartViewer
+MOCU-ChartViewer/ChartViewer/bin/
+MOCU-ChartViewer/ChartViewer/obj/
+MOCU-ChartViewer/ChartViewer/ChartViewer.exe
+
+# MOCU-PortFinder
+MOCU-PortFinder/PortFinder/bin/
+MOCU-PortFinder/PortFinder/obj/
+MOCU-PortFinder/PortFinder/PortFinder.exe
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 **/[Mm]emoryCaptures/

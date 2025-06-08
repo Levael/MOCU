@@ -8,6 +8,7 @@
  */
 
 
+using ChartsModule;
 using MoogModule;
 using UnityEngine;
 
@@ -58,12 +59,13 @@ public class Bootstrap : MonoBehaviour
             EnsureComponent<InputLogic>(),
 
             // MOOG
-            EnsureComponent<JoystickForMoogTest>(),
-            EnsureComponent<TrajectoryMakerForMoogTest>(),
+            //EnsureComponent<JoystickForMoogTest>(),
+            //EnsureComponent<TrajectoryMakerForMoogTest>(),
             EnsureComponent<MoogHandler>(),
 
             // TESTS
             EnsureComponent<ForTests>(),
+            EnsureComponent<ChartsHandler>(),
             //EnsureComponent<FixedUpdateMonitor>(),
         };
 

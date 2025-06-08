@@ -12,20 +12,34 @@ namespace MoogModule.Daemon
     {
         // todo (temp): change later to parameter
 
-        private static int AllowedCoresMask;
-        private static int BlockedCoresMask; // Complementary to AllowedCoresMask
+        private static long AllowedCoresMask = 0L;
+        private static long BlockedCoresMask = 0L; // Complementary to AllowedCoresMask
         private static readonly Dictionary<int, IntPtr> originalAffinity = new();
         private static ManagementEventWatcher _watcher;
 
-        public static void Optimize(int reserveCores = 2)
+        public static void Optimize()
         {
-            int totalCores = Environment.ProcessorCount;
+            //int totalCores = Environment.ProcessorCount;
+            int totalCores = GetLogicalProcessorCount();
 
-            if (reserveCores > totalCores)
-                reserveCores = totalCores;
+            // temp
+            Console.WriteLine($"ProcessorCount = {totalCores}");
 
-            AllowedCoresMask = (1 << reserveCores) - 1; // for 2 it will be 0b00000011
-            BlockedCoresMask = ~AllowedCoresMask;
+            if (totalCores == 0)
+            {
+                Console.WriteLine("Handled error in 'SystemOptimizer.Optimize' method: no logical cores found.");
+                return;
+            }
+
+            if (totalCores == 1)
+            {
+                Console.WriteLine("You have only 1 core, no optimization will be provided.");
+                return;
+            }
+
+            long allCores = (1L << totalCores) - 1;
+            AllowedCoresMask = allCores & (~((1L << (totalCores / 2)) - 1)); // second half of all cores
+            BlockedCoresMask = allCores & (~AllowedCoresMask);
 
             AnnexCores();
             ExpelOthersFromAnnexedCores();
@@ -114,7 +128,7 @@ namespace MoogModule.Daemon
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Couldn't handle an error in 'WatchNewProcesses'");
+                //Console.WriteLine($"Couldn't handle an error in 'WatchNewProcesses'");
             }
         }
 
@@ -152,6 +166,15 @@ namespace MoogModule.Daemon
                 try { thread.PriorityLevel = ThreadPriorityLevel.Highest; }
                 catch { }
             }
+        }
+
+        private static int GetLogicalProcessorCount()
+        {
+            int count = 0;
+            var searcher = new ManagementObjectSearcher("select NumberOfLogicalProcessors from Win32_Processor");
+            foreach (var item in searcher.Get())
+                count += Convert.ToInt32(item["NumberOfLogicalProcessors"]);
+            return count;
         }
 
         public static void PauseGarbageCollector()

@@ -62,11 +62,12 @@
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_DPadAction.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\IControllerDevice.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_JoystickAction.cs" />
-    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Fps_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\ITrajectoryProfile.cs" />
+    <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Fps_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesModule\DeviceBoxPanel_Microphones.cs" />
     <Compile Include="Assets\Scripts\WinAPI.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModulesSubStatuses\Moog_ModuleSubStatuses.cs" />
+    <Compile Include="Assets\Scripts\MoogRelated\CommonPart\MoogFeedback.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\MoogRealTimeState.cs" />
     <Compile Include="Assets\For tests\FixedUpdateMonitor.cs" />
     <Compile Include="Assets\Scripts\Bootstrap\Bootstrap.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\zDaemonsOnlyCommon (depricated)\DaemonsUtilities.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesModule\DeviceBoxPanel.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\_Depricated\AudioDevice.cs" />
+    <Compile Include="Assets\Scripts\ChartsRelated\UnityPart\ChartsDaemon_API.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DTOs\UnifiedDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\UnityPart\AudioHostSideBridge.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\UnityPart\MoogHandler.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\CommuicationModel\MoogDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DTOs\UnifiedCommandFrom_Client.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\DelayCompensationStrategy.cs" />
+    <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\ChartPointData.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\CommuicationModel\MoveToPointParameters.cs" />
     <Compile Include="Assets\Scripts\CustomBuildProcessor.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DebugTabHandler.cs" />
@@ -123,6 +126,7 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonPart\IHostAPI.cs" />
     <Compile Include="Assets\For tests\Moog Movement\TrajectoryMakerForMoogTest.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\KeyboardSimulator.cs" />
+    <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\ChartsDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\DaemonsHandler.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\Linear\TrajectoryGenerator_Linear.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Base.cs" />
@@ -139,6 +143,7 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Client.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\ControllersHandler.cs" />
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
+    <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\ChartParameters.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\CDF\TrajectoryProfile_CDF.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\SettingsDeviceBox\SettingsDeviceBox.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\SettingsTabHandler.cs" />
@@ -167,6 +172,7 @@
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\TrajectoryTypeSettings.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatusHandler.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\SubStatusImportance.cs" />
+    <Compile Include="Assets\Scripts\ChartsRelated\UnityPart\ChartsHostSideBridge.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\DofParameters.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceData.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
@@ -179,6 +185,7 @@
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Daemons_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\For tests\Moog Movement\JoystickForMoogTest.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\Slider\CustomSlider.cs" />
+    <Compile Include="Assets\Scripts\ChartsRelated\UnityPart\ChartsHandler.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioIntercomData.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Interface.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\SafeExpandoObject.cs" />

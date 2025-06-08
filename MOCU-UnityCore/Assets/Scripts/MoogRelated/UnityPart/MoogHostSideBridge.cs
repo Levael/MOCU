@@ -18,8 +18,8 @@ namespace MoogModule
         private IInterprocessCommunicator _communicator;
 
         public event Action<MoogRealTimeState> MachineStateChanged;
-        public event Action<DofParameters> SingleFeedback;
-        public event Action<IEnumerable<DofParameters>> FeedbackForTimeRange;
+        public event Action<MoogRealTimeState> State;
+        public event Action<MoogFeedback> Feedback;
 
         private string _premadeCommand_Engage;
         private string _premadeCommand_Disengage;
@@ -89,6 +89,7 @@ namespace MoogModule
         
         // ########################################################################################
 
+        // todo
         private void HandleIncomingMessage(string message)
         {
             /*try

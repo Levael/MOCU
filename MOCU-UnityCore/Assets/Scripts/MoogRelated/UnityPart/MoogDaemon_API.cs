@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoogModule.Daemon;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace MoogModule
         void MoveToPoint(MoveToPointParameters parameters);
         void MoveByTrajectory(MoveByTrajectoryParameters parameters);
 
-        event Action<DofParameters> SingleFeedback;
-        event Action<IEnumerable<DofParameters>> FeedbackForTimeRange;
+        event Action<MoogRealTimeState> State;
+        event Action<MoogFeedback> Feedback;
     }
 }

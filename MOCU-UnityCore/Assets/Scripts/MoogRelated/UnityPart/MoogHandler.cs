@@ -22,7 +22,7 @@ namespace MoogModule
 
         // unity components
         private DaemonsHandler _daemonsHandler;
-        private TrajectoryMakerForMoogTest _controller;
+        //private TrajectoryMakerForMoogTest _controller;
         private DebugTabHandler _debugTabHandler;
 
         // ########################################################################################
@@ -30,7 +30,7 @@ namespace MoogModule
         public override void ManagedAwake()
         {
             _daemonsHandler = GetComponent<DaemonsHandler>();
-            _controller = GetComponent<TrajectoryMakerForMoogTest>();
+            //_controller = GetComponent<TrajectoryMakerForMoogTest>();
             _debugTabHandler = GetComponent<DebugTabHandler>();
 
             _connectParameters = new MachineSettings
@@ -152,10 +152,12 @@ namespace MoogModule
 
             IEnumerator TestCoroutine()
             {
+                _daemon.StartReceivingFeedback();
                 _daemon.MoveByTrajectory(firstTrajectorySettings);
                 yield return new WaitForSeconds(1f + 3f);
                 _daemon.MoveByTrajectory(secondTrajectorySettings);
                 yield return new WaitForSeconds(2.5f + 3f);
+                _daemon.StopReceivingFeedback();
                 _daemon.Disengage();
             }
 

@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- ============================ -->
+  <!-- COMMON PART FOR EVERY DAEMON -->
+  <!-- ============================ -->
+
+  <!-- Settings for project that compiles into single selfcontained '.exe' file which will be coppied to Unity project folder and executed from there -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>  <!-- automatic inclusion of common 'using' directives -->
+    <InvariantGlobalization>true</InvariantGlobalization> <!-- ignoring system locale settings (all formats are EN) -->
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms> <!-- for using 'ScottPlot' lib -->
+
+    <!--<ApplicationIcon>Media/logo.ico</ApplicationIcon>-->
+    <PublishDir>$(MSBuildProjectDirectory)\</PublishDir>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+
+    <!-- FOR RELEASE -->
+    <Optimize>true</Optimize>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <DebugType>none</DebugType>
+
+    <!-- FOR DEBUG -->
+    <!--<StartArguments>420 MoogDaemon False</StartArguments>-->
+    <!--<DebugType>full</DebugType>-->
+    <!--<Optimize>false</Optimize>-->
+  </PropertyGroup>
+
+  <!-- Paths for external files -->
+  <PropertyGroup>
+    <MocuScriptsPath>..\..\MOCU-UnityCore\Assets\Scripts</MocuScriptsPath>
+    <DaemonsRelated>$(MocuScriptsPath)\DaemonsRelated</DaemonsRelated>
+  </PropertyGroup>
+
+  <!-- Linked files -->
+  <ItemGroup>
+    <Compile Include="$(DaemonsRelated)\CommonPart\**\*.cs" Link="Linked code\DaemonsRelated\CommonPart\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="$(DaemonsRelated)\DaemonPart\**\*.cs" Link="Linked code\DaemonsRelated\DaemonPart\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <Compile Remove="$(DaemonsRelated)\CommonPart\InterprocessCommunicator\InterprocessCommunicator_UnityServer.cs" />
+  </ItemGroup>
+
+  <!-- Libraries -->
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <!-- ========================================= -->
+  <!-- EXCLUSIVE PART FOR THIS PARTICULAR DAEMON -->
+  <!-- ========================================= -->
+
+  <PropertyGroup>
+    <AssemblyName>ChartViewer</AssemblyName>
+    <!-- todo: change later -->
+    <Version>0.1.0</Version>
+    <Authors>Levael</Authors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <StartupObject>ChartsModule.Daemon.Program</StartupObject>
+    <!--<ApplicationManifest>app.manifest</ApplicationManifest>-->
+  </PropertyGroup>
+
+  <!-- Linked files -->
+  <ItemGroup>
+    <!-- The whole folder with 'PlotParameters' and 'PointData' -->
+    <Compile Include="$(MocuScriptsPath)\ChartsRelated\CommonPart\**\*.cs" Link="Linked code\ChartsRelated\CommonPart\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!-- Libraries -->
+  <ItemGroup>
+    <PackageReference Include="ScottPlot" Version="5.0.55" />
+    <PackageReference Include="ScottPlot.WinForms" Version="5.0.55" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Media\" />
+  </ItemGroup>
+</Project>

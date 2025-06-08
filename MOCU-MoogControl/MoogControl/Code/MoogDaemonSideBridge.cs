@@ -42,14 +42,14 @@ namespace MoogModule.Daemon
 
         // ########################################################################################
 
-        public void FeedbackForTimeRange(IEnumerable<DofParameters> parameters)
+        public void Feedback(MoogFeedback feedback)
         {
-            var moogDataTransferObject = new MoogDataTransferObject() { FeedbackCoordinates = parameters };
+            var moogDataTransferObject = new MoogDataTransferObject() { Feedback = feedback };
             var json = JsonHelper.SerializeJson(moogDataTransferObject);
             _communicator.SendMessage(json);
         }
 
-        public void SingleFeedback(MoogRealTimeState state)
+        public void State(MoogRealTimeState state)
         {
             var moogDataTransferObject = new MoogDataTransferObject() { State = state };
             var json = JsonHelper.SerializeJson(moogDataTransferObject);

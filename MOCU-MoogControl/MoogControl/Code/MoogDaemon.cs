@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
 
+using MoogModule;
 using DaemonsRelated.DaemonPart;
-using ScottPlot;
 
 
 namespace MoogModule.Daemon
@@ -24,18 +23,20 @@ namespace MoogModule.Daemon
         private readonly ConcurrentQueue<CommandPacket> _atomicCommandsForMoog;
         private readonly ConcurrentQueue<TrajectoryManager> _complexCommandsForMoog;
 
-        private bool _doSendFeedback = false;
-        private bool _moogMachineIsConnected = false;
+        private volatile bool _doSaveLogs = false;
+        private volatile bool _moogMachineIsConnected = false;
 
-        // test
         private ConcurrentQueue<(DateTime time, DofParameters position)> _logsCommand;
         private ConcurrentQueue<(DateTime time, DofParameters position)> _logsFeedback;
+        private ConcurrentQueue<(DateTime time, string error)> _logsError;
+        private ConcurrentQueue<(DateTime time, EncodedMachineState state)> _logsState;
 
         public MoogDaemon(MoogDaemonSideBridge hostAPI)
         {
             _logsCommand = new();
             _logsFeedback = new();
-
+            _logsError = new();
+            _logsState = new();
 
             _atomicCommandsForMoog = new();
             _complexCommandsForMoog = new();
@@ -46,7 +47,8 @@ namespace MoogModule.Daemon
             _intervalExecutor = new IntervalExecutor(TimeSpan.FromMilliseconds(1));
 
             _hostAPI.TerminateDaemon += message => Console.WriteLine("Got command to terminate the daemon.");
-            _moogMachineCommunicator.PacketReceived += HandleReceivedPacket;    // todo: BlockingCollection
+            _moogMachineCommunicator.PacketReceived += HandleReceivedPacket;
+            _moogMachineCommunicator.PacketSent += HandleSentPacket;
             _intervalExecutor.OnTick += ExecuteEveryTick;
 
             _hostAPI.Connect += HandleConnectCommand;
@@ -58,8 +60,6 @@ namespace MoogModule.Daemon
             _hostAPI.MoveToPoint += HandleMoveToPointCommand;
             _hostAPI.MoveByTrajectory += HandleMoveByTrajectoryCommand;
         }
-
-        
 
         public void DoBeforeExit()
         {
@@ -73,10 +73,10 @@ namespace MoogModule.Daemon
             _hostAPI.StartCommunication();
             _intervalExecutor.Start();
 
-            Task.Run(() => RunChartWindow());
+            //Task.Run(() => RunChartWindow());
         }
 
-        private void RunChartWindow()
+        /*private void RunChartWindow()
         {
             var formsPlot = new ScottPlot.WinForms.FormsPlot
             {
@@ -137,7 +137,7 @@ namespace MoogModule.Daemon
 
             form.Show();
             System.Windows.Forms.Application.Run();
-        }
+        }*/
 
         // ########################################################################################
 
@@ -151,6 +151,7 @@ namespace MoogModule.Daemon
 
                 // test ?
                 _moogRealTimeState.Position = _machineSettings.StartPosition;
+                _moogRealTimeState.DesiredPosition = _machineSettings.StartPosition;
             }
             catch (Exception ex)
             {
@@ -212,14 +213,30 @@ namespace MoogModule.Daemon
             }
         }
 
+        // todo: looks like it needs to be reworked
         private void HandleStopReceivingFeedbackCommand()
         {
-            _doSendFeedback = false;
+            _doSaveLogs = false;
+
+            var feedback = new MoogFeedback
+            {
+                Commands = _logsCommand,
+                Responses = _logsFeedback,
+                Errors = _logsError,
+                States = _logsState
+            };
+
+            _hostAPI.Feedback(feedback);
+
+            _logsCommand.Clear();
+            _logsFeedback.Clear();
+            _logsError.Clear();
+            _logsState.Clear();
         }
 
         private void HandleStartReceivingFeedbackCommand()
         {
-            _doSendFeedback = true;
+            _doSaveLogs = true;
         }
 
         private void HandleResetCommand()
@@ -258,25 +275,21 @@ namespace MoogModule.Daemon
             }
         }
 
-
-        // I guess there is a problem here
-        private void HandleReceivedPacket(byte[] data)
+        private void HandleReceivedPacket((byte[] data, DateTime timestamp) packet)
         {
             try
             {
-                var parsedMessage = PacketSerializer.Deserialize(data);
+                var parsedMessage = PacketSerializer.Deserialize(packet.data);
 
                 _moogRealTimeState.EncodedMachineState = parsedMessage.EncodedMachineState;
-                //_moogRealTimeState.Position = parsedMessage.Parameters;
+                _moogRealTimeState.Position = parsedMessage.Parameters;
 
-                _logsFeedback.Enqueue((time: DateTime.UtcNow, position: parsedMessage.Parameters));
+                if (_doSaveLogs)
+                    _logsFeedback.Enqueue((time: packet.timestamp, position: parsedMessage.Parameters));
 
                 // TODO:
-                // - faults
+                // - faults and state changes (if yes - make and send MoogRealTimeState + add to log if needed)
                 // - add safety checks
-
-                if (_doSendFeedback)
-                    _hostAPI.SingleFeedback(_moogRealTimeState);
             }
             catch (Exception ex)
             {
@@ -284,24 +297,31 @@ namespace MoogModule.Daemon
             }
         }
 
+        private void HandleSentPacket((byte[] data, DateTime timestamp) packet)
+        {
+            try
+            {
+                if (_doSaveLogs)
+                {
+                    var parsedMessage = PacketSerializer.Test(packet.data);
+                    _logsCommand.Enqueue((time: packet.timestamp, position: parsedMessage.Parameters));
+                }  
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Handled error ucurred in 'HandleSentPacket': {ex}");
+            }
+        }
+
         private void ExecuteEveryTick()
         {
             if (!_moogMachineIsConnected) return;
 
-            CommandPacket command = RequestNextCommand() ?? CommandPackets.NewPosition(_moogRealTimeState.Position);
-
-            /*var log = (time: DateTime.UtcNow, position: command.Parameters);
-            _logsCommand.Enqueue(log);*/   // show position right now
+            CommandPacket command = RequestNextCommand() ?? CommandPackets.NewPosition(_moogRealTimeState.DesiredPosition);
+            _moogRealTimeState.DesiredPosition = command.Parameters;
 
             byte[] packet = PacketSerializer.Serialize(command);
-            // test start
-            CommandPacket antiPacket = PacketSerializer.Test(packet);
-            if (command.Parameters != antiPacket.Parameters)
-                Console.WriteLine($"command: {command.Parameters}, antiPacket: {antiPacket.Parameters}");
-            // test end
-
             _moogMachineCommunicator.SendPacket(packet);
-            _moogRealTimeState.Position = command.Parameters;
         }
 
         private CommandPacket? RequestNextCommand()
@@ -323,16 +343,10 @@ namespace MoogModule.Daemon
                     _complexCommandsForMoog.TryDequeue(out _);*/
 
                 if (manager.GetNextPosition() is DofParameters position)
-                {
-                    //Console.WriteLine($"time: {DateTime.UtcNow}, position: {position.Surge}");
-                    _logsCommand.Enqueue((time: DateTime.UtcNow, position: position));   // show only movements
                     return CommandPackets.NewPosition(position);
-                }
                 else
                 {
-                    var trajectory = manager.GetTrajectoryArray();
-                    var tempPathToSavePlots = @$"C:\Users\Levael\GitHub\MOCU\MOCU-MoogControl\MoogControl\Media\Plots\{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.png";
-                    Task.Run(() => PlotTrajectoryParameters(tempPathToSavePlots, trajectory));
+                    // end of trajectory. todo: maybe use it somehow
                     _complexCommandsForMoog.TryDequeue(out _);
                 }
 
@@ -344,7 +358,7 @@ namespace MoogModule.Daemon
                 return null;
         }
 
-        private void PlotTrajectoryParameters(string outputPath, IEnumerable<DofParameters> trajectory)
+        /*private void PlotTrajectoryParameters(string outputPath, IEnumerable<DofParameters> trajectory)
         {
             var plt = new ScottPlot.Plot();
 
@@ -373,6 +387,6 @@ namespace MoogModule.Daemon
             plt.Legend.IsVisible = true;
 
             plt.SavePng(outputPath, 800, 600);
-        }
+        }*/
     }
 }
