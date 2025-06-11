@@ -27,16 +27,12 @@ namespace MoogModule.Daemon
         private volatile bool _moogMachineIsConnected = false;
 
         private ConcurrentQueue<(DateTime time, DofParameters position)> _logsCommand;
-        private ConcurrentQueue<(DateTime time, DofParameters position)> _logsFeedback;
-        private ConcurrentQueue<(DateTime time, string error)> _logsError;
-        private ConcurrentQueue<(DateTime time, EncodedMachineState state)> _logsState;
+        private ConcurrentQueue<(DateTime time, MoogRealTimeState state)> _logsFeedback;
 
         public MoogDaemon(MoogDaemonSideBridge hostAPI)
         {
             _logsCommand = new();
             _logsFeedback = new();
-            _logsError = new();
-            _logsState = new();
 
             _atomicCommandsForMoog = new();
             _complexCommandsForMoog = new();
@@ -222,16 +218,12 @@ namespace MoogModule.Daemon
             {
                 Commands = _logsCommand,
                 Responses = _logsFeedback,
-                Errors = _logsError,
-                States = _logsState
             };
 
             _hostAPI.Feedback(feedback);
 
             _logsCommand.Clear();
             _logsFeedback.Clear();
-            _logsError.Clear();
-            _logsState.Clear();
         }
 
         private void HandleStartReceivingFeedbackCommand()
@@ -285,7 +277,7 @@ namespace MoogModule.Daemon
                 _moogRealTimeState.Position = parsedMessage.Parameters;
 
                 if (_doSaveLogs)
-                    _logsFeedback.Enqueue((time: packet.timestamp, position: parsedMessage.Parameters));
+                    _logsFeedback.Enqueue((time: packet.timestamp, state: _moogRealTimeState));
 
                 // TODO:
                 // - faults and state changes (if yes - make and send MoogRealTimeState + add to log if needed)

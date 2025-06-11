@@ -46,14 +46,21 @@ namespace ChartsModule
 
         // .............................
 
-        public Texture2D RegularChart(ChartParameters parameters)
+        public Texture2D RegularChart(ChartData parameters)
         {
             return null;
         }
 
-        public void InteractiveChart(ChartParameters parameters)
+        public void InteractiveChart(ChartData parameters)
         {
 
+        }
+
+        // .............................
+
+        private ChartData ParseMoogFeedback(MoogFeedback data)
+        {
+            return null;
         }
     }
 }
