@@ -33,6 +33,7 @@ namespace MoogModule
             //_controller = GetComponent<TrajectoryMakerForMoogTest>();
             _debugTabHandler = GetComponent<DebugTabHandler>();
 
+            // todo: move to config
             _connectParameters = new MachineSettings
             {
                 StartPosition = new DofParameters { Heave = -0.22f },

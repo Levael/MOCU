@@ -1,5 +1,6 @@
 ﻿using System;
 
+using DaemonsRelated;
 using DaemonsRelated.DaemonPart;
 using InterprocessCommunication;
 
@@ -33,6 +34,57 @@ namespace ChartsModule.Daemon
         private void HandleIncomingMessage(string message)
         {
             Console.WriteLine($"Got message from host: {message}");
+            try
+            {
+                var DTO = JsonHelper.DeserializeJson<ChartsDataTransferObject>(message);
+
+                // ................................................................................
+
+                // CUSTOM MESSAGE
+                if (!String.IsNullOrEmpty(DTO.CustomMessage))
+                    Console.WriteLine($"Custom message in 'HandleIncomingMessage': {DTO.CustomMessage}");
+
+                // TERMINATION COMMAND
+                if (DTO.DoTerminateTheDaemon)
+                    TerminateDaemon?.Invoke("Got command from host to terminate the daemon");
+
+                // ................................................................................
+
+                // CONNECT
+                if (dataTransferObject.ConnectCommand)
+                    Connect?.Invoke(dataTransferObject.ConnectParameters);
+
+                // ENGAGE
+                if (dataTransferObject.EngageCommand)
+                    Engage?.Invoke();
+
+                // DISENGAGE
+                if (dataTransferObject.DisengageCommand)
+                    Disengage?.Invoke();
+
+                // RESET
+                if (dataTransferObject.ResetCommand)
+                    Reset?.Invoke();
+
+                // DO RECEIVE FEEDBACK
+                if (dataTransferObject.DoReceiveFeedback)
+                    StartReceivingFeedback?.Invoke();
+                else
+                    StopReceivingFeedback?.Invoke();
+
+                // MOVE TO POINT
+                if (dataTransferObject.MoveToPointCommand)
+                    MoveToPoint?.Invoke(dataTransferObject.MoveToPointParameters);
+
+                // MOVE BY TRAJECTORY
+                if (dataTransferObject.MoveByTrajectoryCommand)
+                    MoveByTrajectory?.Invoke(dataTransferObject.MoveByTrajectoryParameters);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in 'HandleIncomingMessage': {ex.Message}");
+            }
+
         }
     }
 }

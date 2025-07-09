@@ -10,7 +10,7 @@ namespace ChartsModule
 {
     public static class MoogFeedbackConverter
     {
-        public static ChartData ConvertToChartData(MoogFeedback feedback, ChartConversionSettings settings, string dofToDisplay = "Surge")
+        public static ChartData ConvertToChartData(MoogFeedback feedback, SpetialChartSettings_Displacement settings, string dofToDisplay = "Surge")
         {
             var seriesList = new List<SeriesData>();
 

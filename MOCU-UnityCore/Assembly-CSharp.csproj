@@ -65,7 +65,6 @@
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_JoystickAction.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\ITrajectoryProfile.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Fps_DebugUiModuleHandler.cs" />
-    <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\ChartConversionSettings.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\DevicesModule\DeviceBoxPanel_Microphones.cs" />
     <Compile Include="Assets\Scripts\WinAPI.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModulesSubStatuses\Moog_ModuleSubStatuses.cs" />
@@ -128,10 +127,12 @@
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioClipData.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Experiment\ExperimentTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonPart\IHostAPI.cs" />
+    <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\SpetialChartSettings_Displacement.cs" />
     <Compile Include="Assets\For tests\Moog Movement\TrajectoryMakerForMoogTest.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\KeyboardSimulator.cs" />
     <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\ChartsDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\DaemonsHandler.cs" />
+    <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\ChartType.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\Linear\TrajectoryGenerator_Linear.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Base.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\IDaemonUser.cs" />

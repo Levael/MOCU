@@ -44,15 +44,15 @@ namespace MoogModule.Daemon
 
         public void Feedback(MoogFeedback feedback)
         {
-            var moogDataTransferObject = new MoogDataTransferObject() { Feedback = feedback };
-            var json = JsonHelper.SerializeJson(moogDataTransferObject);
+            var DTO = new MoogDataTransferObject() { Feedback = feedback };
+            var json = JsonHelper.SerializeJson(DTO);
             _communicator.SendMessage(json);
         }
 
         public void State(MoogRealTimeState state)
         {
-            var moogDataTransferObject = new MoogDataTransferObject() { State = state };
-            var json = JsonHelper.SerializeJson(moogDataTransferObject);
+            var DTO = new MoogDataTransferObject() { State = state };
+            var json = JsonHelper.SerializeJson(DTO);
             _communicator.SendMessage(json);
         }
 
@@ -64,49 +64,49 @@ namespace MoogModule.Daemon
 
             try
             {
-                var dataTransferObject = JsonHelper.DeserializeJson<MoogDataTransferObject>(message);
+                var DTO = JsonHelper.DeserializeJson<MoogDataTransferObject>(message);
 
                 // ................................................................................
 
                 // CUSTOM MESSAGE
-                if (!String.IsNullOrEmpty(dataTransferObject.CustomMessage))
-                    Console.WriteLine($"Custom message in 'HandleIncomingMessage': {dataTransferObject.CustomMessage}");
+                if (!String.IsNullOrEmpty(DTO.CustomMessage))
+                    Console.WriteLine($"Custom message in 'HandleIncomingMessage': {DTO.CustomMessage}");
 
                 // TERMINATION COMMAND
-                if (dataTransferObject.DoTerminateTheDaemon)
+                if (DTO.DoTerminateTheDaemon)
                     TerminateDaemon?.Invoke("Got command from host to terminate the daemon");
 
                 // ................................................................................
 
                 // CONNECT
-                if (dataTransferObject.ConnectCommand)
-                    Connect?.Invoke(dataTransferObject.ConnectParameters);
+                if (DTO.ConnectCommand)
+                    Connect?.Invoke(DTO.ConnectParameters);
 
                 // ENGAGE
-                if (dataTransferObject.EngageCommand)
+                if (DTO.EngageCommand)
                     Engage?.Invoke();
 
                 // DISENGAGE
-                if (dataTransferObject.DisengageCommand)
+                if (DTO.DisengageCommand)
                     Disengage?.Invoke();
 
                 // RESET
-                if (dataTransferObject.ResetCommand)
+                if (DTO.ResetCommand)
                     Reset?.Invoke();
 
                 // DO RECEIVE FEEDBACK
-                if (dataTransferObject.DoReceiveFeedback)
+                if (DTO.DoReceiveFeedback)
                     StartReceivingFeedback?.Invoke();
                 else
                     StopReceivingFeedback?.Invoke();
 
                 // MOVE TO POINT
-                if (dataTransferObject.MoveToPointCommand)
-                    MoveToPoint?.Invoke(dataTransferObject.MoveToPointParameters);
+                if (DTO.MoveToPointCommand)
+                    MoveToPoint?.Invoke(DTO.MoveToPointParameters);
 
                 // MOVE BY TRAJECTORY
-                if (dataTransferObject.MoveByTrajectoryCommand)
-                    MoveByTrajectory?.Invoke(dataTransferObject.MoveByTrajectoryParameters);
+                if (DTO.MoveByTrajectoryCommand)
+                    MoveByTrajectory?.Invoke(DTO.MoveByTrajectoryParameters);
             }
             catch (Exception ex)
             {
