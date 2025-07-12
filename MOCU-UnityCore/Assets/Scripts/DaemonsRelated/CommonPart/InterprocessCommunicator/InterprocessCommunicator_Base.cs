@@ -176,7 +176,6 @@ namespace InterprocessCommunication
                 foreach (var message in toBeSentMessagesQueue.GetConsumingEnumerable(cancellationTokenSource.Token))
                 {
                     await writer.WriteLineAsync(ProtectString(message));
-                    await writer.FlushAsync();
 
                     sentMessagesQueue.Add(message);
                 }

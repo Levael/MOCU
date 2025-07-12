@@ -15,6 +15,9 @@ namespace ChartsModule.Daemon
         {
             _hostAPI = hostAPI;
             _hostAPI.TerminateDaemon += message => Console.WriteLine("Got command to terminate the daemon.");
+
+            _hostAPI.GenerateChartAsImage += OnGenerateChartAsImage;
+            _hostAPI.GenerateChartAsForm += OnGenerateChartAsForm;
         }
 
         public void DoBeforeExit()
@@ -26,6 +29,18 @@ namespace ChartsModule.Daemon
         {
             _hostAPI.StartCommunication();
             Console.WriteLine("Started");
+        }
+
+        // ...............................
+
+        private void OnGenerateChartAsImage(ChartData chartData)
+        {
+
+        }
+
+        private void OnGenerateChartAsForm(ChartData chartData)
+        {
+
         }
     }
 }

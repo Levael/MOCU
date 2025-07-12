@@ -55,9 +55,19 @@ namespace ChartsModule
             _daemon.GenerateChartAsImage(parameters);
         }
 
+        public void StaticChart(MoogFeedback moogFeedback)
+        {
+            StaticChart(ParseMoogFeedback(moogFeedback));
+        }
+
         public void InteractiveChart(ChartData parameters)
         {
             _daemon.GenerateChartAsForm(parameters);
+        }
+
+        public void InteractiveChart(MoogFeedback moogFeedback)
+        {
+            InteractiveChart(ParseMoogFeedback(moogFeedback));
         }
 
         // .............................

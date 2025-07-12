@@ -27,12 +27,12 @@ namespace MoogModule.Daemon
         private volatile bool _moogMachineIsConnected = false;
 
         private ConcurrentQueue<(DateTime time, DofParameters position)> _logsCommand;
-        private ConcurrentQueue<(DateTime time, MoogRealTimeState state)> _logsFeedback;
+        private ConcurrentQueue<(DateTime time, MoogRealTimeState state)> _logsResponses;
 
         public MoogDaemon(MoogDaemonSideBridge hostAPI)
         {
             _logsCommand = new();
-            _logsFeedback = new();
+            _logsResponses = new();
 
             _atomicCommandsForMoog = new();
             _complexCommandsForMoog = new();
@@ -123,7 +123,7 @@ namespace MoogModule.Daemon
                 while (_logsCommand.TryDequeue(out var point))
                     loggerCommand.Add((point.time - startTime).TotalMilliseconds, point.position.Surge);
 
-                while (_logsFeedback.TryDequeue(out var point))
+                while (_logsResponses.TryDequeue(out var point))
                     loggerFeedback.Add((point.time - startTime).TotalMilliseconds, point.position.Surge);
 
                 if ((loggerCommand.HasNewData || loggerFeedback.HasNewData) && (maxTicks-- >= 0))
@@ -217,13 +217,13 @@ namespace MoogModule.Daemon
             var feedback = new MoogFeedback
             {
                 Commands = _logsCommand,
-                Responses = _logsFeedback,
+                Responses = _logsResponses,
             };
 
             _hostAPI.Feedback(feedback);
 
             _logsCommand.Clear();
-            _logsFeedback.Clear();
+            _logsResponses.Clear();
         }
 
         private void HandleStartReceivingFeedbackCommand()
@@ -277,7 +277,7 @@ namespace MoogModule.Daemon
                 _moogRealTimeState.Position = parsedMessage.Parameters;
 
                 if (_doSaveLogs)
-                    _logsFeedback.Enqueue((time: packet.timestamp, state: _moogRealTimeState));
+                    _logsResponses.Enqueue((time: packet.timestamp, state: _moogRealTimeState));
 
                 // TODO:
                 // - faults and state changes (if yes - make and send MoogRealTimeState + add to log if needed)

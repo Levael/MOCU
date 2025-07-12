@@ -22,9 +22,7 @@ namespace ChartsModule
 
         public void Test()
         {
-            var chartsDataTransferObject = new ChartsDataTransferObject { };
-            var json = JsonHelper.SerializeJson(chartsDataTransferObject);
-            _communicator.SendMessage(json);
+            GenerateChartAsForm();
         }
 
         public void GenerateChartAsImage(ChartData chartData)

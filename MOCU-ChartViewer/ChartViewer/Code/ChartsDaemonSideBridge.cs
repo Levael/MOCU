@@ -10,6 +10,8 @@ namespace ChartsModule.Daemon
     public class ChartsDaemonSideBridge : ChartsHost_API, IHostAPI
     {
         public event Action<string> TerminateDaemon;
+        public event Action<ChartData> GenerateChartAsImage;
+        public event Action<ChartData> GenerateChartAsForm;
 
         private IInterprocessCommunicator _communicator;
 
@@ -50,41 +52,25 @@ namespace ChartsModule.Daemon
 
                 // ................................................................................
 
-                // CONNECT
-                if (dataTransferObject.ConnectCommand)
-                    Connect?.Invoke(dataTransferObject.ConnectParameters);
+                // GENERATE IMAGE
+                if (DTO.SaveAsImage)
+                    GenerateChartAsImage?.Invoke(DTO.ChartData);
 
-                // ENGAGE
-                if (dataTransferObject.EngageCommand)
-                    Engage?.Invoke();
-
-                // DISENGAGE
-                if (dataTransferObject.DisengageCommand)
-                    Disengage?.Invoke();
-
-                // RESET
-                if (dataTransferObject.ResetCommand)
-                    Reset?.Invoke();
-
-                // DO RECEIVE FEEDBACK
-                if (dataTransferObject.DoReceiveFeedback)
-                    StartReceivingFeedback?.Invoke();
-                else
-                    StopReceivingFeedback?.Invoke();
-
-                // MOVE TO POINT
-                if (dataTransferObject.MoveToPointCommand)
-                    MoveToPoint?.Invoke(dataTransferObject.MoveToPointParameters);
-
-                // MOVE BY TRAJECTORY
-                if (dataTransferObject.MoveByTrajectoryCommand)
-                    MoveByTrajectory?.Invoke(dataTransferObject.MoveByTrajectoryParameters);
+                // GENERATE FORM
+                if (DTO.OpenAsForm)
+                    GenerateChartAsForm?.Invoke(DTO.ChartData);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in 'HandleIncomingMessage': {ex.Message}");
             }
+        }
 
+        public void ChartImageGenerated(string path)
+        {
+            var DTO = new ChartsDataTransferObject { ImageFullPath = path };
+            var json = JsonHelper.SerializeJson(DTO);
+            _communicator.SendMessage(json);
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using MoogModule.Daemon;
 using System.Collections;
 using UnityEngine;
+using ChartsModule;
 
 
 namespace MoogModule
@@ -24,6 +25,7 @@ namespace MoogModule
         private DaemonsHandler _daemonsHandler;
         //private TrajectoryMakerForMoogTest _controller;
         private DebugTabHandler _debugTabHandler;
+        private ChartsHandler _chartsHandler;
 
         // ########################################################################################
 
@@ -32,6 +34,7 @@ namespace MoogModule
             _daemonsHandler = GetComponent<DaemonsHandler>();
             //_controller = GetComponent<TrajectoryMakerForMoogTest>();
             _debugTabHandler = GetComponent<DebugTabHandler>();
+            _chartsHandler = GetComponent<ChartsHandler>();
 
             // todo: move to config
             _connectParameters = new MachineSettings
@@ -60,6 +63,7 @@ namespace MoogModule
 
             //communicator.ConnectionEstablished += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Complete);
             //communicator.ConnectionBroked += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Failed);
+            _daemon.Feedback += OnReceivedFeedback;
             _daemon.MachineStateChanged += OnMachineStateChanged;
             //_controller.OnPositionChanged += (coordinate) => MoveToPoint(new MoveToPointParameters { Coordinate = coordinate });    //test
 
@@ -114,6 +118,11 @@ namespace MoogModule
                 stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Machine, SubStatusState.StillNotSet);
             else
                 stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Machine, SubStatusState.Failed);*/
+        }
+
+        private void OnReceivedFeedback(MoogFeedback feedback)
+        {
+            _chartsHandler.
         }
 
         private void TestMethod()

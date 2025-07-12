@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -11,7 +10,8 @@ namespace ChartsModule
         public IEnumerable<PointData> Series    { get; set; } = Enumerable.Empty<PointData>();
         public string Title                     { get; set; } = String.Empty;
         public bool ConnectPoints               { get; set; } = true;
-
-        // todo: maybe add line settings (style, size, color, etc)
+        public string Color                     { get; set; } = "#0000FF";  // Hex color for both points and line
+        public int PointSize                    { get; set; } = 5;
+        public int LineSize                     { get; set; } = 1;
     }
 }

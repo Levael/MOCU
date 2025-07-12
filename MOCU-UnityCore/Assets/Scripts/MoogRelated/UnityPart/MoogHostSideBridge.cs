@@ -92,28 +92,23 @@ namespace MoogModule
         // todo
         private void HandleIncomingMessage(string message)
         {
-            /*try
+            try
             {
-                var dataTransferObject = JsonHelper.DeserializeJson<MoogDataTransferObject>(message);
+                UnityEngine.Debug.Log($"Got message from Moog: {message}");
+                var DTO = JsonHelper.DeserializeJson<MoogDataTransferObject>(message);
 
                 // CUSTOM MESSAGE
-                if (!String.IsNullOrEmpty(dataTransferObject.CustomMessage))
-                    UnityEngine.Debug.Log($"Custom message in 'HandleIncomingMessage': {dataTransferObject.CustomMessage}");
+                if (!String.IsNullOrEmpty(DTO.CustomMessage))
+                    UnityEngine.Debug.Log($"Custom message in 'HandleIncomingMessage': {DTO.CustomMessage}");
 
                 // CLIP CHANGES
-                if (dataTransferObject.ClipChanges.Any())
-                    ClipsDataChanged?.Invoke(dataTransferObject.ClipChanges);
-
-                *//*// TERMINATION COMMAND
-                if (dataTransferObject.DoTerminateTheDaemon)
-                    TerminateDaemon?.Invoke("Got command from host to terminate the daemon");*//*
-
-                UnityEngine.Debug.Log($"Moog state: {dataTransferObject.MoogState}");
+                if (DTO.Feedback != null)
+                    Feedback?.Invoke(DTO.Feedback);
             }
             catch (Exception ex)
             {
                 UnityEngine.Debug.LogError($"Error in 'HandleIncomingMessage': {ex.Message}");
-            }*/
+            }
         }
     }
 }

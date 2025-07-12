@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using System;
+using System.Text;
 
 
 namespace InterprocessCommunication
@@ -17,11 +18,11 @@ namespace InterprocessCommunication
         {
             _connectionToServerTimeoutMs = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;   // todo: move to config file
 
-            readPipe = new NamedPipeClientStream(".", pipeName_serverWritesClientReads, PipeDirection.In);
-            writePipe = new NamedPipeClientStream(".", pipeName_clientWritesServerReads, PipeDirection.Out);
+            readPipe = new NamedPipeClientStream(".", pipeName_serverWritesClientReads, PipeDirection.In, PipeOptions.Asynchronous);
+            writePipe = new NamedPipeClientStream(".", pipeName_clientWritesServerReads, PipeDirection.Out, PipeOptions.Asynchronous);
 
-            reader = new StreamReader(readPipe);
-            writer = new StreamWriter(writePipe);
+            reader = new StreamReader(readPipe, new UTF8Encoding(false));
+            writer = new StreamWriter(writePipe, new UTF8Encoding(false)) { AutoFlush = true };
         }
 
         public override async void Start()

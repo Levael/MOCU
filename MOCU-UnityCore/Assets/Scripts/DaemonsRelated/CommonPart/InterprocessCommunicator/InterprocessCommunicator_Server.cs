@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Text;
 using System.Threading.Tasks;
 
 
@@ -8,6 +9,7 @@ namespace InterprocessCommunication
 {
     public class InterprocessCommunicator_Server : InterprocessCommunicator_Base
     {
+        private const int _bufferSize = 131_072;    // larger pipe buffer -- 128 KB (default is 4 KB)
         private readonly TaskCompletionSource<bool> _serverIsReadyForClientConnection = new();
         public Task WaitForServerReadyForClientConnectionAsync() => _serverIsReadyForClientConnection.Task;
 
@@ -16,11 +18,26 @@ namespace InterprocessCommunication
 
         public InterprocessCommunicator_Server(string pipeName) : base(pipeName)
         {
-            readPipe = new NamedPipeServerStream(pipeName_clientWritesServerReads, PipeDirection.In, NamedPipeServerStream.MaxAllowedServerInstances);
-            writePipe = new NamedPipeServerStream(pipeName_serverWritesClientReads, PipeDirection.Out, NamedPipeServerStream.MaxAllowedServerInstances);
+            readPipe = new NamedPipeServerStream(
+                pipeName_clientWritesServerReads,
+                PipeDirection.In,
+                NamedPipeServerStream.MaxAllowedServerInstances,
+                PipeTransmissionMode.Byte,
+                PipeOptions.Asynchronous,
+                inBufferSize: _bufferSize,
+                outBufferSize: 0);
 
-            reader = new StreamReader(readPipe);
-            writer = new StreamWriter(writePipe);
+            writePipe = new NamedPipeServerStream(
+                pipeName_serverWritesClientReads,
+                PipeDirection.Out,
+                NamedPipeServerStream.MaxAllowedServerInstances,
+                PipeTransmissionMode.Byte,
+                PipeOptions.Asynchronous,
+                inBufferSize: 0,
+                outBufferSize: _bufferSize);
+
+            reader = new StreamReader(readPipe, new UTF8Encoding(false));
+            writer = new StreamWriter(writePipe, new UTF8Encoding(false)) { AutoFlush = true };
         }
 
         public override async void Start()
