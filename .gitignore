@@ -9,6 +9,7 @@
 **/[Bb]uilds/
 **/[Ll]ogs/
 **/[Uu]ser[Ss]ettings/
+**/StreamingAssets/Daemons/
 
 # MOCU-AudioControl
 MOCU-AudioControl/AudioControl/bin/

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 
 using MoogModule;
@@ -21,6 +23,7 @@ namespace MoogModule.Daemon
         public event Action<MoveByTrajectoryParameters> MoveByTrajectory;
 
         public event Action<string> TerminateDaemon;
+        public event Action<object?> Test;
 
         private IInterprocessCommunicator _communicator;
 
@@ -70,7 +73,13 @@ namespace MoogModule.Daemon
 
                 // CUSTOM MESSAGE
                 if (!String.IsNullOrEmpty(DTO.CustomMessage))
+                {
                     Console.WriteLine($"Custom message in 'HandleIncomingMessage': {DTO.CustomMessage}");
+
+                    if (DTO.CustomMessage == "test request")
+                        Test?.Invoke(null);
+                }
+                    
 
                 // TERMINATION COMMAND
                 if (DTO.DoTerminateTheDaemon)

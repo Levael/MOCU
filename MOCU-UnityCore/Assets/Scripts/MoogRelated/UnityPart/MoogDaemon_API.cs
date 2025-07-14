@@ -1,4 +1,6 @@
-﻿using MoogModule.Daemon;
+﻿#nullable enable
+
+using MoogModule.Daemon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +20,8 @@ namespace MoogModule
         void StopReceivingFeedback();
         void MoveToPoint(MoveToPointParameters parameters);
         void MoveByTrajectory(MoveByTrajectoryParameters parameters);
+
+        void Test(object? input = null);
 
         event Action<MoogRealTimeState> State;
         event Action<MoogFeedback> Feedback;

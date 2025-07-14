@@ -5,6 +5,8 @@ using UnityEngine.InputSystem.XR;
 using InterprocessCommunication;
 using MoogModule;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 
 namespace ChartsModule
@@ -40,7 +42,7 @@ namespace ChartsModule
 
             _daemon = new ChartsHostSideBridge(communicator);
             _daemon.ChartImageGenerated += GotStaticChart;
-            _daemon.Test();
+            //_daemon.Test();
 
             //communicator.ConnectionEstablished += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Complete);
             //communicator.ConnectionBroked += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Failed);
@@ -84,10 +86,72 @@ namespace ChartsModule
             }
         }
 
-        private ChartData ParseMoogFeedback(MoogFeedback data)
+        private ChartData ParseMoogFeedback(MoogFeedback feedback)
         {
-            // todo: save once data from Moog to json file to further dabug
-            return null;
+            if (!feedback.Commands.Any() && !feedback.Responses.Any())
+            {
+                Debug.Log($"No data to present");
+                return null;
+            }
+
+            // Находим самую раннюю временную метку
+            var baseTime = feedback.Commands.Select(c => c.timestamp)
+                .Concat(feedback.Responses.Select(r => r.timestamp))
+                .ToList()
+                .Min();
+
+            // Функция для преобразования DateTime в миллисекунды с базового времени
+            Func<DateTime, double> toMs = dt => (dt - baseTime).TotalMilliseconds;
+
+            // Создаем серию для команд
+            var commandPoints = feedback.Commands.Select(c => new PointData
+            {
+                X = toMs(c.timestamp),
+                Y = c.position.Surge
+            }).ToList();
+
+            var commandSeries = new SeriesData
+            {
+                Series = commandPoints,
+                Title = "Commands",
+                ConnectPoints = true,
+                Color = "#0000FF", // Синий
+                PointSize = 5,
+                LineSize = 1
+            };
+
+            // Создаем серию для ответов
+            var responsePoints = feedback.Responses.Select(r => new PointData
+            {
+                X = toMs(r.timestamp),
+                Y = r.feedback.Position.Surge,
+                Label = $"Response at {r.timestamp}"
+            }).ToList();
+
+            var responseSeries = new SeriesData
+            {
+                Series = responsePoints,
+                Title = "Responses",
+                ConnectPoints = false,
+                Color = "#FF0000", // Красный
+                PointSize = 5
+            };
+
+            // Создаем ChartData
+            var chartData = new ChartData
+            {
+                Series = new List<SeriesData> { commandSeries, responseSeries },
+                Type = ChartType.Displacement,
+                Title = "Surge Displacement over Time",
+                XLabel = "Time (ms)",
+                YLabel = "Surge (m)",
+                DoShowLegend = true,
+                Width = 800,
+                Height = 600,
+                BackgroundColor = "#2F2F2F"
+            };
+
+            return chartData;
         }
 
         private Texture2D ParsePngToTexture2D(string fullPathToImage)

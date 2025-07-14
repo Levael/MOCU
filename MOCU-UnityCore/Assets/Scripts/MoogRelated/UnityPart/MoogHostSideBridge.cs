@@ -43,8 +43,8 @@ namespace MoogModule
 
         public void Connect(MachineSettings parameters)
         {
-            var moogDataTransferObject = new MoogDataTransferObject { ConnectCommand = true, ConnectParameters = parameters };
-            var json = JsonHelper.SerializeJson(moogDataTransferObject);
+            var DTO = new MoogDataTransferObject { ConnectCommand = true, ConnectParameters = parameters };
+            var json = JsonHelper.SerializeJson(DTO);
             _communicator.SendMessage(json);
         }
 
@@ -75,18 +75,26 @@ namespace MoogModule
 
         public void MoveToPoint(MoveToPointParameters parameters)
         {
-            var moogDataTransferObject = new MoogDataTransferObject { MoveToPointCommand = true, MoveToPointParameters = parameters };
-            var json = JsonHelper.SerializeJson(moogDataTransferObject);
+            var DTO = new MoogDataTransferObject { MoveToPointCommand = true, MoveToPointParameters = parameters };
+            var json = JsonHelper.SerializeJson(DTO);
             _communicator.SendMessage(json);
         }
 
         public void MoveByTrajectory(MoveByTrajectoryParameters parameters)
         {
-            var moogDataTransferObject = new MoogDataTransferObject { MoveByTrajectoryCommand = true, MoveByTrajectoryParameters = parameters };
-            var json = JsonHelper.SerializeJson(moogDataTransferObject);
+            var DTO = new MoogDataTransferObject { MoveByTrajectoryCommand = true, MoveByTrajectoryParameters = parameters };
+            var json = JsonHelper.SerializeJson(DTO);
             _communicator.SendMessage(json);
         }
-        
+
+
+        public void Test(object input = null)
+        {
+            var DTO = new MoogDataTransferObject { CustomMessage = "test request" };
+            var json = JsonHelper.SerializeJson(DTO);
+            _communicator.SendMessage(json);
+        }
+
         // ########################################################################################
 
         // todo
@@ -101,7 +109,7 @@ namespace MoogModule
                 if (!String.IsNullOrEmpty(DTO.CustomMessage))
                     UnityEngine.Debug.Log($"Custom message in 'HandleIncomingMessage': {DTO.CustomMessage}");
 
-                // CLIP CHANGES
+                // 
                 if (DTO.Feedback != null)
                     Feedback?.Invoke(DTO.Feedback);
             }

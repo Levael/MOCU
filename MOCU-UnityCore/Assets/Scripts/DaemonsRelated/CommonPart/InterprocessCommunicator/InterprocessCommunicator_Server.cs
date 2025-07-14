@@ -37,7 +37,7 @@ namespace InterprocessCommunication
                 outBufferSize: _bufferSize);
 
             reader = new StreamReader(readPipe, new UTF8Encoding(false));
-            writer = new StreamWriter(writePipe, new UTF8Encoding(false)) { AutoFlush = true };
+            writer = new StreamWriter(writePipe, new UTF8Encoding(false));
         }
 
         public override async void Start()

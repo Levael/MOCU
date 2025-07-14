@@ -34,7 +34,7 @@ namespace MoogModule.Daemon
             _cancelationTokenSource = new();
         }
 
-        public void Connect(MachineSettings parameters)
+        public bool Connect(MachineSettings parameters)
         {
             try
             {
@@ -48,11 +48,15 @@ namespace MoogModule.Daemon
                 Task.Run(() => FeedbackLoop());
                 Task.Run(() => ListenLoop());
                 //Task.Run(() => SendLoop());
+
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Handled error in 'Connect' method: {ex}");
                 Disconnect();
+
+                return false;
             }
         }
 

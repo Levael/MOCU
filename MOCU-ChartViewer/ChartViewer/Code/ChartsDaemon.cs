@@ -35,12 +35,13 @@ namespace ChartsModule.Daemon
 
         private void OnGenerateChartAsImage(ChartData chartData)
         {
-
+            // todo
+            //ChartMaker.SavePng(chartData);
         }
 
         private void OnGenerateChartAsForm(ChartData chartData)
         {
-
+            ChartMaker.ShowInteractive(chartData);
         }
     }
 }

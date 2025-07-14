@@ -10,7 +10,7 @@ namespace ChartsModule
 {
     public static class MoogFeedbackConverter
     {
-        public static ChartData ConvertToChartData(MoogFeedback feedback, SpetialChartSettings_Displacement settings, string dofToDisplay = "Surge")
+        /*public static ChartData ConvertToChartData(MoogFeedback feedback, SpetialChartSettings_Displacement settings, string dofToDisplay = "Surge")
         {
             var seriesList = new List<SeriesData>();
 
@@ -149,6 +149,6 @@ namespace ChartsModule
                 "Heave" => parameters.Heave,
                 _ => double.NaN // Возвращаем NaN если имя неверное
             };
-        }
+        }*/
     }
 }

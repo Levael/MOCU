@@ -18,6 +18,8 @@ namespace MoogModule
         event Action<MoveToPointParameters> MoveToPoint;
         event Action<MoveByTrajectoryParameters> MoveByTrajectory;
 
+        event Action<object?> Test;
+
         // responses from Daemon
         void State(MoogRealTimeState state);
         void Feedback(MoogFeedback feedback);

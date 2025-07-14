@@ -55,6 +55,7 @@ namespace MoogModule.Daemon
             _hostAPI.StopReceivingFeedback += HandleStopReceivingFeedbackCommand;
             _hostAPI.MoveToPoint += HandleMoveToPointCommand;
             _hostAPI.MoveByTrajectory += HandleMoveByTrajectoryCommand;
+            _hostAPI.Test += HandleTestCommand;
         }
 
         public void DoBeforeExit()
@@ -142,8 +143,7 @@ namespace MoogModule.Daemon
             try
             {
                 _machineSettings = parameters;
-                _moogMachineCommunicator.Connect(_machineSettings);
-                _moogMachineIsConnected = true;
+                _moogMachineIsConnected = _moogMachineCommunicator.Connect(_machineSettings);
 
                 // test ?
                 _moogRealTimeState.Position = _machineSettings.StartPosition;
@@ -212,6 +212,9 @@ namespace MoogModule.Daemon
         // todo: looks like it needs to be reworked
         private void HandleStopReceivingFeedbackCommand()
         {
+            if (_doSaveLogs == false)
+                return;
+
             _doSaveLogs = false;
 
             var feedback = new MoogFeedback
@@ -303,6 +306,40 @@ namespace MoogModule.Daemon
             {
                 Console.WriteLine($"Handled error ucurred in 'HandleSentPacket': {ex}");
             }
+        }
+
+        private void HandleTestCommand(object? input = null)
+        {
+            var feedback = new MoogFeedback
+            {
+                Commands = new List<(DateTime timestamp, DofParameters position)>
+                {
+                    (new DateTime(2025, 7, 14, 13, 5, 0, 0, DateTimeKind.Utc), new DofParameters { Surge = 0.1f }),
+                    (new DateTime(2025, 7, 14, 13, 5, 0, 1, DateTimeKind.Utc), new DofParameters { Surge = 0.2f }),
+                    (new DateTime(2025, 7, 14, 13, 5, 0, 2, DateTimeKind.Utc), new DofParameters { Surge = 0.15f })
+                },
+                
+                Responses = new List<(DateTime timestamp, MoogRealTimeState feedback)>
+                {
+                    (new DateTime(2025, 7, 14, 13, 5, 0, 5, DateTimeKind.Utc), new MoogRealTimeState
+                    {
+                        EncodedMachineState = EncodedMachineState.Engaged,
+                        Position = new DofParameters { Surge = 0.1f }
+                    }),
+                    (new DateTime(2025, 7, 14, 13, 5, 0, 6, DateTimeKind.Utc), new MoogRealTimeState
+                    {
+                        EncodedMachineState = EncodedMachineState.Engaged,
+                        Position = new DofParameters { Surge = 0.2f }
+                    }),
+                    (new DateTime(2025, 7, 14, 13, 5, 0, 7, DateTimeKind.Utc), new MoogRealTimeState
+                    {
+                        EncodedMachineState = EncodedMachineState.Engaged,
+                        Position = new DofParameters { Surge = 0.3f }
+                    })
+                }
+            };
+
+            _hostAPI.Feedback(feedback);
         }
 
         private void ExecuteEveryTick()

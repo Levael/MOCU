@@ -20,10 +20,10 @@ namespace ChartsModule
             _communicator.MessageReceived += message => HandleIncomingMessage(message);
         }
 
-        public void Test()
+        /*public void Test()
         {
             GenerateChartAsForm();
-        }
+        }*/
 
         public void GenerateChartAsImage(ChartData chartData)
         {

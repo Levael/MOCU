@@ -60,6 +60,7 @@ namespace MoogModule
 
             _daemon = new MoogHostSideBridge(communicator);
             _daemon.Connect(_connectParameters);    // will be sent only after 'ConnectionEstablished' (automatically, it's in the queue)
+            _daemon.Test();
 
             //communicator.ConnectionEstablished += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Complete);
             //communicator.ConnectionBroked += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Failed);
@@ -122,7 +123,7 @@ namespace MoogModule
 
         private void OnReceivedFeedback(MoogFeedback feedback)
         {
-            _chartsHandler.
+            _chartsHandler.InteractiveChart(feedback);
         }
 
         private void TestMethod()
