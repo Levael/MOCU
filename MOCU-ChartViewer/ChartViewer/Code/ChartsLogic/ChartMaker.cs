@@ -92,7 +92,7 @@ namespace ChartsModule
 
             plot.Axes.Bottom.Label.Text = data.XLabel;
             plot.Axes.Left.Label.Text = data.YLabel;
-            plot.FigureBackground = new BackgroundStyle { Color = ScottPlot.Color.FromHex(data.BackgroundColor) };
+            //plot.FigureBackground = new BackgroundStyle { Color = ScottPlot.Color.FromHex(data.BackgroundColor) };
             plot.Legend.IsVisible = data.DoShowLegend;
         }
     }

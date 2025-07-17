@@ -16,6 +16,7 @@ Notes:
 	(which means you can control app fps but not while VR is active)
 	- sometimes Unity just F*CKING IGNORS EXCEPTIONS and continues its execution without any console notification (try catch DO help)
 	- interposes communication is now done via NamedPipes. If higher speed will be needed - switch to SharedMemory (faster but more complicated).
+	- removed 'exe' files from GitHub (too heavy). When downloading repo you will need to compile them by yourself and add to folder 'Daemons'
 - ABOUT EXTERNAL APPLICATIONS (audio and port finder):
 	- do not specify that the project is for Windows, otherwise the file size will increase from 64mb to 150mb
 	- project settings should be something like:

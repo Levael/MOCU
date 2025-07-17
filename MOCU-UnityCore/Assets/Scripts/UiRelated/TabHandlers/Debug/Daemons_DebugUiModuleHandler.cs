@@ -60,7 +60,7 @@ public class Daemons_DebugUiModuleHandler : ManagedMonoBehaviour
 
         _daemonsActivitiesText.text += $"{message.messageLabel} - {message.daemonName} - {message.messageSemanticType} - {message.messageSourceType}";
         Debug.Log($"messageLabel: {message.messageLabel}. MS: {_testStopwatch.Elapsed.TotalMilliseconds}");
-        Debug.Log($"messageContent: {message.messageContent}");
+        //Debug.Log($"messageContent: {message.messageContent}");
     }
 
     private void DaemonStatusChanged()

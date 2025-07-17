@@ -4,16 +4,25 @@ using System.Numerics;
 
 namespace MoogModule.Daemon
 {
-    public class MoogRealTimeState
+    public struct MoogRealTimeState
     {
         private (DofParameters coordinate, DateTime time) _currentPosition;
         private (DofParameters coordinate, DateTime time) _previousPosition;
         private (DofParameters coordinate, DateTime time) _prePreviousPosition;
 
 
-        public EncodedMachineState EncodedMachineState { get; set; } = EncodedMachineState.Disabled;
-        public DofParameters DesiredPosition { get; set; } = default;
-        public string Faults { get; set; } = String.Empty;
+        public EncodedMachineState EncodedMachineState  { get; set; }
+        public DofParameters DesiredPosition            { get; set; }
+        public string Faults                            { get; set; }
+
+        public static MoogRealTimeState CreateDefault()
+        {
+            var s = new MoogRealTimeState();
+            s.EncodedMachineState = EncodedMachineState.Disabled;
+            s.DesiredPosition = default;
+            s.Faults = String.Empty;
+            return s;
+        }
 
 
         public DofParameters Position

@@ -32,7 +32,7 @@ namespace MoogModule.Daemon
             _communicator = communicator;
 
             _communicator.MessageReceived       += message => HandleIncomingMessage(message);
-            _communicator.MessageSent           += message => Console.WriteLine($"Sent message to host: {message}");
+            //_communicator.MessageSent           += message => Console.WriteLine($"Sent message to host: {message}");
             _communicator.ConnectionEstablished += message => Console.WriteLine($"Connection established. {message}");
             _communicator.ConnectionBroked      += message => Console.WriteLine($"Connection broked. {message}");
             _communicator.ErrorOccurred         += message => Console.WriteLine($"Occurred an error in communicator. {message}");
@@ -63,7 +63,7 @@ namespace MoogModule.Daemon
 
         private void HandleIncomingMessage(string message)
         {
-            Console.WriteLine($"Got message: {message}");
+            //Console.WriteLine($"Got message: {message}");
 
             try
             {
@@ -103,10 +103,12 @@ namespace MoogModule.Daemon
                 if (DTO.ResetCommand)
                     Reset?.Invoke();
 
-                // DO RECEIVE FEEDBACK
-                if (DTO.DoReceiveFeedback)
+                // START RECEIVING FEEDBACK
+                if (DTO.StartReceivingFeedback)
                     StartReceivingFeedback?.Invoke();
-                else
+
+                // STOP RECEIVING FEEDBACK
+                if (DTO.StopReceivingFeedback)
                     StopReceivingFeedback?.Invoke();
 
                 // MOVE TO POINT

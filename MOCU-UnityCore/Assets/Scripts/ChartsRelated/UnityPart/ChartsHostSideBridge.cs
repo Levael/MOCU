@@ -42,7 +42,7 @@ namespace ChartsModule
 
         private void HandleIncomingMessage(string message)
         {
-            Debug.Log($"Message from daemon (charts): {message}");
+            //Debug.Log($"Message from daemon (charts): {message}");
 
             var DTO = JsonHelper.DeserializeJson<ChartsDataTransferObject>(message);
 

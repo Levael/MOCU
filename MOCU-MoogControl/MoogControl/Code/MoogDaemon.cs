@@ -17,7 +17,7 @@ namespace MoogModule.Daemon
         private readonly MoogDaemonSideBridge _hostAPI;
         private readonly IntervalExecutor _intervalExecutor;
         private readonly MachineCommunicator _moogMachineCommunicator;
-        private readonly MoogRealTimeState _moogRealTimeState;
+        private MoogRealTimeState _moogRealTimeState;
         private MachineSettings _machineSettings;
 
         private readonly ConcurrentQueue<CommandPacket> _atomicCommandsForMoog;
@@ -39,7 +39,7 @@ namespace MoogModule.Daemon
 
             _hostAPI = hostAPI;
             _moogMachineCommunicator = new MachineCommunicator();
-            _moogRealTimeState = new MoogRealTimeState();
+            _moogRealTimeState = MoogRealTimeState.CreateDefault();
             _intervalExecutor = new IntervalExecutor(TimeSpan.FromMilliseconds(1));
 
             _hostAPI.TerminateDaemon += message => Console.WriteLine("Got command to terminate the daemon.");

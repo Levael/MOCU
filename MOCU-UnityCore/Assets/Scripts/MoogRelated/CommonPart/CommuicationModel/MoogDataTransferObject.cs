@@ -17,9 +17,10 @@ namespace MoogModule
         public bool EngageCommand                                       { get; set; } = false;
         public bool DisengageCommand                                    { get; set; } = false;
         public bool ResetCommand                                        { get; set; } = false;
-        public bool DoReceiveFeedback                                   { get; set; } = false;
         public bool MoveToPointCommand                                  { get; set; } = false;
         public bool MoveByTrajectoryCommand                             { get; set; } = false;
+        public bool StartReceivingFeedback                              { get; set; } = false;
+        public bool StopReceivingFeedback                               { get; set; } = false;
 
         // Parameters
         public MachineSettings? ConnectParameters                       { get; set; } = null;

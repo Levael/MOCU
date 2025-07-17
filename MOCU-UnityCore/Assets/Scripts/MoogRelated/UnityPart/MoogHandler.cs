@@ -60,7 +60,7 @@ namespace MoogModule
 
             _daemon = new MoogHostSideBridge(communicator);
             _daemon.Connect(_connectParameters);    // will be sent only after 'ConnectionEstablished' (automatically, it's in the queue)
-            _daemon.Test();
+            //_daemon.Test();
 
             //communicator.ConnectionEstablished += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Complete);
             //communicator.ConnectionBroked += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Failed);
@@ -129,7 +129,8 @@ namespace MoogModule
         private void TestMethod()
         {
             var centerPoint = new DofParameters { Heave = -0.22f };
-            var destinationPoint = new DofParameters { Heave = -0.22f, Surge = 0.13f, Sway = -0.02f };
+            var destinationPoint_1 = new DofParameters { Heave = -0.22f, Surge = 0.01f };
+            var destinationPoint_2 = new DofParameters { Heave = -0.22f, Surge = 0.13f };
             var trajectoryTypeSettings = new TrajectoryTypeSettings { Linear = new TrajectoryTypeSettings_Linear { } };
             var trajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } };
             var trajectoryType = TrajectoryType.Linear;
@@ -140,7 +141,7 @@ namespace MoogModule
             var firstTrajectorySettings = new MoveByTrajectoryParameters
             {
                 StartPoint = centerPoint,
-                EndPoint = destinationPoint,
+                EndPoint = destinationPoint_1,
                 MovementDuration = TimeSpan.FromSeconds(1),
                 TrajectoryTypeSettings = trajectoryTypeSettings,
                 TrajectoryProfileSettings = trajectoryProfileSettings,
@@ -151,7 +152,7 @@ namespace MoogModule
 
             var secondTrajectorySettings = new MoveByTrajectoryParameters
             {
-                StartPoint = destinationPoint,
+                StartPoint = destinationPoint_1,
                 EndPoint = centerPoint,
                 MovementDuration = TimeSpan.FromSeconds(2.5),
                 TrajectoryTypeSettings = trajectoryTypeSettings,
@@ -161,14 +162,56 @@ namespace MoogModule
                 TrajectoryProfile = trajectoryProfile
             };
 
+            var thirdTrajectorySettings = new MoveByTrajectoryParameters
+            {
+                StartPoint = centerPoint,
+                EndPoint = destinationPoint_2,
+                MovementDuration = TimeSpan.FromSeconds(1),
+                TrajectoryTypeSettings = trajectoryTypeSettings,
+                TrajectoryProfileSettings = trajectoryProfileSettings,
+                DelayHandling = delayHandling,
+                TrajectoryType = trajectoryType,
+                TrajectoryProfile = trajectoryProfile
+            };
+
+            var fourthTrajectorySettings = new MoveByTrajectoryParameters
+            {
+                StartPoint = destinationPoint_2,
+                EndPoint = centerPoint,
+                MovementDuration = TimeSpan.FromSeconds(2.5),
+                TrajectoryTypeSettings = trajectoryTypeSettings,
+                TrajectoryProfileSettings = trajectoryProfileSettings,
+                DelayHandling = delayHandling,
+                TrajectoryType = trajectoryType,
+                TrajectoryProfile = trajectoryProfile
+            };
+
+
             IEnumerator TestCoroutine()
             {
+                // forward 1 (short)
                 _daemon.StartReceivingFeedback();
                 _daemon.MoveByTrajectory(firstTrajectorySettings);
-                yield return new WaitForSeconds(1f + 3f);
-                _daemon.MoveByTrajectory(secondTrajectorySettings);
-                yield return new WaitForSeconds(2.5f + 3f);
+                yield return new WaitForSeconds(1f + 0.5f);
                 _daemon.StopReceivingFeedback();
+                yield return new WaitForSeconds(1f);    // на всякий случай
+
+                // backward 1
+                _daemon.MoveByTrajectory(secondTrajectorySettings);
+                yield return new WaitForSeconds(2.5f + 2f);
+
+                /*// forward 2 (long)
+                _daemon.StartReceivingFeedback();
+                _daemon.MoveByTrajectory(thirdTrajectorySettings);
+                yield return new WaitForSeconds(1f + 0.5f);
+                _daemon.StopReceivingFeedback();
+                yield return new WaitForSeconds(1f);    // на всякий случай
+
+                // backward 2
+                _daemon.MoveByTrajectory(fourthTrajectorySettings);
+                yield return new WaitForSeconds(2.5f + 2f);*/
+
+                // stop
                 _daemon.Disengage();
             }
 

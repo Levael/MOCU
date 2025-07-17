@@ -35,8 +35,8 @@ namespace MoogModule
             _premadeCommand_Engage                  = JsonHelper.SerializeJson(new MoogDataTransferObject { EngageCommand = true });
             _premadeCommand_Disengage               = JsonHelper.SerializeJson(new MoogDataTransferObject { DisengageCommand = true });
             _premadeCommand_Reset                   = JsonHelper.SerializeJson(new MoogDataTransferObject { ResetCommand = true });
-            _premadeCommand_StartReceivingFeedback  = JsonHelper.SerializeJson(new MoogDataTransferObject { DoReceiveFeedback = true });
-            _premadeCommand_StopReceivingFeedback   = JsonHelper.SerializeJson(new MoogDataTransferObject { DoReceiveFeedback = false });
+            _premadeCommand_StartReceivingFeedback  = JsonHelper.SerializeJson(new MoogDataTransferObject { StartReceivingFeedback = true });
+            _premadeCommand_StopReceivingFeedback   = JsonHelper.SerializeJson(new MoogDataTransferObject { StopReceivingFeedback = true });
         }
 
         // ########################################################################################
@@ -102,7 +102,7 @@ namespace MoogModule
         {
             try
             {
-                UnityEngine.Debug.Log($"Got message from Moog: {message}");
+                //UnityEngine.Debug.Log($"Got message from Moog: {message}");
                 var DTO = JsonHelper.DeserializeJson<MoogDataTransferObject>(message);
 
                 // CUSTOM MESSAGE

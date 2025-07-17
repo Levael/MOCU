@@ -124,8 +124,7 @@ namespace ChartsModule
             var responsePoints = feedback.Responses.Select(r => new PointData
             {
                 X = toMs(r.timestamp),
-                Y = r.feedback.Position.Surge,
-                Label = $"Response at {r.timestamp}"
+                Y = r.feedback.Position.Surge
             }).ToList();
 
             var responseSeries = new SeriesData

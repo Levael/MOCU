@@ -11,7 +11,7 @@ namespace ChartsModule
         public string Title                     { get; set; } = String.Empty;
         public bool ConnectPoints               { get; set; } = true;
         public string Color                     { get; set; } = "#0000FF";  // Hex color for both points and line
-        public int PointSize                    { get; set; } = 5;
+        public int PointSize                    { get; set; } = 3;
         public int LineSize                     { get; set; } = 1;
     }
 }
