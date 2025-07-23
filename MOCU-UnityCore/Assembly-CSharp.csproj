@@ -58,8 +58,10 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.9f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistParameters.cs" />
     <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\SeriesData.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\InterprocessCommunicationMessageLog.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistTrial.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_DPadAction.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\IControllerDevice.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_JoystickAction.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="Assets\For tests\UpdUiCameraParams.cs" />
     <Compile Include="Assets\Scripts\User.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Base.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistExperiment.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\DaemonErrorReport.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Server.cs" />
     <Compile Include="Assets\Scripts\UnityMainThreadDispatcher.cs" />
@@ -132,6 +135,7 @@
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\KeyboardSimulator.cs" />
     <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\ChartsDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\DaemonsHandler.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistHandler.cs" />
     <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\ChartType.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\Linear\TrajectoryGenerator_Linear.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Base.cs" />
@@ -148,7 +152,9 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Client.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\ControllersHandler.cs" />
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistScene.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\CDF\TrajectoryProfile_CDF.cs" />
+    <Compile Include="Assets\For tests\TestStyle.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\SettingsDeviceBox\SettingsDeviceBox.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\SettingsTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_EventType.cs" />
@@ -168,6 +174,7 @@
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DifferentInfo_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputSystemTests.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\CommuicationModel\MachineSettings.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistStimulusType.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceConnectionStatus.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_UnityServer.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\JsonHelper.cs" />
