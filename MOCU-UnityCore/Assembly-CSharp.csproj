@@ -107,6 +107,7 @@
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DebugTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\HostSideDaemonContainer.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\IDaemonHandler.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistControls.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\InterlinkedCollection.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\DaemonType.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\SubStatusState.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="Assets\Scripts\AudioRelated\_Depricated\AudioDevices.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\UnityPart\AudioHandler.cs" />
     <Compile Include="Assets\Scripts\VrRelated\VrHandler.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TwoIntervalDistanceType.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\TrajectoryProfile.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioClipData.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Experiment\ExperimentTabHandler.cs" />
@@ -142,8 +144,10 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\IDaemonUser.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\TrajectoryType.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_IntercomAction.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TwoIntervalExperimentHalf.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zAudioControl (depricated)\AudioCommunicationModel.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputHandler.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistResponseHandler.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\ObservableConcurrentQueue.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\TrajectoryManager.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatus.cs" />
@@ -169,6 +173,7 @@
     <Compile Include="Assets\Scripts\StatusesRelated\StatusesHandler.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\CDF\TrajectoryProfileSettings_CDF.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioClipName.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TwoIntervalPersonColor.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\UnityPart\MoogHandler_API.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zUnityDaemonsCommon (depricated)\CommonUtilities.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DifferentInfo_DebugUiModuleHandler.cs" />

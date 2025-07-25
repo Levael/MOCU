@@ -460,6 +460,8 @@ GameObject:
   m_Component:
   - component: {fileID: 421177267}
   - component: {fileID: 421177268}
+  - component: {fileID: 421177269}
+  - component: {fileID: 421177270}
   m_Layer: 3
   m_Name: AfroIsraelis
   m_TagString: Untagged
@@ -500,6 +502,30 @@ MonoBehaviour:
   - {fileID: 3680885089750297166}
   BlackModels:
   - {fileID: 1795770540}
+--- !u!114 &421177269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421177266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b74ac0ceca6c63340aca810df9e927e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &421177270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421177266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecfd37a10fd879042addb46a6368d5f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &603612049
 GameObject:
   m_ObjectHideFlags: 0
