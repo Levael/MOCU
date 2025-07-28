@@ -157,6 +157,7 @@
     <Compile Include="Assets\Scripts\ControllersRelated\ControllersHandler.cs" />
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistScene.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistExperimentState.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\CDF\TrajectoryProfile_CDF.cs" />
     <Compile Include="Assets\For tests\TestStyle.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\SettingsDeviceBox\SettingsDeviceBox.cs" />
@@ -184,6 +185,7 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_UnityServer.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\JsonHelper.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\IBusinessLogic_Client.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistAnswer.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceType.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\TrajectoryTypeSettings.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatusHandler.cs" />

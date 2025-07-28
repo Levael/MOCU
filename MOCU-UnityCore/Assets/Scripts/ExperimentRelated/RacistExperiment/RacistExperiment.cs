@@ -16,6 +16,10 @@ namespace RacistExperiment
         private float _multiplier;
         private int _currentTrialIndex;
 
+        public DateTime StartedAt;
+        public DateTime FinishedAt;
+        public bool HasFinished;
+
         public RacistExperiment(RacistParameters config)
         {
             _config = config;
@@ -23,6 +27,7 @@ namespace RacistExperiment
             _multiplierIndex = _config.Multipliers.Count - 1;
             _multiplier = _config.Multipliers[_multiplierIndex];
             _currentTrialIndex = 0;
+            HasFinished = false;
         }
 
         public string GetTrialsData()
@@ -48,8 +53,11 @@ namespace RacistExperiment
             SetTrialAdditionalData(trialData: _trials[0]);
         }
 
-        public void PrepareNextTrial(bool answerWasCorrect)
+        public void PrepareNextTrial()
         {
+            var currentTrial = _trials[_currentTrialIndex];
+            var answerWasCorrect = currentTrial.ReceivedAnswer == currentTrial.CorrectAnswer;
+
             if (answerWasCorrect)
             {
                 if (UnityEngine.Random.value < _config.ChanceToMakeTaskHarder)
@@ -63,6 +71,31 @@ namespace RacistExperiment
 
             _currentTrialIndex++;
             SetTrialAdditionalData(_trials[_currentTrialIndex]);
+        }
+
+        public void SetParticipantAnswer(RacistAnswer answer)
+        {
+            _trials[_currentTrialIndex].ReceivedAnswer = answer;
+        }
+
+        public RacistTrial StartTrial()
+        {
+            var trial = _trials[_currentTrialIndex];
+            trial.StartedAt = DateTime.UtcNow;
+            return trial;
+        }
+
+        public void FinishTrial()
+        {
+            _trials[_currentTrialIndex].FinishedAt = DateTime.UtcNow;
+
+            if (_currentTrialIndex >= _trials.Count - 1)
+            {
+                HasFinished = true;
+                return;
+            }
+
+            PrepareNextTrial();
         }
 
         // .....................
@@ -133,6 +166,11 @@ namespace RacistExperiment
                 trialData.SecondInterval.Distance = testDistance;
             else
                 trialData.FirstInterval.Distance = testDistance;
+
+            trialData.CorrectAnswer =
+                trialData.FirstInterval.Distance > trialData.SecondInterval.Distance ?
+                RacistAnswer.FirstWasLonger :
+                RacistAnswer.SecondWasLonger;
         }
     }
 }

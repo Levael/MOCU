@@ -69,72 +69,7 @@ namespace MoogModule.Daemon
 
             _hostAPI.StartCommunication();
             _intervalExecutor.Start();
-
-            //Task.Run(() => RunChartWindow());
         }
-
-        /*private void RunChartWindow()
-        {
-            var formsPlot = new ScottPlot.WinForms.FormsPlot
-            {
-                Dock = System.Windows.Forms.DockStyle.Fill,
-            };
-
-            ScottPlot.Plot plt = formsPlot.Plot;
-            ScottPlot.Plottables.DataLogger loggerCommand = plt.Add.DataLogger();
-            ScottPlot.Plottables.DataLogger loggerFeedback = plt.Add.DataLogger();
-
-            plt.Axes.Rules.Clear();
-            plt.Axes.Bottom.Label.Text = "Time [ms] (from start)";
-            plt.Axes.Left.Label.Text = "Surge [m]";
-            plt.Axes.SetLimitsX(0, 10_000);
-            plt.Axes.SetLimitsY(-0.5, 0.5);
-
-            loggerCommand.MarkerSize = 3;
-            loggerCommand.MarkerShape = ScottPlot.MarkerShape.FilledCircle;
-            loggerFeedback.MarkerSize = 3;
-            loggerFeedback.MarkerShape = ScottPlot.MarkerShape.OpenSquare;
-
-            plt.Grid.XAxisStyle.MajorLineStyle.Width = 1;
-            plt.Grid.XAxisStyle.MinorLineStyle.Width = 0.01f;
-
-            loggerCommand.ManageAxisLimits = false;
-            loggerFeedback.ManageAxisLimits = false;
-
-            var form = new System.Windows.Forms.Form
-            {
-                Text = "ScottPlot Live",
-                Width = 800,
-                Height = 400
-            };
-            form.Controls.Add(formsPlot);
-
-            form.FormClosed += (s, e) => System.Windows.Forms.Application.ExitThread();
-
-            DateTime startTime = DateTime.UtcNow;
-
-            var renderTimer = new System.Windows.Forms.Timer { Interval = 100 };
-            var maxTicks = 2000;
-
-            renderTimer.Tick += (s, e) =>
-            {
-                if (maxTicks-- <= 0)
-                    return;
-
-                while (_logsCommand.TryDequeue(out var point))
-                    loggerCommand.Add((point.time - startTime).TotalMilliseconds, point.position.Surge);
-
-                while (_logsResponses.TryDequeue(out var point))
-                    loggerFeedback.Add((point.time - startTime).TotalMilliseconds, point.position.Surge);
-
-                if ((loggerCommand.HasNewData || loggerFeedback.HasNewData) && (maxTicks-- >= 0))
-                    formsPlot.Refresh();
-            };
-            renderTimer.Start();
-
-            form.Show();
-            System.Windows.Forms.Application.Run();
-        }*/
 
         // ########################################################################################
 
@@ -160,9 +95,10 @@ namespace MoogModule.Daemon
         {
             try
             {
+                parameters.DesiredFps = Math.Max(parameters.DesiredFps, _machineSettings.DesiredFPS);
                 DateTime now = DateTime.UtcNow;
                 TimeSpan delay = parameters.ScheduledStartTime - now;
-                TrajectoryManager trajectoryManager = new(parameters, _machineSettings, _moogRealTimeState);
+                TrajectoryManager trajectoryManager = new (parameters);
 
                 if (delay > TimeSpan.Zero)
                 {

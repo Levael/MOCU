@@ -7,6 +7,7 @@ namespace MoogModule
 {
     public class MoveByTrajectoryParameters
     {
+        public int DesiredFps                                       { get; set; } = 1000;
         public TimeSpan MovementDuration                            { get; set; } = TimeSpan.Zero;
         public DateTime ScheduledStartTime                          { get; set; } = DateTime.MinValue;
         public DofParameters StartPoint                             { get; set; } = default;
