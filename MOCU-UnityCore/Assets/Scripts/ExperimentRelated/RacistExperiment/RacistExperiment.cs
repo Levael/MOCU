@@ -37,6 +37,9 @@ namespace RacistExperiment
 
         public void GenerateTrials()
         {
+            if (_config.TrialsNumber < 4)
+                throw new Exception("Number of trials must be at least 4");
+
             int quarter = (int)Math.Floor(_config.TrialsNumber * 0.25);
 
             _trials.Clear();
@@ -58,16 +61,12 @@ namespace RacistExperiment
             var currentTrial = _trials[_currentTrialIndex];
             var answerWasCorrect = currentTrial.ReceivedAnswer == currentTrial.CorrectAnswer;
 
-            if (answerWasCorrect)
-            {
-                if (UnityEngine.Random.value < _config.ChanceToMakeTaskHarder)
-                    MakeTaskHarder();
-            }
+            if (currentTrial.ReceivedAnswer == RacistAnswer.Late)
+                LeaveSameDifficulty();
+            else if(answerWasCorrect)
+                MakeTaskHarder();
             else
-            {
-                if (UnityEngine.Random.value < _config.ChanceToMakeTaskEasier)
-                    MakeTaskEasier();
-            }
+                MakeTaskEasier();
 
             _currentTrialIndex++;
             SetTrialAdditionalData(_trials[_currentTrialIndex]);
@@ -126,14 +125,25 @@ namespace RacistExperiment
 
         private void MakeTaskHarder()
         {
+            if (UnityEngine.Random.value > _config.ChanceToMakeTaskHarder)
+                return;
+
             _multiplierIndex = Mathf.Clamp(_multiplierIndex - 1, 0, _config.Multipliers.Count - 1);
             _multiplier = _config.Multipliers[_multiplierIndex];
         }
 
         private void MakeTaskEasier()
         {
+            if (UnityEngine.Random.value > _config.ChanceToMakeTaskEasier)
+                return;
+
             _multiplierIndex = Mathf.Clamp(_multiplierIndex + 1, 0, _config.Multipliers.Count - 1);
             _multiplier = _config.Multipliers[_multiplierIndex];
+        }
+
+        private void LeaveSameDifficulty()
+        {
+            // nothing
         }
 
 

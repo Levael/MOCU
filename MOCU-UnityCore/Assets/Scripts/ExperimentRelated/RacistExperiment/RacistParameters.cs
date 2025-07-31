@@ -18,10 +18,12 @@ namespace RacistExperiment
 
         public TimeSpan FirstMovementDuration           { get; set; } = TimeSpan.FromSeconds(1);
         public TimeSpan SecondMovementDuration          { get; set; } = TimeSpan.FromSeconds(1);
-        public TimeSpan BackwardMovementDuration        { get; set; } = TimeSpan.FromSeconds(2.5);
+        public TimeSpan BackwardMovementDuration        { get; set; } = TimeSpan.FromSeconds(2);
         public TimeSpan PauseBetweenIntervalsDuration   { get; set; } = TimeSpan.FromSeconds(1);
-        public TimeSpan DelayBeforeStartMoving          { get; set; } = TimeSpan.FromSeconds(0.5);
+        public TimeSpan DelayBeforeStartSound           { get; set; } = TimeSpan.FromSeconds(1.5);
+        public TimeSpan DelayAfterStartSignal           { get; set; } = TimeSpan.FromSeconds(0.5);
         public TimeSpan TimeToAnswer                    { get; set; } = TimeSpan.FromSeconds(2);
+        public TimeSpan DelayAfterAnswerSignal          { get; set; } = TimeSpan.FromSeconds(0);
 
         public bool PlayStartTrialSound                 { get; set; } = true;
         public bool PlayFinishTrialSound                { get; set; } = true;

@@ -3,6 +3,9 @@ using UnityEngine;
 using System.Collections;
 
 using MoogModule;
+using UnityEngine.InputSystem.XR;
+using Unity.VisualScripting;
+using System.Threading;
 
 
 namespace RacistExperiment
@@ -12,9 +15,11 @@ namespace RacistExperiment
         private RacistParameters _parameters;
         private RacistExperiment _experiment;
         private RacistResponseHandler _input;
+        private RacistSound _sound;
 
-        private RacistExperimentState _state;
-        private Vector3 _cameraPosition;
+        private RacistTrialState _state;
+        private DofParameters _cameraStartPosition;
+        private DofParameters _whereCameraShouldBe;
         private RacistTrial _currentTrial;
         private Transform _camera;
         private TrajectoryManager _trajectoryManager;
@@ -22,14 +27,15 @@ namespace RacistExperiment
 
         private void Awake()
         {
-            _parameters = new RacistParameters { TrialsNumber = 8, StimulusType = RacistStimulusType.VisualVisual };
+            _parameters = new RacistParameters { TrialsNumber = 4, StimulusType = RacistStimulusType.VisualVisual };
             _experiment = new RacistExperiment(_parameters);
             _input = GetComponent<RacistResponseHandler>();
+            _sound = GetComponent<RacistSound>();
 
-            _state = RacistExperimentState.None;
-            _cameraPosition = new Vector3 { z = _parameters.StartPosition.Surge, y = 1.7f, x = 0 };
-            _camera = GameObject.Find("VrHelmetCamera").transform;
-            _camera.position = _cameraPosition;
+            _state = RacistTrialState.None;
+            _cameraStartPosition = new DofParameters { Surge = _parameters.StartPosition.Surge, Heave = 1.7f, Sway = 0 };
+            _whereCameraShouldBe = _cameraStartPosition;
+            _camera = GameObject.Find("Camera Offset").transform;
             _currentTrial = null;
 
             _input.GotAnswer_Up += HandleInput_Up;
@@ -42,87 +48,132 @@ namespace RacistExperiment
             StartCoroutine(Loop());
         }
 
+        private void Update()
+        {
+            if (_state == RacistTrialState.FirstInterval)
+                _whereCameraShouldBe.Surge -= 0.01f;
+            
+            if (_state == RacistTrialState.SecondInterval)
+                _whereCameraShouldBe.Surge -= 0.01f;
+
+            if (_state == RacistTrialState.Returning)
+                _whereCameraShouldBe.Surge += 0.01f;
+
+
+            _camera.position = new Vector3 { z = _whereCameraShouldBe.Surge, y = _whereCameraShouldBe.Heave, x = _whereCameraShouldBe.Sway };
+        }
+
         private IEnumerator Loop()
         {
+            Debug.Log("Experiment started");
+
             while (!_experiment.HasFinished)
             {
-                yield return Init();
-                yield return WaitToStart();
-                yield return MoveFirstInterval();
-                yield return InterIntervalsWait();
-                yield return MoveSecondInterval();
-                yield return WaitForAnswer();
+                Debug.Log("Trial started");
+
+                yield return Initializing();
+                // here waiting for 'start btn' event
+                yield return WaitingToStartSignal();
+                yield return FirstInterval();
+                yield return InterIntervalPause();
+                yield return SecondInterval();
+                yield return AnswerPhase();
+                yield return PreReturningPause();
                 yield return Returning();
+                yield return Analyzation();
+
+                Debug.Log("Trial finished");
             }
+
+            Debug.Log("Experiment finished");
         }
 
-        private IEnumerator Init()
+        private IEnumerator Initializing()
         {
-            _state = RacistExperimentState.Initializing;
+            _state = RacistTrialState.Initializing;
             _experiment.GenerateTrials();
-            yield return null;
+            yield return new WaitForSeconds((float)_parameters.DelayBeforeStartSound.TotalSeconds);
+
+            _sound.PlaySound_Start();
+            _state = RacistTrialState.ReadyToStart;
         }
 
-        private IEnumerator WaitToStart()
+        private IEnumerator WaitingToStartSignal()
         {
-            _state = RacistExperimentState.ReadyToStart;
-
-            while (_state != RacistExperimentState.FirstInterval)
+            while (_state != RacistTrialState.PreFirstIntervalPause)
                 yield return null;
+
+            yield return new WaitForSeconds((float)_parameters.DelayAfterStartSignal.TotalSeconds);
+            _currentTrial = _experiment.StartTrial();
+            _state = RacistTrialState.FirstInterval;
         }
 
-        private IEnumerator MoveFirstInterval()
+        private IEnumerator FirstInterval()
         {
-            // temp
-            return null;
+            // here
+            yield return new WaitForSeconds((float)_parameters.FirstMovementDuration.TotalSeconds);
+            _state = RacistTrialState.InterIntervalPause;
         }
 
-        private IEnumerator InterIntervalsWait()
+        private IEnumerator InterIntervalPause()
         {
             yield return new WaitForSeconds((float)_parameters.PauseBetweenIntervalsDuration.TotalSeconds);
-            _state = RacistExperimentState.SecondInterval;
+            _state = RacistTrialState.SecondInterval;
         }
 
-        private IEnumerator MoveSecondInterval()
+        private IEnumerator SecondInterval()
         {
-            // temp
-            return null;
+            // here
+            yield return new WaitForSeconds((float)_parameters.SecondMovementDuration.TotalSeconds);
+            _state = RacistTrialState.AnswerPhase;
         }
 
-        private IEnumerator WaitForAnswer()
+        private IEnumerator AnswerPhase()
         {
             float timeout = (float)_parameters.TimeToAnswer.TotalSeconds;
             float elapsed = 0f;
 
-            Debug.Log("Ожидание ответа...");
-
-            while (_state != RacistExperimentState.Returning && elapsed < timeout)
+            while (_currentTrial.ReceivedAnswer == RacistAnswer.None && elapsed < timeout)
             {
                 elapsed += Time.deltaTime;
                 yield return null;
             }
 
-            if (_state != RacistExperimentState.Returning)
+            if (_currentTrial.ReceivedAnswer == RacistAnswer.None && elapsed >= timeout)
             {
                 _experiment.SetParticipantAnswer(RacistAnswer.Late);
-                _state = RacistExperimentState.Returning;
+                _sound.PlaySound_AnswerIsLate();
             }
+
+            _state = RacistTrialState.PreReturningPause;
+        }
+
+        private IEnumerator PreReturningPause()
+        {
+            yield return new WaitForSeconds((float)_parameters.DelayAfterAnswerSignal.TotalSeconds);
+            _state = RacistTrialState.Returning;
         }
 
         private IEnumerator Returning()
         {
-            // temp
-            return null;
+            yield return new WaitForSeconds((float)_parameters.BackwardMovementDuration.TotalSeconds);
+            _state = RacistTrialState.Analyzation;
+        }
+
+        private IEnumerator Analyzation()
+        {
+            _experiment.FinishTrial();
+            yield return null;
         }
 
         /*private void Update()
         {
             switch (_state)
             {
-                case RacistExperimentState.None:
+                case RacistTrialState.None:
                     break;
 
-                case RacistExperimentState.Initializing:
+                case RacistTrialState.Initializing:
                     _trajectoryManager = new TrajectoryManager(new MoveByTrajectoryParameters
                     {
                         StartPoint = new DofParameters { Surge = 0 },
@@ -134,31 +185,31 @@ namespace RacistExperiment
                         TrajectoryTypeSettings = new TrajectoryTypeSettings { Linear = new TrajectoryTypeSettings_Linear { } },
                         TrajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } }
                     });
-                    _state = RacistExperimentState.ReadyToStart;
+                    _state = RacistTrialState.PreFirstIntervalPause;
                     break;
 
-                case RacistExperimentState.ReadyToStart:
+                case RacistTrialState.PreFirstIntervalPause:
                     break;
 
-                case RacistExperimentState.FirstInterval:
+                case RacistTrialState.FirstInterval:
                     var position = _trajectoryManager.GetNextPosition();
                     if (position == null)
-                        _state = RacistExperimentState.InterIntervalPause;
+                        _state = RacistTrialState.InterIntervalPause;
                     break;
 
-                case RacistExperimentState.InterIntervalPause:
+                case RacistTrialState.InterIntervalPause:
                     break;
 
-                case RacistExperimentState.SecondInterval:
+                case RacistTrialState.SecondInterval:
                     break;
 
-                case RacistExperimentState.AnswerPhase:
+                case RacistTrialState.AnswerPhase:
                     break;
 
-                case RacistExperimentState.Returning:
+                case RacistTrialState.Returning:
                     break;
 
-                case RacistExperimentState.Finished:
+                case RacistTrialState.Analyzation:
                     break;
 
                 default:
@@ -173,36 +224,49 @@ namespace RacistExperiment
 
         private void HandleInput_Up()
         {
-            if (_state != RacistExperimentState.AnswerPhase) return;
+            if (_state != RacistTrialState.AnswerPhase) return;
 
             _experiment.SetParticipantAnswer(RacistAnswer.SecondWasLonger);
-
-            _state = RacistExperimentState.Returning;
+            _sound.PlaySound_GotAnswer();
         }
 
         private void HandleInput_Down()
         {
-            if (_state != RacistExperimentState.AnswerPhase) return;
+            if (_state != RacistTrialState.AnswerPhase) return;
 
             _experiment.SetParticipantAnswer(RacistAnswer.FirstWasLonger);
-
-            _state = RacistExperimentState.Returning;
+            _sound.PlaySound_GotAnswer();
         }
 
         private void HandleInput_Start()
         {
-            if (_state != RacistExperimentState.ReadyToStart) return;
+            if (_state != RacistTrialState.ReadyToStart) return;
 
-            _currentTrial = _experiment.StartTrial();
-            _state = RacistExperimentState.FirstInterval;
+            _state = RacistTrialState.PreFirstIntervalPause;
         }
 
         // ................
 
         /*private void RecalculateCameraPosition()
         {
-            _cameraPosition = new Vector3 { z = _parameters.StartPosition.Surge, y = 1.7f, x = 0 };
-            _camera.position = _cameraPosition;
+            _cameraStartPosition = new Vector3 { z = _parameters.StartPosition.Surge, y = 1.7f, x = 0 };
+            _camera.position = _cameraStartPosition;
+        }*/
+
+        /*private void SetCameraControlMode(bool fullyManual)
+        {
+            var tpd = Camera.main.GetComponent<TrackedPoseDriver>();
+
+            if (fullyManual)
+            {
+                tpd.trackingType = TrackedPoseDriver.TrackingType.RotationOnly;
+                _camera.position = new Vector3 { z = _parameters.StartPosition.Surge, y = 1.7f, x = 0 };
+            }
+            else
+            {
+                tpd.trackingType = TrackedPoseDriver.TrackingType.RotationAndPosition;
+                _camera.position = new Vector3 { z = _parameters.StartPosition.Surge, y = 0, x = 0 };
+            }
         }*/
     }
 }

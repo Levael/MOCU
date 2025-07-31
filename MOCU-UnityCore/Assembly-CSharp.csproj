@@ -154,10 +154,10 @@
     <Compile Include="Assets\Scripts\VrRelated\VrHeadset_Statuses.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\TrajectoryProfileSettings.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Client.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistTrialState.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\ControllersHandler.cs" />
     <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistScene.cs" />
-    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistExperimentState.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\CDF\TrajectoryProfile_CDF.cs" />
     <Compile Include="Assets\For tests\TestStyle.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\SettingsDeviceBox\SettingsDeviceBox.cs" />
@@ -193,6 +193,7 @@
     <Compile Include="Assets\Scripts\ChartsRelated\UnityPart\ChartsHostSideBridge.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\DofParameters.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceData.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistSound.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigClassTemplates.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\Devices_SettingsUiModuleHandler.cs" />

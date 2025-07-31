@@ -27,19 +27,19 @@ namespace RacistExperiment
 
         private void HandleUp()
         {
-            Debug.Log("Up arrow pressed");
+            //Debug.Log("Up arrow pressed");
             GotAnswer_Up?.Invoke();
         }
 
         private void HandleDown()
         {
-            Debug.Log("Down arrow pressed");
+            //Debug.Log("Down arrow pressed");
             GotAnswer_Down?.Invoke();
         }
 
         private void HandleStart()
         {
-            Debug.Log("Start button pressed");
+            //Debug.Log("Start button pressed");
             GotSignal_Start?.Invoke();
         }
     }

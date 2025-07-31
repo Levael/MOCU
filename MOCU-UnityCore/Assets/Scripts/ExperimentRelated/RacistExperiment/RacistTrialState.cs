@@ -1,15 +1,17 @@
 ﻿namespace RacistExperiment
 {
-    public enum RacistExperimentState
+    public enum RacistTrialState
     {
         None,
         Initializing,
         ReadyToStart,
+        PreFirstIntervalPause,
         FirstInterval,
         InterIntervalPause,
         SecondInterval,
         AnswerPhase,
+        PreReturningPause,
         Returning,
-        Finished
+        Analyzation
     }
 }
