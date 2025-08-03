@@ -11,7 +11,6 @@ namespace MoogModule
     public class TrajectoryManager
     {
         private MoveByTrajectoryParameters _trajectoryParameters;
-        private MachineSettings _machineSettings;
 
         private ITrajectoryGenerator _trajectoryGenerator;
         private ITrajectoryProfile _trajectoryProfile;
@@ -40,17 +39,24 @@ namespace MoogModule
             _trajectory = _trajectoryGenerator.GetWholePath(trajectoryParameters.DesiredFps);
             _currentPositionIndex = 0;
             _startTime = _trajectoryParameters.ScheduledStartTime == DateTime.MinValue ? DateTime.UtcNow : _trajectoryParameters.ScheduledStartTime;
+        }
 
-
-            /*Console.WriteLine(@$"
+        public string GetDevLog()
+        {
+            return
+                @$"
                 TrajectoryManager.constructor info:
                     _trajectory.Length = {_trajectory.Length}
-                    _currentPositionIndex = {_currentPositionIndex}
+                    {_trajectoryParameters.MovementDuration.TotalMilliseconds}
+                    {_trajectoryParameters.StartPoint.Surge}
+                    {_trajectoryParameters.EndPoint.Surge}
+                    {_trajectoryParameters.TrajectoryType}
+                    {_trajectoryParameters.TrajectoryProfile}
+                    {_trajectoryParameters.DelayHandling}
                     _startTime = {_startTime}
-                    _machineSettings.DesiredFPS = {_machineSettings.DesiredFPS}
 
                     _trajectory = {string.Join(", ", _trajectory.Select(p => p.Surge))}
-            ");*/
+                ";
         }
 
         public IEnumerable<DofParameters> GetTrajectoryArray()
@@ -69,6 +75,8 @@ namespace MoogModule
             TimeSpan timePassed = DateTime.UtcNow - _startTime;
             TimeSpan timeLeft = totalTime - timePassed;
 
+            // todo: resolve problem with "index overflow" and devision by 0
+
             /*Console.WriteLine(@$"
                 TrajectoryManager.GetNextPosition info:
                     indexesLeft = {indexesLeft}
@@ -83,8 +91,8 @@ namespace MoogModule
             {
                 DelayCompensationStrategy.None => throw new Exception("You didn't choose a 'DelayCompensationStrategy'"),
                 DelayCompensationStrategy.Ignore => _trajectory[_currentPositionIndex++],
-                DelayCompensationStrategy.Repair => _trajectory[_currentPositionIndex += (int)(indexesLeft / timeLeft.TotalMilliseconds)],
-                DelayCompensationStrategy.Jump => _trajectory[(int)Math.Round(totalIndexes * timePassed / totalTime)],
+                DelayCompensationStrategy.Repair => _trajectory[Math.Min(_currentPositionIndex += (int)(indexesLeft / timeLeft.TotalMilliseconds), totalIndexes - 1)],
+                DelayCompensationStrategy.Jump => _trajectory[Math.Min((int)Math.Round(totalIndexes * timePassed / totalTime), totalIndexes - 1)],
                 _ => throw new NotImplementedException()
             };
         }

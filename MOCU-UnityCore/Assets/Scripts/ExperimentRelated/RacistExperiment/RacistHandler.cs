@@ -6,6 +6,8 @@ using MoogModule;
 using UnityEngine.InputSystem.XR;
 using Unity.VisualScripting;
 using System.Threading;
+using UnityEditor;
+using System.Linq;
 
 
 namespace RacistExperiment
@@ -16,6 +18,7 @@ namespace RacistExperiment
         private RacistExperiment _experiment;
         private RacistResponseHandler _input;
         private RacistSound _sound;
+        private RacistScene _scene;
 
         private RacistTrialState _state;
         private DofParameters _cameraStartPosition;
@@ -31,11 +34,12 @@ namespace RacistExperiment
             _experiment = new RacistExperiment(_parameters);
             _input = GetComponent<RacistResponseHandler>();
             _sound = GetComponent<RacistSound>();
+            _scene = GetComponent<RacistScene>();
 
             _state = RacistTrialState.None;
-            _cameraStartPosition = new DofParameters { Surge = _parameters.StartPosition.Surge, Heave = 1.7f, Sway = 0 };
+            _cameraStartPosition = new DofParameters { Surge = 0, Heave = 1.7f, Sway = 0 };
             _whereCameraShouldBe = _cameraStartPosition;
-            _camera = GameObject.Find("Camera Offset").transform;
+            _camera = GameObject.Find("VR").transform;
             _currentTrial = null;
 
             _input.GotAnswer_Up += HandleInput_Up;
@@ -50,17 +54,8 @@ namespace RacistExperiment
 
         private void Update()
         {
-            if (_state == RacistTrialState.FirstInterval)
-                _whereCameraShouldBe.Surge -= 0.01f;
-            
-            if (_state == RacistTrialState.SecondInterval)
-                _whereCameraShouldBe.Surge -= 0.01f;
-
-            if (_state == RacistTrialState.Returning)
-                _whereCameraShouldBe.Surge += 0.01f;
-
-
-            _camera.position = new Vector3 { z = _whereCameraShouldBe.Surge, y = _whereCameraShouldBe.Heave, x = _whereCameraShouldBe.Sway };
+            _camera.position = new Vector3 { z = _whereCameraShouldBe.Surge, y = _cameraStartPosition.Heave, x = _cameraStartPosition.Sway };
+            //_camera.position = new Vector3 { z = _whereCameraShouldBe.Surge, y = _whereCameraShouldBe.Heave, x = _whereCameraShouldBe.Sway };
         }
 
         private IEnumerator Loop()
@@ -69,7 +64,7 @@ namespace RacistExperiment
 
             while (!_experiment.HasFinished)
             {
-                Debug.Log("Trial started");
+                //Debug.Log("Trial started");
 
                 yield return Initializing();
                 // here waiting for 'start btn' event
@@ -82,7 +77,7 @@ namespace RacistExperiment
                 yield return Returning();
                 yield return Analyzation();
 
-                Debug.Log("Trial finished");
+                //Debug.Log("Trial finished");
             }
 
             Debug.Log("Experiment finished");
@@ -110,9 +105,41 @@ namespace RacistExperiment
 
         private IEnumerator FirstInterval()
         {
-            // here
-            yield return new WaitForSeconds((float)_parameters.FirstMovementDuration.TotalSeconds);
+            if (_currentTrial.FirstInterval.PersonColor == TwoIntervalPersonColor.White)
+                _scene.ShowWhiteModel();
+            else if (_currentTrial.FirstInterval.PersonColor == TwoIntervalPersonColor.Black)
+                _scene.ShowBlackModel();
+            else
+                Debug.Log("You shouldn't see that message");
+
+            TimeSpan elapsed = TimeSpan.Zero;
+            var trajectoryManager = new TrajectoryManager(new MoveByTrajectoryParameters
+            {
+                StartPoint = new DofParameters { Surge = 0 },
+                EndPoint = new DofParameters { Surge = _currentTrial.FirstInterval.Distance },
+                MovementDuration = _parameters.FirstMovementDuration,
+                TrajectoryType = TrajectoryType.Linear,
+                TrajectoryProfile = TrajectoryProfile.CDF,
+                DelayHandling = DelayCompensationStrategy.Jump,
+                TrajectoryTypeSettings = new TrajectoryTypeSettings { Linear = new TrajectoryTypeSettings_Linear { } },
+                TrajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } }
+            });
+
+            while (elapsed <= _parameters.FirstMovementDuration)
+            {
+                elapsed += TimeSpan.FromSeconds(Time.deltaTime);
+                float progress = Mathf.Clamp01((float)(elapsed / _parameters.FirstMovementDuration));
+                var nextPosition = trajectoryManager.GetNextPosition();
+
+                if (nextPosition == null)
+                    break;
+
+                _whereCameraShouldBe = trajectoryManager.GetNextPosition().Value;
+                yield return null;
+            }
+
             _state = RacistTrialState.InterIntervalPause;
+            _scene.HideModel();
         }
 
         private IEnumerator InterIntervalPause()
@@ -123,9 +150,48 @@ namespace RacistExperiment
 
         private IEnumerator SecondInterval()
         {
-            // here
-            yield return new WaitForSeconds((float)_parameters.SecondMovementDuration.TotalSeconds);
+            if (_currentTrial.SecondInterval.PersonColor == TwoIntervalPersonColor.White)
+                _scene.ShowWhiteModel();
+            else if (_currentTrial.SecondInterval.PersonColor == TwoIntervalPersonColor.Black)
+                _scene.ShowBlackModel();
+            else
+                Debug.Log("You shouldn't see that message");
+
+            TimeSpan elapsed = TimeSpan.Zero;
+            var trajectoryManager = new TrajectoryManager(new MoveByTrajectoryParameters
+            {
+                StartPoint = new DofParameters { Surge = _currentTrial.FirstInterval.Distance },
+                EndPoint = new DofParameters { Surge = _currentTrial.FirstInterval.Distance + _currentTrial.SecondInterval.Distance },
+                MovementDuration = _parameters.SecondMovementDuration,
+                TrajectoryType = TrajectoryType.Linear,
+                TrajectoryProfile = TrajectoryProfile.CDF,
+                DelayHandling = DelayCompensationStrategy.Jump,
+                TrajectoryTypeSettings = new TrajectoryTypeSettings { Linear = new TrajectoryTypeSettings_Linear { } },
+                TrajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } }
+            });
+
+            //Debug.Log(_whereCameraShouldBe.Surge);
+
+            while (elapsed <= _parameters.SecondMovementDuration)
+            {
+                elapsed += TimeSpan.FromSeconds(Time.deltaTime);
+                float progress = Mathf.Clamp01((float)(elapsed / _parameters.SecondMovementDuration));
+                var nextPosition = trajectoryManager.GetNextPosition();
+
+                if (nextPosition == null)
+                    break;
+
+                _whereCameraShouldBe = trajectoryManager.GetNextPosition().Value;
+                yield return null;
+            }
+
+            //Debug.Log(_currentTrial.FirstInterval.Distance);
+            //Debug.Log(_currentTrial.FirstInterval.Distance + _currentTrial.SecondInterval.Distance);
+            //Debug.Log(_whereCameraShouldBe.Surge);
+            //Debug.Log(trajectoryManager.GetDevLog());
+
             _state = RacistTrialState.AnswerPhase;
+            _scene.HideModel();
         }
 
         private IEnumerator AnswerPhase()
@@ -156,7 +222,32 @@ namespace RacistExperiment
 
         private IEnumerator Returning()
         {
-            yield return new WaitForSeconds((float)_parameters.BackwardMovementDuration.TotalSeconds);
+            TimeSpan elapsed = TimeSpan.Zero;
+            var trajectoryManager = new TrajectoryManager(new MoveByTrajectoryParameters
+            {
+                StartPoint = new DofParameters { Surge = _currentTrial.FirstInterval.Distance + _currentTrial.SecondInterval.Distance },
+                EndPoint = new DofParameters { Surge = 0 },
+                MovementDuration = _parameters.BackwardMovementDuration,
+                TrajectoryType = TrajectoryType.Linear,
+                TrajectoryProfile = TrajectoryProfile.CDF,
+                DelayHandling = DelayCompensationStrategy.Jump,
+                TrajectoryTypeSettings = new TrajectoryTypeSettings { Linear = new TrajectoryTypeSettings_Linear { } },
+                TrajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } }
+            });
+
+            while (elapsed <= _parameters.BackwardMovementDuration)
+            {
+                elapsed += TimeSpan.FromSeconds(Time.deltaTime);
+                float progress = Mathf.Clamp01((float)(elapsed / _parameters.BackwardMovementDuration));
+                var nextPosition = trajectoryManager.GetNextPosition();
+
+                if (nextPosition == null)
+                    break;
+
+                _whereCameraShouldBe = trajectoryManager.GetNextPosition().Value;
+                yield return null;
+            }
+
             _state = RacistTrialState.Analyzation;
         }
 
@@ -165,60 +256,6 @@ namespace RacistExperiment
             _experiment.FinishTrial();
             yield return null;
         }
-
-        /*private void Update()
-        {
-            switch (_state)
-            {
-                case RacistTrialState.None:
-                    break;
-
-                case RacistTrialState.Initializing:
-                    _trajectoryManager = new TrajectoryManager(new MoveByTrajectoryParameters
-                    {
-                        StartPoint = new DofParameters { Surge = 0 },
-                        EndPoint = new DofParameters { Surge = _currentTrial.FirstInterval.Distance },
-                        MovementDuration = _currentTrial.FirstInterval.Duration,
-                        TrajectoryType = TrajectoryType.Linear,
-                        TrajectoryProfile = TrajectoryProfile.CDF,
-                        DelayHandling = DelayCompensationStrategy.Ignore,
-                        TrajectoryTypeSettings = new TrajectoryTypeSettings { Linear = new TrajectoryTypeSettings_Linear { } },
-                        TrajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } }
-                    });
-                    _state = RacistTrialState.PreFirstIntervalPause;
-                    break;
-
-                case RacistTrialState.PreFirstIntervalPause:
-                    break;
-
-                case RacistTrialState.FirstInterval:
-                    var position = _trajectoryManager.GetNextPosition();
-                    if (position == null)
-                        _state = RacistTrialState.InterIntervalPause;
-                    break;
-
-                case RacistTrialState.InterIntervalPause:
-                    break;
-
-                case RacistTrialState.SecondInterval:
-                    break;
-
-                case RacistTrialState.AnswerPhase:
-                    break;
-
-                case RacistTrialState.Returning:
-                    break;
-
-                case RacistTrialState.Analyzation:
-                    break;
-
-                default:
-                    break;
-            }
-
-            _camera.position = new Vector3 { z = _parameters.StartPosition.Surge, y = 1.7f, x = 0 };
-            //Debug.Log($"state: {_state}");
-        }*/
 
         // ................
 
@@ -244,29 +281,5 @@ namespace RacistExperiment
 
             _state = RacistTrialState.PreFirstIntervalPause;
         }
-
-        // ................
-
-        /*private void RecalculateCameraPosition()
-        {
-            _cameraStartPosition = new Vector3 { z = _parameters.StartPosition.Surge, y = 1.7f, x = 0 };
-            _camera.position = _cameraStartPosition;
-        }*/
-
-        /*private void SetCameraControlMode(bool fullyManual)
-        {
-            var tpd = Camera.main.GetComponent<TrackedPoseDriver>();
-
-            if (fullyManual)
-            {
-                tpd.trackingType = TrackedPoseDriver.TrackingType.RotationOnly;
-                _camera.position = new Vector3 { z = _parameters.StartPosition.Surge, y = 1.7f, x = 0 };
-            }
-            else
-            {
-                tpd.trackingType = TrackedPoseDriver.TrackingType.RotationAndPosition;
-                _camera.position = new Vector3 { z = _parameters.StartPosition.Surge, y = 0, x = 0 };
-            }
-        }*/
     }
 }

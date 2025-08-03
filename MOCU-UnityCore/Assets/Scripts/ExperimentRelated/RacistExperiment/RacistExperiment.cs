@@ -53,7 +53,7 @@ namespace RacistExperiment
             Shuffle(_trials);
 
             // First trial has easiest task. All subsequent ones will be calculated only after receiving the response
-            SetTrialAdditionalData(trialData: _trials[0]);
+            SetTrialAdditionalData();
         }
 
         public void PrepareNextTrial()
@@ -68,8 +68,8 @@ namespace RacistExperiment
             else
                 MakeTaskEasier();
 
-            _currentTrialIndex++;
-            SetTrialAdditionalData(_trials[_currentTrialIndex]);
+            _currentTrialIndex += 1;
+            SetTrialAdditionalData();
         }
 
         public void SetParticipantAnswer(RacistAnswer answer)
@@ -81,6 +81,7 @@ namespace RacistExperiment
         {
             var trial = _trials[_currentTrialIndex];
             trial.StartedAt = DateTime.UtcNow;
+            Debug.Log($"_multiplier - {_multiplier}");
             return trial;
         }
 
@@ -168,14 +169,22 @@ namespace RacistExperiment
             return type == TwoIntervalDistanceType.Reference ? TwoIntervalDistanceType.Test : TwoIntervalDistanceType.Reference;
         }
 
-        private void SetTrialAdditionalData(RacistTrial trialData)
+        private void SetTrialAdditionalData()
         {
+            var trialData = _trials[_currentTrialIndex];
             var testDistance = _config.ReferenceDistance * _multiplier;
+            //Debug.Log($"_config.ReferenceDistance: {_config.ReferenceDistance}, _multiplier: {_multiplier}");
 
             if (trialData.FirstInterval.DistanceType == TwoIntervalDistanceType.Reference)
+            {
+                trialData.FirstInterval.Distance = _config.ReferenceDistance;
                 trialData.SecondInterval.Distance = testDistance;
+            }
             else
+            {
                 trialData.FirstInterval.Distance = testDistance;
+                trialData.SecondInterval.Distance = _config.ReferenceDistance;
+            }
 
             trialData.CorrectAnswer =
                 trialData.FirstInterval.Distance > trialData.SecondInterval.Distance ?

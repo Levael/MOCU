@@ -8,6 +8,5 @@ namespace RacistExperiment
         public TwoIntervalDistanceType DistanceType;
         public TwoIntervalPersonColor PersonColor;
         public float Distance;
-        public TimeSpan Duration;
     }
 }

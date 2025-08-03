@@ -11,7 +11,7 @@ namespace RacistExperiment
 
         private GameObject _currentModel;
 
-        private float _nextActionTime = 0f;
+        //private float _nextActionTime = 0f;
 
         private void Awake()
         {
@@ -24,7 +24,7 @@ namespace RacistExperiment
 
         private void Update()
         {
-            if (Time.time >= _nextActionTime)
+            /*if (Time.time >= _nextActionTime)
             {
                 if (_currentModel != null)
                 {
@@ -36,21 +36,24 @@ namespace RacistExperiment
                     ShowRandomModel();
                     _nextActionTime = Time.time + Random.Range(0.7f, 1f);
                 }
-            }
+            }*/
         }
 
         public void ShowWhiteModel()
         {
+            //Debug.Log("Showed white model");
             ShowRandomFromList(WhiteModels);
         }
 
         public void ShowBlackModel()
         {
+            //Debug.Log("Showed black model");
             ShowRandomFromList(BlackModels);
         }
 
         public void HideModel()
         {
+            //Debug.Log("Hided model");
             _currentModel?.SetActive(false);
             _currentModel = null;
         }
