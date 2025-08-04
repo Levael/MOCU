@@ -160,8 +160,8 @@ namespace RacistExperiment
             TimeSpan elapsed = TimeSpan.Zero;
             var trajectoryManager = new TrajectoryManager(new MoveByTrajectoryParameters
             {
-                StartPoint = new DofParameters { Surge = _currentTrial.FirstInterval.Distance },
-                EndPoint = new DofParameters { Surge = _currentTrial.FirstInterval.Distance + _currentTrial.SecondInterval.Distance },
+                StartPoint = new DofParameters { Surge = 0 },
+                EndPoint = new DofParameters { Surge = _currentTrial.SecondInterval.Distance },
                 MovementDuration = _parameters.SecondMovementDuration,
                 TrajectoryType = TrajectoryType.Linear,
                 TrajectoryProfile = TrajectoryProfile.CDF,
@@ -222,7 +222,7 @@ namespace RacistExperiment
 
         private IEnumerator Returning()
         {
-            TimeSpan elapsed = TimeSpan.Zero;
+            /*TimeSpan elapsed = TimeSpan.Zero;
             var trajectoryManager = new TrajectoryManager(new MoveByTrajectoryParameters
             {
                 StartPoint = new DofParameters { Surge = _currentTrial.FirstInterval.Distance + _currentTrial.SecondInterval.Distance },
@@ -246,8 +246,9 @@ namespace RacistExperiment
 
                 _whereCameraShouldBe = trajectoryManager.GetNextPosition().Value;
                 yield return null;
-            }
+            }*/
 
+            yield return new WaitForSeconds((float)_parameters.BackwardMovementDuration.TotalSeconds);
             _state = RacistTrialState.Analyzation;
         }
 

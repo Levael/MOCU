@@ -8,7 +8,7 @@ namespace RacistExperiment
 {
     public class RacistParameters
     {
-        public IReadOnlyList<float> Multipliers         { get; set; } = new List<float> { 1.125f, 1.25f, 1.5f, 1.75f, 2.0f }.AsReadOnly();
+        public IReadOnlyList<float> Multipliers         { get; set; } = new List<float> { 0.5f, 0.75f, 1f, 1.125f, 1.25f, 1.5f, 1.75f, 2.0f }.AsReadOnly();
 
         public int TrialsNumber                         { get; set; } = 0;      // Better be modulus 4
         public float ReferenceDistance                  { get; set; } = 0.08f;  // meters
