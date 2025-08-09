@@ -22,6 +22,7 @@ namespace RacistExperiment
 
         private RacistTrialState _state;
         private DofParameters _cameraStartPosition;
+        private DofParameters _moogStartPosition;
         private DofParameters _whereCameraShouldBe;
         private RacistTrial _currentTrial;
         private Transform _camera;
@@ -38,6 +39,7 @@ namespace RacistExperiment
 
             _state = RacistTrialState.None;
             _cameraStartPosition = new DofParameters { Surge = 0, Heave = 1.7f, Sway = 0 };
+            _moogStartPosition = new DofParameters { Surge = -0.12f, Heave = -0.22f, Sway = 0 };
             _whereCameraShouldBe = _cameraStartPosition;
             _camera = GameObject.Find("VR").transform;
             _currentTrial = null;
@@ -61,11 +63,10 @@ namespace RacistExperiment
         private IEnumerator Loop()
         {
             Debug.Log("Experiment started");
+            _experiment.GenerateTrials();
 
             while (!_experiment.HasFinished)
             {
-                //Debug.Log("Trial started");
-
                 yield return Initializing();
                 // here waiting for 'start btn' event
                 yield return WaitingToStartSignal();
@@ -76,17 +77,15 @@ namespace RacistExperiment
                 yield return PreReturningPause();
                 yield return Returning();
                 yield return Analyzation();
-
-                //Debug.Log("Trial finished");
             }
 
+            _experiment.Save();
             Debug.Log("Experiment finished");
         }
 
         private IEnumerator Initializing()
         {
             _state = RacistTrialState.Initializing;
-            _experiment.GenerateTrials();
             yield return new WaitForSeconds((float)_parameters.DelayBeforeStartSound.TotalSeconds);
 
             _sound.PlaySound_Start();

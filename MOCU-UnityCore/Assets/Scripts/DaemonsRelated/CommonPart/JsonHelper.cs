@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Converters;
 
 #nullable enable
 
@@ -23,6 +24,8 @@ namespace DaemonsRelated
             {
                 Formatting = Formatting.Indented
             };
+
+            settings.Converters.Add(new StringEnumConverter());
 
             string jsonString = JsonConvert.SerializeObject(obj, settings);
 

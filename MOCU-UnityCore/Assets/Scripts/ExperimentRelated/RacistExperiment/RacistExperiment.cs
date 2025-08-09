@@ -98,6 +98,11 @@ namespace RacistExperiment
             PrepareNextTrial();
         }
 
+        public void Save()
+        {
+            new RacistSavedData { Trials = _trials, Parameters = _config }.Save();
+        }
+
         // .....................
 
         private void AddTrials(TwoIntervalDistanceType type, TwoIntervalPersonColor color, int count)

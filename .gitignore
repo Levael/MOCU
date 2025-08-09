@@ -11,6 +11,10 @@
 **/[Uu]ser[Ss]ettings/
 **/StreamingAssets/Daemons/
 
+# MOCU-UnityCore
+MOCU-UnityCore/Assets/For tests/People/
+MOCU-UnityCore/Assets/For tests/Sorroundings/
+
 # MOCU-AudioControl
 MOCU-AudioControl/AudioControl/bin/
 MOCU-AudioControl/AudioControl/obj/
