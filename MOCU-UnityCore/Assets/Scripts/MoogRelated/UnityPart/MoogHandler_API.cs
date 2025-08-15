@@ -9,12 +9,14 @@ namespace MoogModule
 {
     public interface MoogHandler_API
     {
+        event Action<MoogFeedback> GotFeedback;
+
         void Connect(MachineSettings parameters);
         void Engage();
         void Disengage();
         void Reset();
         void MoveToPoint(MoveToPointParameters parameters);
         void MoveByTrajectory(MoveByTrajectoryParameters parameters);
-        void GetFeedbackForTimeRange(TimeSpan start, TimeSpan end);
+        void RecordFeedback(TimeSpan timeSpan);
     }
 }

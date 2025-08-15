@@ -1,17 +1,19 @@
-﻿using System.Collections.Generic;
+﻿/*using System.Collections.Generic;
 using Unity.VisualScripting.FullSerializer;
 using System;
 
 using DaemonsRelated;
 using UnityEngine;
 
+using RacistExperiment;
 
-namespace RacistExperiment
+
+namespace MeshisExperiment
 {
-    public class RacistExperiment
+    public class MeshisExperiment
     {
         private List<RacistTrial> _trials;
-        private RacistParameters _config;
+        private MeshisParameters _config;
         private int _multiplierIndex;
         private float _multiplier;
         private int _currentTrialIndex;
@@ -20,7 +22,7 @@ namespace RacistExperiment
         public DateTime FinishedAt;
         public bool HasFinished;
 
-        public RacistExperiment(RacistParameters config)
+        public MeshisExperiment(MeshisParameters config)
         {
             _config = config;
             _trials = new();
@@ -44,10 +46,10 @@ namespace RacistExperiment
 
             _trials.Clear();
 
-            AddTrials(TwoIntervalDistanceType.Reference, TwoIntervalPersonColor.Black, quarter);
-            AddTrials(TwoIntervalDistanceType.Reference, TwoIntervalPersonColor.White, quarter);
-            AddTrials(TwoIntervalDistanceType.Test, TwoIntervalPersonColor.Black, quarter);
-            AddTrials(TwoIntervalDistanceType.Test, TwoIntervalPersonColor.White, quarter);
+            AddTrials(TwoIntervalDistanceType.Reference, TwoIntervalDirection.Forward, quarter);
+            AddTrials(TwoIntervalDistanceType.Reference, TwoIntervalDirection.Aside, quarter);
+            AddTrials(TwoIntervalDistanceType.Test, TwoIntervalDirection.Forward, quarter);
+            AddTrials(TwoIntervalDistanceType.Test, TwoIntervalDirection.Aside, quarter);
 
             // Random shuffle of all trials
             Shuffle(_trials);
@@ -105,7 +107,7 @@ namespace RacistExperiment
 
         // .....................
 
-        private void AddTrials(TwoIntervalDistanceType type, TwoIntervalPersonColor color, int count)
+        private void AddTrials(TwoIntervalDistanceType type, TwoIntervalDirection direction, int count)
         {
             for (int i = 0; i < count; i++)
             {
@@ -197,4 +199,4 @@ namespace RacistExperiment
                 RacistAnswer.SecondWasLonger;
         }
     }
-}
+}*/

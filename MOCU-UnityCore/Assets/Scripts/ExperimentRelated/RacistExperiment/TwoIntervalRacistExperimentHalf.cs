@@ -3,7 +3,7 @@
 
 namespace RacistExperiment
 {
-    public class TwoIntervalExperimentHalf
+    public class TwoIntervalRacistExperimentHalf
     {
         public TwoIntervalDistanceType DistanceType;
         public TwoIntervalPersonColor PersonColor;

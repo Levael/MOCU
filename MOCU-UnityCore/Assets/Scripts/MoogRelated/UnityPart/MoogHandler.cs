@@ -16,6 +16,8 @@ namespace MoogModule
 {
     public class MoogHandler : ManagedMonoBehaviour, MoogHandler_API
     {
+        public event Action<MoogFeedback> GotFeedback;
+
         public ModuleStatusHandler<Moog_ModuleSubStatuses> stateTracker { get; private set; }
 
         private MoogHostSideBridge _daemon;
@@ -101,12 +103,12 @@ namespace MoogModule
 
         public void MoveByTrajectory(MoveByTrajectoryParameters parameters)
         {
-
+            _daemon.MoveByTrajectory(parameters);
         }
 
-        public void GetFeedbackForTimeRange(TimeSpan start, TimeSpan end)
+        public void RecordFeedback(TimeSpan timeSpan)
         {
-
+            StartCoroutine(FeedbackCoroutine(timeSpan));
         }
 
         // ########################################################################################
@@ -121,9 +123,18 @@ namespace MoogModule
                 stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Machine, SubStatusState.Failed);*/
         }
 
+        // todo: rename
+        private IEnumerator FeedbackCoroutine(TimeSpan timeSpan)
+        {
+            _daemon.StartReceivingFeedback();
+            yield return new WaitForSeconds((float)timeSpan.TotalSeconds);
+            _daemon.StopReceivingFeedback();
+        }
+
         private void OnReceivedFeedback(MoogFeedback feedback)
         {
-            _chartsHandler.InteractiveChart(feedback);
+            GotFeedback?.Invoke(feedback);
+            //_chartsHandler.InteractiveChart(feedback);
         }
 
         private void TestMethod()

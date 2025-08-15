@@ -62,6 +62,7 @@
     <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\SeriesData.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\InterprocessCommunicationMessageLog.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistTrial.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\TwoIntervalDirection.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_DPadAction.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\IControllerDevice.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_JoystickAction.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\MoogRealTimeState.cs" />
     <Compile Include="Assets\For tests\FixedUpdateMonitor.cs" />
     <Compile Include="Assets\Scripts\Bootstrap\Bootstrap.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisAnswer.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Client.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\MinimalDataTransferObject.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\CommuicationModel\MoveByTrajectoryParameters.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="Assets\Scripts\CustomDataStructures\InterlinkedCollection.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\DaemonType.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\SubStatusState.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DTOs\UnifiedResponseFrom_Server.cs" />
     <Compile Include="Assets\Scripts\UnityUtilities.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\UnityPart\AudioHandler_new.cs" />
@@ -144,7 +147,7 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\IDaemonUser.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\TrajectoryType.cs" />
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_IntercomAction.cs" />
-    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TwoIntervalExperimentHalf.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisExperiment.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zAudioControl (depricated)\AudioCommunicationModel.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputHandler.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistResponseHandler.cs" />
@@ -152,7 +155,9 @@
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\TrajectoryManager.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatus.cs" />
     <Compile Include="Assets\Scripts\VrRelated\VrHeadset_Statuses.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisParameters.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\TrajectoryProfileSettings.cs" />
+    <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\ChartDisplayMode.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Client.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistTrialState.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\ControllersHandler.cs" />
@@ -173,9 +178,12 @@
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\SerialPortHelper.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\StatusesHandler.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\CDF\TrajectoryProfileSettings_CDF.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TwoIntervalRacistExperimentHalf.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\TwoIntervalMeshisExperimentHalf.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioClipName.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TwoIntervalPersonColor.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\UnityPart\MoogHandler_API.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisSavedData.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zUnityDaemonsCommon (depricated)\CommonUtilities.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DifferentInfo_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputSystemTests.cs" />
@@ -193,6 +201,7 @@
     <Compile Include="Assets\Scripts\ChartsRelated\UnityPart\ChartsHostSideBridge.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\DofParameters.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceData.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisTrial.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistSound.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigClassTemplates.cs" />
