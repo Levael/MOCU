@@ -3,7 +3,7 @@
 
 namespace RacistExperiment
 {
-    public class RacistSound : MonoBehaviour
+    public class TemporalSound : ManagedMonoBehaviour
     {
         public AudioSource AudioSource;
 

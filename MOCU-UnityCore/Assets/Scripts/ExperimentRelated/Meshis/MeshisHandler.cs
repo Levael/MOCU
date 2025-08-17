@@ -17,8 +17,8 @@ namespace MeshisExperiment
     {
         private MeshisParameters _parameters;
         private MeshisExperiment _experiment;
-        private RacistResponseHandler _input;
-        private RacistSound _sound;
+        private TemporalResponseHandler _input;
+        private TemporalSound _sound;
         private MeshisScene _scene;
 
         private RacistTrialState _state;
@@ -32,10 +32,10 @@ namespace MeshisExperiment
 
         private void Awake()
         {
-            _parameters = new RacistParameters { TrialsNumber = 4, StimulusType = RacistStimulusType.VisualVisual };
+            _parameters = new RacistParameters { TrialsNumber = 4, StimulusType = RacistExperimentStimulusType.VisualVisual };
             _experiment = new RacistExperiment(_parameters);
-            _input = GetComponent<RacistResponseHandler>();
-            _sound = GetComponent<RacistSound>();
+            _input = GetComponent<TemporalResponseHandler>();
+            _sound = GetComponent<TemporalSound>();
             _scene = GetComponent<RacistScene>();
 
             _state = RacistTrialState.None;

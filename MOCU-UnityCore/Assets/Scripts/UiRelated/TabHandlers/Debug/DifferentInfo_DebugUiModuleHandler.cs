@@ -35,7 +35,7 @@ public class DifferentInfo_DebugUiModuleHandler : ManagedMonoBehaviour
         _gcValueCell = _uiReference.elements.debugTab.diffInfoModule.gc;
         _timeWorkingValueCell = _uiReference.elements.debugTab.diffInfoModule.totalTimeWorking;
 
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
 
         // todo: consider changing 'ControllableUpdate' to 'GetComponent<UIDocument>().rootVisualElement.schedule.Execute(UpdateTimer).Every(1000);'
     }

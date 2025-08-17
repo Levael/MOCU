@@ -35,7 +35,7 @@ public class ForTests : ManagedMonoBehaviour
             _audioHandler.
             //_audioHandler.SendTestAudioSignalToDevice("Speakers (Realtek High Definition Audio)");
         };*/
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
     public override void ManagedUpdate()

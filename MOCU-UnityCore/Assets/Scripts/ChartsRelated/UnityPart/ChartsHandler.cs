@@ -23,6 +23,7 @@ namespace ChartsModule
         // unity components
         private DaemonsHandler _daemonsHandler;
         private DebugTabHandler _debugTabHandler;
+        private MoogHandler _moogHandler;
 
         public Action<Texture2D> StaticChartUpdated;
 
@@ -30,6 +31,9 @@ namespace ChartsModule
         {
             _daemonsHandler = GetComponent<DaemonsHandler>();
             _debugTabHandler = GetComponent<DebugTabHandler>();
+            _moogHandler = GetComponent<MoogHandler>();
+
+            _moogHandler.GotFeedback += InteractiveChart;
 
             /*_debugTabHandler.testBtn1Clicked += (eventObj) => Engage();     // test
             _debugTabHandler.testBtn2Clicked += (eventObj) => TestMethod(); // test*/

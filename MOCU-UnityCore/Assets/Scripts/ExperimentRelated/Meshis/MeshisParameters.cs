@@ -15,7 +15,7 @@ namespace MeshisExperiment
         public float ReferenceDistance                  { get; set; } = 0.08f;  // meters
         public DofParameters MoogStartPosition          { get; set; } = new DofParameters { Heave = -0.22f, Surge = -0.08f };
         public DofParameters CameraStartPosition        { get; set; } = new DofParameters { Heave = 1.7f };
-        public RacistStimulusType StimulusType          { get; set; } = RacistStimulusType.None;
+        public RacistExperimentStimulusType StimulusType          { get; set; } = RacistExperimentStimulusType.None;
         public float StartDistanceToStarCenter          { get; set; } = 0.66f;
         public float StarSize                           { get; set; } = 0.05f;
         public float StarsQuantity                      { get; set; } = 100f;

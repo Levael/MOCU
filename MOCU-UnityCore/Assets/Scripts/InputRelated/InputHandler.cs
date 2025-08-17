@@ -86,7 +86,7 @@ public class InputHandler : ManagedMonoBehaviour
 
         InputSystem.onDeviceChange += OnDeviceChange;
 
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
     private void OnDeviceChange(UnityEngine.InputSystem.InputDevice device, InputDeviceChange change)

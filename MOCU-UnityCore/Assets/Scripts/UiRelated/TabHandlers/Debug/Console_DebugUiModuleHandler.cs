@@ -19,7 +19,7 @@ public class Console_DebugUiModuleHandler : ManagedMonoBehaviour
     {
         _uiReference = _uiHandler.secondaryUiScreen;
         _console = _uiReference.elements.debugTab.consoleModule.console;
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
 

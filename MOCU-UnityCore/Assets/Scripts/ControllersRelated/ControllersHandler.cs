@@ -32,7 +32,7 @@ public class ControllersHandler : ManagedMonoBehaviour
         foreach (var device in _devices)
             await device.Init();
 
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
     
 

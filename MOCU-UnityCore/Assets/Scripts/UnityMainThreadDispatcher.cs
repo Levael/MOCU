@@ -11,7 +11,7 @@ public class UnityMainThreadDispatcher : ManagedMonoBehaviour
 
     public override void ManagedStart()
     {
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
     public override void ManagedUpdate()

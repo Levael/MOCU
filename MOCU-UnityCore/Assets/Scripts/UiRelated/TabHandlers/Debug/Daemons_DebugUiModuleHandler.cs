@@ -40,7 +40,7 @@ public class Daemons_DebugUiModuleHandler : ManagedMonoBehaviour
         _daemonsHandler.NewMessageLogged += NewMessageLogged;
         _daemonsHandler.DaemonStatusChanged += DaemonStatusChanged;
 
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
 
         _testStopwatch = new();
         _testStopwatch.Start();

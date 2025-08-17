@@ -14,7 +14,7 @@ public class AnswerHandler : ManagedMonoBehaviour
 
     public override void ManagedStart()
     {
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
 

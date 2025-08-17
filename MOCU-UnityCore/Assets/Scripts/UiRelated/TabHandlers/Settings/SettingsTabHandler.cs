@@ -25,7 +25,7 @@ public class SettingsTabHandler : ManagedMonoBehaviour
     {
         _uiReference = _uiHandler.secondaryUiScreen;
         AddEventListeners();
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
 

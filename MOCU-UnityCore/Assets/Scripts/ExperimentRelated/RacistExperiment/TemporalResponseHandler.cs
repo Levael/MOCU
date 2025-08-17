@@ -3,27 +3,33 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-namespace RacistExperiment
+namespace Temporal
 {
-    public class RacistResponseHandler : MonoBehaviour
+    public class TemporalResponseHandler : ManagedMonoBehaviour
     {
         public event Action GotAnswer_Up;
         public event Action GotAnswer_Down;
+        public event Action GotAnswer_Left;
+        public event Action GotAnswer_Right;
         public event Action GotSignal_Start;
 
-        private RacistControls _input;
+        private TemporalControls _input;
 
-        private void Awake()
+        public override void ManagedAwake()
         {
             _input = new();
 
             _input.Responses.Up.performed += _ => HandleUp();
             _input.Responses.Down.performed += _ => HandleDown();
+            _input.Responses.Left.performed += _ => HandleLeft();
+            _input.Responses.Right.performed += _ => HandleRight();
             _input.Responses.Start.performed += _ => HandleStart();
         }
 
-        private void OnEnable() => _input.Enable();
-        private void OnDisable() => _input.Disable();
+        public override void ManagedOnEnable() => _input.Enable();
+        public override void ManagedOnDisable() => _input.Disable();
+
+        // .................................
 
         private void HandleUp()
         {
@@ -35,6 +41,18 @@ namespace RacistExperiment
         {
             //Debug.Log("Down arrow pressed");
             GotAnswer_Down?.Invoke();
+        }
+
+        private void HandleLeft()
+        {
+            //Debug.Log("Left arrow pressed");
+            GotAnswer_Left?.Invoke();
+        }
+
+        private void HandleRight()
+        {
+            //Debug.Log("Right arrow pressed");
+            GotAnswer_Right?.Invoke();
         }
 
         private void HandleStart()

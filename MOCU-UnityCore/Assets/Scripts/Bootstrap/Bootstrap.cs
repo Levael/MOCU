@@ -1,7 +1,7 @@
 /*
  * The Bootstrap class manages the lifecycle of various components in a Unity project by controlling the invocation of initialization and update methods.
  * Specifically, it handles the ManagedAwake, ManagedStart, and ManagedUpdate methods of components.
- * The ManagedUpdate method is particularly useful for centralizing the check of IsComponentReady,
+ * The ManagedUpdate method is particularly useful for centralizing the check of CanUseUpdateMethod,
  * ensuring that each component only updates when it's ready, thereby avoiding redundant checks within individual components.
  * 
  * The order is important, as some components depend on others being initialized first.
@@ -10,6 +10,8 @@
 
 using ChartsModule;
 using MoogModule;
+using RacistExperiment;
+using Temporal;
 using UnityEngine;
 
 
@@ -67,11 +69,27 @@ public class Bootstrap : MonoBehaviour
             EnsureComponent<ForTests>(),
             EnsureComponent<ChartsHandler>(),
             //EnsureComponent<FixedUpdateMonitor>(),
+
+            // SIDE EXPERIMENTS
+            EnsureComponent<RacistHandler>(),
+            EnsureComponent<TemporalResponseHandler>(),
         };
 
 
         foreach (var component in _components)
             component.ManagedAwake();
+    }
+
+    private void OnEnable()
+    {
+        foreach (var component in _components)
+            component.ManagedOnEnable();
+    }
+
+    private void OnDisable()
+    {
+        foreach (var component in _components)
+            component.ManagedOnDisable();
     }
 
     private void Start()
@@ -83,7 +101,7 @@ public class Bootstrap : MonoBehaviour
     private void Update()
     {
         foreach (var component in _components)
-            if (component.IsComponentReady)
+            if (component.CanUseUpdateMethod)
                 component.ManagedUpdate();   
     }
 

@@ -58,7 +58,7 @@ public class StatusesHandler : ManagedMonoBehaviour
             { ModuleStatus.Inactive,                "#9A9B9B" }     // gray
         };
 
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
 

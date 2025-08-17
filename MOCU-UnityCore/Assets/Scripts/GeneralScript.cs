@@ -12,6 +12,6 @@ public class GeneralScript : ManagedMonoBehaviour
         Application.targetFrameRate = 60;                           // Application fps (when VR is on -- automatically switchs to VR fps (90))
         XRSettings.gameViewRenderMode = GameViewRenderMode.None;    // prevents rendering VR view on monitor (works only in Build version)
 
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 }

@@ -126,7 +126,7 @@ public class Devices_SettingsUiModuleHandler : ManagedMonoBehaviour
         };
 
         SomeStuff_RenameLater();*/
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
 

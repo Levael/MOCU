@@ -57,7 +57,7 @@ public class InputSystemTests : ManagedMonoBehaviour
         ActualMapping = new();
         InitializeActionMaps();
 
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
     public override void ManagedStart() { }

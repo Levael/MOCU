@@ -109,9 +109,9 @@
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DebugTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\HostSideDaemonContainer.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\IDaemonHandler.cs" />
-    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistControls.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\InterlinkedCollection.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\UnityPart\DaemonType.cs" />
+    <Compile Include="Assets\Scripts\VrRelated\CopyCameraView.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\SubStatusState.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DTOs\UnifiedResponseFrom_Server.cs" />
@@ -122,6 +122,7 @@
     <Compile Include="Assets\Scripts\StatusesRelated\IModuleStatusHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\DaemonPart\IDaemonLogic.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Server.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TemporalControls.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\Cedrus\CedrusHandler.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\EncodedMachineState.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModulesSubStatuses\ControllerDevice_SubStatuses.cs" />
@@ -149,8 +150,8 @@
     <Compile Include="Assets\Scripts\InputRelated\ActionMap + Actions\enum_IntercomAction.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisExperiment.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zAudioControl (depricated)\AudioCommunicationModel.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TemporalSound.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputHandler.cs" />
-    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistResponseHandler.cs" />
     <Compile Include="Assets\Scripts\CustomDataStructures\ObservableConcurrentQueue.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\TrajectoryManager.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatus.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\CDF\TrajectoryProfile_CDF.cs" />
     <Compile Include="Assets\For tests\TestStyle.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\SettingsDeviceBox\SettingsDeviceBox.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistExperimentStimulusType.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\SettingsTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_EventType.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\ITrajectoryGenerator.cs" />
@@ -188,7 +190,6 @@
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\DifferentInfo_DebugUiModuleHandler.cs" />
     <Compile Include="Assets\Scripts\InputRelated\InputSystemTests.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\CommuicationModel\MachineSettings.cs" />
-    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistStimulusType.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceConnectionStatus.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_UnityServer.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\JsonHelper.cs" />
@@ -196,13 +197,13 @@
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistAnswer.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceType.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\TrajectoryTypeSettings.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TemporalResponseHandler.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatusHandler.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\SubStatusImportance.cs" />
     <Compile Include="Assets\Scripts\ChartsRelated\UnityPart\ChartsHostSideBridge.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\DofParameters.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceData.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisTrial.cs" />
-    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistSound.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigClassTemplates.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\Devices_SettingsUiModuleHandler.cs" />

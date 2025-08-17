@@ -51,8 +51,8 @@ namespace MoogModule
                 MBC_PORT = "16384"
             };
 
-            _debugTabHandler.testBtn1Clicked += (eventObj) => Engage();     // test
-            _debugTabHandler.testBtn2Clicked += (eventObj) => TestMethod(); // test
+            //_debugTabHandler.testBtn1Clicked += (eventObj) => Engage();     // test
+            //_debugTabHandler.testBtn2Clicked += (eventObj) => TestMethod(); // test
         }
 
         public override void ManagedStart()

@@ -20,7 +20,7 @@ public class VrHandler : ManagedMonoBehaviour
     public override void ManagedStart()
     {
         StartCoroutine(CheckConnection(_checkXRConnectionTimeInterval));
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
 

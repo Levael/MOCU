@@ -68,7 +68,7 @@ class DaemonsHandler : ManagedMonoBehaviour
 
     public override void ManagedStart()
     {
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
     private void OnApplicationQuit()

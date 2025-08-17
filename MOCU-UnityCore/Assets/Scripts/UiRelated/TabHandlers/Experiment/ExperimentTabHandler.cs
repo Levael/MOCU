@@ -24,7 +24,7 @@ public class ExperimentTabHandler : ManagedMonoBehaviour
         _infoField = _uiReference.elements.experimentTab.outputsModule.info;
         _warningsField = _uiReference.elements.experimentTab.outputsModule.warnings;
 
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
 
@@ -32,7 +32,7 @@ public class ExperimentTabHandler : ManagedMonoBehaviour
     // todo: rethink, make more abstract (_deferredActions)
     public void PrintToInfo(string message, bool clearTextElement = false)
     {
-        /*if (!IsComponentReady)
+        /*if (!CanUseUpdateMethod)
         {
             _deferredActions.Enqueue(() => PrintToInfo(message, clearTextElement));
             return;
@@ -44,7 +44,7 @@ public class ExperimentTabHandler : ManagedMonoBehaviour
 
     public void PrintToWarnings(string message, bool clearTextElement = false)
     {
-        /*if (!IsComponentReady)
+        /*if (!CanUseUpdateMethod)
         {
             _deferredActions.Enqueue(() => PrintToWarnings(message, clearTextElement));
             return;

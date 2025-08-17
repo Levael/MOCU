@@ -15,12 +15,12 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace RacistExperiment
+namespace Temporal
 {
-    public partial class @RacistControls: IInputActionCollection2, IDisposable
+    public partial class @TemporalControls: IInputActionCollection2, IDisposable
     {
         public InputActionAsset asset { get; }
-        public @RacistControls()
+        public @TemporalControls()
         {
             asset = InputActionAsset.FromJson(@"{
     ""name"": ""RacistControls"",
@@ -51,6 +51,24 @@ namespace RacistExperiment
                     ""name"": ""Start"",
                     ""type"": ""Button"",
                     ""id"": ""66051259-549c-4d4b-81ac-e89933b9c21f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Left"",
+                    ""type"": ""Button"",
+                    ""id"": ""f645091f-33ea-46e3-b5c8-704ba552dae2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Right"",
+                    ""type"": ""Button"",
+                    ""id"": ""1bd8c4a7-60af-44f8-8ac8-c03124169265"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -123,6 +141,50 @@ namespace RacistExperiment
                     ""action"": ""Start"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7edbcaec-aa2d-4268-abd4-dce160168ed1"",
+                    ""path"": ""<Keyboard>/numpad4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""29a9635e-bfb1-4319-83dc-b9d391fdff5e"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ac1f3b7d-afdd-47c7-a57c-4620efac4405"",
+                    ""path"": ""<Keyboard>/numpad6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bc63bff4-e83f-4cf2-ac72-3da711205d5f"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -134,6 +196,8 @@ namespace RacistExperiment
             m_Responses_Up = m_Responses.FindAction("Up", throwIfNotFound: true);
             m_Responses_Down = m_Responses.FindAction("Down", throwIfNotFound: true);
             m_Responses_Start = m_Responses.FindAction("Start", throwIfNotFound: true);
+            m_Responses_Left = m_Responses.FindAction("Left", throwIfNotFound: true);
+            m_Responses_Right = m_Responses.FindAction("Right", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -198,13 +262,17 @@ namespace RacistExperiment
         private readonly InputAction m_Responses_Up;
         private readonly InputAction m_Responses_Down;
         private readonly InputAction m_Responses_Start;
+        private readonly InputAction m_Responses_Left;
+        private readonly InputAction m_Responses_Right;
         public struct ResponsesActions
         {
-            private @RacistControls m_Wrapper;
-            public ResponsesActions(@RacistControls wrapper) { m_Wrapper = wrapper; }
+            private @TemporalControls m_Wrapper;
+            public ResponsesActions(@TemporalControls wrapper) { m_Wrapper = wrapper; }
             public InputAction @Up => m_Wrapper.m_Responses_Up;
             public InputAction @Down => m_Wrapper.m_Responses_Down;
             public InputAction @Start => m_Wrapper.m_Responses_Start;
+            public InputAction @Left => m_Wrapper.m_Responses_Left;
+            public InputAction @Right => m_Wrapper.m_Responses_Right;
             public InputActionMap Get() { return m_Wrapper.m_Responses; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -223,6 +291,12 @@ namespace RacistExperiment
                 @Start.started += instance.OnStart;
                 @Start.performed += instance.OnStart;
                 @Start.canceled += instance.OnStart;
+                @Left.started += instance.OnLeft;
+                @Left.performed += instance.OnLeft;
+                @Left.canceled += instance.OnLeft;
+                @Right.started += instance.OnRight;
+                @Right.performed += instance.OnRight;
+                @Right.canceled += instance.OnRight;
             }
 
             private void UnregisterCallbacks(IResponsesActions instance)
@@ -236,6 +310,12 @@ namespace RacistExperiment
                 @Start.started -= instance.OnStart;
                 @Start.performed -= instance.OnStart;
                 @Start.canceled -= instance.OnStart;
+                @Left.started -= instance.OnLeft;
+                @Left.performed -= instance.OnLeft;
+                @Left.canceled -= instance.OnLeft;
+                @Right.started -= instance.OnRight;
+                @Right.performed -= instance.OnRight;
+                @Right.canceled -= instance.OnRight;
             }
 
             public void RemoveCallbacks(IResponsesActions instance)
@@ -258,6 +338,8 @@ namespace RacistExperiment
             void OnUp(InputAction.CallbackContext context);
             void OnDown(InputAction.CallbackContext context);
             void OnStart(InputAction.CallbackContext context);
+            void OnLeft(InputAction.CallbackContext context);
+            void OnRight(InputAction.CallbackContext context);
         }
     }
 }

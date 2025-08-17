@@ -38,7 +38,7 @@ public class Fps_DebugUiModuleHandler : ManagedMonoBehaviour
         _lastFrameTimeValueCell = _uiReference.elements.debugTab.fpsModule.lastFrameTime;
         _averageFrameTimeValueCell = _uiReference.elements.debugTab.fpsModule.averageFrameTime;
 
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
     public override void ManagedUpdate()

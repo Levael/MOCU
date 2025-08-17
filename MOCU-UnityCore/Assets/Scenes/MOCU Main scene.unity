@@ -292,7 +292,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 78664786}
-  - component: {fileID: 78664785}
   m_Layer: 0
   m_Name: Cameras
   m_TagString: Untagged
@@ -300,23 +299,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &78664785
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 78664784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2483b9bd782f9449a5972b61b7d51a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_CameraFloorOffsetObject: {fileID: 1229354833}
-  m_RequestedTrackingMode: 2
-  m_TrackingOriginMode: 1
-  m_TrackingSpace: 1
-  m_CameraYOffset: 1.7
 --- !u!4 &78664786
 Transform:
   m_ObjectHideFlags: 0
@@ -888,7 +870,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 421177267}
-  - component: {fileID: 421177268}
   - component: {fileID: 421177269}
   - component: {fileID: 421177270}
   m_Layer: 3
@@ -911,28 +892,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1795770539}
-  - {fileID: 3680885089750297165}
   - {fileID: 1863181484}
   - {fileID: 430046177}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &421177268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 421177266}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45c83c0bf6762594294cf7a97a34bc16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  WhiteModels:
-  - {fileID: 3680885089750297166}
-  BlackModels:
-  - {fileID: 1795770540}
 --- !u!114 &421177269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1389,7 +1352,7 @@ GameObject:
   - component: {fileID: 886504684}
   m_Layer: 0
   m_Name: VrHelmetCamera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1544,6 +1507,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1092656470}
+  - component: {fileID: 1092656471}
   m_Layer: 3
   m_Name: RacistExperiment
   m_TagString: Untagged
@@ -1563,9 +1527,27 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1795770539}
+  - {fileID: 3680885089750297165}
   m_Father: {fileID: 286630123}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1092656471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1092656469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45c83c0bf6762594294cf7a97a34bc16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WhiteModels:
+  - {fileID: 3680885089750297166}
+  BlackModels:
+  - {fileID: 1795770540}
 --- !u!1 &1229354833
 GameObject:
   m_ObjectHideFlags: 0
@@ -3504,7 +3486,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 421177267}
+    m_TransformParent: {fileID: 1092656470}
     m_Modifications:
     - target: {fileID: 212751073461116319, guid: a4a9cdab76fca2b4c85ced12a05771ef, type: 3}
       propertyPath: m_Layer
@@ -3652,7 +3634,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4311652260893728935, guid: a4a9cdab76fca2b4c85ced12a05771ef, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4311652260893728935, guid: a4a9cdab76fca2b4c85ced12a05771ef, type: 3}
       propertyPath: m_LocalRotation.y
@@ -3660,7 +3642,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4311652260893728935, guid: a4a9cdab76fca2b4c85ced12a05771ef, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4311652260893728935, guid: a4a9cdab76fca2b4c85ced12a05771ef, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4379,7 +4361,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2133400221}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92c3124657953d64791ebb2006f0a694, type: 3}
+  m_Script: {fileID: 11500000, guid: 3e38a489c3a1b4646b02b3dbe72d9b9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   AudioSource: {fileID: 2133400224}
@@ -4394,7 +4376,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 421177267}
+    m_TransformParent: {fileID: 1092656470}
     m_Modifications:
     - target: {fileID: 3503167532966410781, guid: ac1c776b9fc2a3b458edc83e9ab3577f, type: 3}
       propertyPath: m_Name
@@ -4402,7 +4384,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3503167532966410781, guid: ac1c776b9fc2a3b458edc83e9ab3577f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4311652260893728935, guid: ac1c776b9fc2a3b458edc83e9ab3577f, type: 3}
       propertyPath: m_LocalPosition.x

@@ -35,7 +35,7 @@ public class DebugTabHandler : ManagedMonoBehaviour
         _testBtn1.RegisterCallback<ClickEvent>(eventObj => { testBtn1Clicked?.Invoke(eventObj); });
         _testBtn2.RegisterCallback<ClickEvent>(eventObj => { testBtn2Clicked?.Invoke(eventObj); });
 
-        IsComponentReady = true;
+        CanUseUpdateMethod = true;
     }
 
 

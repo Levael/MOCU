@@ -1,6 +1,6 @@
 ﻿namespace RacistExperiment
 {
-    public enum RacistStimulusType
+    public enum RacistExperimentStimulusType
     {
         None,
         VisualVisual,
