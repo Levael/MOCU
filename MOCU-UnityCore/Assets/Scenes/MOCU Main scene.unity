@@ -192,7 +192,7 @@ Transform:
   m_GameObject: {fileID: 78664784}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1048,11 +1048,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b32504398914ac4796f42c178495e1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cubeCount: 1000
-  bounds: {x: 3, y: 3, z: 3}
-  cloudCenter: {x: 0, y: 1.7, z: 3}
-  cubeMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  cubeMaterial: {fileID: 2100000, guid: ad72a190e43fb944d8fa3ba67aac93df, type: 2}
+  starCount: 1250
+  bounds: {x: 1.3, y: 1.3, z: 1}
+  cloudCenter: {x: 0, y: 1.7, z: 0.66}
+  starScale: {x: 0.02, y: 0.02, z: 0.02}
+  starMaterial: {fileID: 2100000, guid: ad72a190e43fb944d8fa3ba67aac93df, type: 2}
 --- !u!1 &756818297
 GameObject:
   m_ObjectHideFlags: 0
@@ -1332,7 +1332,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.01
+  near clip plane: 0.05
   far clip plane: 1000
   field of view: 60
   orthographic: 0

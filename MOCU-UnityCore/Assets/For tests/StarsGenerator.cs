@@ -29,16 +29,18 @@ public class CubesGenerator : MonoBehaviour
 }*/
 
 using UnityEngine;
+using UnityEngine.Rendering;
 
 
-public class CubesGenerator : MonoBehaviour
+public class StarsGenerator : MonoBehaviour
 {
-    public int cubeCount = 1000;
-    public Vector3 bounds = new Vector3(3, 3, 3);
-    public Vector3 cloudCenter = Vector3.zero;
+    private int starCount = 1250;
+    private Vector3 bounds = new Vector3(1.3f, 1.3f, 1.0f);
+    private Vector3 cloudCenter = new Vector3(0f, 1.7f, 0.66f);
+    private Vector3 starScale = new Vector3(0.02f, 0.02f, 0.02f);
 
-    public Mesh cubeMesh;
-    public Material cubeMaterial; // Материал с включенным GPU Instancing
+    private Mesh starMesh;
+    public Material starMaterial; // Материал с включенным GPU Instancing
 
     // Массив для хранения всех трансформаций (позиция, вращение, масштаб)
     private Matrix4x4[] matrices;
@@ -46,13 +48,14 @@ public class CubesGenerator : MonoBehaviour
 
     private void Awake()
     {
-        matrices = new Matrix4x4[cubeCount];
-        RandomizeCubes();
+        matrices = new Matrix4x4[starCount];
+        starMesh = CreateStarMesh();
+        RandomizeStars();
     }
 
-    public void RandomizeCubes()
+    public void RandomizeStars()
     {
-        for (int i = 0; i < cubeCount; i++)
+        for (int i = 0; i < starCount; i++)
         {
             // Случайная позиция в заданных границах (это остаётся как было)
             Vector3 localPosition = new Vector3(
@@ -63,33 +66,34 @@ public class CubesGenerator : MonoBehaviour
 
             // ✨ ПРИБАВЛЯЕМ СМЕЩЕНИЕ ЦЕНТРА
             Vector3 worldPosition = cloudCenter + localPosition;
+            Quaternion rotation = Quaternion.Euler(0, 180, 0);
 
-            Quaternion rotation = Quaternion.Euler(
+            /*Quaternion rotation = Quaternion.Euler(
                 Random.Range(0, 360),
                 Random.Range(0, 360),
                 Random.Range(0, 360)
-            );
-
-            Vector3 scale = new Vector3(0.05f, 0.05f, 0.05f);
+            );*/
 
             // Используем новую позицию в матрице
-            matrices[i] = Matrix4x4.TRS(worldPosition, rotation, scale);
+            matrices[i] = Matrix4x4.TRS(worldPosition, rotation, starScale);
         }
     }
 
     void Update()
     {
         // Если кубы видимы, рисуем их все одной командой
-        if (isVisible && cubeCount > 0)
+        if (isVisible && starCount > 0)
         {
             Graphics.DrawMeshInstanced(
-                cubeMesh,
+                starMesh,
                 0,
-                cubeMaterial,
+                starMaterial,
                 matrices,
-                cubeCount,
+                starCount,
                 null, // MaterialPropertyBlock - нам не нужен
+                //ShadowCastingMode.Off,
                 UnityEngine.Rendering.ShadowCastingMode.On, // Включить тени (стандартно)
+                //false, // Принимать тени (стандартно)
                 true, // Принимать тени (стандартно)
                 gameObject.layer // ✨ ЗАДАЕМ НУЖНЫЙ СЛОЙ
             );
@@ -104,5 +108,37 @@ public class CubesGenerator : MonoBehaviour
     public void Show()
     {
         isVisible = true;
+    }
+
+    // .........
+
+    private Mesh CreateStarMesh()
+    {
+        var mesh = new Mesh();
+
+        // Вершины (точки) треугольника
+        Vector3[] vertices = new Vector3[3]
+        {
+            new Vector3(0, 0.5f, 0),    // Верхняя точка
+            new Vector3(-0.5f, -0.5f, 0), // Левая нижняя
+            new Vector3(0.5f, -0.5f, 0)  // Правая нижняя
+        };
+
+        // Индексы вершин, которые образуют треугольник
+        int[] triangles = new int[3] { 0, 1, 2 };
+
+        // Нормали (чтобы освещение работало корректно)
+        Vector3[] normals = new Vector3[3]
+        {
+            -Vector3.forward,
+            -Vector3.forward,
+            -Vector3.forward
+        };
+
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.normals = normals;
+
+        return mesh;
     }
 }

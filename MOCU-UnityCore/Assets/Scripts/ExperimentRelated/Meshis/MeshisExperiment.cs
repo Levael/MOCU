@@ -87,7 +87,7 @@ namespace MeshisExperiment
         {
             var trial = _trials[_currentTrialIndex];
             trial.StartedAt = DateTime.UtcNow;
-            Debug.Log($"_multiplier - {_multiplier}");
+            //Debug.Log($"_multiplier - {_multiplier}");
             return trial;
         }
 

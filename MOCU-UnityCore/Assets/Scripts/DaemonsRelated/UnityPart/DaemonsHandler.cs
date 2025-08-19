@@ -50,7 +50,7 @@ class DaemonsHandler : ManagedMonoBehaviour
                 DaemonType.Moog, new HostSideDaemonContainer(
                     type: DaemonType.Moog,
                     fullPath: Path.Combine(_daemonsFolderPath, "MoogControl.exe"),
-                    isHidden: false,
+                    isHidden: true,
                     priority: ProcessPriorityClass.High
                 )
             },

@@ -74,6 +74,7 @@
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\MoogFeedback.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\MoogRealTimeState.cs" />
     <Compile Include="Assets\For tests\FixedUpdateMonitor.cs" />
+    <Compile Include="Assets\For tests\StarsGenerator.cs" />
     <Compile Include="Assets\Scripts\Bootstrap\Bootstrap.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisAnswer.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_Client.cs" />
@@ -202,7 +203,6 @@
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\DofParameters.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceData.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisTrial.cs" />
-    <Compile Include="Assets\For tests\CubesGenerator.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigClassTemplates.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\Devices_SettingsUiModuleHandler.cs" />

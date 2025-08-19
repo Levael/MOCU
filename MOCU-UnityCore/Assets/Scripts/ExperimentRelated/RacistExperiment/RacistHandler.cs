@@ -197,8 +197,8 @@ namespace RacistExperiment
                     TrajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } }
                 };
 
-                if (_experiment.GetCurrentTrialIndex() == 0)
-                    _moogHandler.RecordFeedback(TimeSpan.FromSeconds(10));
+                /*if (_experiment.GetCurrentTrialIndex() == 0)
+                    _moogHandler.RecordFeedback(TimeSpan.FromSeconds(10));*/
 
                 _moogHandler.MoveByTrajectory(trajectoryParameters);
                 yield return new WaitForSeconds((float)_parameters.DelayBetweenMoogAndVr.TotalSeconds);

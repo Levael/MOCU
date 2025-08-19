@@ -79,7 +79,7 @@ namespace Temporal
                 {
                     ""name"": """",
                     ""id"": ""c776c0c4-491a-4bb9-9c7e-18f9465a969e"",
-                    ""path"": ""<Keyboard>/upArrow"",
+                    ""path"": ""<Keyboard>/numpad8"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -101,7 +101,7 @@ namespace Temporal
                 {
                     ""name"": """",
                     ""id"": ""7240cf8a-3cca-4452-b07a-0c0f80dd75ac"",
-                    ""path"": ""<Keyboard>/downArrow"",
+                    ""path"": ""<Keyboard>/numpad2"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -123,7 +123,7 @@ namespace Temporal
                 {
                     ""name"": """",
                     ""id"": ""2caabeb8-7915-4e6c-ac85-a560db595031"",
-                    ""path"": ""<Keyboard>/numpadEnter"",
+                    ""path"": ""<Keyboard>/numpad5"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -145,7 +145,7 @@ namespace Temporal
                 {
                     ""name"": """",
                     ""id"": ""7edbcaec-aa2d-4268-abd4-dce160168ed1"",
-                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""path"": ""<Keyboard>/numpad4"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -156,7 +156,7 @@ namespace Temporal
                 {
                     ""name"": """",
                     ""id"": ""29a9635e-bfb1-4319-83dc-b9d391fdff5e"",
-                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""path"": ""<Gamepad>/dpad/left"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -167,7 +167,7 @@ namespace Temporal
                 {
                     ""name"": """",
                     ""id"": ""ac1f3b7d-afdd-47c7-a57c-4620efac4405"",
-                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""path"": ""<Keyboard>/numpad6"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -178,7 +178,7 @@ namespace Temporal
                 {
                     ""name"": """",
                     ""id"": ""bc63bff4-e83f-4cf2-ac72-3da711205d5f"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

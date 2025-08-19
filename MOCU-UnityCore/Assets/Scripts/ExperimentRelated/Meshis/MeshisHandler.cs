@@ -19,7 +19,7 @@ namespace MeshisExperiment
         private MeshisExperiment _experiment;
         private TemporalResponseHandler _input;
         private TemporalSound _sound;
-        private CubesGenerator _scene;
+        private StarsGenerator _scene;
         private DebugTabHandler _debugTabHandler;
         private MoogHandler _moogHandler;
 
@@ -38,7 +38,7 @@ namespace MeshisExperiment
             _moogHandler = GetComponent<MoogHandler>();
             _input = GetComponent<TemporalResponseHandler>();
             _sound = GameObject.Find("Audio").GetComponent<TemporalSound>();
-            _scene = GameObject.Find("MeshisExperiment").GetComponent<CubesGenerator>();
+            _scene = GameObject.Find("MeshisExperiment").GetComponent<StarsGenerator>();
 
             _state = Temporal2IntervalTrialState.None;
             _whereCameraShouldBe = _parameters.CameraStartPosition;
@@ -175,7 +175,7 @@ namespace MeshisExperiment
             _whereCameraShouldBe = new DofParameters { Surge = 0 };
             yield return null;
 
-            _scene.RandomizeCubes();
+            _scene.RandomizeStars();
             _scene.Show();
 
             if (_parameters.StimulusType == TemporalExperimentStimulusType.VestibularVestibular || _parameters.StimulusType == TemporalExperimentStimulusType.CombinedCombined)
@@ -199,8 +199,8 @@ namespace MeshisExperiment
                     TrajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } }
                 };
 
-                if (_experiment.GetCurrentTrialIndex() == 0)
-                    _moogHandler.RecordFeedback(TimeSpan.FromSeconds(10));
+                /*if (_experiment.GetCurrentTrialIndex() == 0)
+                    _moogHandler.RecordFeedback(TimeSpan.FromSeconds(10));*/
 
                 _moogHandler.MoveByTrajectory(trajectoryParameters);
                 yield return new WaitForSeconds((float)_parameters.DelayBetweenMoogAndVr.TotalSeconds);
@@ -249,7 +249,7 @@ namespace MeshisExperiment
             _whereCameraShouldBe = new DofParameters { Surge = 0 };
             yield return null;
 
-            _scene.RandomizeCubes();
+            _scene.RandomizeStars();
             _scene.Show();
 
             if (_parameters.StimulusType == TemporalExperimentStimulusType.VestibularVestibular || _parameters.StimulusType == TemporalExperimentStimulusType.CombinedCombined)

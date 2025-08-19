@@ -51,7 +51,7 @@ namespace ChartsModule
             //communicator.ConnectionEstablished += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Complete);
             //communicator.ConnectionBroked += message => stateTracker.UpdateSubStatus(Moog_ModuleSubStatuses.Communicator, SubStatusState.Failed);
 
-            daemonWrapper.Start();                    // <----------
+            //daemonWrapper.Start();                    // <----------
         }
 
         // .............................

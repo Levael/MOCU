@@ -20,9 +20,11 @@ namespace MeshisExperiment
         public TimeSpan DelayBetweenMoogAndVr               { get; set; } = TimeSpan.FromMilliseconds(100); // Moog starts with delay
         public float MoogMovementDurationCorrectionFactor   { get; set; } = 0.8f;   // It takes to Moog more time (1 / 1.25) ~1100ms (-100 from prev param)
         public float StartDistanceToStarCenter              { get; set; } = 0.66f;
-        public float StarSize                               { get; set; } = 0.05f;
-        public float StarsQuantity                          { get; set; } = 100f;
-        public float StarsBoxSideLength                     { get; set; } = 1f;
+        public float StarSize                               { get; set; } = 0.02f;
+        public int StarsQuantity                            { get; set; } = 1250;
+        public float StarCloudBoxWidth                      { get; set; } = 0.13f;
+        public float StarCloudBoxHeight                     { get; set; } = 0.13f;
+        public float StarCloudBoxDeep                       { get; set; } = 0.1f;
 
         public TimeSpan FirstMovementDuration               { get; set; } = TimeSpan.FromSeconds(1);
         public TimeSpan SecondMovementDuration              { get; set; } = TimeSpan.FromSeconds(1);
