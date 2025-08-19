@@ -35,6 +35,11 @@ namespace RacistExperiment
             return JsonHelper.SerializeJson(_trials);
         }
 
+        public int GetCurrentTrialIndex()
+        {
+            return _currentTrialIndex;
+        }
+
         public void GenerateTrials()
         {
             if (_config.TrialsNumber < 4)
@@ -178,7 +183,6 @@ namespace RacistExperiment
         {
             var trialData = _trials[_currentTrialIndex];
             var testDistance = _config.ReferenceDistance * _multiplier;
-            //Debug.Log($"_config.ReferenceDistance: {_config.ReferenceDistance}, _multiplier: {_multiplier}");
 
             if (trialData.FirstInterval.DistanceType == TwoIntervalDistanceType.Reference)
             {

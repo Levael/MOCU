@@ -9,6 +9,7 @@
 
 
 using ChartsModule;
+using MeshisExperiment;
 using MoogModule;
 using RacistExperiment;
 using Temporal;
@@ -71,7 +72,8 @@ public class Bootstrap : MonoBehaviour
             //EnsureComponent<FixedUpdateMonitor>(),
 
             // SIDE EXPERIMENTS
-            EnsureComponent<RacistHandler>(),
+            //EnsureComponent<RacistHandler>(),
+            EnsureComponent<MeshisHandler>(),
             EnsureComponent<TemporalResponseHandler>(),
         };
 

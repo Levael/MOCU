@@ -1,6 +1,6 @@
-﻿namespace RacistExperiment
+﻿namespace Temporal
 {
-    public enum RacistTrialState
+    public enum Temporal2IntervalTrialState
     {
         None,
         Initializing,

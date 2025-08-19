@@ -22,7 +22,7 @@ namespace RacistExperiment
         private DebugTabHandler _debugTabHandler;
         private MoogHandler _moogHandler;
 
-        private RacistTrialState _state;
+        private Temporal2IntervalTrialState _state;
         private DofParameters _whereCameraShouldBe;
         private RacistTrial _currentTrial;
         private Transform _camera;
@@ -30,7 +30,7 @@ namespace RacistExperiment
 
         public override void ManagedAwake()
         {
-            _parameters = new RacistParameters { TrialsNumber = 4, StimulusType = RacistExperimentStimulusType.CombinedCombined };
+            _parameters = new RacistParameters { TrialsNumber = 4, StimulusType = TemporalExperimentStimulusType.CombinedCombined };
             _experiment = new RacistExperiment(_parameters);
 
             _debugTabHandler = GetComponent<DebugTabHandler>();
@@ -39,7 +39,7 @@ namespace RacistExperiment
             _sound = GameObject.Find("Audio").GetComponent<TemporalSound>();
             _scene = GameObject.Find("RacistExperiment").GetComponent<RacistScene>();
 
-            _state = RacistTrialState.None;
+            _state = Temporal2IntervalTrialState.None;
             _whereCameraShouldBe = _parameters.CameraStartPosition;
             _camera = GameObject.Find("Cameras").transform;
             _currentTrial = null;
@@ -50,11 +50,6 @@ namespace RacistExperiment
 
             _debugTabHandler.testBtn1Clicked += (eventObj) => EngageMoog();
             _debugTabHandler.testBtn2Clicked += (eventObj) => StartExperiment();
-        }
-
-        public override void ManagedStart()
-        {
-            //StartCoroutine(Loop());
         }
 
         public override void ManagedUpdate()
@@ -106,20 +101,42 @@ namespace RacistExperiment
             }
 
             _experiment.Save();
+            yield return MoveMoogToOriginPosition();
             DisengageMoog();
             Debug.Log("Experiment finished");
         }
 
         private IEnumerator MoveMoogToStartPosition()
         {
-            if (_parameters.StimulusType != RacistExperimentStimulusType.CombinedCombined)
+            if (_parameters.StimulusType != TemporalExperimentStimulusType.CombinedCombined)
                 yield return null;
 
             var trajectoryParameters = new MoveByTrajectoryParameters
             {
                 StartPoint = new DofParameters { Heave = -0.22f },
                 EndPoint = _parameters.MoogStartPosition,
-                MovementDuration = TimeSpan.FromSeconds(1),
+                MovementDuration = TimeSpan.FromSeconds(2),
+                TrajectoryType = TrajectoryType.Linear,
+                TrajectoryProfile = TrajectoryProfile.CDF,
+                DelayHandling = DelayCompensationStrategy.Ignore,
+                TrajectoryTypeSettings = new TrajectoryTypeSettings { Linear = new TrajectoryTypeSettings_Linear { } },
+                TrajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } }
+            };
+
+            _moogHandler.MoveByTrajectory(trajectoryParameters);
+            yield return new WaitForSeconds(3);
+        }
+
+        private IEnumerator MoveMoogToOriginPosition()
+        {
+            if (_parameters.StimulusType != TemporalExperimentStimulusType.CombinedCombined)
+                yield return null;
+
+            var trajectoryParameters = new MoveByTrajectoryParameters
+            {
+                StartPoint = _parameters.MoogStartPosition,
+                EndPoint = new DofParameters { Heave = -0.22f },
+                MovementDuration = TimeSpan.FromSeconds(2),
                 TrajectoryType = TrajectoryType.Linear,
                 TrajectoryProfile = TrajectoryProfile.CDF,
                 DelayHandling = DelayCompensationStrategy.Ignore,
@@ -133,25 +150,29 @@ namespace RacistExperiment
 
         private IEnumerator Initializing()
         {
-            _state = RacistTrialState.Initializing;
+            _state = Temporal2IntervalTrialState.Initializing;
             yield return new WaitForSeconds((float)_parameters.DelayBeforeStartSound.TotalSeconds);
 
             _sound.PlaySound_Start();
-            _state = RacistTrialState.ReadyToStart;
+            _state = Temporal2IntervalTrialState.ReadyToStart;
         }
 
         private IEnumerator WaitingToStartSignal()
         {
-            while (_state != RacistTrialState.PreFirstIntervalPause)
+            while (_state != Temporal2IntervalTrialState.PreFirstIntervalPause)
                 yield return null;
 
             yield return new WaitForSeconds((float)_parameters.DelayAfterStartSignal.TotalSeconds);
             _currentTrial = _experiment.StartTrial();
-            _state = RacistTrialState.FirstInterval;
+            _state = Temporal2IntervalTrialState.FirstInterval;
         }
 
         private IEnumerator FirstInterval()
         {
+            // resolves visual glitch of sudden tp
+            _whereCameraShouldBe = new DofParameters { Surge = 0 };
+            yield return null;
+
             if (_currentTrial.FirstInterval.PersonColor == TwoIntervalPersonColor.White)
                 _scene.ShowWhiteModel();
             else if (_currentTrial.FirstInterval.PersonColor == TwoIntervalPersonColor.Black)
@@ -159,7 +180,7 @@ namespace RacistExperiment
             else
                 Debug.Log("You shouldn't see that message");
 
-            if (_parameters.StimulusType == RacistExperimentStimulusType.CombinedCombined)
+            if (_parameters.StimulusType == TemporalExperimentStimulusType.CombinedCombined)
             {
                 var toPoint = _parameters.MoogStartPosition;
                 toPoint.Surge += _currentTrial.FirstInterval.Distance;
@@ -176,7 +197,9 @@ namespace RacistExperiment
                     TrajectoryProfileSettings = new TrajectoryProfileSettings { CDF = new TrajectoryProfileSettings_CDF { Sigmas = 3 } }
                 };
 
-                _moogHandler.RecordFeedback(TimeSpan.FromSeconds(10));
+                if (_experiment.GetCurrentTrialIndex() == 0)
+                    _moogHandler.RecordFeedback(TimeSpan.FromSeconds(10));
+
                 _moogHandler.MoveByTrajectory(trajectoryParameters);
                 yield return new WaitForSeconds((float)_parameters.DelayBetweenMoogAndVr.TotalSeconds);
             }
@@ -207,18 +230,22 @@ namespace RacistExperiment
                 yield return null;
             }
 
-            _state = RacistTrialState.InterIntervalPause;
+            _state = Temporal2IntervalTrialState.InterIntervalPause;
             _scene.HideModel();
         }
 
         private IEnumerator InterIntervalPause()
         {
             yield return new WaitForSeconds((float)_parameters.PauseBetweenIntervalsDuration.TotalSeconds);
-            _state = RacistTrialState.SecondInterval;
+            _state = Temporal2IntervalTrialState.SecondInterval;
         }
 
         private IEnumerator SecondInterval()
         {
+            // resolves visual glitch of sudden tp
+            _whereCameraShouldBe = new DofParameters { Surge = 0 };
+            yield return null;
+
             if (_currentTrial.SecondInterval.PersonColor == TwoIntervalPersonColor.White)
                 _scene.ShowWhiteModel();
             else if (_currentTrial.SecondInterval.PersonColor == TwoIntervalPersonColor.Black)
@@ -226,7 +253,7 @@ namespace RacistExperiment
             else
                 Debug.Log("You shouldn't see that message");
 
-            if (_parameters.StimulusType == RacistExperimentStimulusType.CombinedCombined)
+            if (_parameters.StimulusType == TemporalExperimentStimulusType.CombinedCombined)
             {
                 var toPoint = _parameters.MoogStartPosition;
                 toPoint.Surge += _currentTrial.FirstInterval.Distance;
@@ -282,7 +309,7 @@ namespace RacistExperiment
             //Debug.Log(_whereCameraShouldBe.Surge);
             //Debug.Log(trajectoryManager.GetDevLog());
 
-            _state = RacistTrialState.AnswerPhase;
+            _state = Temporal2IntervalTrialState.AnswerPhase;
             _scene.HideModel();
         }
 
@@ -303,13 +330,13 @@ namespace RacistExperiment
                 _sound.PlaySound_AnswerIsLate();
             }
 
-            _state = RacistTrialState.PreReturningPause;
+            _state = Temporal2IntervalTrialState.PreReturningPause;
         }
 
         private IEnumerator PreReturningPause()
         {
             yield return new WaitForSeconds((float)_parameters.DelayAfterAnswerSignal.TotalSeconds);
-            _state = RacistTrialState.Returning;
+            _state = Temporal2IntervalTrialState.Returning;
         }
 
         private IEnumerator Returning()
@@ -340,7 +367,7 @@ namespace RacistExperiment
                 yield return null;
             }*/
 
-            if (_parameters.StimulusType == RacistExperimentStimulusType.CombinedCombined)
+            if (_parameters.StimulusType == TemporalExperimentStimulusType.CombinedCombined)
             {
                 var fromPoint = _parameters.MoogStartPosition;
                 fromPoint.Surge += _currentTrial.FirstInterval.Distance;
@@ -363,7 +390,7 @@ namespace RacistExperiment
             }
 
             yield return new WaitForSeconds((float)_parameters.BackwardMovementDuration.TotalSeconds);
-            _state = RacistTrialState.Analyzation;
+            _state = Temporal2IntervalTrialState.Analyzation;
         }
 
         private IEnumerator Analyzation()
@@ -376,7 +403,7 @@ namespace RacistExperiment
 
         private void HandleInput_Up()
         {
-            if (_state != RacistTrialState.AnswerPhase) return;
+            if (_state != Temporal2IntervalTrialState.AnswerPhase) return;
 
             _experiment.SetParticipantAnswer(RacistAnswer.SecondWasLonger);
             _sound.PlaySound_GotAnswer();
@@ -384,7 +411,7 @@ namespace RacistExperiment
 
         private void HandleInput_Down()
         {
-            if (_state != RacistTrialState.AnswerPhase) return;
+            if (_state != Temporal2IntervalTrialState.AnswerPhase) return;
 
             _experiment.SetParticipantAnswer(RacistAnswer.FirstWasLonger);
             _sound.PlaySound_GotAnswer();
@@ -392,9 +419,9 @@ namespace RacistExperiment
 
         private void HandleInput_Start()
         {
-            if (_state != RacistTrialState.ReadyToStart) return;
+            if (_state != Temporal2IntervalTrialState.ReadyToStart) return;
 
-            _state = RacistTrialState.PreFirstIntervalPause;
+            _state = Temporal2IntervalTrialState.PreFirstIntervalPause;
         }
     }
 }

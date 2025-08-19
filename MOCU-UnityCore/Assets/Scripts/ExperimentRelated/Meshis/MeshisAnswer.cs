@@ -5,7 +5,7 @@
         None,
 
         Late,
-        ForwardWasLonger,
+        StraightWasLonger,
         AsideWasLonger
     }
 }

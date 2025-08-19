@@ -1,18 +1,17 @@
-﻿/*using System.Collections.Generic;
-using Unity.VisualScripting.FullSerializer;
-using System;
-
-using DaemonsRelated;
-using UnityEngine;
-
+﻿using DaemonsRelated;
 using RacistExperiment;
+using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using Unity.VisualScripting.FullSerializer;
+using UnityEngine;
 
 
 namespace MeshisExperiment
 {
     public class MeshisExperiment
     {
-        private List<RacistTrial> _trials;
+        private List<MeshisTrial> _trials;
         private MeshisParameters _config;
         private int _multiplierIndex;
         private float _multiplier;
@@ -37,6 +36,11 @@ namespace MeshisExperiment
             return JsonHelper.SerializeJson(_trials);
         }
 
+        public int GetCurrentTrialIndex()
+        {
+            return _currentTrialIndex;
+        }
+
         public void GenerateTrials()
         {
             if (_config.TrialsNumber < 4)
@@ -46,9 +50,9 @@ namespace MeshisExperiment
 
             _trials.Clear();
 
-            AddTrials(TwoIntervalDistanceType.Reference, TwoIntervalDirection.Forward, quarter);
+            AddTrials(TwoIntervalDistanceType.Reference, TwoIntervalDirection.Straight, quarter);
             AddTrials(TwoIntervalDistanceType.Reference, TwoIntervalDirection.Aside, quarter);
-            AddTrials(TwoIntervalDistanceType.Test, TwoIntervalDirection.Forward, quarter);
+            AddTrials(TwoIntervalDistanceType.Test, TwoIntervalDirection.Straight, quarter);
             AddTrials(TwoIntervalDistanceType.Test, TwoIntervalDirection.Aside, quarter);
 
             // Random shuffle of all trials
@@ -63,9 +67,9 @@ namespace MeshisExperiment
             var currentTrial = _trials[_currentTrialIndex];
             var answerWasCorrect = currentTrial.ReceivedAnswer == currentTrial.CorrectAnswer;
 
-            if (currentTrial.ReceivedAnswer == RacistAnswer.Late)
+            if (currentTrial.ReceivedAnswer == MeshisAnswer.Late)
                 LeaveSameDifficulty();
-            else if(answerWasCorrect)
+            else if (answerWasCorrect)
                 MakeTaskHarder();
             else
                 MakeTaskEasier();
@@ -74,12 +78,12 @@ namespace MeshisExperiment
             SetTrialAdditionalData();
         }
 
-        public void SetParticipantAnswer(RacistAnswer answer)
+        public void SetParticipantAnswer(MeshisAnswer answer)
         {
             _trials[_currentTrialIndex].ReceivedAnswer = answer;
         }
 
-        public RacistTrial StartTrial()
+        public MeshisTrial StartTrial()
         {
             var trial = _trials[_currentTrialIndex];
             trial.StartedAt = DateTime.UtcNow;
@@ -102,7 +106,7 @@ namespace MeshisExperiment
 
         public void Save()
         {
-            new RacistSavedData { Trials = _trials, Parameters = _config }.Save();
+            new MeshisSavedData { Trials = _trials, Parameters = _config }.Save();
         }
 
         // .....................
@@ -111,19 +115,19 @@ namespace MeshisExperiment
         {
             for (int i = 0; i < count; i++)
             {
-                var first = new TwoIntervalRacistExperimentHalf
+                var first = new TwoIntervalMeshisExperimentHalf
                 {
                     DistanceType = type,
-                    PersonColor = color
+                    Direction = direction
                 };
 
-                var second = new TwoIntervalRacistExperimentHalf
+                var second = new TwoIntervalMeshisExperimentHalf
                 {
                     DistanceType = GetComplementaryDistanceType(type),
-                    PersonColor = GetComplementaryColor(color)
+                    Direction = GetComplementaryDirection(direction)
                 };
 
-                _trials.Add(new RacistTrial
+                _trials.Add(new MeshisTrial
                 {
                     FirstInterval = first,
                     SecondInterval = second
@@ -166,9 +170,9 @@ namespace MeshisExperiment
             }
         }
 
-        private TwoIntervalPersonColor GetComplementaryColor(TwoIntervalPersonColor color)
+        private TwoIntervalDirection GetComplementaryDirection(TwoIntervalDirection direction)
         {
-            return color == TwoIntervalPersonColor.Black ? TwoIntervalPersonColor.White : TwoIntervalPersonColor.Black;
+            return direction == TwoIntervalDirection.Aside ? TwoIntervalDirection.Straight : TwoIntervalDirection.Aside;
         }
 
         private TwoIntervalDistanceType GetComplementaryDistanceType(TwoIntervalDistanceType type)
@@ -180,8 +184,8 @@ namespace MeshisExperiment
         {
             var trialData = _trials[_currentTrialIndex];
             var testDistance = _config.ReferenceDistance * _multiplier;
-            //Debug.Log($"_config.ReferenceDistance: {_config.ReferenceDistance}, _multiplier: {_multiplier}");
 
+            // Reference or Test
             if (trialData.FirstInterval.DistanceType == TwoIntervalDistanceType.Reference)
             {
                 trialData.FirstInterval.Distance = _config.ReferenceDistance;
@@ -193,10 +197,27 @@ namespace MeshisExperiment
                 trialData.SecondInterval.Distance = _config.ReferenceDistance;
             }
 
-            trialData.CorrectAnswer =
-                trialData.FirstInterval.Distance > trialData.SecondInterval.Distance ?
-                RacistAnswer.FirstWasLonger :
-                RacistAnswer.SecondWasLonger;
+            // Correct answer determination
+            if (trialData.FirstInterval.Distance > trialData.SecondInterval.Distance)
+            {
+                if (trialData.FirstInterval.Direction == TwoIntervalDirection.Straight)
+                    trialData.CorrectAnswer = MeshisAnswer.StraightWasLonger;
+                else
+                    trialData.CorrectAnswer = MeshisAnswer.AsideWasLonger;
+            }
+            else
+            {
+                if (trialData.SecondInterval.Direction == TwoIntervalDirection.Straight)
+                    trialData.CorrectAnswer = MeshisAnswer.StraightWasLonger;
+                else
+                    trialData.CorrectAnswer = MeshisAnswer.AsideWasLonger;
+            }
+
+            // Left or Right
+            if (trialData.FirstInterval.Direction == TwoIntervalDirection.Aside)
+                trialData.FirstInterval.Distance *= (UnityEngine.Random.value < 0.5f ? -1 : 1);
+            else
+                trialData.SecondInterval.Distance *= (UnityEngine.Random.value < 0.5f ? -1 : 1);
         }
     }
-}*/
+}

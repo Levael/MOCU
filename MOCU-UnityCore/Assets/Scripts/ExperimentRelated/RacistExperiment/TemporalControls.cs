@@ -145,7 +145,7 @@ namespace Temporal
                 {
                     ""name"": """",
                     ""id"": ""7edbcaec-aa2d-4268-abd4-dce160168ed1"",
-                    ""path"": ""<Keyboard>/numpad4"",
+                    ""path"": ""<Keyboard>/leftArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -167,7 +167,7 @@ namespace Temporal
                 {
                     ""name"": """",
                     ""id"": ""ac1f3b7d-afdd-47c7-a57c-4620efac4405"",
-                    ""path"": ""<Keyboard>/numpad6"",
+                    ""path"": ""<Keyboard>/rightArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

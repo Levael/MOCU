@@ -160,14 +160,11 @@
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\TrajectoryProfileSettings.cs" />
     <Compile Include="Assets\Scripts\ChartsRelated\CommonPart\ChartDisplayMode.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\DaemonHandler_Client.cs" />
-    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistTrialState.cs" />
     <Compile Include="Assets\Scripts\ControllersRelated\ControllersHandler.cs" />
-    <Compile Include="Assets\For tests\GenerateManyCubes.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistScene.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Profile\CDF\TrajectoryProfile_CDF.cs" />
     <Compile Include="Assets\For tests\TestStyle.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\SettingsDeviceBox\SettingsDeviceBox.cs" />
-    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistExperimentStimulusType.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\SettingsTabHandler.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\CommonPart\InterprocessCommunicator\InterprocessCommunicator_EventType.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\ITrajectoryGenerator.cs" />
@@ -196,6 +193,7 @@
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\IBusinessLogic_Client.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\RacistAnswer.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceType.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\Temporal2IntervalTrialState.cs" />
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\TrajectoryRelated\Type\TrajectoryTypeSettings.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TemporalResponseHandler.cs" />
     <Compile Include="Assets\Scripts\StatusesRelated\ModuleStatusHandler.cs" />
@@ -204,6 +202,7 @@
     <Compile Include="Assets\Scripts\MoogRelated\CommonPart\DofParameters.cs" />
     <Compile Include="Assets\Scripts\AudioRelated\CommonPart\AudioDeviceData.cs" />
     <Compile Include="Assets\Scripts\ExperimentRelated\Meshis\MeshisTrial.cs" />
+    <Compile Include="Assets\For tests\CubesGenerator.cs" />
     <Compile Include="Assets\Scripts\GeneralScript.cs" />
     <Compile Include="Assets\Scripts\DataRelated\ConfigClassTemplates.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Settings\Devices_SettingsUiModuleHandler.cs" />
@@ -212,6 +211,7 @@
     <Compile Include="Assets\Scripts\UiRelated\UiReferences.cs" />
     <Compile Include="Assets\Scripts\DaemonsRelated\zDifferent (deprecated)\DaemonHandlers\IBusinessLogic_Server.cs" />
     <Compile Include="Assets\Scripts\UiRelated\TabHandlers\Debug\Daemons_DebugUiModuleHandler.cs" />
+    <Compile Include="Assets\Scripts\ExperimentRelated\RacistExperiment\TemporalExperimentStimulusType.cs" />
     <Compile Include="Assets\For tests\Moog Movement\JoystickForMoogTest.cs" />
     <Compile Include="Assets\Resources\GUI\CustomElements\Slider\CustomSlider.cs" />
     <Compile Include="Assets\Scripts\ChartsRelated\UnityPart\ChartsHandler.cs" />
